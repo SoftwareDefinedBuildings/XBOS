@@ -1,0 +1,36 @@
+<head>
+  <title>myapp</title>
+</head>
+
+<body>
+  {{> navbar}}
+</body>
+
+<template name="navbar">
+  <div class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+          <a class="navbar-brand" href="/">OpenBAS</a>
+      </div>
+      <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="{{activeIf 'home'}}"><a href="{{pathFor 'home'}}">Home</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="{{activeIf 'about'}}"><a href="{{pathFor 'about'}}">About</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+              {{> loginButtons }} 
+          </ul>
+      </div>
+  </div>
+</template>
+
+<template name="home">
+  <h1>Hello World!</h1>
+  {{greeting}}
+  <input type="button" value="Click" />
+</template>
+
+<template name="about">
+  <h1>About!</h1>
+</template>
