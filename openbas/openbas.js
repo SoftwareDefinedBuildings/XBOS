@@ -1,4 +1,11 @@
+Devices = new Meteor.Collection("devices");
+
 if (Meteor.isClient) {
+
+  Template.devices.devices = function() {
+    return Devices.find({});
+  };  
+
   Template.navbar.helpers({
     activeIf: function (template) {
       var currentRoute = Router.current();

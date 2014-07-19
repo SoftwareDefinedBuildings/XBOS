@@ -18,6 +18,9 @@
           <ul class="nav navbar-nav">
             <li class="{{activeIf 'about'}}"><a href="{{pathFor 'about'}}">About</a></li>
           </ul>
+          <ul class="nav navbar-nav">
+            <li class="{{activeIf 'devices'}}"><a href="{{pathFor 'devices'}}">Devices</a></li>
+          </ul>
           <ul class="nav navbar-nav navbar-right">
               {{> loginButtons }} 
           </ul>
@@ -33,4 +36,23 @@
 
 <template name="about">
   <h1>About!</h1>
+</template>
+
+<template name="devices">
+  <div id="outer">
+    <div class="device">
+      <span class="Path">Path</span>
+      <span class="value">value</span>
+    </div>
+    {{#each devices}}
+      {{> device}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="device">
+  <div class="device">
+    <span class="Path">{{Path}}</span>
+    <span class="value">{{value}}</span>
+  </div>
 </template>

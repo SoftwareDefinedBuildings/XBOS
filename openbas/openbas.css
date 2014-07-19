@@ -9,3 +9,28 @@ body {
     -o-user-select: none;
     user-select: none;
 }
+
+#outer {
+    width: 600px;
+    margin: 0 auto;
+}
+
+.device {
+    padding: 5px;
+}
+
+.device .Path {
+    display: inline-block;
+    width: 300px;
+    font-size: 1.75em;
+}
+
+.device .value {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+    font-size: 2em;
+    font-weight: bold;
+    color: #777;
+}
+
