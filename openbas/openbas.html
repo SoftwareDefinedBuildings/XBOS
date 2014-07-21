@@ -19,7 +19,7 @@
             <li class="{{activeIf 'about'}}"><a href="{{pathFor 'about'}}">About</a></li>
           </ul>
           <ul class="nav navbar-nav">
-            <li class="{{activeIf 'devices'}}"><a href="{{pathFor 'devices'}}">Devices</a></li>
+            <li class="{{activeIf 'points'}}"><a href="{{pathFor 'points'}}">Points</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
               {{> loginButtons }} 
@@ -38,21 +38,29 @@
   <h1>About!</h1>
 </template>
 
-<template name="devices">
+<template name="points">
   <div id="outer">
-    <div class="device">
+    <div class="point">
       <span class="Path">Path</span>
       <span class="value">value</span>
     </div>
-    {{#each devices}}
-      {{> device}}
+    {{#each points}}
+      {{> point_list}}
     {{/each}}
   </div>
 </template>
 
-<template name="device">
-  <div class="device">
-    <span class="Path">{{Path}}</span>
+<template name="point_list">
+  <div class="point">
+    <span class="Path">
+      <a href="{{ pathFor 'points'}}/{{_id.toHexString}}">
+        {{Path}}
+      </a>
+    </span>
     <span class="value">{{value}}</span>
   </div>
+</template>
+
+<template name="point">
+  <h1>Hello world {{ _id.toHexString }}}</h1>
 </template>

@@ -1,9 +1,9 @@
-Devices = new Meteor.Collection("devices");
+Points = new Meteor.Collection("points");
 
 if (Meteor.isClient) {
 
-  Template.devices.devices = function() {
-    return Devices.find({});
+  Template.points.points = function() {
+    return Points.find({});
   };  
 
   Template.navbar.helpers({

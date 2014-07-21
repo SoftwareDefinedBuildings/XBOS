@@ -15,17 +15,17 @@ body {
     margin: 0 auto;
 }
 
-.device {
+.point {
     padding: 5px;
 }
 
-.device .Path {
+.point .Path {
     display: inline-block;
     width: 300px;
     font-size: 1.75em;
 }
 
-.device .value {
+.point .value {
     display: inline-block;
     width: 100px;
     text-align: right;
