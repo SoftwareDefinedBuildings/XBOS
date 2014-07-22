@@ -9,5 +9,5 @@ To install all the dependencies and run the app,
 
 ```
 cd openbas
-mrt 
+mrt --settings settings.json
 ```
