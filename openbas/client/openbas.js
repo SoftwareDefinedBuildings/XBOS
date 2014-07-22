@@ -2,7 +2,7 @@ Points = new Meteor.Collection("points");
 
 if (Meteor.isClient) {
 
-  Template.points.points = function() {
+  Template.points.pointsAll = function() {
     return Points.find({});
   };  
 
@@ -29,6 +29,6 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    // code to run on server at startup
+
   });
 }

@@ -44,23 +44,19 @@
       <span class="Path">Path</span>
       <span class="value">value</span>
     </div>
-    {{#each points}}
-      {{> point_list}}
+    {{#each pointsAll}}
+      {{> point_row}}
     {{/each}}
   </div>
 </template>
 
-<template name="point_list">
+<template name="point_row">
   <div class="point">
     <span class="Path">
-      <a href="{{ pathFor 'points'}}/{{_id.toHexString}}">
+      <a href="{{ pathFor 'pointDetail'}}">
         {{Path}}
       </a>
     </span>
     <span class="value">{{value}}</span>
   </div>
-</template>
-
-<template name="point">
-  <h1>Hello world {{ _id.toHexString }}}</h1>
 </template>
