@@ -12,15 +12,15 @@ Meteor.methods({
 
   query: function(q){
       var url = Meteor.settings.archiverUrl + "/api/query"
-      var r = HTTP.call("GET", url, {data: q})
+      var r = HTTP.call("POST", url, {content: q})
       return EJSON.parse(r.content);
   },
 
   latest: function(restrict, n){
       var q = "select data before now limit " + n + " where " + restrict;
       var url = Meteor.settings.archiverUrl + "/api/query";
-      var r = HTTP.call("GET", url, {data: q});
+      var r = HTTP.call("POST", url, {content: q});
       return EJSON.parse(r.content);
-  }
+  },
 
 });
