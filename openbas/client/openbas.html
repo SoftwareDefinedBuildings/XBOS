@@ -1,5 +1,7 @@
 <head>
   <title>OpenBAS</title>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -20,6 +22,9 @@
           </ul>
           <ul class="nav navbar-nav">
             <li class="{{activeIf 'points'}}"><a href="{{pathFor 'points'}}">Points</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="{{activeIf 'actuators'}}"><a href="{{pathFor 'actuators'}}">Actuators</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
               {{> loginButtons }} 
@@ -43,6 +48,7 @@
     <div class="point">
       <span class="Path">Path</span>
       <span class="value">value</span>
+      <span class="actuator">ActuatorPath</span>
     </div>
     {{#each pointsAll}}
       {{> point_row}}
@@ -58,5 +64,29 @@
       </a>
     </span>
     <span class="value">{{value}}</span>
+    <span class="actuator">{{ActuatorPath}}</span>
   </div>
+</template>
+
+<template name="actuators">
+  <table class="table table-bordered table-condensed" id="actuators">
+    <tr>
+      <th>Path</th>
+      <th>ActuatorUUID</th>
+      <th>Value</th>
+      <th>Type</th>
+    </tr>
+    {{# each actuatorsAll}}
+      {{> actuator_display}}
+    {{/each}}
+  </table>
+</template>
+
+<template name="actuator_display">
+  <tr>
+  <td>{{Path}}</td>
+  <td>{{ActuatorUUID}}</td>
+  <td>{{value}}</td>
+  <td>{{type}}</td>
+  </tr>
 </template>

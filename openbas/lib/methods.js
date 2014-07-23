@@ -23,4 +23,11 @@ Meteor.methods({
       return EJSON.parse(r.content);
   },
 
+  tags: function(uuid){
+      console.log(uuid, deliver);
+      var url = Meteor.settings.public.archiverUrl + "/api/tags/uuid/"+ uuid;
+      deliver(1,2);
+      HTTP.call("GET", url, {}, deliver);
+  },
+
 });

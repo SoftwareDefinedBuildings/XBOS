@@ -1,3 +1,4 @@
 { 
-  "archiverUrl": "http://new.openbms.org/backend"
+  "archiverUrl": "http://new.openbms.org/backend",
+  "public": {"archiverUrl":  "http://new.openbms.org/backend"}
 }

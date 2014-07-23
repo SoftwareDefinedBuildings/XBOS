@@ -34,3 +34,17 @@ body {
     color: #777;
 }
 
+.point .actuator {
+    display: inline-block;
+    width: 100px;
+    padding-left: 10px;
+    text-align: right;
+    font-size: 2em;
+    font-weight: bold;
+    color: #777;
+}
+
+#actuators {
+  width: 900px;
+  margin: 0 auto;
+}
