@@ -38,6 +38,15 @@ if (Meteor.isClient) {
     }
   });
 
+  Template.actuator_continuous.rendered = function() {
+    if (Meteor.isClient) {
+      //TODO: write methods to get min/max from the sMAP metadata and use that o create the slider
+      console.log(this.data.ActuatorUUID);
+      $("#"+this.data.ActuatorUUID).slider({
+      });
+    }
+  };
+
 
   Template.navbar.helpers({
     activeIf: function (template) {

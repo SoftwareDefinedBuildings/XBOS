@@ -100,13 +100,17 @@
 </template>
 
 <template name="actuator_discrete">
-  Discrete Actuator
+  <select class="form-control">
+    <option value="heat">Heat</option>
+    <option value="cool">Cool</option>
+    <option value="off">Off</option>
+  </select>
 </template>
 
 <template name="actuator_continuous">
-  Continuous Actuator
+  <input id="{{ActuatorUUID}}" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{value}}"/>
 </template>
 
 <template name="actuator_binary">
-  Binary Actuator
+<a href="#" id="{{ActuatorUUID}}" class="button button-3d-caution button-small">Binary Actuator</a><br>
 </template>
