@@ -2,6 +2,19 @@ Points = new Meteor.Collection("points");
 
 if (Meteor.isClient) {
 
+  var actuators = {};
+  var actuatorsDep = new Deps.Dependency;
+
+  var getActuators = function(act_uuid) {
+    actuatorsDep.depend();
+    return actuators[act_uuid] || {"Actuate": {"Model": {}, "States": [0,1000]}};
+  };
+
+  var updateActuators = function(act_uuid, data) {
+    actuators[act_uuid] = data;
+    actuatorsDep.changed();
+  };
+
   Template.points.pointsAll = function() {
     return Points.find({});
   };
@@ -17,24 +30,24 @@ if (Meteor.isClient) {
       if (err) {
         console.log(err);
       }
-      Session.set(res[0].uuid, res[0].Actuate.Model);
+      updateActuators(res[0].uuid, res[0]);
     });
   };
 
   Template.actuator_display.type = function() {
-    return Session.get(this.ActuatorUUID) || "none";
+    return getActuators(this.ActuatorUUID).Actuate.Model || "none";
   };
 
   // functions to help determine type of actuator based on Actuate.Model from sMAP metadata
   Template.actuator_display.helpers({
     isDiscrete: function(template) {
-      return Session.get(this.ActuatorUUID) === "discrete";
+      return getActuators(this.ActuatorUUID).Actuate.Model === "discrete";
     },
     isBinary: function(template) {
-      return Session.get(this.ActuatorUUID) === "binary";
+      return getActuators(this.ActuatorUUID).Actuate.Model === "binary";
     },
     isContinuous: function(template) {
-      return Session.get(this.ActuatorUUID) === "continuous";
+      return getActuators(this.ActuatorUUID).Actuate.Model === "continuous";
     }
   });
 
