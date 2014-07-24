@@ -7,7 +7,7 @@ if (Meteor.isClient) {
 
   var getActuators = function(act_uuid) {
     actuatorsDep.depend();
-    return actuators[act_uuid] || {"Actuate": {"Model": {}, "States": [0,1000]}};
+    return actuators[act_uuid] || {"Actuate": {"Model": "none", "States": [0,1]}};
   };
 
   var updateActuators = function(act_uuid, data) {
@@ -53,12 +53,28 @@ if (Meteor.isClient) {
 
   Template.actuator_continuous.rendered = function() {
     if (Meteor.isClient) {
-      //TODO: write methods to get min/max from the sMAP metadata and use that o create the slider
-      console.log(this.data.ActuatorUUID);
+      that = getActuators(this.data.ActuatorUUID);
       $("#"+this.data.ActuatorUUID).slider({
+        min: that.Actuate.States[0],
+        max: that.Actuate.States[1],
+        value: this.data.value
       });
     }
   };
+
+  Template.actuator_binary.events({
+    'click a': function () {
+      console.log(this);
+      if (this.value === 1) {
+        this.value = 0;
+        $('#'+this.ActuatorUUID).removeClass("pressed");
+      } else {
+        this.value = 1;
+        $('#'+this.ActuatorUUID).addClass("pressed");
+      }
+      console.log("clicked a button", this);
+    }
+  });
 
 
   Template.navbar.helpers({
