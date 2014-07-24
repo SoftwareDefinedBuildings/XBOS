@@ -25,6 +25,7 @@ Meteor.methods({
 
   tags: function(uuid){
     if (Meteor.isServer) {
+      this.unblock();
       var url = Meteor.settings.archiverUrl + "/api/tags/uuid/"+ uuid;
       var r = HTTP.call("GET", url);
       return EJSON.parse(r.content);
