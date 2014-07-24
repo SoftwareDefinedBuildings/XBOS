@@ -89,6 +89,24 @@
     <td>{{Path}}</td>
     <td>{{ActuatorUUID}}</td>
     <td>{{value}}</td>
-    <td>{{type}}</td>
+    {{#if isDiscrete}}
+      <td>{{> actuator_discrete}}</td>
+    {{else}} {{#if isContinuous}}
+      <td>{{> actuator_continuous}}</td>
+    {{else}}
+      <td>{{> actuator_binary}}</td>
+    {{/if}}{{/if}}
   </tr>
+</template>
+
+<template name="actuator_discrete">
+  Discrete Actuator
+</template>
+
+<template name="actuator_continuous">
+  Continuous Actuator
+</template>
+
+<template name="actuator_binary">
+  Binary Actuator
 </template>

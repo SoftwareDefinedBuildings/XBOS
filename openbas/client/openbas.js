@@ -4,7 +4,7 @@ if (Meteor.isClient) {
 
   Template.points.pointsAll = function() {
     return Points.find({});
-  };  
+  };
 
   Template.actuators.actuatorsAll = function() {
     // only returns points that have ActuatorPath
@@ -13,7 +13,6 @@ if (Meteor.isClient) {
 
   Template.actuator_display.rendered = function() {
     var uuid = this.data.ActuatorUUID;
-    console.log("rendered",uuid);
     Meteor.call('tags', uuid, function(err, res) {
       if (err) {
         console.log(err);
@@ -25,6 +24,19 @@ if (Meteor.isClient) {
   Template.actuator_display.type = function() {
     return Session.get(this.ActuatorUUID) || "none";
   };
+
+  // functions to help determine type of actuator based on Actuate.Model from sMAP metadata
+  Template.actuator_display.helpers({
+    isDiscrete: function(template) {
+      return Session.get(this.ActuatorUUID) === "discrete";
+    },
+    isBinary: function(template) {
+      return Session.get(this.ActuatorUUID) === "binary";
+    },
+    isContinuous: function(template) {
+      return Session.get(this.ActuatorUUID) === "continuous";
+    }
+  });
 
 
   Template.navbar.helpers({
