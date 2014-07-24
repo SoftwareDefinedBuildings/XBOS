@@ -4,7 +4,7 @@ deliver = function(err, res) {
   if (err) {
     console.log(err);
   }
-  console.log("got RES", res);
+  Session.set(res[0].uuid, res[0].Actuate.Model);
 };
 
 if (Meteor.isClient) {
@@ -21,7 +21,8 @@ if (Meteor.isClient) {
   Template.actuator_display.rendered = function() {
     var uuid = this.data.ActuatorUUID;
     console.log("rendered",uuid);
-    Meteor.call('tags', uuid);
+    var returned = Meteor.call('tags', uuid, deliver);
+    Session.set(uuid, returned[0].Actuate.Model);
   };
 
   Template.actuator_display.type = function() {
