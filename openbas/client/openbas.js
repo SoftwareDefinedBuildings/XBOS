@@ -14,7 +14,7 @@ if (Meteor.isClient) {
   Template.actuator_display.rendered = function() {
     var uuid = this.data.ActuatorUUID;
     console.log("rendered",uuid);
-    var returned = Meteor.call('tags', uuid, function(err, res) {
+    Meteor.call('tags', uuid, function(err, res) {
       if (err) {
         console.log(err);
       }
@@ -49,6 +49,4 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-  console.log("asdf");
-  console.log(Meteor.settings);
 }
