@@ -22,13 +22,6 @@ if (Meteor.isClient) {
     var uuid = this.data.ActuatorUUID;
     console.log("rendered",uuid);
     Meteor.call('tags', uuid);
-    //Meteor.call('tags', uuid, function(err, res) {
-    //  if (err) {
-    //    console.log("ERR:",err);
-    //  }
-    //  console.log("RES:", res);
-    //  Session.set(uuid, res.uuid);
-    //});
   };
 
   Template.actuator_display.type = function() {

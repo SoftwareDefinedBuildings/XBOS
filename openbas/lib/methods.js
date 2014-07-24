@@ -11,8 +11,8 @@ Meteor.methods({
   },
 
   query: function(q){
-      var url = Meteor.settings.archiverUrl + "/api/query"
-      var r = HTTP.call("POST", url, {content: q})
+      var url = Meteor.settings.archiverUrl + "/api/query";
+      var r = HTTP.call("POST", url, {content: q});
       return EJSON.parse(r.content);
   },
 
@@ -24,10 +24,9 @@ Meteor.methods({
   },
 
   tags: function(uuid){
-      console.log(uuid, deliver);
-      var url = Meteor.settings.public.archiverUrl + "/api/tags/uuid/"+ uuid;
-      deliver(1,2);
-      HTTP.call("GET", url, {}, deliver);
+      var url = Meteor.settings.archiverUrl + "/api/tags/uuid/"+ uuid;
+      var r = HTTP.call("GET", url);
+      return EJSON.parse(r.content);
   },
 
 });

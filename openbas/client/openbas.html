@@ -1,7 +1,5 @@
 <head>
   <title>OpenBAS</title>
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -10,26 +8,26 @@
 
 <template name="navbar">
   <div class="navbar navbar-default" role="navigation">
-      <div class="navbar-header">
-          <a class="navbar-brand" href="/">OpenBAS</a>
-      </div>
-      <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="{{activeIf 'home'}}"><a href="{{pathFor 'home'}}">Home</a></li>
-          </ul>
-          <ul class="nav navbar-nav">
-            <li class="{{activeIf 'about'}}"><a href="{{pathFor 'about'}}">About</a></li>
-          </ul>
-          <ul class="nav navbar-nav">
-            <li class="{{activeIf 'points'}}"><a href="{{pathFor 'points'}}">Points</a></li>
-          </ul>
-          <ul class="nav navbar-nav">
-            <li class="{{activeIf 'actuators'}}"><a href="{{pathFor 'actuators'}}">Actuators</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-              {{> loginButtons }} 
-          </ul>
-      </div>
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">OpenBAS</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="{{activeIf 'home'}}"><a href="{{pathFor 'home'}}">Home</a></li>
+      </ul>
+      <ul class="nav navbar-nav">
+        <li class="{{activeIf 'about'}}"><a href="{{pathFor 'about'}}">About</a></li>
+      </ul>
+      <ul class="nav navbar-nav">
+        <li class="{{activeIf 'points'}}"><a href="{{pathFor 'points'}}">Points</a></li>
+      </ul>
+      <ul class="nav navbar-nav">
+        <li class="{{activeIf 'actuators'}}"><a href="{{pathFor 'actuators'}}">Actuators</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        {{> loginButtons }} 
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -70,23 +68,27 @@
 
 <template name="actuators">
   <table class="table table-bordered table-condensed" id="actuators">
-    <tr>
-      <th>Path</th>
-      <th>ActuatorUUID</th>
-      <th>Value</th>
-      <th>Type</th>
-    </tr>
-    {{# each actuatorsAll}}
-      {{> actuator_display}}
-    {{/each}}
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>ActuatorUUID</th>
+        <th>Value</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{# each actuatorsAll}}
+        {{> actuator_display}}
+      {{/each}}
+    </tbody>
   </table>
 </template>
 
 <template name="actuator_display">
   <tr>
-  <td>{{Path}}</td>
-  <td>{{ActuatorUUID}}</td>
-  <td>{{value}}</td>
-  <td>{{type}}</td>
+    <td>{{Path}}</td>
+    <td>{{ActuatorUUID}}</td>
+    <td>{{value}}</td>
+    <td>{{type}}</td>
   </tr>
 </template>
