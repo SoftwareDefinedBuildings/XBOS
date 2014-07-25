@@ -93,9 +93,11 @@
       <td>{{> actuator_discrete}}</td>
     {{else}} {{#if isContinuous}}
       <td>{{> actuator_continuous}}</td>
-    {{else}}
+    {{else}} {{#if isBinary}}
       <td>{{> actuator_binary}}</td>
-    {{/if}}{{/if}}
+    {{else}}
+      <td>None</td>
+    {{/if}}{{/if}}{{/if}}
   </tr>
 </template>
 
@@ -108,9 +110,9 @@
 </template>
 
 <template name="actuator_continuous">
-  <input id="{{ActuatorUUID}}" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{value}}"/>
+<div id="{{ActuatorUUID}}" data-slider-step="1" data-value="{{value}}"></div>
 </template>
 
 <template name="actuator_binary">
-<a href="#" id="{{ActuatorUUID}}" class="button button-3d-caution button-small">Binary Actuator</a><br>
+  <a href="#" id="{{ActuatorUUID}}" class="button button-3d-caution button-small" data-value="{{value}}">Binary Actuator</a><br>
 </template>
