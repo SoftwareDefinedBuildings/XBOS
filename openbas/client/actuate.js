@@ -8,10 +8,8 @@ if (Meteor.isClient) {
   };
 
   var updateActuators = function(act_uuid, data) {
-    if (actuators[act_uuid] !== data) {
-      actuators[act_uuid] = data;
-      actuatorsDep.changed();
-    }
+    actuators[act_uuid] = data;
+    actuatorsDep.changed();
   };
 
   Template.actuators.actuatorsAll = function() {
@@ -51,8 +49,9 @@ if (Meteor.isClient) {
       var that = getActuators(this.data.ActuatorUUID);
       var port = this.data.ServerPort;
       $("#"+this.data.ActuatorUUID).slider({
-        min: 0,//that.Actuator.MinValue,
-        max: 50,//that.Actuator.MaxValue,
+        min: 100*that.Actuator.MinValue,
+        max: that.Actuator.MaxValue,
+        step: 1,
         value: this.data.value
       }).on('slideStop', function(e) {
         Meteor.call("actuate", port, that.Path, e.value, function(err, res) {
