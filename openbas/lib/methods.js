@@ -32,4 +32,14 @@ Meteor.methods({
     }
   },
 
+  actuate: function(port, path, value){
+    if (Meteor.isServer) {
+      this.unblock();
+      var url = "http://localhost:" + port + "/data"+path+"?state="+value;
+      console.log("URL",url)
+      var r = HTTP.call("PUT", url);
+      return EJSON.parse(r.content);
+    }
+  },
+
 });
