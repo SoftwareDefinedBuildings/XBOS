@@ -4,7 +4,7 @@ if (Meteor.isClient) {
 
   var getActuators = function(act_uuid) {
     actuatorsDep.depend();
-    return actuators[act_uuid] || {"Actuator": {"Model": "none", "States": [0,1], "MinValue": 0, "MaxValue": 100}};
+    return actuators[act_uuid] || {"Actuator": {"Model": "none", "States": [0,1], "MinValue": 0, "MaxValue": 100, "Values": ["does","not","work"]}};
   };
 
   var updateActuators = function(act_uuid, data) {
@@ -44,6 +44,8 @@ if (Meteor.isClient) {
     }
   });
 
+  /* Actuator Continuous */
+
   Template.actuator_continuous.rendered = function() {
     if (Meteor.isClient) {
       var that = getActuators(this.data.ActuatorUUID);
@@ -71,11 +73,24 @@ if (Meteor.isClient) {
     }
   };
 
+  /* Actuator Discrete */
+
   Template.actuator_discrete.rendered = function() {
     if (Meteor.isClient) {
       that = getActuators(this.data.ActuatorUUID);
+      console.log(that.Actuator.Values);
+      console.log(EJSON.toJSONValue(that.Actuator.Values)[0]);
+      console.log(that);
     }
   };
+
+  Template.actuator_discrete.events({
+    'change': function(e) {
+      console.log(e.target.selectedIndex);
+    }
+  });
+
+  /* Actuator Binary */
 
   Template.actuator_binary.rendered = function() {
     if (Meteor.isClient) {
@@ -95,9 +110,8 @@ if (Meteor.isClient) {
     }
   };
 
-
   Template.actuator_binary.events({
-    'click a': function () {
+    'click': function () {
       if (this.value === 1) {
         $('#'+this.ActuatorUUID).removeClass("pressed");
         var act = getActuators(this.ActuatorUUID);
