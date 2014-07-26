@@ -8,3 +8,6 @@ def cool_controller(current_temperature, setpoint, deadband):
         print 'NO COOL'
         return 0
 
+# simple controller
+# def cool_controller(current_temperature, setpoint, deadband):
+#     return int(current_temperature > setpoint + deadband)

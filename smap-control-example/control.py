@@ -16,11 +16,12 @@ class Controller(driver.SmapDriver):
         restriction = "uuid = '{0}'".format(self.roomuuid)
         self.roomclient = RepublishClient(self.archiver_url, self.controlcb, restrict=restriction)
         # setpoint
-        self.sp = float(opts.get('setpoint',78))
+        self.sp = float(opts.get('setpoint',72))
         # deadband
         self.db = float(opts.get('deadband',1))
         # period between calling controller
         self.rate = float(opts.get('rate',1))
+        self.cool = 0 # off
 
         self.add_timeseries('/cool', 'On/Off',data_type='long')
 
@@ -35,8 +36,13 @@ class Controller(driver.SmapDriver):
 
     def read(self):
         # calculate and send control decision
-        print self.cool_controller(self.cur_temp, self.sp, self.db)
-        self.add('/cool', self.cool_controller(self.cur_temp, self.sp, self.db))
+        #print self.cool_controller(self.cur_temp, self.sp, self.db)
+        #self.add('/cool', self.cool_controller(self.cur_temp, self.sp, self.db))
+        if self.cool: #
+            self.cool = self.cur_temp > self.sp - self.db
+        else:
+            self.cool = self.cur_temp > self.sp + self.db
+        self.add('/cool',int(self.cool))
 
     def controlcb(self, _, data):
         # parse streaming data
