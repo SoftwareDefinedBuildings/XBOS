@@ -28,7 +28,12 @@ Meteor.methods({
       this.unblock();
       var url = Meteor.settings.archiverUrl + "/api/tags/uuid/"+ uuid;
       var r = HTTP.call("GET", url);
-      return EJSON.parse(r.content);
+      res = EJSON.parse(r.content);
+      if ('Actuator' in res[0] && 'Values' in res[0].Actuator) {
+        var x = res[0].Actuator.Values.replace(/'/g, '"');
+        res[0].Actuator.Values = EJSON.parse(x);
+      }
+      return res;
     }
   },
 
