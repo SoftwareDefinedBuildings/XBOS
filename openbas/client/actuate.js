@@ -77,10 +77,13 @@ if (Meteor.isClient) {
 
   Template.actuator_discrete.rendered = function() {
     if (Meteor.isClient) {
-      that = getActuators(this.data.ActuatorUUID);
-      console.log(that.Actuator.Values);
-      console.log(EJSON.toJSONValue(that.Actuator.Values)[0]);
-      console.log(that);
+      var that = getActuators(this.data.ActuatorUUID);
+      var uuid = this.data.ActuatorUUID;
+      $.each(that.Actuator.Values, function(idx, val) {
+        $('#'+uuid).append($("<option></option>")
+            .attr("value", idx)
+            .text(val));
+      });
     }
   };
 
@@ -89,6 +92,15 @@ if (Meteor.isClient) {
       console.log(e.target.selectedIndex);
     }
   });
+
+  Template.actuator_discrete.value = function() {
+    if (Meteor.isClient) {
+      var p = Points.find({'_id': this._id}).fetch();
+      console.log(this.ActuatorUUID,p[0].value);
+      $('#'+this.ActuatorUUID).val("0");
+      return p[0].value;
+    }
+  };
 
   /* Actuator Binary */
 
