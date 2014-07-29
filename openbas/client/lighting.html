@@ -1,0 +1,41 @@
+<template name="lighting">
+ <h2>This is the Building Lighting</h2>
+ <div id="buildinglighting">
+ </div>
+</template>
+
+<template name="lightgrouprender">
+  <div class="widget">
+    {{#each lightgroups}}
+      {{> lightgroup}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="lightgroup">
+<p>GroupName: {{value}}</p>
+</template>
+
+<template name="actuator">
+    {{#if isDiscrete}}
+      <td>{{> actuator_discrete}}</td>
+    {{else}} {{#if isContinuous}}
+      <td>{{> actuator_continuous}}</td>
+    {{else}} {{#if isBinary}}
+      <td>{{> actuator_binary}}</td>
+    {{else}}
+      <td>None</td>
+    {{/if}}{{/if}}{{/if}}
+</template>
+
+<template name="bri">
+{{> actuator}}
+</template>
+
+<template name="hue">
+{{> actuator}}
+</template>
+
+<template name="on">
+{{> actuator}}
+</template>

@@ -11,9 +11,11 @@ Meteor.methods({
   },
 
   query: function(q){
+    if (Meteor.isServer) {
       var url = Meteor.settings.archiverUrl + "/api/query";
       var r = HTTP.call("POST", url, {content: q});
       return EJSON.parse(r.content);
+    }
   },
 
   latest: function(restrict, n){
