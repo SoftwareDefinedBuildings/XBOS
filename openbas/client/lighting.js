@@ -73,13 +73,13 @@ if (Meteor.isClient) {
       return this.on;
     },
     bri_uuid: function(template) {
-      return this.bri.Metadata.ActuatorUUID;
+      return this.bri.Metadata.ActuatorUUID+"_light";
     },
     hue_uuid: function(template) {
-      return this.hue.Metadata.ActuatorUUID;
+      return this.hue.Metadata.ActuatorUUID+"_light";
     },
     on_uuid: function(template) {
-      return this.on.Metadata.ActuatorUUID;
+      return this.on.Metadata.ActuatorUUID+"_light";
     },
   });
 
@@ -94,6 +94,6 @@ if (Meteor.isClient) {
   Template.on.rendered = function() {
     var p = Points.find({'uuid': this.data.on.uuid}).fetch()[0];
     var rend = UI.renderWithData(Template.actuator_display, p);
-    UI.insert(rend, $('#'+p.ActuatorUUID).get(0));
+    UI.insert(rend, $('#'+p.ActuatorUUID+"_light").get(0));
   };
 }

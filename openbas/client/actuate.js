@@ -107,7 +107,12 @@ if (Meteor.isClient) {
 
   Template.actuator_binary.rendered = function() {
     if (Meteor.isClient) {
-      var that = getActuators(this.data.ActuatorUUID);
+      var p = Points.find({'uuid': this.data.uuid}).fetch();
+      if (p[0].value === 0) {
+        $('#'+this.data.ActuatorUUID).removeClass("pressed");
+      } else {
+        $('#'+this.data.ActuatorUUID).addClass("pressed");
+      }
     }
   };
 
