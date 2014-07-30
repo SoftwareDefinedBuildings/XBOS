@@ -19,6 +19,7 @@ if (Meteor.isClient) {
 
   Template.actuator_display.rendered = function() {
     var uuid = this.data.ActuatorUUID;
+    console.log(this.data);
     Meteor.call('tags', uuid, function(err, res) {
       if (err) {
         console.log(err);

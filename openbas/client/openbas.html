@@ -74,23 +74,22 @@
     <thead>
       <tr>
         <th>Path</th>
-        <th>ActuatorUUID</th>
         <th>Value</th>
         <th>Type</th>
       </tr>
     </thead>
     <tbody>
-      {{# each actuatorsAll}}
-        {{> actuator_display}}
-      {{/each}}
+      <tr>
+        {{# each actuatorsAll}}
+          {{> actuator_display}}
+        {{/each}}
+      </tr>
     </tbody>
   </table>
 </template>
 
 <template name="actuator_display">
-  <tr>
     <td>{{Path}}</td>
-    <td>{{ActuatorUUID}}</td>
     <td>{{value}}</td>
     {{#if isDiscrete}}
       <td>{{> actuator_discrete}}</td>
@@ -101,7 +100,6 @@
     {{else}}
       <td>None</td>
     {{/if}}{{/if}}{{/if}}
-  </tr>
 </template>
 
 <template name="actuator_discrete">

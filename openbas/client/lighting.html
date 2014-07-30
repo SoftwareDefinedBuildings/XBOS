@@ -13,29 +13,49 @@
 </template>
 
 <template name="lightgroup">
+<div class="lightinggroup" id="{{id_value}}">
 <p>GroupName: {{value}}</p>
+</div>
 </template>
 
-<template name="actuator">
-    {{#if isDiscrete}}
-      <td>{{> actuator_discrete}}</td>
-    {{else}} {{#if isContinuous}}
-      <td>{{> actuator_continuous}}</td>
-    {{else}} {{#if isBinary}}
-      <td>{{> actuator_binary}}</td>
-    {{else}}
-      <td>None</td>
-    {{/if}}{{/if}}{{/if}}
+<template name="lightobj">
+  <p>Light!</p>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Value</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+  {{#if has_bri}}
+  <tr id="{{bri_uuid}}">
+    {{> bri}}
+  </tr>
+  {{/if}}
+
+  {{#if has_hue}}
+  <tr id="{{hue_uuid}}">
+    {{> hue}}
+  </tr>
+  {{/if}}
+
+  {{#if has_on}}
+  <tr id="{{on_uuid}}">
+    {{> on}}
+  </tr>
+  {{/if}}
+  </tbody>
+  </table>
+
 </template>
 
 <template name="bri">
-{{> actuator}}
 </template>
 
 <template name="hue">
-{{> actuator}}
 </template>
 
 <template name="on">
-{{> actuator}}
 </template>
