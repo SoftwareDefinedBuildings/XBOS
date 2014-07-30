@@ -45,6 +45,7 @@ Meteor.methods({
       var url = "http://localhost:" + port + "/data"+path+"?state="+value;
       console.log("URL",url)
       var r = HTTP.call("PUT", url);
+      HTTP.call("GET", url);
       return EJSON.parse(r.content);
     }
   },

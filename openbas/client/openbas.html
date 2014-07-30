@@ -89,6 +89,7 @@
 </template>
 
 <template name="actuator_display">
+  {{#with point uuid}}
     <td>{{Path}}</td>
     <td>{{value}}</td>
     {{#if isDiscrete}}
@@ -100,6 +101,7 @@
     {{else}}
       <td>None</td>
     {{/if}}{{/if}}{{/if}}
+  {{/with}}
 </template>
 
 <template name="actuator_discrete">

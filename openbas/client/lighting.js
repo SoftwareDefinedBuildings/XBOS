@@ -84,11 +84,16 @@ if (Meteor.isClient) {
   });
 
   Template.bri.rendered = function() {
-    var rend = UI.renderWithData(Template.actuator_display, this.data.bri);
+    console.log("rendered hue", this);
+    var p = Points.find({'uuid': this.data.bri.uuid}).fetch()[0];
+    var rend = UI.renderWithData(Template.actuator_display, p);
+    UI.insert(rend, $('#'+p.ActuatorUUID+"_light").get(0));
   };
 
   Template.hue.rendered = function() {
-    console.log("rendered hue", this);
+    var p = Points.find({'uuid': this.data.hue.uuid}).fetch()[0];
+    var rend = UI.renderWithData(Template.actuator_display, p);
+    UI.insert(rend, $('#'+p.ActuatorUUID+"_light").get(0));
   };
 
   Template.on.rendered = function() {

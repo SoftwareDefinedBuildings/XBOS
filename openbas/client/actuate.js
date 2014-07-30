@@ -19,7 +19,6 @@ if (Meteor.isClient) {
 
   Template.actuator_display.rendered = function() {
     var uuid = this.data.ActuatorUUID;
-    console.log(this.data);
     Meteor.call('tags', uuid, function(err, res) {
       if (err) {
         console.log(err);
@@ -44,6 +43,11 @@ if (Meteor.isClient) {
       return getActuators(this.ActuatorUUID).Actuator.Model === "continuous";
     }
   });
+
+  Template.actuator_display.point = function(uuid) {
+    var p = Points.find({'uuid': uuid}).fetch()[0];
+    return p;
+  };
 
   /* Actuator Continuous */
 
@@ -97,7 +101,6 @@ if (Meteor.isClient) {
   Template.actuator_discrete.value = function() {
     if (Meteor.isClient) {
       var p = Points.find({'_id': this._id}).fetch();
-      console.log(this.ActuatorUUID,p[0].value);
       $('#'+this.ActuatorUUID).val("0");
       return p[0].value;
     }
