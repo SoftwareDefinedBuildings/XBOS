@@ -33,15 +33,9 @@ class Controller(driver.SmapDriver):
     #  - update control state
     #  - build timeseries of actions
     def read(self):
-        if (self.state == 0) :  # passive heating
-            if (self.cur_temp > self.sp + self.db) :
-                self.state = 1  # start cooling
-                print "coolControlService: cool on"
-        else :                  # cooling
-            if (self.cur_temp < self.sp - self.db) :
-                self.state = 0
-                print "coolControlService: cool off"
-        self.add('/cool', self.state) # publish the state even when no change
+        if (self.cur_temp > self.sp + self.db) : self.state = 1 # start cool
+        if (self.cur_temp < self.sp - self.db) : self.state = 0 # stop cool
+        self.add('/cool', self.state) # publish the state change
 
     # Handle temperature reporting event
     #  record most recent zone temperature for next contol event
