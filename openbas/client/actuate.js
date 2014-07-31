@@ -44,6 +44,11 @@ if (Meteor.isClient) {
     }
   });
 
+  Template.actuator_display.point = function(uuid) {
+    var p = Points.find({'uuid': uuid}).fetch()[0];
+    return p;
+  };
+
   /* Actuator Continuous */
 
   Template.actuator_continuous.rendered = function() {
@@ -96,7 +101,6 @@ if (Meteor.isClient) {
   Template.actuator_discrete.value = function() {
     if (Meteor.isClient) {
       var p = Points.find({'_id': this._id}).fetch();
-      console.log(this.ActuatorUUID,p[0].value);
       $('#'+this.ActuatorUUID).val("0");
       return p[0].value;
     }
@@ -106,7 +110,12 @@ if (Meteor.isClient) {
 
   Template.actuator_binary.rendered = function() {
     if (Meteor.isClient) {
-      var that = getActuators(this.data.ActuatorUUID);
+      var p = Points.find({'uuid': this.data.uuid}).fetch();
+      if (p[0].value === 0) {
+        $('#'+this.data.ActuatorUUID).removeClass("pressed");
+      } else {
+        $('#'+this.data.ActuatorUUID).addClass("pressed");
+      }
     }
   };
 

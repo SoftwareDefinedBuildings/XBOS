@@ -1,0 +1,60 @@
+<template name="lighting">
+ <h2>This is the Building Lighting</h2>
+ <div id="buildinglighting">
+ </div>
+</template>
+
+<template name="lightgrouprender">
+  <div class="widget">
+    {{#each lightgroups}}
+      {{> lightgroup}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="lightgroup">
+<div class="lightinggroup" id="{{id_value}}">
+<p>GroupName: {{value}}</p>
+</div>
+</template>
+
+<template name="lightobj">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Value</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+  {{#if has_bri}}
+  <tr id="{{bri_uuid}}">
+    {{> bri}}
+  </tr>
+  {{/if}}
+
+  {{#if has_hue}}
+  <tr id="{{hue_uuid}}">
+    {{> hue}}
+  </tr>
+  {{/if}}
+
+  {{#if has_on}}
+  <tr id="{{on_uuid}}">
+    {{> on}}
+  </tr>
+  {{/if}}
+  </tbody>
+  </table>
+
+</template>
+
+<template name="bri">
+</template>
+
+<template name="hue">
+</template>
+
+<template name="on">
+</template>

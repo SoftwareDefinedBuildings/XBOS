@@ -11,9 +11,11 @@ Meteor.methods({
   },
 
   query: function(q){
+    if (Meteor.isServer) {
       var url = Meteor.settings.archiverUrl + "/api/query";
       var r = HTTP.call("POST", url, {content: q});
       return EJSON.parse(r.content);
+    }
   },
 
   latest: function(restrict, n){
@@ -43,6 +45,7 @@ Meteor.methods({
       var url = "http://localhost:" + port + "/data"+path+"?state="+value;
       console.log("URL",url)
       var r = HTTP.call("PUT", url);
+      HTTP.call("GET", url);
       return EJSON.parse(r.content);
     }
   },

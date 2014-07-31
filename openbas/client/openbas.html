@@ -24,6 +24,9 @@
       <ul class="nav navbar-nav">
         <li class="{{activeIf 'actuators'}}"><a href="{{pathFor 'actuators'}}">Actuators</a></li>
       </ul>
+      <ul class="nav navbar-nav">
+        <li class="{{activeIf 'lighting'}}"><a href="{{pathFor 'lighting'}}">Lighting</a></li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         {{> loginButtons }} 
       </ul>
@@ -71,23 +74,23 @@
     <thead>
       <tr>
         <th>Path</th>
-        <th>ActuatorUUID</th>
         <th>Value</th>
         <th>Type</th>
       </tr>
     </thead>
     <tbody>
       {{# each actuatorsAll}}
-        {{> actuator_display}}
+        <tr>
+          {{> actuator_display}}
+        </tr>
       {{/each}}
     </tbody>
   </table>
 </template>
 
 <template name="actuator_display">
-  <tr>
+  {{#with point uuid}}
     <td>{{Path}}</td>
-    <td>{{ActuatorUUID}}</td>
     <td>{{value}}</td>
     {{#if isDiscrete}}
       <td>{{> actuator_discrete}}</td>
@@ -98,7 +101,7 @@
     {{else}}
       <td>None</td>
     {{/if}}{{/if}}{{/if}}
-  </tr>
+  {{/with}}
 </template>
 
 <template name="actuator_discrete">
@@ -111,5 +114,5 @@
 </template>
 
 <template name="actuator_binary">
-  <a href="#" id="{{ActuatorUUID}}" class="button button-3d-caution button-small" data-value="{{value}}">Binary Actuator</a><br>
+  <div id="{{ActuatorUUID}}" class="button button-3d-caution button-small" data-value="{{value}}">Binary Actuator</div><br>
 </template>
