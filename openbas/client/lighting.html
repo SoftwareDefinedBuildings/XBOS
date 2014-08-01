@@ -14,12 +14,14 @@
 
 <template name="lightgroup">
 <div class="lightinggroup" id="{{id_value}}">
-<p>GroupName: {{value}}</p>
+  <hr>
+  <p><b>GroupName: {{value}}</b></p>
 </div>
 </template>
 
 <template name="lightobj">
-  <table class="table table-bordered">
+ <div class='table-responsive'>
+  <table class="table table-bordered table-striped">
     <thead>
       <tr>
         <th>Path</th>
@@ -47,6 +49,7 @@
   {{/if}}
   </tbody>
   </table>
+</div>
 
 </template>
 
