@@ -26,23 +26,24 @@ if (Meteor.isClient) {
 
         // create group obj
         var group = {'Timeseries': ts_list};
+
         // populates the bri object
         var bri = _.filter(ts_list, function(o) {
-          return o.Path.match(/bri_act_ts$/);
+          return o.Path.match(/bri$/);
         });
         if (bri) {
           group.bri = bri[0];
         }
 
         var hue = _.filter(ts_list, function(o) {
-          return o.Path.match(/hue_act_ts$/);
+          return o.Path.match(/hue$/);
         });
         if (hue) {
           group.hue = hue[0];
         }
 
         var on = _.filter(ts_list, function(o) {
-          return o.Path.match(/on_act_ts$/);
+          return o.Path.match(/on$/);
         });
         if (on) {
           group.on = on[0];
@@ -73,18 +74,17 @@ if (Meteor.isClient) {
       return this.on;
     },
     bri_uuid: function(template) {
-      return this.bri.Metadata.ActuatorUUID+"_light";
+      return this.bri.Actuator.uuid+"_light";
     },
     hue_uuid: function(template) {
-      return this.hue.Metadata.ActuatorUUID+"_light";
+      return this.hue.Actuator.uuid+"_light";
     },
     on_uuid: function(template) {
-      return this.on.Metadata.ActuatorUUID+"_light";
+      return this.on.Actuator.uuid+"_light";
     },
   });
 
   Template.bri.rendered = function() {
-    console.log("rendered hue", this);
     var p = Points.find({'uuid': this.data.bri.uuid}).fetch()[0];
     var rend = UI.renderWithData(Template.actuator_display, p);
     UI.insert(rend, $('#'+p.ActuatorUUID+"_light").get(0));
