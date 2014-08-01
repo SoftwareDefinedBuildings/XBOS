@@ -21,7 +21,7 @@ if (Meteor.isClient) {
       $.each(groups, function(idx, val) {
         // get all timeseries for this group
         var ts_list = _.filter(res, function(o) {
-                return o.Metadata.Name == val;
+          return o.Metadata.Name == val;
         });
 
         // create group obj
