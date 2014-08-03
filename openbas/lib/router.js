@@ -9,6 +9,8 @@ Router.map(function() {
 
     this.route('lighting');
 
+    this.route('hvac');
+
     this.route('pointDetail', {
       path: '/points/:uuid',
       data: function() { return Points.findOne({uuid: this.params.uuid}); },

@@ -1,5 +1,5 @@
 Meteor.methods({
-  // in the client: 
+  // in the client:
   // Meteor.call('method_name', param, param, function(err, data){ ... });
 
   foo: function(){
