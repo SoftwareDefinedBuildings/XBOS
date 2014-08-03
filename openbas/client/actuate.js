@@ -1,4 +1,5 @@
 if (Meteor.isClient) {
+  Session.set('loading',false);
   var actuators = {};
   var actuatorsDep = new Deps.Dependency;
 
@@ -14,7 +15,7 @@ if (Meteor.isClient) {
 
   Template.actuators.actuatorsAll = function() {
     // only returns points that have ActuatorPath
-    return Points.find({"ActuatorUUID": {"$exists": true} })
+    return Points.find({"ActuatorUUID": {"$exists": true}}, {"reactive": !Session.get('loading')});
   };
 
   Template.actuator_display.rendered = function() {
@@ -45,7 +46,7 @@ if (Meteor.isClient) {
   });
 
   Template.actuator_display.point = function(uuid) {
-    var p = Points.find({'uuid': uuid}).fetch()[0];
+    var p = Points.find({'uuid': uuid}, {'reactive': !Session.get('loading')}).fetch()[0];
     return p;
   };
 
@@ -66,13 +67,16 @@ if (Meteor.isClient) {
             console.log("ERROR", err);
           }
         });
+        Session.set('loading',false);
+      }).on('slideStart', function(e) {
+        Session.set('loading', true);
       });
     }
   };
 
   Template.actuator_continuous.value = function() {
     if (Meteor.isClient) {
-      var p = Points.find({'_id': this._id}).fetch();
+      var p = Points.find({'_id': this._id}, {'reactive': !Session.get('loading')}).fetch();
       $('#'+this.ActuatorUUID).slider('setValue', p[0].value);
       return p[0].value;
     }
