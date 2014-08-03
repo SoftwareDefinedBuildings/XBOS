@@ -1,0 +1,91 @@
+<template name="hvac">
+<h2>Building HVAC</h2>
+<div id="buildinghvac">
+</div>
+</template>
+
+<template name="hvacgrouprender">
+  <div class="widget">
+    {{#each hvacgroups}}
+      {{> hvacgroup}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="hvacgroup">
+<div class="hvacgroup" id="{{id_value}}">
+  <hr>
+  <p><b>GroupName: {{value}}</b></p>
+</div>
+</template>
+
+<template name="hvacobj">
+ <div class='table-responsive'>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Value</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+  {{#if has 'temp'}}
+  <tr id="{{temp_uuid}}">
+    temp
+  </tr>
+  {{/if}}
+
+  {{#if has 'humidity'}}
+  <tr id="{{humidity_uuid}}">
+    humidity
+  </tr>
+  {{/if}}
+
+  {{#if has 'hvac_state'}}
+  <tr id="{{hvac_state_uuid}}">
+    hvac_state
+  </tr>
+  {{/if}}
+
+  {{#if has 'temp_heat'}}
+  <tr id="{{temp_heat_uuid}}">
+    temp_heat
+  </tr>
+  {{/if}}
+
+  {{#if has 'temp_cool'}}
+  <tr id="{{temp_cool_uuid}}">
+    temp_cool
+  </tr>
+  {{/if}}
+
+  {{#if has 'hold'}}
+  <tr id="{{hold_uuid}}">
+    hold
+  </tr>
+  {{/if}}
+
+  {{#if has 'override'}}
+  <tr id="{{override_uuid}}">
+    override
+  </tr>
+  {{/if}}
+
+  {{#if has 'hvac_mode'}}
+  <tr id="{{hvac_mode_uuid}}">
+    hvac_mode
+  </tr>
+  {{/if}}
+
+  {{#if has 'fan_mode'}}
+  <tr id="{{fan_mode_uuid}}">
+    fan_mode
+  </tr>
+  {{/if}}
+
+  </tbody>
+  </table>
+</div>
+
+</template>
