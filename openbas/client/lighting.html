@@ -1,7 +1,7 @@
 <template name="lighting">
- <h2>This is the Building Lighting</h2>
- <div id="buildinglighting">
- </div>
+  <h2>This is the Building Lighting</h2>
+  <div id="buildinglighting">
+  </div>
 </template>
 
 <template name="lightgrouprender">
@@ -13,44 +13,43 @@
 </template>
 
 <template name="lightgroup">
-<div class="lightinggroup" id="{{id_value}}">
-  <hr>
-  <p><b>GroupName: {{value}}</b></p>
-</div>
+  <div class="lightinggroup" id="{{id_value}}">
+    <hr>
+    <p><b>GroupName: {{value}}</b></p>
+  </div>
 </template>
 
 <template name="lightobj">
- <div class='table-responsive'>
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>Path</th>
-        <th>Value</th>
-        <th>Type</th>
-      </tr>
-    </thead>
-    <tbody>
-  {{#if has_bri}}
-  <tr id="{{bri_uuid}}">
-    {{> bri}}
-  </tr>
-  {{/if}}
+  <div class='table-responsive'>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Path</th>
+          <th>Value</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if has_bri}}
+        <tr id="{{bri_uuid}}">
+          {{> bri}}
+        </tr>
+        {{/if}}
 
-  {{#if has_hue}}
-  <tr id="{{hue_uuid}}">
-    {{> hue}}
-  </tr>
-  {{/if}}
+        {{#if has_hue}}
+        <tr id="{{hue_uuid}}">
+          {{> hue}}
+        </tr>
+        {{/if}}
 
-  {{#if has_on}}
-  <tr id="{{on_uuid}}">
-    {{> on}}
-  </tr>
-  {{/if}}
-  </tbody>
-  </table>
-</div>
-
+        {{#if has_on}}
+        <tr id="{{on_uuid}}">
+          {{> on}}
+        </tr>
+        {{/if}}
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <template name="bri">
