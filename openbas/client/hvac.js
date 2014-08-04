@@ -53,10 +53,10 @@ if (Meteor.isClient) {
     },
     uuid: function(val) {
       if (this[val]) {
-        if (this[val].Actuator.uuid) {
+        if (this[val].Actuator) {
           return this[val].Actuator.uuid+"_hvac";
         } else {
-          return this[val].uuid;
+          return this[val].uuid+"_hvac";
         }
       }
       return ''
@@ -74,11 +74,13 @@ if (Meteor.isClient) {
 
   Template.hvacpoint.rendered = function() {
     var p = Points.find({'uuid': this.data.uuid}).fetch()[0];
-    var rend = UI.renderWithData(Template.actuator_display, p);
-    console.log(p);
-    console.log('#'+p.ActuatorUUID+'_hvac');
-    console.log($('#'+p.ActuatorUUID+'_hvac').get(0));
-    UI.insert(rend, $('#'+p.ActuatorUUID+"_hvac").get(0));
+    if (p.ActuatorUUID) {
+      var rend = UI.renderWithData(Template.actuator_display, p);
+      UI.insert(rend, $('#'+p.ActuatorUUID+"_hvac").get(0));
+    } else {
+      var rend = UI.renderWithData(Template.point_display, p);
+      UI.insert(rend, $('#'+p.uuid+"_hvac").get(0));
+    }
   };
 
 

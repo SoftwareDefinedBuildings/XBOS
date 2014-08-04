@@ -51,6 +51,11 @@ if (Meteor.isClient) {
     return p;
   };
 
+  Template.point_display.point = function(uuid) {
+    var p = Points.find({'uuid': uuid}, {'reactive': !Session.get('loading')}).fetch()[0];
+    return p;
+  };
+
   /* Actuator Continuous */
 
   Template.actuator_continuous.rendered = function() {

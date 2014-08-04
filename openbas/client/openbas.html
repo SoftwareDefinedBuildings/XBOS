@@ -107,6 +107,14 @@
   {{/with}}
 </template>
 
+<template name="point_display">
+  {{#with point uuid}}
+  <td>{{Path}}</td>
+  <td>{{value}}</td>
+  <td></td>
+  {{/with}}
+</template>
+
 <template name="actuator_discrete">
   <select id="{{ActuatorUUID}}" data-value="{{value}}" class="form-control">
   </select>
