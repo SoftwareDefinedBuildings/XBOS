@@ -41,7 +41,8 @@ if (Meteor.isClient) {
       return getActuators(this.ActuatorUUID).Actuator.Model === "binary";
     },
     isContinuous: function(template) {
-      return getActuators(this.ActuatorUUID).Actuator.Model === "continuous";
+      var model = getActuators(this.ActuatorUUID).Actuator.Model;
+      return model === 'continuous' || model === 'continuousInteger';
     }
   });
 
