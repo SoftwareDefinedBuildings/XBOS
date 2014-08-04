@@ -62,9 +62,19 @@ if (Meteor.isClient) {
     if (Meteor.isClient) {
       var that = getActuators(this.data.ActuatorUUID);
       var port = this.data.ServerPort;
+      var min = 0;
+      var max = 10;
+      if (that.Actuator.MinValue) {
+        min = that.Actuator.MinValue;
+        max = that.Actuator.MaxValue;
+      } else {
+        var states = EJSON.parse(that.Actuator.States);
+        min = states[0];
+        max = states[1]
+      }
       $("#"+this.data.ActuatorUUID).slider({
-        min: 100*that.Actuator.MinValue,
-        max: that.Actuator.MaxValue,
+        min: min,
+        max: max,
         step: 1,
         value: this.data.value
       }).on('slideStop', function(e) {
