@@ -49,12 +49,15 @@ if (Meteor.isClient) {
 
   Template.hvacobj.helpers({
     has: function(val) {
-      console.log("has", val, this);
       return this[val]
     },
     uuid: function(val) {
       if (this[val]) {
-        return this[val].Actuator.uuid+"_hvac";
+        if (this[val].Actuator.uuid) {
+          return this[val].Actuator.uuid+"_hvac";
+        } else {
+          return this[val].uuid;
+        }
       }
       return ''
     }
@@ -68,26 +71,16 @@ if (Meteor.isClient) {
     return this.replace(/ /g, '_');
   };
 
-  //Template.hvacobj.helpers({
-  //  has_bri: function(template) {
-  //    return this.bri;
-  //  },
-  //  has_hue: function(template) {
-  //    return this.hue;
-  //  },
-  //  has_on: function(template) {
-  //    return this.on;
-  //  },
-  //  bri_uuid: function(template) {
-  //    return this.bri.Actuator.uuid+"_hvac";
-  //  },
-  //  hue_uuid: function(template) {
-  //    return this.hue.Actuator.uuid+"_hvac";
-  //  },
-  //  on_uuid: function(template) {
-  //    return this.on.Actuator.uuid+"_hvac";
-  //  },
-  //});
+
+  Template.hvacpoint.rendered = function() {
+    var p = Points.find({'uuid': this.data.uuid}).fetch()[0];
+    var rend = UI.renderWithData(Template.actuator_display, p);
+    console.log(p);
+    console.log('#'+p.ActuatorUUID+'_hvac');
+    console.log($('#'+p.ActuatorUUID+'_hvac').get(0));
+    UI.insert(rend, $('#'+p.ActuatorUUID+"_hvac").get(0));
+  };
+
 
   //Template.bri.rendered = function() {
   //  var p = Points.find({'uuid': this.data.bri.uuid}).fetch()[0];

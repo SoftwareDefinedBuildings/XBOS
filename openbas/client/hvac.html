@@ -30,62 +30,65 @@
       </tr>
     </thead>
     <tbody>
-  {{#if has 'temp'}}
-  <tr id="{{temp_uuid}}">
-    temp
-  </tr>
-  {{/if}}
+      {{#if has 'temp'}}
+      <tr id="{{uuid 'temp'}}">
+        {{> hvacpoint temp}}
+      </tr>
+      {{/if}}
 
-  {{#if has 'humidity'}}
-  <tr id="{{humidity_uuid}}">
-    humidity
-  </tr>
-  {{/if}}
+      {{#if has 'humidity'}}
+      <tr id="{{uuid 'humidity'}}">
+        {{> hvacpoint humidity}}
+      </tr>
+      {{/if}}
 
-  {{#if has 'hvac_state'}}
-  <tr id="{{hvac_state_uuid}}">
-    hvac_state
-  </tr>
-  {{/if}}
+      {{#if has 'hvac_state'}}
+      <tr id="{{uuid 'hvac_state'}}">
+        {{> hvacpoint hvac_state}}
+      </tr>
+      {{/if}}
 
-  {{#if has 'temp_heat'}}
-  <tr id="{{temp_heat_uuid}}">
-    temp_heat
-  </tr>
-  {{/if}}
+      {{#if has 'temp_heat'}}
+      <tr id="{{uuid 'temp_heat'}}">
+        {{> hvacpoint temp_heat}}
+      </tr>
+      {{/if}}
 
-  {{#if has 'temp_cool'}}
-  <tr id="{{temp_cool_uuid}}">
-    temp_cool
-  </tr>
-  {{/if}}
+      {{#if has 'temp_cool'}}
+      <tr id="{{uuid 'temp_cool'}}">
+        {{> hvacpoint temp_cool}}
+      </tr>
+      {{/if}}
 
-  {{#if has 'hold'}}
-  <tr id="{{hold_uuid}}">
-    hold
-  </tr>
-  {{/if}}
+      {{#if has 'hold'}}
+      <tr id="{{uuid 'hold'}}">
+        {{> hvacpoint hold}}
+      </tr>
+      {{/if}}
 
-  {{#if has 'override'}}
-  <tr id="{{override_uuid}}">
-    override
-  </tr>
-  {{/if}}
+      {{#if has 'override'}}
+      <tr id="{{uuid 'override'}}">
+        {{> hvacpoint override}}
+      </tr>
+      {{/if}}
 
-  {{#if has 'hvac_mode'}}
-  <tr id="{{hvac_mode_uuid}}">
-    hvac_mode
-  </tr>
-  {{/if}}
+      {{#if has 'hvac_mode'}}
+      <tr id="{{uuid 'hvac_mode'}}">
+        {{> hvacpoint hvac_mode}}
+      </tr>
+      {{/if}}
 
-  {{#if has 'fan_mode'}}
-  <tr id="{{fan_mode_uuid}}">
-    fan_mode
-  </tr>
-  {{/if}}
+      {{#if has 'fan_mode'}}
+      <tr id="{{uuid 'fan_mode'}}">
+        {{> hvacpoint fan_mode}}
+      </tr>
+      {{/if}}
 
-  </tbody>
+    </tbody>
   </table>
 </div>
 
+</template>
+
+<template name="hvacpoint">
 </template>
