@@ -25,6 +25,7 @@ if (Meteor.isClient) {
         console.log("You pressed the button");
     }
   });
+
 }
 
 if (Meteor.isServer) {

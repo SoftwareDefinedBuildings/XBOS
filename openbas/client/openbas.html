@@ -30,6 +30,9 @@
       <ul class="nav navbar-nav">
         <li class="{{activeIf 'hvac'}}"><a href="{{pathFor 'hvac'}}">HVAC</a></li>
       </ul>
+      <ul class="nav navbar-nav">
+        <li class="{{activeIf 'dashboard'}}"><a href="{{pathFor 'dashboard'}}">Dashboard</a></li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         {{> loginButtons }} 
       </ul>
@@ -93,7 +96,7 @@
 
 <template name="actuator_display">
   {{#with point uuid}}
-    <td>{{Path}}</td>
+    <td>{{name}}</td>
     <td>{{value}}</td>
     {{#if isDiscrete}}
       <td>{{> actuator_discrete}}</td>
@@ -109,7 +112,7 @@
 
 <template name="point_display">
   {{#with point uuid}}
-  <td>{{Path}}</td>
+  <td>{{name}}</td>
   <td>{{value}}</td>
   <td></td>
   {{/with}}
