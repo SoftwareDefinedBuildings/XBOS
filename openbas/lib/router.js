@@ -11,6 +11,8 @@ Router.map(function() {
 
     this.route('hvac');
 
+    this.route('dashboard');
+
     this.route('pointDetail', {
       path: '/points/:uuid',
       data: function() { return Points.findOne({uuid: this.params.uuid}); },
