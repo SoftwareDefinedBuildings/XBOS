@@ -49,9 +49,11 @@
     </div>
     <div class="col-xs-6">
       {{#each sensors}}
-        <p><b>Room:</b> {{room}}</p>
-        <p><b>Temp:</b> {{getValue 'temp'}}</p>
-        <p><b>Humidity:</b> {{getValue 'humidity'}}</p>
+        <div class="sensorbox">
+          <p><b>Room:</b> {{room}}</p>
+          <p><b>Temp:</b> {{getValue 'temp'}}</p>
+          <p><b>Humidity:</b> {{getValue 'humidity'}}</p>
+        </div>
       {{/each}}
     </div>
   </div>
@@ -74,7 +76,9 @@
     <div class="col-xs-6">
       <p>list of sensors goes here</p>
       {{#each sensors}}
-      <p>sensor</p>
+      <div class="sensorbox">
+        <p>sensor</p>
+      </div>
       {{/each}}
     </div>
   </div>

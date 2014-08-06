@@ -67,5 +67,9 @@ tr {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+}
 
+.sensorbox {
+  outline: 1px solid black;
+  padding: 5px;
 }
