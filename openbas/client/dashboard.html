@@ -3,17 +3,44 @@
   <div class="row">
     <div id="fullbuildingcolumn" class="col-xs-4 well">
       <h2>Building View</h2>
-      {{> fullbuilding}}
     </div>
     <div id="hvacbuildingcolumn" class="col-xs-4 well">
-      {{> hvac}}
+      {{> hvacbuildingcolumn}}
     </div>
     <div id="lightingbuildingcolumn" class="col-xs-4 well">
-      {{> lighting}}
+      {{> lightingbuildingcolumn}}
     </div>
   </div>
 </div>
 </template>
 
-<template name="fullbuilding">
+<template name="hvacbuildingcolumn">
+{{#each HVACAll}}
+{{> hvac_zone_widget}}
+{{/each}}
+</template>
+
+<template name="lightingbuildingcolumn">
+{{#each LightingAll}}
+{{> light_zone_widget}}
+{{/each}}
+</template>
+
+<template name="hvac_zone_widget">
+<div class="dark well">
+  <h2>Zone: {{zone}}</h2>
+  <p><b>Temp:</b> {{getValue 'temp'}}</p>
+  <p><b>Heat Setpoint:</b> {{getValue 'temp_heat'}}</p>
+  <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
+</div>
+</template>
+
+<template name="light_zone_widget">
+<div class="dark well">
+  <h2>Zone: {{zone}}</h2>
+  <h3>Group: {{group}}</h3>
+  <p><b>On:</b> {{getValue 'on'}}</p>
+  <p><b>Brightness:</b> {{getValue 'bri'}}</p>
+  <p><b>Hue:</b> {{getValue 'hue'}}</p>
+</div>
 </template>

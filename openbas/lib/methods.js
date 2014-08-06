@@ -50,4 +50,21 @@ Meteor.methods({
     }
   },
 
+  /* 
+   * Removes everything after the last '/' in a path and returns
+   */
+  get_source_path:  function(path) {
+    return path.slice(0,path.lastIndexOf('/'));
+  },
+
+  /*
+   * Returns value after last '/' in path
+   */
+  get_endpoint: function(path) {
+    var p = path.split('/');
+    return p[p.length-1];
+  },
+
+
+
 });

@@ -1,4 +1,6 @@
 Points = new Meteor.Collection("points");
+HVAC = new Meteor.Collection("hvac");
+Lighting = new Meteor.Collection("lighting");
 
 if (Meteor.isClient) {
 
@@ -25,8 +27,4 @@ if (Meteor.isClient) {
         console.log("You pressed the button");
     }
   });
-
-}
-
-if (Meteor.isServer) {
 }
