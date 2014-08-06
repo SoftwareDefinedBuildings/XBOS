@@ -2,7 +2,7 @@
 <div class="container-fluid">
   <div class="row">
     <div id="fullbuildingcolumn" class="col-xs-4 well">
-      <h2>Building View</h2>
+      {{> generalbuildingcolumn}}
     </div>
     <div id="hvacbuildingcolumn" class="col-xs-4 well">
       {{> hvacbuildingcolumn}}
@@ -14,13 +14,22 @@
 </div>
 </template>
 
+<template name="generalbuildingcolumn">
+<h2>General</h2>
+{{#each powermeterAll}}
+{{> power_meter_widget}}
+{{/each}}
+</template>
+
 <template name="hvacbuildingcolumn">
+<h2>Building HVAC</h2>
 {{#each HVACAll}}
 {{> hvac_zone_widget}}
 {{/each}}
 </template>
 
 <template name="lightingbuildingcolumn">
+<h2>Building Lighting</h2>
 {{#each LightingAll}}
 {{> light_zone_widget}}
 {{/each}}
@@ -48,5 +57,11 @@
   <p><b>MAC Address:</b> n/a </p>
   <p><b>IP Address:</b> n/a </p>
   <p><b>Live?:</b> n/a </p>
+</div>
+</template>
+
+<template name="power_meter_widget">
+<div class="infobox dark well">
+  <p><b>Demand:</b> {{getValue 'demand'}}</p>
 </div>
 </template>

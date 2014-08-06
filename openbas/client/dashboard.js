@@ -25,4 +25,9 @@ if (Meteor.isClient) {
     return Lighting.find({});
   };
 
+  Template.generalbuildingcolumn.powermeterAll = function() {
+    // find everything with a /demand endpoint
+    return Monitoring.find({'timeseries.demand': {'$exists': true}});
+  };
+
 }

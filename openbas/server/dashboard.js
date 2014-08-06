@@ -1,6 +1,7 @@
 Points = new Meteor.Collection("points");
 HVAC = new Meteor.Collection("hvac");
 Lighting = new Meteor.Collection("lighting");
+Monitoring = new Meteor.Collection("monitoring");
 
 if (Meteor.isServer) {
   Meteor.methods({
@@ -11,7 +12,7 @@ if (Meteor.isServer) {
       var get_source_path = function(path) { return Meteor.call('get_source_path', path); }
       var get_endpoint = function(path) { return Meteor.call('get_endpoint', path); }
       // query all HVAC system points at our current site
-      _.each(['HVAC','Lighting'], function(system, index) {
+      _.each(['HVAC','Lighting','Monitoring'], function(system, index) {
         var query = "select * where Metadata/Site = '" + Meteor.settings.public.site + "'";
         query += " and Metadata/System = '"+system+"'";
         if (system == 'HVAC') {
@@ -53,6 +54,10 @@ if (Meteor.isServer) {
             } else if (system == 'Lighting') {
               var zonename = my_ts[0].Metadata.LightingZone;
               var groupname = my_ts[0].Metadata.Group;
+            } else if (system == 'Monitoring') {
+              var roomname = my_ts[0].Metadata.Room;
+              var lightzonename = my_ts[0].Metadata.LightingZone;
+              var hvaczonename = my_ts[0].Metadata.HVACZone;
             }
             // the record we will insert
             var record = {};
@@ -66,6 +71,8 @@ if (Meteor.isServer) {
                 HVAC.upsert({'zone': zonename}, {'zone': zonename, 'timeseries': record});
               } else if (system == 'Lighting') {
                 Lighting.upsert({'group': groupname}, {'group': groupname, 'zone': zonename, 'timeseries': record});
+              } else if (system == 'Monitoring') {
+                Monitoring.upsert({'room': roomname}, {'room': roomname, 'lightingzone': lightzonename, 'hvaczone': hvaczonename, 'timeseries': record});
               }
 
           });

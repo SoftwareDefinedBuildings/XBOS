@@ -1,6 +1,7 @@
 Points = new Meteor.Collection("points");
 HVAC = new Meteor.Collection("hvac");
 Lighting = new Meteor.Collection("lighting");
+Monitoring = new Meteor.Collection("monitoring");
 
 if (Meteor.isClient) {
 
