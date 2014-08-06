@@ -25,6 +25,15 @@ if (Meteor.isClient) {
     return Lighting.find({});
   };
 
+  Template.light_zone_widget.sensors = function() {
+    return [1,2,3];
+  };
+
+  Template.hvac_zone_widget.sensors = function() {
+    console.log(this);
+    return Monitoring.find({'hvaczone': this.zone});
+  };
+
   Template.generalbuildingcolumn.powermeterAll = function() {
     // find everything with a /demand endpoint
     return Monitoring.find({'timeseries.demand': {'$exists': true}});

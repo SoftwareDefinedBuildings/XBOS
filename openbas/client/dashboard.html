@@ -48,7 +48,10 @@
       <p><b>Live?:</b> n/a </p>
     </div>
     <div class="col-xs-6">
-      <p>list of rooms + sensors goes here</p>
+      {{#each sensors}}
+        <p><b>Temp:</b> {{getValue 'temp'}}</p>
+        <p><b>Humidity:</b> {{getValue 'humidity'}}</p>
+      {{/each}}
     </div>
   </div>
 </div>
@@ -69,6 +72,9 @@
     </div>
     <div class="col-xs-6">
       <p>list of sensors goes here</p>
+      {{#each sensors}}
+      <p>sensor</p>
+      {{/each}}
     </div>
   </div>
 </div>
