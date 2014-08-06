@@ -49,6 +49,7 @@
     </div>
     <div class="col-xs-6">
       {{#each sensors}}
+        <p><b>Room:</b> {{room}}</p>
         <p><b>Temp:</b> {{getValue 'temp'}}</p>
         <p><b>Humidity:</b> {{getValue 'humidity'}}</p>
       {{/each}}

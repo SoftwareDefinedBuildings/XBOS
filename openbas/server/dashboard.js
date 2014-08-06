@@ -31,7 +31,7 @@ if (Meteor.isServer) {
             console.log("No results found for",query);
             return
           }
-          console.log(res);
+          //console.log(res);
           
           /* 
            * Need to find unique paths. Unfortunately, we have full timeseries paths. Need
@@ -39,7 +39,7 @@ if (Meteor.isServer) {
            */
           var source_paths = _.map(_.pluck(res, 'Path'), get_source_path);
           var unique_paths = _.uniq(source_paths);
-          console.log('unique paths', unique_paths);
+          //console.log('unique paths', unique_paths);
 
           /*
            * for each unique_path, we add it to the system collection as a key. The value is
@@ -50,6 +50,7 @@ if (Meteor.isServer) {
             // get timeseries objects for this unique_path
             var my_ts = _.filter(res, function(o) { return get_source_path(o.Path) == src_path; });
             var path = get_source_path(my_ts[0].Path);
+            console.log(path)
             if (system == 'HVAC') {
               var zonename = my_ts[0].Metadata.HVACZone;
             } else if (system == 'Lighting') {
@@ -69,9 +70,9 @@ if (Meteor.isServer) {
 
             // insert into database
               if (system == 'HVAC') {
-                HVAC.upsert({'path': path}, {'zone': zonename, 'timeseries': record});
+                HVAC.upsert({'path': path}, {'path': path, 'zone': zonename, 'timeseries': record});
               } else if (system == 'Lighting') {
-                Lighting.upsert({'path': path}, {'group': groupname, 'zone': zonename, 'timeseries': record});
+                Lighting.upsert({'path': path}, {'path': path, 'group': groupname, 'zone': zonename, 'timeseries': record});
               } else if (system == 'Monitoring') {
                 Monitoring.upsert({'path': path}, {'path': path, 'room': roomname, 'lightingzone': lightzonename, 'hvaczone': hvaczonename, 'timeseries': record});
               }

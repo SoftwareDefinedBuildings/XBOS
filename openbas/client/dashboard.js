@@ -30,7 +30,6 @@ if (Meteor.isClient) {
   };
 
   Template.hvac_zone_widget.sensors = function() {
-    console.log(this);
     return Monitoring.find({'hvaczone': this.zone});
   };
 
