@@ -49,6 +49,7 @@ if (Meteor.isServer) {
           _.each(unique_paths, function(src_path, idx) {
             // get timeseries objects for this unique_path
             var my_ts = _.filter(res, function(o) { return get_source_path(o.Path) == src_path; });
+            var path = get_source_path(my_ts[0].Path);
             if (system == 'HVAC') {
               var zonename = my_ts[0].Metadata.HVACZone;
             } else if (system == 'Lighting') {
@@ -68,11 +69,11 @@ if (Meteor.isServer) {
 
             // insert into database
               if (system == 'HVAC') {
-                HVAC.upsert({'zone': zonename}, {'zone': zonename, 'timeseries': record});
+                HVAC.upsert({'path': path}, {'zone': zonename, 'timeseries': record});
               } else if (system == 'Lighting') {
-                Lighting.upsert({'group': groupname}, {'group': groupname, 'zone': zonename, 'timeseries': record});
+                Lighting.upsert({'path': path}, {'group': groupname, 'zone': zonename, 'timeseries': record});
               } else if (system == 'Monitoring') {
-                Monitoring.upsert({'room': roomname}, {'room': roomname, 'lightingzone': lightzonename, 'hvaczone': hvaczonename, 'timeseries': record});
+                Monitoring.upsert({'path': path}, {'path': path, 'room': roomname, 'lightingzone': lightzonename, 'hvaczone': hvaczonename, 'timeseries': record});
               }
 
           });
