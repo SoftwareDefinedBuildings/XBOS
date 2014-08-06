@@ -27,20 +27,26 @@
 </template>
 
 <template name="hvac_zone_widget">
-<div class="dark well">
-  <h2>Zone: {{zone}}</h2>
+<div class="infobox dark well">
+  <h3>Zone: {{zone}}</h3>
   <p><b>Temp:</b> {{getValue 'temp'}}</p>
   <p><b>Heat Setpoint:</b> {{getValue 'temp_heat'}}</p>
   <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
+  <p><b>MAC Address:</b> n/a </p>
+  <p><b>IP Address:</b> n/a </p>
+  <p><b>Live?:</b> n/a </p>
 </div>
 </template>
 
 <template name="light_zone_widget">
-<div class="dark well">
-  <h2>Zone: {{zone}}</h2>
-  <h3>Group: {{group}}</h3>
+<div class="infobox dark well">
+  <h3>Zone: {{zone}}</h3>
+  <h4>Group: {{group}}</h4>
   <p><b>On:</b> {{getValue 'on'}}</p>
   <p><b>Brightness:</b> {{getValue 'bri'}}</p>
   <p><b>Hue:</b> {{getValue 'hue'}}</p>
+  <p><b>MAC Address:</b> n/a </p>
+  <p><b>IP Address:</b> n/a </p>
+  <p><b>Live?:</b> n/a </p>
 </div>
 </template>

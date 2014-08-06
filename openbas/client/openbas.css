@@ -59,3 +59,6 @@ tr {
   background: rgba(200, 200, 200, 0.9);
 }
 
+.infobox {
+  font-size: small;
+}
