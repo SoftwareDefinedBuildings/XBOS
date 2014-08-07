@@ -3,9 +3,6 @@ Router.map(function() {
     this.route('schedule');
     this.route('status');
     this.route('points');
-    this.route('actuators');
-    this.route('lighting');
-    this.route('hvac');
     this.route('about');
     this.route('test');
 
