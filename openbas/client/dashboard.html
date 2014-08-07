@@ -14,6 +14,7 @@
 </div>
 </template>
 
+<!-- Render each power meter in the building-wide general column -->
 <template name="generalbuildingcolumn">
 <h2>General</h2>
 {{#each powermeterAll}}
@@ -40,12 +41,9 @@
   <h3 class="centertext">Zone: {{zone}}</h3>
   <div class="row">
     <div class="col-xs-6">
+      <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
       <p><b>Temp:</b> {{getValue 'temp'}}</p>
       <p><b>Heat Setpoint:</b> {{getValue 'temp_heat'}}</p>
-      <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
-      <p><b>MAC Address:</b> n/a </p>
-      <p><b>IP Address:</b> n/a </p>
-      <p><b>Live?:</b> n/a </p>
     </div>
     <div class="col-xs-6">
       {{#each sensors}}
