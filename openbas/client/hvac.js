@@ -83,22 +83,4 @@ if (Meteor.isClient) {
     }
   };
 
-
-  //Template.bri.rendered = function() {
-  //  var p = Points.find({'uuid': this.data.bri.uuid}).fetch()[0];
-  //  var rend = UI.renderWithData(Template.actuator_display, p);
-  //  UI.insert(rend, $('#'+p.ActuatorUUID+"_hvac").get(0));
-  //};
-
-  //Template.hue.rendered = function() {
-  //  var p = Points.find({'uuid': this.data.hue.uuid}).fetch()[0];
-  //  var rend = UI.renderWithData(Template.actuator_display, p);
-  //  UI.insert(rend, $('#'+p.ActuatorUUID+"_hvac").get(0));
-  //};
-
-  //Template.on.rendered = function() {
-  //  var p = Points.find({'uuid': this.data.on.uuid}).fetch()[0];
-  //  var rend = UI.renderWithData(Template.actuator_display, p);
-  //  UI.insert(rend, $('#'+p.ActuatorUUID+"_hvac").get(0));
-  //};
 }

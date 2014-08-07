@@ -51,11 +51,11 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.hvac_point.rendered = function() {
+  Template.thermostat.rendered = function() {
     console.log('hacpoint',this);
   };
 
-  Template.hvac_point.helpers({
+  Template.thermostat.helpers({
     has: function(val) {
       return this.timeseries[val]
     },
@@ -70,5 +70,18 @@ if (Meteor.isClient) {
       return ''
     }
   });
+
+  Template.point.rendered = function() {
+    console.log('point',this);
+    var p = Points.find({'uuid': this.data.uuid}).fetch()[0];
+    console.log(p);
+    if (p.ActuatorUUID) {
+      var rend = UI.renderWithData(Template.actuator_display, p);
+      UI.insert(rend, $('#'+p.ActuatorUUID+"_hvac").get(0));
+    } else {
+      var rend = UI.renderWithData(Template.point_display, p);
+      UI.insert(rend, $('#'+p.uuid+"_hvac").get(0));
+    }
+  };
 
 }

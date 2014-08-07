@@ -93,7 +93,7 @@
 <template name="zone_detail">
 {{#if is_hvac type}}
   {{#each points}}
-    {{> hvac_point}}
+    {{> thermostat}}
   {{/each}}
 {{else}}{{#if is_lighting}}
   {{#each points}}
@@ -102,7 +102,7 @@
 {{/if}}{{/if}}
 </template>
 
-<template name="hvac_point">
+<template name="thermostat">
  <div class='table-responsive'>
   <table class="table table-bordered table-striped">
     <thead>
@@ -115,55 +115,55 @@
     <tbody>
       {{#if has 'temp'}}
       <tr id="{{uuid 'temp'}}">
-        temp
+        {{> point timeseries.temp}}
       </tr>
       {{/if}}
 
       {{#if has 'humidity'}}
       <tr id="{{uuid 'humidity'}}">
-        humidity
+        {{> point timeseries.humidity}}
       </tr>
       {{/if}}
 
       {{#if has 'hvac_state'}}
       <tr id="{{uuid 'hvac_state'}}">
-        hvac_state
+        {{> point timeseries.hvac_state}}
       </tr>
       {{/if}}
 
       {{#if has 'temp_heat'}}
       <tr id="{{uuid 'temp_heat'}}">
-        temp_heat
+        {{> point timeseries.temp_heat}}
       </tr>
       {{/if}}
 
       {{#if has 'temp_cool'}}
       <tr id="{{uuid 'temp_cool'}}">
-        temp_cool
+        {{> point timeseries.temp_cool}}
       </tr>
       {{/if}}
 
       {{#if has 'hold'}}
       <tr id="{{uuid 'hold'}}">
-      hold
+        {{> point timeseries.hold}}
       </tr>
       {{/if}}
 
       {{#if has 'override'}}
       <tr id="{{uuid 'override'}}">
-        override
+        {{> point timeseries.override}}
       </tr>
       {{/if}}
 
       {{#if has 'hvac_mode'}}
       <tr id="{{uuid 'hvac_mode'}}">
-        hvac_mode
+        {{> point timeseries.hvac_mode}}
       </tr>
       {{/if}}
 
       {{#if has 'fan_mode'}}
       <tr id="{{uuid 'fan_mode'}}">
-        fan_mode
+        {{> point timeseries.fan_mode}}
       </tr>
       {{/if}}
 
@@ -171,6 +171,9 @@
   </table>
 </div>
 
+</template>
+
+<template name="point">
 </template>
 
 <template name="lighting_point">
