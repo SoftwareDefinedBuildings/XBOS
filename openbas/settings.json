@@ -1,5 +1,5 @@
 { 
-  "archiverUrl": "http://new.openbms.org/backend",
-  "public": {"archiverUrl":  "http://new.openbms.org/backend",
-             "site": "2d1fd317-1772-11e4-87c5-6003089ed1d0"}
+  "archiverUrl": "http://localhost:8079",
+  "public": {"archiverUrl":  "http://localhost:8079",
+             "site": "0273d18f-1c03-11e4-a490-6003089ed1d0"}
 }
