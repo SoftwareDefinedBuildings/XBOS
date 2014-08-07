@@ -26,7 +26,7 @@ if (Meteor.isClient) {
   };
 
   Template.light_zone_widget.sensors = function() {
-    return [1,2,3];
+    return Monitoring.find({'lightingzone': this.zone});
   };
 
   Template.hvac_zone_widget.sensors = function() {
@@ -51,10 +51,6 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.thermostat.rendered = function() {
-    console.log('hacpoint',this);
-  };
-
   Template.thermostat.helpers({
     has: function(val) {
       return this.timeseries[val]
@@ -71,16 +67,37 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.point.rendered = function() {
-    console.log('point',this);
+  Template.lightinggroup.helpers({
+    has: function(val) {
+      return this.timeseries[val]
+    },
+    uuid: function(val) {
+      if (this.timeseries[val]) {
+        if (this.timeseries[val].Actuator) {
+          return this.timeseries[val].Actuator.uuid+"_lighting";
+        } else {
+          return this.timeseries[val].uuid+"_lighting";
+        }
+      }
+      return ''
+    }
+  });
+
+  Template.point.rendered = function(arg) {
+    console.log('point',this,arg);
     var p = Points.find({'uuid': this.data.uuid}).fetch()[0];
     console.log(p);
     if (p.ActuatorUUID) {
       var rend = UI.renderWithData(Template.actuator_display, p);
-      UI.insert(rend, $('#'+p.ActuatorUUID+"_hvac").get(0));
+      var pointid = '#'+p.ActuatorUUID;
     } else {
       var rend = UI.renderWithData(Template.point_display, p);
-      UI.insert(rend, $('#'+p.uuid+"_hvac").get(0));
+      var pointid = '#'+p.uuid;
+    }
+    if (this.data.Metadata.System == 'Lighting') {
+      UI.insert(rend, $(pointid+'_lighting').get(0));
+    } else if (this.data.Metadata.System == 'HVAC') {
+      UI.insert(rend, $(pointid+'_hvac').get(0));
     }
   };
 
