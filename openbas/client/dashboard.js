@@ -38,4 +38,37 @@ if (Meteor.isClient) {
     return Monitoring.find({'timeseries.demand': {'$exists': true}});
   };
 
+  Template.zone_detail.points = function() {
+    return this.points;
+  };
+
+  Template.zone_detail.helpers({
+    is_hvac: function(val) {
+      return val == 'hvac';
+    },
+    is_lighting: function(val) {
+      return val == 'lighting';
+    }
+  });
+
+  Template.hvac_point.rendered = function() {
+    console.log('hacpoint',this);
+  };
+
+  Template.hvac_point.helpers({
+    has: function(val) {
+      return this.timeseries[val]
+    },
+    uuid: function(val) {
+      if (this.timeseries[val]) {
+        if (this.timeseries[val].Actuator) {
+          return this.timeseries[val].Actuator.uuid+"_hvac";
+        } else {
+          return this.timeseries[val].uuid+"_hvac";
+        }
+      }
+      return ''
+    }
+  });
+
 }

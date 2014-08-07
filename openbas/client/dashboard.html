@@ -44,6 +44,7 @@
       <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
       <p><b>Temp:</b> {{getValue 'temp'}}</p>
       <p><b>Heat Setpoint:</b> {{getValue 'temp_heat'}}</p>
+      <a class="button button-small" href="{{pathFor 'zone_detail' zonetype='hvac' zone=zone }}">Detail</a>
     </div>
     <div class="col-xs-6">
       {{#each sensors}}
@@ -87,4 +88,91 @@
 <div class="infobox dark well">
   <p><b>Demand:</b> {{getValue 'demand'}}</p>
 </div>
+</template>
+
+<template name="zone_detail">
+{{#if is_hvac type}}
+  {{#each points}}
+    {{> hvac_point}}
+  {{/each}}
+{{else}}{{#if is_lighting}}
+  {{#each points}}
+    {{> lighting_point}}
+  {{/each}}
+{{/if}}{{/if}}
+</template>
+
+<template name="hvac_point">
+ <div class='table-responsive'>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Value</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#if has 'temp'}}
+      <tr id="{{uuid 'temp'}}">
+        temp
+      </tr>
+      {{/if}}
+
+      {{#if has 'humidity'}}
+      <tr id="{{uuid 'humidity'}}">
+        humidity
+      </tr>
+      {{/if}}
+
+      {{#if has 'hvac_state'}}
+      <tr id="{{uuid 'hvac_state'}}">
+        hvac_state
+      </tr>
+      {{/if}}
+
+      {{#if has 'temp_heat'}}
+      <tr id="{{uuid 'temp_heat'}}">
+        temp_heat
+      </tr>
+      {{/if}}
+
+      {{#if has 'temp_cool'}}
+      <tr id="{{uuid 'temp_cool'}}">
+        temp_cool
+      </tr>
+      {{/if}}
+
+      {{#if has 'hold'}}
+      <tr id="{{uuid 'hold'}}">
+      hold
+      </tr>
+      {{/if}}
+
+      {{#if has 'override'}}
+      <tr id="{{uuid 'override'}}">
+        override
+      </tr>
+      {{/if}}
+
+      {{#if has 'hvac_mode'}}
+      <tr id="{{uuid 'hvac_mode'}}">
+        hvac_mode
+      </tr>
+      {{/if}}
+
+      {{#if has 'fan_mode'}}
+      <tr id="{{uuid 'fan_mode'}}">
+        fan_mode
+      </tr>
+      {{/if}}
+
+    </tbody>
+  </table>
+</div>
+
+</template>
+
+<template name="lighting_point">
+
 </template>
