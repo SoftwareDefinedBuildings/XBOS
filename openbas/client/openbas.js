@@ -12,11 +12,19 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.home.greeting = function () {
+  Template.schedule.blurb = function () {
+    return "Build and Manipulate the weekly schedule";
+  };
+
+  Template.status.blurb = function () {
+    return "report status on everything";
+  };
+
+  Template.test.greeting = function () {
     return "Welcome to openbas.";
   };
 
-  Template.home.events({
+  Template.test.events({
     'click input': function () {
       // template data, if any, is available in 'this'
       if (typeof console !== 'undefined')

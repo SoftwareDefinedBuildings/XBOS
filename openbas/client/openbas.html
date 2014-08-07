@@ -13,10 +13,13 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li class="{{activeIf 'home'}}"><a href="{{pathFor 'home'}}">Home</a></li>
+        <li class="{{activeIf 'dashboard'}}"><a href="{{pathFor 'dashboard'}}">Display</a></li>
       </ul>
       <ul class="nav navbar-nav">
-        <li class="{{activeIf 'about'}}"><a href="{{pathFor 'about'}}">About</a></li>
+        <li class="{{activeIf 'schedule'}}"><a href="{{pathFor 'schedule'}}">Schedule</a></li>
+      </ul>
+      <ul class="nav navbar-nav">
+        <li class="{{activeIf 'status'}}"><a href="{{pathFor 'status'}}">Status</a></li>
       </ul>
       <ul class="nav navbar-nav">
         <li class="{{activeIf 'points'}}"><a href="{{pathFor 'points'}}">Points</a></li>
@@ -31,8 +34,12 @@
         <li class="{{activeIf 'hvac'}}"><a href="{{pathFor 'hvac'}}">HVAC</a></li>
       </ul>
       <ul class="nav navbar-nav">
-        <li class="{{activeIf 'dashboard'}}"><a href="{{pathFor 'dashboard'}}">Dashboard</a></li>
+        <li class="{{activeIf 'about'}}"><a href="{{pathFor 'about'}}">About</a></li>
       </ul>
+      <ul class="nav navbar-nav">
+        <li class="{{activeIf 'test'}}"><a href="{{pathFor 'test'}}">Test</a></li>
+      </ul>
+
       <ul class="nav navbar-nav navbar-right">
         {{> loginButtons }} 
       </ul>
@@ -40,7 +47,17 @@
   </div>
 </template>
 
-<template name="home">
+<template name="schedule">
+  <h1>Integrated HVAC, Lighting and General Control Schedule</h1>
+  {{blurb}}
+</template>
+
+<template name="status">
+  <h1>OpenBAS status for - put building here</h1>
+  {{blurb}}
+</template>
+
+<template name="test">
   <h1>Hello World!</h1>
   {{greeting}}
   <input type="button" value="Click" />
