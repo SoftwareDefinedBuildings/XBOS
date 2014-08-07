@@ -176,7 +176,6 @@ if (Meteor.isClient) {
           if (err) {
             console.log("ERROR", err);
           }
-          console.log("RES",res);
         });
       } else {
         var act = getActuators(this.ActuatorUUID);
@@ -184,7 +183,6 @@ if (Meteor.isClient) {
           if (err) {
             console.log("ERROR", err);
           }
-          console.log("RES",res);
         });
         $('#'+this.ActuatorUUID).addClass("pressed");
       }

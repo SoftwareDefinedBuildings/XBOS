@@ -84,9 +84,7 @@ if (Meteor.isClient) {
   });
 
   Template.point.rendered = function(arg) {
-    console.log('point',this,arg);
     var p = Points.find({'uuid': this.data.uuid}).fetch()[0];
-    console.log(p);
     if (p.ActuatorUUID) {
       var rend = UI.renderWithData(Template.actuator_display, p);
       var pointid = '#'+p.ActuatorUUID;
