@@ -4,6 +4,7 @@
     "accounts-ui-bootstrap-3": {},
     "bootstrap-3": {},
     "houston": {},
-    "bootstrap-slider": {}
+    "bootstrap-slider": {},
+    "moment": {}
   }
 }
