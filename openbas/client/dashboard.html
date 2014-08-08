@@ -20,6 +20,54 @@
 {{#each powermeterAll}}
 {{> power_meter_widget}}
 {{/each}}
+<h3>Today's Schedule</h3>
+<div>
+  <table class="table table-bordered">
+    <tbody>
+    <tr>
+      <td>Sun</td>
+      <td>Mon</td>
+      <td>Tue</td>
+      <td>Wed</td>
+      <td>Thu</td>
+      <td class="info">Fri</td>
+      <td>Sat</td>
+    </tr>
+    </tbody>
+  </table>
+  <p>Schedule Type: <b>Weekday</b></p>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Start</th>
+        <th>Heat SP</th>
+        <th>Cool SP</th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr class="info">
+      <td>Morning</td>
+      <td>7:30 AM</td>
+      <td>72 F</td>
+      <td>83 F</td>
+    </tr>
+    <tr>
+      <td>Afternoon</td>
+      <td>12:30 PM</td>
+      <td>70 F</td>
+      <td>80 F</td>
+    </tr>
+    <tr>
+      <td>Evening</td>
+      <td>6:30 PM</td>
+      <td>50 F</td>
+      <td>90 F</td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
 </template>
 
 <template name="hvacbuildingcolumn">
