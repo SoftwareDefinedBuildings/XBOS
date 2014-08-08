@@ -14,6 +14,7 @@ if (Meteor.isServer) {
           query += " and not Metadata/HVACZone = ''";
         } else if (system == 'Lighting') {
           query += " and not Metadata/LightingZone = ''";
+          query += " and Metadata/Role = 'Building Lighting'";
         }
 
         Meteor.call('query', query, function(err, res) {
