@@ -22,7 +22,7 @@ if (Meteor.isClient) {
   };
   
   Template.lightingbuildingcolumn.LightingAll = function() {
-    var lighting = Lighting.find({}).fetch();
+    var lighting = Lighting.find({'role': 'Building Lighting'}).fetch();
     // for each unique zone
     var zones = [];
     _.each(_.uniq(_.pluck(lighting, 'zone')), function(val, idx) {
@@ -37,9 +37,15 @@ if (Meteor.isClient) {
   };
 
   Template.light_zone_widget.groups = function() {
-    console.log(this);
     return this;
   };
+
+  Template.light_zone_widget.internals = function() {
+    var lighting = Lighting.find({'role': 'Task Lighting', 'zone': this[0].zone});
+    console.log('lighting',lighting.fetch());
+    return lighting;
+  };
+
   Template.light_zone_widget.sensors = function() {
     return Monitoring.find({'lightingzone': this.zone});
   };

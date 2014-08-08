@@ -14,7 +14,7 @@ if (Meteor.isServer) {
           query += " and not Metadata/HVACZone = ''";
         } else if (system == 'Lighting') {
           query += " and not Metadata/LightingZone = ''";
-          query += " and Metadata/Role = 'Building Lighting'";
+          //query += " and Metadata/Role = 'Building Lighting'";
         }
 
         Meteor.call('query', query, function(err, res) {
@@ -46,6 +46,7 @@ if (Meteor.isServer) {
             // get timeseries objects for this unique_path
             var my_ts = _.filter(res, function(o) { return get_source_path(o.Path) == src_path; });
             var path = get_source_path(my_ts[0].Path);
+            var role = my_ts[0].Metadata.Role;
             console.log(path)
             if (system == 'HVAC') {
               var zonename = my_ts[0].Metadata.HVACZone;
@@ -68,7 +69,7 @@ if (Meteor.isServer) {
               if (system == 'HVAC') {
                 HVAC.upsert({'path': path}, {'path': path, 'zone': zonename, 'timeseries': record});
               } else if (system == 'Lighting') {
-                Lighting.upsert({'path': path}, {'path': path, 'group': groupname, 'zone': zonename, 'timeseries': record});
+                Lighting.upsert({'path': path}, {'path': path, 'group': groupname, 'zone': zonename, 'role': role, 'timeseries': record});
               } else if (system == 'Monitoring') {
                 Monitoring.upsert({'path': path}, {'path': path, 'room': roomname, 'lightingzone': lightzonename, 'hvaczone': hvaczonename, 'timeseries': record});
               }
