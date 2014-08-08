@@ -77,6 +77,11 @@
         <p>sensor</p>
       </div>
       {{/each}}
+      {{#each internals}}
+      <div class="sensorbox">
+        <p>internal</p>
+      </div>
+      {{/each}}
     </div>
   </div>
   {{/each}}
@@ -102,6 +107,8 @@
 </template>
 
 <template name="thermostat">
+ <h2>Zone: {{zone}}</h2>
+ <h3>{{path}}</h3>
  <div class='table-responsive'>
   <table class="table table-bordered table-striped">
     <thead>
@@ -176,6 +183,8 @@
 </template>
 
 <template name="lightinggroup">
+ <h2>Zone: {{zone}}</h2>
+ <h3>{{path}}</h3>
  <div class='table-responsive'>
   <table class="table table-bordered table-striped">
     <thead>
