@@ -56,7 +56,7 @@ if (Meteor.isServer) {
             } else if (system == 'Monitoring') {
               var roomname = my_ts[0].Metadata.Room;
               var lightzonename = my_ts[0].Metadata.LightingZone;
-              var hvaczonename = my_ts[0].Metadata.HVACZone;
+              var hvaczonename = my_ts[0].Metadata.HVACZone || my_ts[0].Metadata.Hvaczone;
             }
             // the record we will insert
             var record = {};

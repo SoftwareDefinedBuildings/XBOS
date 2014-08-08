@@ -17,6 +17,7 @@
 <!-- Render each power meter in the building-wide general column -->
 <template name="generalbuildingcolumn">
 <h2>General</h2>
+<h3>Building Name Here</h3>
 {{#each powermeterAll}}
 {{> power_meter_widget}}
 {{/each}}
@@ -32,6 +33,15 @@
       <td id='day4' class='day'>Thu</td>
       <td id='day5' class='day'>Fri</td>
       <td id='day6' class='day'>Sat</td>
+    </tr>
+    <tr>
+      <td>We</td>
+      <td>Wd</td>
+      <td>Wd</td>
+      <td>Wd</td>
+      <td>Wd</td>
+      <td>Wd</td>
+      <td>We</td>
     </tr>
     </tbody>
   </table>
@@ -91,7 +101,7 @@
       {{#each sensors}}
         <div class="sensorbox">
           <p><b>Room:</b> {{room}}</p>
-          <p><b>Temp:</b> {{getValue 'temp'}}</p>
+          <p><b>Temp:</b> {{getValue 'temperature'}}</p>
           <p><b>Humidity:</b> {{getValue 'humidity'}}</p>
         </div>
       {{/each}}
@@ -111,22 +121,20 @@
           <p><b>Brightness:</b> {{getValue 'bri'}}</p>
           <p><b>Hue:</b> {{getValue 'hue'}}</p>
         </div>
-        <div class="col-xs-6">
-          {{#each sensors}}
-          <div class="sensorbox">
-            <p><b>Room:</b> {{room}} </p>
-            <p><b>Illumination:</b> {{getValue 'illumination'}} </p>
-          </div>
-          {{/each}}
-        </div>
       </div>
       {{/each}}
     </div>
     <div class="col-xs-6">
       {{#each internals}}
         <div class="sensorbox">
-          <p><b>Room:</b> {{path}} </p>
+          <p><b>Task Light:</b> {{path}} </p>
         </div>
+      {{/each}}
+      {{#each sensors}}
+      <div class="sensorbox">
+        <p><b>Room:</b> {{room}} </p>
+        <p><b>Illumination:</b> {{getValue 'illumination'}} </p>
+      </div>
       {{/each}}
     </div>
   </div>
