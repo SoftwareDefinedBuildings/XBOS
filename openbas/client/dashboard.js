@@ -22,9 +22,24 @@ if (Meteor.isClient) {
   };
   
   Template.lightingbuildingcolumn.LightingAll = function() {
-    return Lighting.find({});
+    var lighting = Lighting.find({}).fetch();
+    // for each unique zone
+    var zones = [];
+    _.each(_.uniq(_.pluck(lighting, 'zone')), function(val, idx) {
+      var groups = _.filter(lighting, function(o) { return o.zone == val; });
+      zones[idx] = groups;
+    });
+    return zones;
   };
 
+  Template.light_zone_widget.zone = function() {
+    return this[0].zone;
+  };
+
+  Template.light_zone_widget.groups = function() {
+    console.log(this);
+    return this;
+  };
   Template.light_zone_widget.sensors = function() {
     return Monitoring.find({'lightingzone': this.zone});
   };

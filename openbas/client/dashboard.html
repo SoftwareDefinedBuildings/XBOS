@@ -25,19 +25,22 @@
 <template name="hvacbuildingcolumn">
 <h2>Building HVAC</h2>
 {{#each HVACAll}}
-{{> hvac_zone_widget}}
+<div class="infobox dark well">
+  {{> hvac_zone_widget}}
+</div>
 {{/each}}
 </template>
 
 <template name="lightingbuildingcolumn">
 <h2>Building Lighting</h2>
 {{#each LightingAll}}
+<div class="infobox dark well">
 {{> light_zone_widget}}
+</div>
 {{/each}}
 </template>
 
 <template name="hvac_zone_widget">
-<div class="infobox dark well">
   <h3 class="centertext">Zone: {{zone}}</h3>
   <div class="row">
     <div class="col-xs-6">
@@ -56,19 +59,17 @@
       {{/each}}
     </div>
   </div>
-</div>
 </template>
 
 <template name="light_zone_widget">
-<div class="infobox dark well">
   <h3 class="centertext">Zone: {{zone}}</h3>
-  <h4 class="centertext">Group: {{group}}</h4>
+  {{#each groups}}
   <div class="row">
+    <h4 class="centertext">Group: {{group}}</h4>
     <div class="col-xs-6">
       <p><b>On:</b> {{getValue 'on'}}</p>
       <p><b>Brightness:</b> {{getValue 'bri'}}</p>
       <p><b>Hue:</b> {{getValue 'hue'}}</p>
-      <a class="button button-small" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">Detail</a>
     </div>
     <div class="col-xs-6">
       {{#each sensors}}
@@ -78,7 +79,8 @@
       {{/each}}
     </div>
   </div>
-</div>
+  {{/each}}
+  <a class="button button-small" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">Detail</a>
 </template>
 
 <template name="power_meter_widget">
