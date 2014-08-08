@@ -46,7 +46,7 @@ if (Meteor.isClient) {
   };
 
   Template.light_zone_widget.sensors = function() {
-    return Monitoring.find({'lightingzone': this.zone});
+    return Monitoring.find({'lightingzone': this[0].zone});
   };
 
   Template.hvac_zone_widget.sensors = function() {
