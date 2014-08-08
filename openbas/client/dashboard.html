@@ -25,17 +25,17 @@
   <table class="table table-bordered">
     <tbody>
     <tr>
-      <td>Sun</td>
-      <td>Mon</td>
-      <td>Tue</td>
-      <td>Wed</td>
-      <td>Thu</td>
-      <td class="info">Fri</td>
-      <td>Sat</td>
+      <td id='day7' class='day'>Sun</td>
+      <td id='day1' class='day'>Mon</td>
+      <td id='day2' class='day'>Tue</td>
+      <td id='day3' class='day'>Wed</td>
+      <td id='day4' class='day'>Thu</td>
+      <td id='day5' class='day'>Fri</td>
+      <td id='day6' class='day'>Sat</td>
     </tr>
     </tbody>
   </table>
-  <p>Schedule Type: <b>Weekday</b></p>
+  <p>Schedule Type: <b>{{daytype}}</b></p>
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -46,24 +46,14 @@
       </tr>
     </thead>
     <tbody>
-    <tr class="info">
-      <td>Morning</td>
-      <td>7:30 AM</td>
-      <td>72 F</td>
-      <td>83 F</td>
+    {{#each globalschedule.weekday}}
+    <tr class="schedulerow" data-time="{{time}}" id="{{name}}">
+      <td>{{name}}</td>
+      <td>{{time}}</td>
+      <td>{{heatsp}}</td>
+      <td>{{coolsp}}</td>
     </tr>
-    <tr>
-      <td>Afternoon</td>
-      <td>12:30 PM</td>
-      <td>70 F</td>
-      <td>80 F</td>
-    </tr>
-    <tr>
-      <td>Evening</td>
-      <td>6:30 PM</td>
-      <td>50 F</td>
-      <td>90 F</td>
-    </tr>
+    {{/each}}
     </tbody>
   </table>
 

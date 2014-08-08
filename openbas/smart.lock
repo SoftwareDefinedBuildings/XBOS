@@ -6,7 +6,8 @@
       "accounts-ui-bootstrap-3": {},
       "bootstrap-3": {},
       "houston": {},
-      "bootstrap-slider": {}
+      "bootstrap-slider": {},
+      "moment": {}
     },
     "packages": {
       "iron-router": {
@@ -16,8 +17,8 @@
       },
       "accounts-ui-bootstrap-3": {
         "git": "https://github.com/mangasocial/meteor-accounts-ui-bootstrap-3.git",
-        "tag": "v0.3.3",
-        "commit": "2e50b605d8d5ed68e48c4529a65f13552d8af3f9"
+        "tag": "v0.3.4",
+        "commit": "9f006ee48d869877d90d54ac75b54550a587df8f"
       },
       "bootstrap-3": {
         "git": "https://github.com/mangasocial/meteor-bootstrap-3.git",
@@ -34,6 +35,11 @@
         "tag": "v0.0.5",
         "commit": "0a0421f3ceea41d05ad0c90d217589954f0dc3a0"
       },
+      "moment": {
+        "git": "https://github.com/acreeger/meteor-moment.git",
+        "tag": "v2.6.0",
+        "commit": "26156df681750fd6e6ed77043eef32b6653ebbdf"
+      },
       "iron-layout": {
         "git": "https://github.com/EventedMind/iron-layout.git",
         "tag": "v0.2.0",
@@ -46,8 +52,8 @@
       },
       "spin": {
         "git": "https://github.com/SachaG/meteor-spin.git",
-        "tag": "v2.0.3",
-        "commit": "23c1145472a710d5c93fa4beaca4e576caeb2f24"
+        "tag": "v2.0.4",
+        "commit": "f7b1e12a7caff1283cdb3671a393c182d0ae9862"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",
