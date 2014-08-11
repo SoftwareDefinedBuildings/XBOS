@@ -1,11 +1,10 @@
 if (Meteor.isServer) {
   Meteor.methods({
     querysystem: function() {
-      if (Meteor.isServer) {
-        console.log('called!')
 
       var get_source_path = function(path) { return Meteor.call('get_source_path', path); }
       var get_endpoint = function(path) { return Meteor.call('get_endpoint', path); }
+
       // query all HVAC system points at our current site
       _.each(['HVAC','Lighting','Monitoring'], function(system, index) {
         var query = "select * where Metadata/Site = '" + Meteor.settings.public.site + "'";
@@ -27,7 +26,6 @@ if (Meteor.isServer) {
             console.log("No results found for",query);
             return
           }
-          //console.log(res);
           
           /* 
            * Need to find unique paths. Unfortunately, we have full timeseries paths. Need
@@ -35,7 +33,6 @@ if (Meteor.isServer) {
            */
           var source_paths = _.map(_.pluck(res, 'Path'), get_source_path);
           var unique_paths = _.uniq(source_paths);
-          //console.log('unique paths', unique_paths);
 
           /*
            * for each unique_path, we add it to the system collection as a key. The value is
@@ -66,20 +63,34 @@ if (Meteor.isServer) {
             });
 
             // insert into database
-              if (system == 'HVAC') {
-                HVAC.upsert({'path': path}, {'path': path, 'zone': zonename, 'timeseries': record});
-              } else if (system == 'Lighting') {
-                Lighting.upsert({'path': path}, {'path': path, 'group': groupname, 'zone': zonename, 'role': role, 'timeseries': record});
-              } else if (system == 'Monitoring') {
-                Monitoring.upsert({'path': path}, {'path': path, 'room': roomname, 'lightingzone': lightzonename, 'hvaczone': hvaczonename, 'timeseries': record});
-              }
+            if (system == 'HVAC') {
+              HVAC.upsert({'path': path}, {
+                'path': path, 
+                'zone': zonename, 
+                'timeseries': record
+              });
+            } else if (system == 'Lighting') {
+              Lighting.upsert({'path': path}, {
+                'path': path, 
+                'group': groupname, 
+                'zone': zonename, 
+                'role': role, 
+                'timeseries': record
+              });
+            } else if (system == 'Monitoring') {
+              Monitoring.upsert({'path': path}, {
+                'path': path, 
+                'room': roomname, 
+                'lightingzone': lightzonename, 
+                'hvaczone': hvaczonename, 
+                'timeseries': record
+              });
+            }
 
           });
-
         });
-      });
-      }
-    },
-  })
-}
+      }); 
 
+    }, 
+  }); 
+} 
