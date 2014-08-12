@@ -16,9 +16,6 @@ if (Meteor.isClient) {
     return "Build and Manipulate the weekly schedule";
   };
 
-  Template.status.blurb = function () {
-    return "report status on everything";
-  };
 
   Template.test.greeting = function () {
     return "Welcome to openbas.";

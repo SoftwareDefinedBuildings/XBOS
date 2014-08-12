@@ -1,0 +1,30 @@
+<template name="status">
+  <h1>Device Status Page</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Model</th>
+        <th>IP Address</th>
+        <th>MAC Address</th>
+        <th>Path</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each sources}}
+        {{> device}}
+      {{/each}}
+    </tbody>
+  </table>
+</template>
+
+<template name="device">
+  <tr>
+    <td>{{device}}</td>
+    <td>{{model}}</td>
+    <td>ip</td>
+    <td>mac</td>
+    <td>{{path}}</td>
+  </tr>
+</template>
+

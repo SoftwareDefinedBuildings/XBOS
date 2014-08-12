@@ -44,6 +44,8 @@ if (Meteor.isServer) {
             var my_ts = _.filter(res, function(o) { return get_source_path(o.Path) == src_path; });
             var path = get_source_path(my_ts[0].Path);
             var role = my_ts[0].Metadata.Role;
+            var device = my_ts[0].Metadata.Device;
+            var model = my_ts[0].Metadata.Model;
             console.log(path)
             if (system == 'HVAC') {
               var zonename = my_ts[0].Metadata.HVACZone;
@@ -67,6 +69,8 @@ if (Meteor.isServer) {
               HVAC.upsert({'path': path}, {
                 'path': path, 
                 'zone': zonename, 
+                'device': device,
+                'model': model,
                 'timeseries': record
               });
             } else if (system == 'Lighting') {
@@ -75,6 +79,8 @@ if (Meteor.isServer) {
                 'group': groupname, 
                 'zone': zonename, 
                 'role': role, 
+                'device': device,
+                'model': model,
                 'timeseries': record
               });
             } else if (system == 'Monitoring') {
@@ -83,6 +89,8 @@ if (Meteor.isServer) {
                 'room': roomname, 
                 'lightingzone': lightzonename, 
                 'hvaczone': hvaczonename, 
+                'device': device,
+                'model': model,
                 'timeseries': record
               });
             }
