@@ -12,7 +12,7 @@ if (Meteor.isClient) {
     var p = Points.find({'uuid': this.timeseries[obj].uuid}).fetch()[0];
     var value = p.value;
     if (unit == 'C') {
-      value = value * .8 + 32;
+      value = value * 1.8 + 32;
     }
     return Number((value).toFixed(1));
   });
