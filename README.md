@@ -40,7 +40,7 @@ From within the openbas folder, run the following to install dependencies
 and run the app
 
 ```
-mrt —settings settings.json
+mrt --settings settings.json
 ```
 
 
