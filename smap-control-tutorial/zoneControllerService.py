@@ -98,14 +98,12 @@ class ZoneController(driver.SmapDriver):
     def tempcb(self, _, data):
         # list of arrays of [time, val]
         print "ZoneController tempcb: ", data
-        mostrecent = data[-1][-1] 
-        self.coolSP = mostrecent[1]
+
 
     def thermcb(self, _, data):
         # list of arrays of [time, val]
         print "ZoneController thermcb: ", data
-        mostrecent = data[-1][-1] 
-        self.coolSP = mostrecent[1]
+
 
 
 class setpointActuator(actuate.ContinuousActuator):
