@@ -8,8 +8,13 @@ Meteor.startup(function() {
 if (Meteor.isClient) {
 
   UI.registerHelper('getValue', function(obj) {
+    var unit = this.timeseries[obj].Properties.UnitofMeasure;
     var p = Points.find({'uuid': this.timeseries[obj].uuid}).fetch()[0];
-    return p.value;
+    var value = p.value;
+    if (unit == 'C') {
+      value = value * .8 + 32;
+    }
+    return Number((value).toFixed(1));
   });
 
   Template.dashboard.created = function() {
