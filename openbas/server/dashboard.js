@@ -46,6 +46,7 @@ if (Meteor.isServer) {
             var role = my_ts[0].Metadata.Role;
             var device = my_ts[0].Metadata.Device;
             var model = my_ts[0].Metadata.Model;
+            var driver = my_ts[0].Metadata.Driver;
             console.log(path)
             if (system == 'HVAC') {
               var zonename = my_ts[0].Metadata.HVACZone;
@@ -71,6 +72,7 @@ if (Meteor.isServer) {
                 'zone': zonename, 
                 'device': device,
                 'model': model,
+                'driver': driver,
                 'timeseries': record
               });
             } else if (system == 'Lighting') {
@@ -81,6 +83,7 @@ if (Meteor.isServer) {
                 'role': role, 
                 'device': device,
                 'model': model,
+                'driver': driver,
                 'timeseries': record
               });
             } else if (system == 'Monitoring') {
@@ -91,6 +94,7 @@ if (Meteor.isServer) {
                 'hvaczone': hvaczonename, 
                 'device': device,
                 'model': model,
+                'driver': driver,
                 'timeseries': record
               });
             }
