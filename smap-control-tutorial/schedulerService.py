@@ -34,11 +34,11 @@ from smap.util import periodicSequentialCall
 import schedule
 import time
 
-testschedules = {'weekday': (('morning', '7:30', {'heatSetpoint':70, 'coolSetpoint': 74}),
-                             ('night',  '20:30', {'heatSetpoint':60, 'coolSetpoint': 76})),
-                 'weekend': (('morning', '9:30', {'heatSetpoint':68, 'coolSetpoint': 74}),
-                             ('evening','17:00', {'heatSetpoint':68, 'coolSetpoint': 76}),
-                             ('night',  '21:00', {'heatSetpoint':58, 'coolSetpoint': 78}))}
+testschedules = {'weekday': (('morning', '8:00', {'heatSetpoint':68, 'coolSetpoint': 75}),
+                             ('night',  '18:00', {'heatSetpoint':55, 'coolSetpoint': 85})),
+                 'weekend': (('morning', '9:30', {'heatSetpoint':68, 'coolSetpoint': 75}),
+                             ('evening','14:00', {'heatSetpoint':55, 'coolSetpoint': 85}),
+                             ('night',  '21:00', {'heatSetpoint':55, 'coolSetpoint': 85}))}
 
 class Scheduler(driver.SmapDriver):
     def setup(self, opts):
@@ -54,6 +54,7 @@ class Scheduler(driver.SmapDriver):
         self.points = {}
         self.points['heatSetpoint']=int(opts.get('defaultHeatSetpoint',68))
         self.points['coolSetpoint']=int(opts.get('defaultCoolSetpoint',76))
+        print "Scheduler ", self.points
 
         # create timeseries for scheduler actions
         heatSetPoint = self.add_timeseries('/heatSetpoint', 'F', data_type='long')
@@ -64,7 +65,7 @@ class Scheduler(driver.SmapDriver):
         coolSetPoint.add_actuator(setpointActuator(scheduler=self, range=(40,90)))
 
     def start(self):
-
+        print "scheduler start: ", self.rate
         periodicSequentialCall(self.read).start(self.rate)
 
     # Periodically check the schedule
@@ -73,11 +74,11 @@ class Scheduler(driver.SmapDriver):
         now = time.localtime()
         scheduleName = self.weekly[now.tm_wday]
         self.epoch, self.points = self.sched.getPoints(scheduleName, now.tm_hour, now.tm_min)
+        print "scheduler read: ", self.epoch, self.points
         for (point,val) in self.points.iteritems() :
-            if (self.points[point] != val) :
-                self.points[point] = val
-                self.add('/'+point, val)
-
+            self.points[point] = val
+            self.add('/'+point, val)
+        print "scheduler points: ", self.points
 
 class setpointActuator(actuate.ContinuousActuator):
     def __init__(self, **opts):

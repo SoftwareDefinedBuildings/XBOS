@@ -31,6 +31,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 from smap import actuate, driver
 from smap.util import periodicSequentialCall
+from smap.archiver.client import RepublishClient
 import time
 
 class ZoneController(driver.SmapDriver):
@@ -50,39 +51,59 @@ class ZoneController(driver.SmapDriver):
         coolSetPoint.add_actuator(setpointActuator(controller=self, range=(40,90)))
 
         # get master set point stream paths
-        self.archiver_url = opts.pop('archiver_url','http://localhost:8079')
-        self.heatSPpath = opts.pop('heatSPpath', '/scheduler/heatSetpoint')
-        self.coolSPpath = opts.pop('coolSPpath', '/scheduler/coolSetpoint')
-# add mode
-        self.siteid = opts.pop('siteid','')
-        restriction = "Path = '{0}'".format(self.heatSPpath)
-        if self.siteid :
-            restriction = restriction + " and Metadata/Site/id = '{0}'".format(self.siteid)
-        self.heatSPclient = RepublishClient(self.archiver_url, self.heatSPcb, restrict=restriction)
-        restriction = "Path = '{0}'".format(self.coolSPpath)
-        if self.siteid :
-            restriction = restriction + " and Metadata/Site/id = '{0}'".format(self.siteid)
-        self.coolSPclient = RepublishClient(self.archiver_url, self.coolSPcb, restrict=restriction)
+        self.archiver_url = opts.get('archiver_url','http://localhost:8079')
+        self.heatSPwhere = opts.get('heatSPwhere', '')
+        self.coolSPwhere = opts.get('coolSPwhere', '')
+        self.thermwhere = opts.get('thermwhere', '')
+        self.tempwhere = opts.get('tempwhere', '')
+
+        print "ZoneController: heat sp where = ", self.heatSPwhere
+        print "ZoneController: cool sp where = ", self.coolSPwhere
+        print "ZoneController: thermostat where = ", self.thermwhere
+        print "ZoneController: temp sensor where = ", self.tempwhere
+
+        self.heatSPclient = RepublishClient(self.archiver_url, self.heatSPcb, restrict=self.heatSPwhere)
+        self.coolSPclient = RepublishClient(self.archiver_url, self.coolSPcb, restrict=self.coolSPwhere)
+        self.tempclient = RepublishClient(self.archiver_url, self.tempcb, restrict=self.tempwhere)
+        self.thermclient = RepublishClient(self.archiver_url, self.thermcb, restrict=self.thermwhere)
 
 
     def start(self):
+        print "zone controller start: ", self.rate
         self.heatSPclient.connect() # activate subscription scheduler setpoints
         self.coolSPclient.connect() 
+        self.tempclient.connect() 
+        self.thermclient.connect() 
         periodicSequentialCall(self.read).start(self.rate)
 
     def read(self):
-        # periodically update output streams
-        self.add('/heatSetpoint', self.heatSP-self.trim)
-        self.add('/coolSetpoint', self.coolSP+self.trim)
+        # periodically update output streams.  Here a bogus adjustment
+        self.add('/heatSetpoint', self.heatSP - self.trim)
+        self.add('/coolSetpoint', self.coolSP + self.trim)
+        print "zone controller publish: ", self.heatSP, self.coolSP
 
     # Event handler for publication to heatSP stream
     def heatSPcb(self, _, data):
         # list of arrays of [time, val]
+        print "ZoneController heatSPcb: ", data
         mostrecent = data[-1][-1] 
         self.heatSP = mostrecent[1]
 
     def coolSPcb(self, _, data):
         # list of arrays of [time, val]
+        print "ZoneController coolSPcb: ", data
+        mostrecent = data[-1][-1] 
+        self.coolSP = mostrecent[1]
+
+    def tempcb(self, _, data):
+        # list of arrays of [time, val]
+        print "ZoneController tempcb: ", data
+        mostrecent = data[-1][-1] 
+        self.coolSP = mostrecent[1]
+
+    def thermcb(self, _, data):
+        # list of arrays of [time, val]
+        print "ZoneController thermcb: ", data
         mostrecent = data[-1][-1] 
         self.coolSP = mostrecent[1]
 
