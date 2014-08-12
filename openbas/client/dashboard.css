@@ -13,6 +13,7 @@ h2.dashboard-column-heading {
 
 h3.dashboard-column-heading {
   font-size: 1.2em;
+  margin-top: 9px;
 }
 
 .dark {
@@ -54,4 +55,8 @@ h3.dashboard-column-heading {
 .sparkline-container {
   float: left;
   margin-right: 6px;
+}
+
+a.detail-link:hover {
+  text-decoration: none;
 }
