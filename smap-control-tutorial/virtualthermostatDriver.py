@@ -33,10 +33,10 @@ class VirtualThermostat(driver.SmapDriver):
         hvac_mode.add_actuator(ModeActuator(tstat=self, path='hvac_mode', states=[0,1,2,3]))
         fan_mode.add_actuator(OnOffActuator(tstat=self, path='fan_mode'))
 
-        self.trim = int(opts.get('trim',0))
         self.archiver_url = opts.pop('archiver_url','http://localhost:8079')
         self.heatSPpath = opts.pop('heatSPpath', '/scheduler/heatSetpoint')
         self.coolSPpath = opts.pop('coolSPpath', '/scheduler/coolSetpoint')
+# add mode
         self.siteid = opts.pop('siteid','')
         restriction = "Path = '{0}'".format(self.heatSPpath)
         if self.siteid :
@@ -80,14 +80,14 @@ class VirtualThermostat(driver.SmapDriver):
         mostrecent = data[-1][-1] 
         self.heatSP = mostrecent[1]
         print "Set heating setpoint", self.heatSP
-        self.state['temp_heat'] = self.heatSP+self.trim
+        self.state['temp_heat'] = self.heatSP
 
     def coolSPcb(self, _, data):
         # list of arrays of [time, val]
         mostrecent = data[-1][-1] 
         self.coolSP = mostrecent[1]
         print "Set cooling setpoint", self.coolSP
-        self.state['temp_cool'] = self.coolSP+self.trim
+        self.state['temp_cool'] = self.coolSP
 
 class VirtualThermostatActuator(actuate.SmapActuator):
     def __init__(self, **opts):
