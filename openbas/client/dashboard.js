@@ -8,8 +8,13 @@ Meteor.startup(function() {
 if (Meteor.isClient) {
 
   UI.registerHelper('getValue', function(obj) {
+    var unit = this.timeseries[obj].Properties.UnitofMeasure;
     var p = Points.find({'uuid': this.timeseries[obj].uuid}).fetch()[0];
-    return p.value;
+    var value = p.value;
+    if (unit == 'C') {
+      value = value * 1.8 + 32;
+    }
+    return Number((value).toFixed(1));
   });
 
   Template.dashboard.created = function() {
@@ -159,5 +164,50 @@ if (Meteor.isClient) {
       UI.insert(rend, $(pointid+'_hvac').get(0));
     }
   };
+
+  Template.power_meter_widget.rendered = function(){
+    console.log(this.data);
+    var restrict = 'Path="' + this.data.path + '/demand"';
+    var id = this.data._id;
+    Meteor.call("latest", restrict, 100, function(err, res){
+      var width = 100;
+      var height = 25;
+      var x = d3.scale.linear().range([0, width]);
+      var y = d3.scale.linear().range([height, 0]);
+      var line = d3.svg.line()
+                   .x(function(d) { return x(d.time); })
+                   .y(function(d) { return y(d.value); });
+
+      function sparkline(elemId, data) {
+        x.domain(d3.extent(data, function(d) { return d.time; }));
+        var yextents = d3.extent(data, function(d) { return d.value; });
+        y.domain(yextents);
+
+        d3.select(elemId)
+          .append('svg')
+          .attr('width', width)
+          .attr('height', height)
+          .append('path')
+          .datum(data)
+          .attr('class', 'sparkline')
+          .attr('d', line);
+
+        var extents_label = "[<span class='sparkline-min'>" + yextents[0].toFixed(2) + "</span>,";
+        extents_label += "<span class='sparkline-max'>" + yextents[1].toFixed(2) + "</span>]";
+        d3.select('#sparkline-extents-' + id)
+          .html(extents_label)
+
+      }
+
+      var mydata = res[0].Readings;
+      mydata = _.map(mydata, function(d){
+        var r = {};
+        r.time = d[0];
+        r.value = d[1];
+        return r;
+      });
+      sparkline("#sparkline-container-" + id, mydata);
+    });
+  }
 
 }

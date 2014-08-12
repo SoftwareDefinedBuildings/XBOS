@@ -1,95 +1,98 @@
 <template name='dashboard'>
-<div class="container-fluid">
-  <div class="row">
-    <div id="fullbuildingcolumn" class="col-xs-4 well">
-      {{> generalbuildingcolumn}}
-    </div>
-    <div id="hvacbuildingcolumn" class="col-xs-4 well">
-      {{> hvacbuildingcolumn}}
-    </div>
-    <div id="lightingbuildingcolumn" class="col-xs-4 well">
-      {{> lightingbuildingcolumn}}
+  <div class="container-fluid">
+    <div class="row">
+      <div id="fullbuildingcolumn" class="dashboard-column col-xs-4">
+        {{> generalbuildingcolumn}}
+      </div>
+      <div id="hvacbuildingcolumn" class="dashboard-column col-xs-4">
+        {{> hvacbuildingcolumn}}
+      </div>
+      <div id="lightingbuildingcolumn" class="dashboard-column col-xs-4">
+        {{> lightingbuildingcolumn}}
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <!-- Render each power meter in the building-wide general column -->
 <template name="generalbuildingcolumn">
-<h2>General</h2>
-<h3>Building Name Here</h3>
-{{#each powermeterAll}}
-{{> power_meter_widget}}
-{{/each}}
-<h3>Today's Schedule</h3>
-<div>
-  <table class="table table-bordered">
-    <tbody>
-    <tr>
-      <td id='day7' class='day'>Sun</td>
-      <td id='day1' class='day'>Mon</td>
-      <td id='day2' class='day'>Tue</td>
-      <td id='day3' class='day'>Wed</td>
-      <td id='day4' class='day'>Thu</td>
-      <td id='day5' class='day'>Fri</td>
-      <td id='day6' class='day'>Sat</td>
-    </tr>
-    <tr>
-      <td>We</td>
-      <td>Wd</td>
-      <td>Wd</td>
-      <td>Wd</td>
-      <td>Wd</td>
-      <td>Wd</td>
-      <td>We</td>
-    </tr>
-    </tbody>
-  </table>
-  <p>Schedule Type: <b>{{daytype}}</b></p>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Start</th>
-        <th>Heat SP</th>
-        <th>Cool SP</th>
-      </tr>
-    </thead>
-    <tbody>
-    {{#each globalschedule.weekday}}
-    <tr class="schedulerow" data-time="{{time}}" id="{{name}}">
-      <td>{{name}}</td>
-      <td>{{time}}</td>
-      <td>{{heatsp}}</td>
-      <td>{{coolsp}}</td>
-    </tr>
+  <h2 class="dashboard-column-heading">Building Name</h2>
+  <div class="dashboard-well">
+    {{#each powermeterAll}}
+      {{> power_meter_widget}}
     {{/each}}
-    </tbody>
-  </table>
+    <h3 class="dashboard-column-heading">Today's Schedule</h3>
+    <div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <td id='day7' class='day'>Sun</td>
+            <td id='day1' class='day'>Mon</td>
+            <td id='day2' class='day'>Tue</td>
+            <td id='day3' class='day'>Wed</td>
+            <td id='day4' class='day'>Thu</td>
+            <td id='day5' class='day'>Fri</td>
+            <td id='day6' class='day'>Sat</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>We</td>
+            <td>Wd</td>
+            <td>Wd</td>
+            <td>Wd</td>
+            <td>Wd</td>
+            <td>Wd</td>
+            <td>We</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Schedule Type: <b>{{daytype}}</b></p>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Start</th>
+            <th>Heat SP</th>
+            <th>Cool SP</th>
+          </tr>
+        </thead>
+        <tbody>
+        {{#each globalschedule.weekday}}
+        <tr class="schedulerow" data-time="{{time}}" id="{{name}}">
+          <td>{{name}}</td>
+          <td>{{time}}</td>
+          <td>{{heatsp}}</td>
+          <td>{{coolsp}}</td>
+        </tr>
+        {{/each}}
+        </tbody>
+      </table>
 
-</div>
+    </div>
+  </div>
 </template>
 
 <template name="hvacbuildingcolumn">
-<h2>Building HVAC</h2>
-{{#each HVACAll}}
-<div class="infobox dark well">
-  {{> hvac_zone_widget}}
-</div>
-{{/each}}
+  <h2 class="dashboard-column-heading">HVAC</h2>
+  {{#each HVACAll}}
+  <div class="infobox dark well">
+    {{> hvac_zone_widget}}
+  </div>
+  {{/each}}
 </template>
 
 <template name="lightingbuildingcolumn">
-<h2>Building Lighting</h2>
-{{#each LightingAll}}
-<div class="infobox dark well">
-{{> light_zone_widget}}
-</div>
-{{/each}}
+  <h2 class="dashboard-column-heading">Lighting</h2>
+  {{#each LightingAll}}
+  <div class="infobox dark well">
+    {{> light_zone_widget}}
+  </div>
+  {{/each}}
 </template>
 
 <template name="hvac_zone_widget">
-  <h3 class="centertext">Zone: {{zone}}</h3>
+  <h3 class="dashboard-column-heading centertext">Zone: {{zone}}</h3>
   <div class="row">
     <div class="col-xs-6">
       <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
@@ -110,7 +113,7 @@
 </template>
 
 <template name="light_zone_widget">
-  <h3 class="centertext">Zone: {{zone}}</h3>
+  <h3 class="dashboard-column-heading centertext">Zone: {{zone}}</h3>
   <div class="row">
     <div class="col-xs-6">
       {{#each groups}}
@@ -142,26 +145,31 @@
 </template>
 
 <template name="power_meter_widget">
-<div class="infobox dark well">
-  <p><b>Demand:</b> {{getValue 'demand'}}</p>
-</div>
+  <div class="infobox dark well">
+    <div class="sparkline-container" id="sparkline-container-{{ _id }}"></div>
+    <div class="sparkline-label">
+      <span>Demand:</span>
+      <span class="sparkline-value">{{getValue 'demand'}}</span>
+      <span class="sparkline-extents" id="sparkline-extents-{{ _id }}"></span>
+    </div>
+  </div>
 </template>
 
 <template name="zone_detail">
-{{#if is_hvac type}}
-  {{#each points}}
-    {{> thermostat}}
-  {{/each}}
-{{else}}{{#if is_lighting type}}
-  {{#each points}}
-    {{> lightinggroup}}
-  {{/each}}
-{{/if}}{{/if}}
+  {{#if is_hvac type}}
+    {{#each points}}
+      {{> thermostat}}
+    {{/each}}
+  {{else}}{{#if is_lighting type}}
+    {{#each points}}
+      {{> lightinggroup}}
+    {{/each}}
+  {{/if}}{{/if}}
 </template>
 
 <template name="thermostat">
- <h2>Zone: {{zone}}</h2>
- <h3>{{path}}</h3>
+ <h2 class="dashboard-column-heading">Zone: {{zone}}</h2>
+ <h3 class="dashbaord-column-heading">{{path}}</h3>
  <div class='table-responsive'>
   <table class="table table-bordered table-striped">
     <thead>
@@ -236,38 +244,40 @@
 </template>
 
 <template name="lightinggroup">
- <h2>Zone: {{zone}}</h2>
- <h3>{{path}}</h3>
- <div class='table-responsive'>
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>Path</th>
-        <th>Value</th>
-        <th>Type</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#if has 'on'}}
-      <tr id="{{uuid 'on'}}">
-        {{> point timeseries.on }}
-      </tr>
-      {{/if}}
+  <h2 class="dashboard-column-heading">Zone: {{zone}}</h2>
+  <h3 class="dashboard-column-heading">{{path}}</h3>
+  <div class='table-responsive'>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Path</th>
+          <th>Value</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if has 'on'}}
+        <tr id="{{uuid 'on'}}">
+          {{> point timeseries.on }}
+        </tr>
+        {{/if}}
 
-      {{#if has 'bri'}}
-      <tr id="{{uuid 'bri'}}">
-        {{> point timeseries.bri }}
-      </tr>
-      {{/if}}
+        {{#if has 'bri'}}
+        <tr id="{{uuid 'bri'}}">
+          {{> point timeseries.bri }}
+        </tr>
+        {{/if}}
 
-      {{#if has 'hue'}}
-      <tr id="{{uuid 'hue'}}">
-        {{> point timeseries.hue }}
-      </tr>
-      {{/if}}
+        {{#if has 'hue'}}
+        <tr id="{{uuid 'hue'}}">
+          {{> point timeseries.hue }}
+        </tr>
+        {{/if}}
 
-    </tbody>
-  </table>
-</div>
+      </tbody>
+    </table>
+  </div>
 
 </template>
+
+<template name="sparkline"></template>

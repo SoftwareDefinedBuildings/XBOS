@@ -1,32 +1,23 @@
-Meteor.methods({
-  // in the client:
-  // Meteor.call('method_name', param, param, function(err, data){ ... });
+if (Meteor.isServer) {
+  Meteor.methods({
+    // in the client:
+    // Meteor.call('method_name', param, param, function(err, data){ ... });
 
-  foo: function(){
-    return 'bar';
-  },
-
-  bar: function(a, b){
-    return a + b;
-  },
-
-  query: function(q){
-    if (Meteor.isServer) {
+    query: function(q){
       var url = Meteor.settings.archiverUrl + "/api/query";
       var r = HTTP.call("POST", url, {content: q});
       return EJSON.parse(r.content);
-    }
-  },
+    },
 
-  latest: function(restrict, n){
+    latest: function(restrict, n){
       var q = "select data before now limit " + n + " where " + restrict;
       var url = Meteor.settings.archiverUrl + "/api/query";
+      console.log(url)
       var r = HTTP.call("POST", url, {content: q});
       return EJSON.parse(r.content);
-  },
+    },
 
-  tags: function(uuid){
-    if (Meteor.isServer) {
+    tags: function(uuid){
       this.unblock();
       var url = Meteor.settings.archiverUrl + "/api/tags/uuid/"+ uuid;
       var r = HTTP.call("GET", url);
@@ -36,20 +27,19 @@ Meteor.methods({
         res[0].Actuator.Values = EJSON.parse(x);
       }
       return res;
-    }
-  },
+    },
 
-  actuate: function(port, path, value){
-    if (Meteor.isServer) {
+    actuate: function(port, path, value){
       this.unblock();
       var url = "http://localhost:" + port + "/data"+path+"?state="+value;
-      console.log("URL",url)
       var r = HTTP.call("PUT", url);
       HTTP.call("GET", url);
       return EJSON.parse(r.content);
-    }
-  },
+    },
+  });
+}
 
+Meteor.methods({
   /* 
    * Removes everything after the last '/' in a path and returns
    */
@@ -64,7 +54,5 @@ Meteor.methods({
     var p = path.split('/');
     return p[p.length-1];
   },
-
-
 
 });
