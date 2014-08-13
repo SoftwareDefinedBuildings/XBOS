@@ -92,6 +92,7 @@
     <h3 class="dashboard-column-heading centertext">
       <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='hvac' zone=zone }}">{{zone}}</a>
     </h3>
+    <div class="HVAC-zone-summary" id="HVAC-zone-summary-{{ _id }}"></div>
     <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
     <p><b>Temp:</b> {{getValue 'temp'}}</p>
     <p><b>Heat Setpoint:</b> {{getValue 'temp_heat'}}</p>

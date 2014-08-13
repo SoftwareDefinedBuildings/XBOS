@@ -165,8 +165,97 @@ if (Meteor.isClient) {
     }
   };
 
+  Template.hvac_zone_widget.rendered = function(){
+
+    var restrict0 = 'Path="' + this.data.path;
+    var restrict = restrict0 + '/temp_cool" or ' 
+                 + restrict0 + '/temp_heat" or ' 
+                 + restrict0 + '/temp"';
+    var id = this.data._id;
+    var q = "select * where " + restrict;
+    Meteor.call("query", q, function(err, res) {
+      var tags = res;
+      Meteor.call("latest", restrict, 100, function(err, res){
+        var mydata = _.map(res, function(o){
+          var tag = _.find(tags, function(t){ return t.uuid == o.uuid });
+          var rv = _.extend(o, tag);
+          return rv
+        });
+        var width = 300;
+        var height = 100;
+        var x = d3.scale.linear().range([0, width]);
+        var y = d3.scale.linear().range([height, 0]);
+        var line = d3.svg.line()
+                     .x(function(d) { return x(d.time); })
+                     .y(function(d) { return y(d.value); });
+
+        function hvac_zone_summary(elemId, data){
+          var extents = _.map(data, function(d){ 
+            var readings = _.zip.apply(_, d.Readings);
+            var timestamps = readings[0];
+            var values = readings[1];
+            rv = {
+              'xmin': _.min(timestamps),
+              'ymin': _.min(values),
+              'xmax': _.max(timestamps),
+              'ymax': _.max(values),
+            }
+            return rv
+          });
+          var yextent = [ _.min(_.pluck(extents, 'ymin')), _.max(_.pluck(extents, 'ymax'))];
+          var xextent = [ _.min(_.pluck(extents, 'xmin')), _.max(_.pluck(extents, 'xmax'))];
+          x.domain(xextent);
+          y.domain(yextent);
+
+          var temp = _.find(data, function(d){ 
+            return _.last(d.Path.split("/")) == "temp";
+          });
+          var temp_cool = _.find(data, function(d){
+            return _.last(d.Path.split("/")) == "temp_cool";
+          });
+          var temp_heat = _.find(data, function(d){
+            return _.last(d.Path.split("/")) == "temp_heat";
+          });
+        
+          function d3ify(d){
+            var r = {};
+            r.time = d[0];
+            r.value = d[1];
+            return r;
+          } 
+
+          temp = _.map(temp.Readings, d3ify);
+          temp_cool = _.map(temp_cool.Readings, d3ify);
+          temp_heat = _.map(temp_heat.Readings, d3ify);
+
+          var svg = d3.select(elemId)
+            .append('svg')
+            .attr('class', 'HVAC-zone-summary')
+            .attr('width', width)
+            .attr('height', height)
+
+          svg.append('path')
+            .datum(temp)
+            .attr('class', 'templine')
+            .attr('d', line);
+
+          svg.append('path')
+            .datum(temp_cool)
+            .attr('class', 'cooltempline')
+            .attr('d', line);
+
+          svg.append('path')
+            .datum(temp_heat)
+            .attr('class', 'heattempline')
+            .attr('d', line);
+
+        }
+        hvac_zone_summary("#HVAC-zone-summary-" + id, mydata);
+      });
+    });
+  }
+
   Template.power_meter_widget.rendered = function(){
-    console.log(this.data);
     var restrict = 'Path="' + this.data.path + '/demand"';
     var id = this.data._id;
     Meteor.call("latest", restrict, 100, function(err, res){

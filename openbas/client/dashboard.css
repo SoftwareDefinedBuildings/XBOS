@@ -60,3 +60,32 @@ h3.dashboard-column-heading {
 a.detail-link:hover {
   text-decoration: none;
 }
+
+svg.HVAC-zone-summary {
+  display: block;
+  margin: 0 auto;
+}
+
+div.HVAC-zone-summary {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.heattempline {
+  fill: none;
+  stroke: #ff0000;
+  stroke-width: 1px;
+}
+
+.cooltempline {
+  fill: none;
+  stroke: #0000ff;
+  stroke-width: 1px;
+}
+
+.templine {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1px;
+}
+
