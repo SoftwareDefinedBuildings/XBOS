@@ -2,7 +2,7 @@ if (Meteor.isClient) {
 
   Template.status.sources = function () {
     /*
-     * Grabs all the HVAC, Lighting and Monitoring points. These 
+     * Grabs all the HVAC, Lighting and Monitoring points. These
      * have been configured, so we can read their metadata. Thanks
      * to the 'querysystem' function, thse are pre-aggregated by
      * their driver path instead of the individual timeseries
@@ -27,4 +27,14 @@ if (Meteor.isClient) {
     baseurl += '.py';
     return baseurl;
   };
+
+  Template.configuration.rendered = function() {
+    console.log(this);
+  };
+
+  Template.configuration.events({
+    'click div': function(e) {
+        console.log('clicked');
+    }
+  });
 }
