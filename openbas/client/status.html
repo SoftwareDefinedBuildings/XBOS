@@ -33,7 +33,7 @@
 </template>
 
 <template name="configuration">
-  <div id="device_{{path}}" class="btn btn-info" data-toggle="modal" data-target="#metadataModal">Configure</div>
+  <div class="btn btn-info" data-toggle="modal" data-target="#metadataModal">Configure</div>
 
   <div class="modal fade" id="metadataModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -42,8 +42,7 @@
               <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
               <h4 class="modal-title" id="modalLabel">Device Configuration</h4>
             </div>
-            <div class="modal-body">
-              stuff here
+            <div id="device_{{fixPath path}}" class="modal-body">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -52,4 +51,8 @@
         </div>
     </div>
   </div>
+</template>
+
+<template name="config_contents">
+{{this}}
 </template>

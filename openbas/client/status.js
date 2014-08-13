@@ -1,5 +1,9 @@
 if (Meteor.isClient) {
 
+  UI.registerHelper('fixPath', function(p) {
+    return p.replace(/\//g,'_');
+  });
+
   Template.status.sources = function () {
     /*
      * Grabs all the HVAC, Lighting and Monitoring points. These
@@ -28,13 +32,29 @@ if (Meteor.isClient) {
     return baseurl;
   };
 
-  Template.configuration.rendered = function() {
-    console.log(this);
-  };
 
   Template.configuration.events({
     'click div': function(e) {
-        console.log('clicked');
+        console.log(this);
+        var path = this.path;
+        var fixedpath = this.path.replace(/\//g,'_');
+        var query = 'select distinct where Metadata/Site = "' + Meteor.settings.public.site + '"';
+        query += ' and Path~"'+path+'"';
+        console.log(query);
+        Meteor.call('query', query, function(err, res) {
+            if (err) {
+              console.log("Error running query:",query, err);
+              return
+            }
+            if (!res) {
+              console.log("No results found for",query);
+              return
+            }
+            console.log(res);
+            var rend = UI.renderWithData(Template.config_contents, res);
+            UI.insert(rend, $("#device_"+fixedpath).get(0));
+        });
     }
   });
+
 }
