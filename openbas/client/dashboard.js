@@ -25,7 +25,7 @@ if (Meteor.isClient) {
   Template.hvacbuildingcolumn.HVACAll = function() {
     return HVAC.find({});
   };
-  
+
   Template.lightingbuildingcolumn.LightingAll = function() {
     var lighting = Lighting.find({'role': 'Building Lighting'}).fetch();
     // for each unique zone
@@ -168,8 +168,8 @@ if (Meteor.isClient) {
   Template.hvac_zone_widget.rendered = function(){
 
     var restrict0 = 'Path="' + this.data.path;
-    var restrict = restrict0 + '/temp_cool" or ' 
-                 + restrict0 + '/temp_heat" or ' 
+    var restrict = restrict0 + '/temp_cool" or '
+                 + restrict0 + '/temp_heat" or '
                  + restrict0 + '/temp"';
     var id = this.data._id;
     var q = "select * where " + restrict;
@@ -190,7 +190,7 @@ if (Meteor.isClient) {
                      .y(function(d) { return y(d.value); });
 
         function hvac_zone_summary(elemId, data){
-          var extents = _.map(data, function(d){ 
+          var extents = _.map(data, function(d){
             var readings = _.zip.apply(_, d.Readings);
             var timestamps = readings[0];
             var values = readings[1];
@@ -207,7 +207,7 @@ if (Meteor.isClient) {
           x.domain(xextent);
           y.domain(yextent);
 
-          var temp = _.find(data, function(d){ 
+          var temp = _.find(data, function(d){
             return _.last(d.Path.split("/")) == "temp";
           });
           var temp_cool = _.find(data, function(d){
@@ -216,13 +216,13 @@ if (Meteor.isClient) {
           var temp_heat = _.find(data, function(d){
             return _.last(d.Path.split("/")) == "temp_heat";
           });
-        
+
           function d3ify(d){
             var r = {};
             r.time = d[0];
             r.value = d[1];
             return r;
-          } 
+          }
 
           temp = _.map(temp.Readings, d3ify);
           temp_cool = _.map(temp_cool.Readings, d3ify);
