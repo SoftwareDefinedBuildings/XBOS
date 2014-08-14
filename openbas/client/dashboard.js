@@ -22,6 +22,7 @@ if (Meteor.isClient) {
     var x = d3.scale.linear().range([0, width]);
     var y = d3.scale.linear().range([height, 0]);
     var line = d3.svg.line()
+                 .interpolate("basis")
                  .x(function(d) { return x(d.time); })
                  .y(function(d) { return y(d.value); });
     x.domain(d3.extent(data, function(d) { return d.time; }));
@@ -315,10 +316,10 @@ if (Meteor.isClient) {
   Template.power_meter_widget.rendered = function(){
     var restrict = 'Path="' + this.data.path + '/demand"';
     var id = this.data._id;
-    Meteor.call("latest", restrict, 100, function(err, res){
+    Meteor.call("latest", restrict, 1000, function(err, res){
       var mydata = res[0].Readings;
       mydata = Dashboard.jsonify(mydata);
-      Dashboard.sparkline("#sparkline-container-" + id, mydata, 100, 25, true);
+      Dashboard.sparkline("#sparkline-container-" + id, mydata, 250, 50, true);
     });
   }
 
