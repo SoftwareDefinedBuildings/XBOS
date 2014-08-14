@@ -157,15 +157,17 @@
 </template>
 
 <template name="zone_detail">
-  {{#if is_hvac type}}
-    {{#each points}}
-      {{> thermostat}}
-    {{/each}}
-  {{else}}{{#if is_lighting type}}
-    {{#each points}}
-      {{> lightinggroup}}
-    {{/each}}
-  {{/if}}{{/if}}
+  <div class="zone-detail-container">
+    {{#if is_hvac type}}
+      {{#each points}}
+        {{> thermostat}}
+      {{/each}}
+    {{else}}{{#if is_lighting type}}
+      {{#each points}}
+        {{> lightinggroup}}
+      {{/each}}
+    {{/if}}{{/if}}
+  </div>
 </template>
 
 <template name="thermostat">
