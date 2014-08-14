@@ -287,11 +287,19 @@ if (Meteor.isClient) {
 
     // render sparklines for sensors
     var sensors = Monitoring.find({'hvaczone': this.data.zone}).fetch();
+    console.log(sensors);
     _.each(sensors, function(s){
-      var restrict = 'Path="' + s.path + '"';
+      var restrict = 'Path="' + s.path + '/temperature"';
       Meteor.call("latest", restrict, 100, function(err, res){
         var mydata = Dashboard.jsonify(res[0].Readings);
-        Dashboard.sparkline("#sparkline-container-" + s._id, mydata, 100, 25, false);
+        Dashboard.sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 25, false);
+      });
+    });
+    _.each(sensors, function(s){
+      var restrict = 'Path="' + s.path + '/humidity"';
+      Meteor.call("latest", restrict, 100, function(err, res){
+        var mydata = Dashboard.jsonify(res[0].Readings);
+        Dashboard.sparkline("#sparkline-humidity-container-" + s._id, mydata, 100, 25, false);
       });
     });
 

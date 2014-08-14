@@ -110,8 +110,8 @@
         {{#each sensors}}
           <tr>
             <td>{{room}}</td>
-            <td><div class="sparkline-container" id="sparkline-container-{{ _id }}"></div>{{getValue 'temperature'}}</td>
-            <td>{{getValue 'humidity'}}</td>
+            <td><div class="sparkline-container" id="sparkline-temperature-container-{{ _id }}"></div>{{getValue 'temperature'}}</td>
+            <td><div class="sparkline-container" id="sparkline-humidity-container-{{ _id }}"></div>{{getValue 'humidity'}}</td>
           </tr>
         {{/each}}
         </tbody>
@@ -125,12 +125,29 @@
     <h3 class="dashboard-column-heading centertext">
       <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">{{zone}}</a>
     </h3>
-    {{#each groups}}
-    <h4 class="centertext">Group: {{group}}</h4>
-    <p><b>On:</b> {{getValue 'on'}}</p>
-    <p><b>Brightness:</b> {{getValue 'bri'}}</p>
-    <p><b>Hue:</b> {{getValue 'hue'}}</p>
-    {{/each}}
+    <div class="panel panel-default">
+      <div class="panel-heading table-heading">Light Groups</div>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Light Group</th>
+            <th>On/Off</th>
+            <th>Brightness</th>
+            <th>Hue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each groups}}
+          <tr>
+            <td>{{group}}</td>
+            <td>{{getValue 'on'}}</td>
+            <td>{{getValue 'bri'}}</td>
+            <td>{{getValue 'hue'}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
     {{#each internals}}
     <div class="infobox dark well">
       <p><b>Task Light:</b> {{path}} </p>
