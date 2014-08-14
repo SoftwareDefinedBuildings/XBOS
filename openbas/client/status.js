@@ -1,7 +1,24 @@
 if (Meteor.isClient) {
 
+  Session.set('selectedhvaczone', null);
+
+  hvaczones = function() {
+    return _.uniq( _.filter( _.pluck(Rooms.find().fetch(), 'HVACZone'), function(o) { return o != null; }));
+  };
+
+  roomsForHVACZone = function(zone) {
+    if (!zone) {
+      return []
+    }
+    return _.pluck(Rooms.find({'HVACZone':zone}).fetch(), 'RoomNumber');
+  };
+
   UI.registerHelper('fixPath', function(p) {
     return p.replace(/\//g,'_');
+  });
+
+  UI.registerHelper('hvaczones', function() {
+    return hvaczones();
   });
 
   Template.status.sources = function () {
@@ -35,29 +52,27 @@ if (Meteor.isClient) {
 
   Template.configuration.events({
     'click div': function(e) {
-        console.log(this);
         var path = this.path;
         var fixedpath = this.path.replace(/\//g,'_');
-        var query = 'select distinct where Metadata/Site = "' + Meteor.settings.public.site + '"';
-        query += ' and Path~"'+path+'"';
-        console.log(query);
-        Meteor.call('query', query, function(err, res) {
-            if (err) {
-              console.log("Error running query:",query, err);
-              return
-            }
-            if (!res) {
-              console.log("No results found for",query);
-              return
-            }
-            console.log(res);
-            var rend = UI.renderWithData(Template.config_contents, res);
-            UI.insert(rend, $("#device_"+fixedpath).get(0));
-        });
+    },
+
+    'change .hvaczones': function(e, template) {
+        console.log("Selected", template.find('.hvaczones').value);
+        Session.set('selectedhvaczone', template.find('.hvaczones').value);
     }
   });
 
+  Template.configuration.derivedrooms = function() {
+    var ret = [];
+    if (Session.get('selectedhvaczone') != null) {
+      console.log("derivedrooms")
+      ret = roomsForHVACZone(Session.get('selectedhvaczone'));
+    }
+    return ret;
+  };
+
   Template.contents.rendered = function() {
+    $('#config_contents').empty();
     $('#config_contents').append("<ul></ul>");
     var items = [];
     _.each(this.data, function(val, idx) {
@@ -67,5 +82,6 @@ if (Meteor.isClient) {
     $('#config_contents').append(items.join(''));
     
   };
+
 
 }

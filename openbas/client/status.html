@@ -43,6 +43,31 @@
               <h4 class="modal-title" id="modalLabel">Device Configuration</h4>
             </div>
             <div id="device_{{fixPath path}}" class="modal-body">
+              <form class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">HVAC Zone</label>
+                  <div class="col-sm-8">
+                    <select class="hvaczones form-control">
+                      <option class="selected" value=""></option>
+                    {{#each hvaczones}}
+                      <option value="{{this}}">{{this}}</option>
+                    {{/each}}
+                    </select>
+                  </div>
+                </div>
+                {{#if derivedrooms}}
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Room</label>
+                    <div class="col-sm-8">
+                      <select class="rooms form-control">
+                          {{#each derivedrooms}}
+                            <option value="{{this}}">{{this}}</option>
+                          {{/each}}
+                      </select>
+                    </div>
+                  </div>
+                {{/if}}
+              </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
