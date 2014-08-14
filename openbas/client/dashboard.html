@@ -96,13 +96,27 @@
     <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
     <p><b>Temp:</b> {{getValue 'temp'}}</p>
     <p><b>Heat Setpoint:</b> {{getValue 'temp_heat'}}</p>
-    {{#each sensors}}
-    <div class="infobox dark well">
-      <p><b>Room:</b> {{room}}</p>
-      <p><b>Temp:</b> {{getValue 'temperature'}}</p>
-      <p><b>Humidity:</b> {{getValue 'humidity'}}</p>
+    <div class="panel panel-default">
+      <div class="panel-heading table-heading">Sensors</div>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th class="col-md-3">Room</th>
+            <th class="col-md-3">Temperature</th>
+            <th class="col-md-3">Humidity</th>
+          </tr>
+        </thead>
+        <tbody>
+        {{#each sensors}}
+          <tr>
+            <td>{{room}}</td>
+            <td><div class="sparkline-container" id="sparkline-temperature-container-{{ _id }}"></div>{{getValue 'temperature'}}</td>
+            <td><div class="sparkline-container" id="sparkline-humidity-container-{{ _id }}"></div>{{getValue 'humidity'}}</td>
+          </tr>
+        {{/each}}
+        </tbody>
+      </table>
     </div>
-    {{/each}}
   </div>
 </template>
 
@@ -111,12 +125,29 @@
     <h3 class="dashboard-column-heading centertext">
       <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">{{zone}}</a>
     </h3>
-    {{#each groups}}
-    <h4 class="centertext">Group: {{group}}</h4>
-    <p><b>On:</b> {{getValue 'on'}}</p>
-    <p><b>Brightness:</b> {{getValue 'bri'}}</p>
-    <p><b>Hue:</b> {{getValue 'hue'}}</p>
-    {{/each}}
+    <div class="panel panel-default">
+      <div class="panel-heading table-heading">Light Groups</div>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Light Group</th>
+            <th>On/Off</th>
+            <th>Brightness</th>
+            <th>Hue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each groups}}
+          <tr>
+            <td>{{group}}</td>
+            <td>{{getValue 'on'}}</td>
+            <td>{{getValue 'bri'}}</td>
+            <td>{{getValue 'hue'}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
     {{#each internals}}
     <div class="infobox dark well">
       <p><b>Task Light:</b> {{path}} </p>
@@ -143,15 +174,17 @@
 </template>
 
 <template name="zone_detail">
-  {{#if is_hvac type}}
-    {{#each points}}
-      {{> thermostat}}
-    {{/each}}
-  {{else}}{{#if is_lighting type}}
-    {{#each points}}
-      {{> lightinggroup}}
-    {{/each}}
-  {{/if}}{{/if}}
+  <div class="zone-detail-container">
+    {{#if is_hvac type}}
+      {{#each points}}
+        {{> thermostat}}
+      {{/each}}
+    {{else}}{{#if is_lighting type}}
+      {{#each points}}
+        {{> lightinggroup}}
+      {{/each}}
+    {{/if}}{{/if}}
+  </div>
 </template>
 
 <template name="thermostat">
@@ -263,7 +296,4 @@
       </tbody>
     </table>
   </div>
-
 </template>
-
-<template name="sparkline"></template>

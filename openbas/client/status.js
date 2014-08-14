@@ -57,4 +57,15 @@ if (Meteor.isClient) {
     }
   });
 
+  Template.contents.rendered = function() {
+    $('#config_contents').append("<ul></ul>");
+    var items = [];
+    _.each(this.data, function(val, idx) {
+      items.push('<li>'+val+'</li>');
+    });
+    console.log('items',items);
+    $('#config_contents').append(items.join(''));
+    
+  };
+
 }

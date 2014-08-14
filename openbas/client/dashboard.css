@@ -89,3 +89,13 @@ div.HVAC-zone-summary {
   stroke-width: 1px;
 }
 
+.table-heading {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: small;
+}
+
+.zone-detail-container {
+  margin: 0 auto;
+  width: 70%;
+}
