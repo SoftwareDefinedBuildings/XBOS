@@ -3,175 +3,175 @@
     "RoomNumber":205,
     "Description":"Office",
     "Exposure":"S",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":206,
     "Description":"Office",
     "Exposure":"S",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":207,
     "Description":"Conference",
     "Exposure":"S",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":208,
     "Description":"Kitchen",
     "Exposure":"S",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":209,
     "Description":"Office",
     "Exposure":"S",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":210,
     "Description":"Office",
     "Exposure":"S",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":211,
     "Description":"Office",
     "Exposure":"S",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":212,
     "Description":"Office",
     "Exposure":"S",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":213,
     "Description":"Office",
     "Exposure":"SE",
-    "HVACZone":2,
+    "HVACZone":"East",
     "LightingZone":""
   },
   {
     "RoomNumber":214,
     "Description":"Office",
     "Exposure":"E",
-    "HVACZone":2,
+    "HVACZone":"East",
     "LightingZone":""
   },
   {
     "RoomNumber":215,
     "Description":"Office",
     "Exposure":"E",
-    "HVACZone":2,
+    "HVACZone":"East",
     "LightingZone":""
   },
   {
     "RoomNumber":216,
     "Description":"Office",
     "Exposure":"E",
-    "HVACZone":2,
+    "HVACZone":"East",
     "LightingZone":""
   },
   {
     "RoomNumber":217,
     "Description":"Office",
     "Exposure":"E",
-    "HVACZone":2,
+    "HVACZone":"East",
     "LightingZone":""
   },
   {
     "RoomNumber":219,
     "Description":"Open Plan",
     "Exposure":"Core",
-    "HVACZone":3,
+    "HVACZone":"General Area",
     "LightingZone":""
   },
   {
     "RoomNumber":221,
     "Description":"Open Plan",
     "Exposure":"Core",
-    "HVACZone":3,
+    "HVACZone":"General Area",
     "LightingZone":""
   },
   {
     "RoomNumber":222,
     "Description":"Office",
     "Exposure":"Core",
-    "HVACZone":3,
+    "HVACZone":"General Area",
     "LightingZone":""
   },
   {
     "RoomNumber":223,
     "Description":"Office",
     "Exposure":"Core",
-    "HVACZone":3,
+    "HVACZone":"General Area",
     "LightingZone":""
   },
   {
     "RoomNumber":225,
     "Description":"Office",
     "Exposure":"Core",
-    "HVACZone":3,
+    "HVACZone":"General Area",
     "LightingZone":""
   },
   {
     "RoomNumber":203,
     "Description":"Hallway",
     "Exposure":"Core",
-    "HVACZone":3,
+    "HVACZone":"General Area",
     "LightingZone":""
   },
   {
     "RoomNumber":204,
     "Description":"Hallway",
     "Exposure":"Core",
-    "HVACZone":3,
+    "HVACZone":"General Area",
     "LightingZone":""
   },
   {
     "RoomNumber":205,
     "Description":"Hallway",
     "Exposure":"Core",
-    "HVACZone":1,
+    "HVACZone":"South",
     "LightingZone":""
   },
   {
     "RoomNumber":218,
     "Description":"Open Plan",
     "Exposure":"N",
-    "HVACZone":4,
+    "HVACZone":"North",
     "LightingZone":""
   },
   {
     "RoomNumber":220,
     "Description":"Open Plan",
     "Exposure":"N",
-    "HVACZone":4,
+    "HVACZone":"North",
     "LightingZone":""
   },
   {
     "RoomNumber":224,
     "Description":"Office",
     "Exposure":"N",
-    "HVACZone":4,
+    "HVACZone":"North",
     "LightingZone":""
   },
   {
     "RoomNumber":226,
     "Description":"Open Plan",
     "Exposure":"N",
-    "HVACZone":4,
+    "HVACZone":"North",
     "LightingZone":""
   }
 ]
