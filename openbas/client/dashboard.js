@@ -214,17 +214,19 @@ if (Meteor.isClient) {
     var q = "select * where " + restrict;
     Meteor.call("query", q, function(err, res) {
       var tags = res;
-      Meteor.call("latest", restrict, 100, function(err, res){
+      Meteor.call("latest", restrict, 1000, function(err, res){
         var mydata = _.map(res, function(o){
           var tag = _.find(tags, function(t){ return t.uuid == o.uuid });
           var rv = _.extend(o, tag);
           return rv
         });
-        var width = 300;
+        var margin = 30;
+        var width = $(window).width() / 3 - 2 * margin; 
         var height = 100;
         var x = d3.scale.linear().range([0, width]);
         var y = d3.scale.linear().range([height, 0]);
         var line = d3.svg.line()
+                     .interpolate("basis")
                      .x(function(d) { return x(d.time); })
                      .y(function(d) { return y(d.value); });
 
@@ -239,7 +241,7 @@ if (Meteor.isClient) {
               'xmax': _.max(timestamps),
               'ymax': _.max(values),
             }
-            return rv
+            return rv;
           });
           var yextent = [ _.min(_.pluck(extents, 'ymin')), _.max(_.pluck(extents, 'ymax'))];
           var xextent = [ _.min(_.pluck(extents, 'xmin')), _.max(_.pluck(extents, 'xmax'))];
@@ -256,16 +258,9 @@ if (Meteor.isClient) {
             return _.last(d.Path.split("/")) == "temp_heat";
           });
 
-          function d3ify(d){
-            var r = {};
-            r.time = d[0];
-            r.value = d[1];
-            return r;
-          }
-
-          temp = _.map(temp.Readings, d3ify);
-          temp_cool = _.map(temp_cool.Readings, d3ify);
-          temp_heat = _.map(temp_heat.Readings, d3ify);
+          temp = Dashboard.jsonify(temp.Readings);
+          temp_cool = Dashboard.jsonify(temp_cool.Readings);
+          temp_heat = Dashboard.jsonify(temp_heat.Readings);
 
           var svg = d3.select(elemId)
             .append('svg')
