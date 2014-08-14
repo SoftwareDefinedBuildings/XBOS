@@ -57,7 +57,6 @@ if (Meteor.isClient) {
     },
 
     'change .hvaczones': function(e, template) {
-        console.log("Selected", template.find('.hvaczones').value);
         Session.set('selectedhvaczone', template.find('.hvaczones').value);
     }
   });
@@ -65,7 +64,6 @@ if (Meteor.isClient) {
   Template.configuration.derivedrooms = function() {
     var ret = [];
     if (Session.get('selectedhvaczone') != null) {
-      console.log("derivedrooms")
       ret = roomsForHVACZone(Session.get('selectedhvaczone'));
     }
     return ret;
@@ -78,9 +76,8 @@ if (Meteor.isClient) {
     _.each(this.data, function(val, idx) {
       items.push('<li>'+val+'</li>');
     });
-    console.log('items',items);
     $('#config_contents').append(items.join(''));
-    
+
   };
 
 
