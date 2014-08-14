@@ -99,3 +99,7 @@ div.HVAC-zone-summary {
   margin: 0 auto;
   width: 70%;
 }
+
+.demand-widget {
+  height: 75px;
+}
