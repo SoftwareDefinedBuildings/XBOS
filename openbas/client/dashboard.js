@@ -7,6 +7,44 @@ Meteor.startup(function() {
 
 if (Meteor.isClient) {
 
+  var Dashboard = {};
+
+  Dashboard.jsonify = function (readings){
+    return _.map(readings, function(r){
+      var o = {};
+      o.time = r[0];
+      o.value = r[1];
+      return o;
+    });
+  } 
+
+  Dashboard.sparkline = function(elemId, data, width, height, display_range) {
+    var x = d3.scale.linear().range([0, width]);
+    var y = d3.scale.linear().range([height, 0]);
+    var line = d3.svg.line()
+                 .x(function(d) { return x(d.time); })
+                 .y(function(d) { return y(d.value); });
+    x.domain(d3.extent(data, function(d) { return d.time; }));
+    var yextents = d3.extent(data, function(d) { return d.value; });
+    y.domain(yextents);
+
+    d3.select(elemId)
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .append('path')
+      .datum(data)
+      .attr('class', 'sparkline')
+      .attr('d', line);
+
+    if (display_range){
+      var extents_label = "[<span class='sparkline-min'>" + yextents[0].toFixed(2) + "</span>,";
+      extents_label += "<span class='sparkline-max'>" + yextents[1].toFixed(2) + "</span>]";
+      d3.select('#sparkline-extents-' + id)
+        .html(extents_label)
+    }
+  }
+
   UI.registerHelper('getValue', function(obj) {
     var unit = this.timeseries[obj].Properties.UnitofMeasure;
     var p = Points.find({'uuid': this.timeseries[obj].uuid}).fetch()[0];
@@ -217,16 +255,9 @@ if (Meteor.isClient) {
             return _.last(d.Path.split("/")) == "temp_heat";
           });
         
-          function d3ify(d){
-            var r = {};
-            r.time = d[0];
-            r.value = d[1];
-            return r;
-          } 
-
-          temp = _.map(temp.Readings, d3ify);
-          temp_cool = _.map(temp_cool.Readings, d3ify);
-          temp_heat = _.map(temp_heat.Readings, d3ify);
+          temp = Dashboard.jsonify(temp.Readings);
+          temp_cool = Dashboard.jsonify(temp_cool.Readings);
+          temp_heat = Dashboard.jsonify(temp_heat.Readings);
 
           var svg = d3.select(elemId)
             .append('svg')
@@ -253,49 +284,26 @@ if (Meteor.isClient) {
         hvac_zone_summary("#HVAC-zone-summary-" + id, mydata);
       });
     });
+
+    // render sparklines for sensors
+    var sensors = Monitoring.find({'hvaczone': this.data.zone}).fetch();
+    _.each(sensors, function(s){
+      var restrict = 'Path="' + s.path + '"';
+      Meteor.call("latest", restrict, 100, function(err, res){
+        var mydata = Dashboard.jsonify(res[0].Readings);
+        Dashboard.sparkline("#sparkline-container-" + s._id, mydata, 100, 25, false);
+      });
+    });
+
   }
 
   Template.power_meter_widget.rendered = function(){
     var restrict = 'Path="' + this.data.path + '/demand"';
     var id = this.data._id;
     Meteor.call("latest", restrict, 100, function(err, res){
-      var width = 100;
-      var height = 25;
-      var x = d3.scale.linear().range([0, width]);
-      var y = d3.scale.linear().range([height, 0]);
-      var line = d3.svg.line()
-                   .x(function(d) { return x(d.time); })
-                   .y(function(d) { return y(d.value); });
-
-      function sparkline(elemId, data) {
-        x.domain(d3.extent(data, function(d) { return d.time; }));
-        var yextents = d3.extent(data, function(d) { return d.value; });
-        y.domain(yextents);
-
-        d3.select(elemId)
-          .append('svg')
-          .attr('width', width)
-          .attr('height', height)
-          .append('path')
-          .datum(data)
-          .attr('class', 'sparkline')
-          .attr('d', line);
-
-        var extents_label = "[<span class='sparkline-min'>" + yextents[0].toFixed(2) + "</span>,";
-        extents_label += "<span class='sparkline-max'>" + yextents[1].toFixed(2) + "</span>]";
-        d3.select('#sparkline-extents-' + id)
-          .html(extents_label)
-
-      }
-
       var mydata = res[0].Readings;
-      mydata = _.map(mydata, function(d){
-        var r = {};
-        r.time = d[0];
-        r.value = d[1];
-        return r;
-      });
-      sparkline("#sparkline-container-" + id, mydata);
+      mydata = Dashboard.jsonify(mydata);
+      Dashboard.sparkline("#sparkline-container-" + id, mydata, 100, 25, true);
     });
   }
 
