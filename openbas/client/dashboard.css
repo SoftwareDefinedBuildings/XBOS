@@ -103,3 +103,11 @@ div.HVAC-zone-summary {
 .demand-widget {
   height: 75px;
 }
+
+.current-day {
+  font-weight: bold;
+}
+
+.current-period{
+  background-color: #FEFFF2;
+}

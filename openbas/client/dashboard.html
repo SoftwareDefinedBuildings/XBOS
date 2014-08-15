@@ -18,58 +18,60 @@
 <template name="generalbuildingcolumn">
   <h2 class="dashboard-column-heading">Building Name</h2>
   <div class="dashboard-well">
+
     {{#each powermeterAll}}
       {{> power_meter_widget}}
     {{/each}}
-    <h3 class="dashboard-column-heading">Today's Schedule</h3>
-    <div>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <td id='day7' class='day'>Sun</td>
-            <td id='day1' class='day'>Mon</td>
-            <td id='day2' class='day'>Tue</td>
-            <td id='day3' class='day'>Wed</td>
-            <td id='day4' class='day'>Thu</td>
-            <td id='day5' class='day'>Fri</td>
-            <td id='day6' class='day'>Sat</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>We</td>
-            <td>Wd</td>
-            <td>Wd</td>
-            <td>Wd</td>
-            <td>Wd</td>
-            <td>Wd</td>
-            <td>We</td>
-          </tr>
-        </tbody>
-      </table>
-      <p>Schedule Type: <b>{{daytype}}</b></p>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Start</th>
-            <th>Heat SP</th>
-            <th>Cool SP</th>
-          </tr>
-        </thead>
-        <tbody>
-        {{#each globalschedule.weekday}}
-        <tr class="schedulerow" data-time="{{time}}" id="{{name}}">
-          <td>{{name}}</td>
-          <td>{{time}}</td>
-          <td>{{heatsp}}</td>
-          <td>{{coolsp}}</td>
-        </tr>
-        {{/each}}
-        </tbody>
-      </table>
 
-    </div>
+    {{> schedule_widget}}
+
+  </div>
+</template>
+
+<template name="schedule_widget">
+  <h3 class="dashboard-column-heading">This Week</h3>
+  <div>
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <td id='sun' class='day'>Sun</td>
+          <td id='mon' class='day'>Mon</td>
+          <td id='tue' class='day'>Tue</td>
+          <td id='wed' class='day'>Wed</td>
+          <td id='thu' class='day'>Thu</td>
+          <td id='fri' class='day'>Fri</td>
+          <td id='sat' class='day'>Sat</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Today's schedule: <b>{{schedule.name}}</b></p>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Start</th>
+          <th>Heat Setpoint</th>
+          <th>Cool Setpoint</th>
+        </tr>
+      </thead>
+      <tbody>
+      {{#each schedule.periods}}
+      <tr class="schedulerow" data-time="{{start}}" id="{{name}}">
+        <td>{{name}}</td>
+        <td>{{start}}</td>
+        {{#each points}}
+          {{#if isNamed 'temp_heat'}}
+          <td>{{value}}</td>
+          {{/if}}
+          {{#if isNamed 'temp_cool'}}
+          <td>{{value}}</td>
+          {{/if}}
+        {{/each}}
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -97,7 +99,6 @@
     <p><b>Temp:</b> {{getValue 'temp'}}</p>
     <p><b>Heat Setpoint:</b> {{getValue 'temp_heat'}}</p>
     <div class="panel panel-default">
-      <div class="panel-heading table-heading">Sensors</div>
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
@@ -126,7 +127,6 @@
       <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">{{zone}}</a>
     </h3>
     <div class="panel panel-default">
-      <div class="panel-heading table-heading">Light Groups</div>
       <table class="table table-bordered table-striped">
         <thead>
           <tr>

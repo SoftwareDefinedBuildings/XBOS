@@ -1,0 +1,98 @@
+[
+  {
+    "name": "weekday",
+    "periods": [
+      {
+        "name": "morning",
+        "start": "7:30",
+        "points": [
+          {
+            "path": "temp_heat",
+            "value": 72
+          },
+          {
+            "path": "temp_cool",
+            "value": 83
+          }
+        ]
+      },
+      {
+        "name": "afternoon",
+        "start": "13:30",
+        "points": [
+          {
+            "path": "temp_heat",
+            "value": 70
+          },
+          {
+            "path": "temp_cool",
+            "value": 80
+          }
+        ]
+      },
+      {
+        "name": "evening",
+        "start": "18:30",
+        "points": [
+          {
+            "path": "temp_heat",
+            "value": 50
+          },
+          {
+            "path": "temp_cool",
+            "value": 90
+          }
+        ]
+      }
+    ],
+    "color": "#EDF1FA"
+  },
+  {
+    "name": "weekend",
+    "periods": [
+      {
+        "name": "morning",
+        "start": "09:30",
+        "points": [
+          {
+            "path": "temp_heat",
+            "value": 65
+          },
+          {
+            "path": "temp_cool",
+            "value": 85
+          }
+        ]
+      },
+      {
+        "name": "afternoon",
+        "start": "17:30",
+        "points": [
+          {
+            "path": "temp_heat",
+            "value": 70
+          },
+          {
+            "path": "temp_cool",
+            "value": 80
+          }
+        ]
+      },
+      {
+        "name": "evening",
+        "start": "21:00",
+        "points": [
+          {
+            "path": "temp_heat",
+            "value": 50
+          },
+          {
+            "path": "temp_cool",
+            "value": 90
+          }
+        ]
+      }
+    ],
+    "color": "#FAF6ED"
+  }
+]

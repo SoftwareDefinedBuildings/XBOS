@@ -4,7 +4,6 @@ Meteor.startup(function() {
     Meteor.call('querysystem');
 });
 
-
 if (Meteor.isClient) {
 
   var Dashboard = {};
@@ -16,7 +15,7 @@ if (Meteor.isClient) {
       o.value = r[1];
       return o;
     });
-  } 
+  };
 
   Dashboard.sparkline = function(elemId, data, width, height, display_range) {
     var x = d3.scale.linear().range([0, width]);
@@ -44,7 +43,23 @@ if (Meteor.isClient) {
       d3.select('#sparkline-extents-' + id)
         .html(extents_label)
     }
-  }
+  };
+
+  Dashboard.master_schedule = {
+      'sun': 'weekend', 
+      'mon': 'weekday',
+      'tue': 'weekday',
+      'wed': 'weekday',
+      'thu': 'weekday',
+      'fri': 'weekday',
+      'sat': 'weekend'
+  };
+
+  Dashboard.day_names = {'7': 'sun', '1': 'mon', 
+                         '2': 'tue', '3': 'wed', 
+                         '4': 'thu', '5': 'fri', 
+                         '6': 'sat'
+  };
 
   UI.registerHelper('getValue', function(obj) {
     var unit = this.timeseries[obj].Properties.UnitofMeasure;
@@ -102,46 +117,50 @@ if (Meteor.isClient) {
     return Monitoring.find({'timeseries.demand': {'$exists': true}});
   };
 
-  Template.generalbuildingcolumn.globalschedule = function() {
-    var sched = {};
-    sched['weekday'] = [];
-    sched['weekend'] = [];
-    sched['weekday'][0] = {'name': 'Morning', 'time': '0730', 'heatsp': 72, 'coolsp': 83};
-    sched['weekday'][1] = {'name': 'Afternoon', 'time': '1330', 'heatsp': 70, 'coolsp': 80};
-    sched['weekday'][2] = {'name': 'Evening', 'time': '1830', 'heatsp': 50, 'coolsp': 90};
+  Template.schedule_widget.helpers({
+    isNamed: function(path){
+      return path == this.path;
+    }
+  });
 
-    sched['weekend'][0] = {'name': 'Morning','time': '0930', 'heatsp': 65, 'coolsp': 85};
-    sched['weekend'][1] = {'name': 'Afternoon','time': '1730', 'heatsp': 70, 'coolsp': 80};
-    sched['weekend'][2] = {'name': 'Evening','time': '2100', 'heatsp': 50, 'coolsp': 90};
-
-    return sched;
-  };
-
-  Template.generalbuildingcolumn.rendered = function() {
+  Template.schedule_widget.schedule = function(){
     var m = moment();
-    $('.day').removeClass('info');
-    $('#day'+m.day()).addClass('info');
+    var sch_name = Dashboard.master_schedule[Dashboard.day_names[m.day()]]
+    var sched = Schedules.find({'name': sch_name}).fetch()[0];
+    return sched;
+  }; 
 
-    _.each($('.schedulerow'), function(val, idx) {
-      var t = moment(val.getAttribute('data-time'), 'HHmm');
-      var name = val.getAttribute('id');
-      if (m.unix() > t.unix()) {
-        $('.schedulerow').removeClass('info');
-        $('#'+name).addClass('info');
+  Template.schedule_widget.rendered = function(){
+
+    var scheds = Schedules.find();
+    if (scheds.count()){
+      scheds = scheds.fetch();
+    }
+    _.each(Dashboard.master_schedule, function(val, key){
+      var day_sched = _.find(scheds, function(s){ return s.name == val });
+      $('#'+key).css('background-color', day_sched.color);
+    });
+
+    $(".day").tooltip({
+      title: function(){
+        return Dashboard.master_schedule[this.id];
       }
     });
 
-    console.log($('.schedulerow'));
-  };
-
-  Template.generalbuildingcolumn.daytype = function() {
     var m = moment();
-    if (m.day() < 6) {
-      return 'Weekday';
-    } else {
-      return 'Weekend';
-    }
-  };
+    $('.day').removeClass('current-day');
+    $('#'+Dashboard.day_names[m.day()]).addClass('current-day');
+
+    _.each($('.schedulerow'), function(val, idx) {
+      var t = moment(val.getAttribute('data-time'), 'HH:mm');
+      var name = val.getAttribute('id');
+      if (m.unix() > t.unix()) {
+        $('.schedulerow').removeClass('current-period');
+        $('#'+name).addClass('current-period');
+      }
+    });
+
+  }
 
   Template.zone_detail.points = function() {
     return this.points;
@@ -290,7 +309,6 @@ if (Meteor.isClient) {
 
     // render sparklines for sensors
     var sensors = Monitoring.find({'hvaczone': this.data.zone}).fetch();
-    console.log(sensors);
     _.each(sensors, function(s){
       var restrict = 'Path="' + s.path + '/temperature"';
       Meteor.call("latest", restrict, 100, function(err, res){
