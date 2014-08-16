@@ -2,11 +2,42 @@ Meteor.startup(function() {
     console.log('startup');
     // populates the HVAC and Lighting collections
     Meteor.call('querysystem');
+
+    Meteor.subscribe("schedules", Dashboard.render_schedules);
+
 });
 
 if (Meteor.isClient) {
 
   var Dashboard = {};
+
+  Dashboard.render_schedules = function(){
+    var scheds = Schedules.find().fetch();
+    _.each(Dashboard.master_schedule, function(val, key){
+      var day_sched = _.find(scheds, function(s){ return s.name == val });
+      $('#'+key).css('background-color', day_sched.color);
+    });
+
+    $(".day-tooltip").tooltip({
+      title: function(){
+        return Dashboard.master_schedule[this.id];
+      },
+      placement: 'bottom',
+    });
+
+    var m = moment();
+    $('.day').removeClass('current-day');
+    $('#'+Dashboard.day_names[m.day()]).addClass('current-day');
+
+    _.each($('.schedulerow'), function(val, idx) {
+      var t = moment(val.getAttribute('data-time'), 'HH:mm');
+      var name = val.getAttribute('id');
+      if (m.unix() > t.unix()) {
+        $('.schedulerow').removeClass('current-period');
+        $('#'+name).addClass('current-period');
+      }
+    });
+  };
 
   Dashboard.jsonify = function (readings){
     return _.map(readings, function(r){
@@ -130,38 +161,6 @@ if (Meteor.isClient) {
     return sched;
   }; 
 
-  Template.schedule_widget.rendered = function(){
-
-    var scheds = Schedules.find();
-    if (scheds.count()){
-      scheds = scheds.fetch();
-    }
-    _.each(Dashboard.master_schedule, function(val, key){
-      var day_sched = _.find(scheds, function(s){ return s.name == val });
-      $('#'+key).css('background-color', day_sched.color);
-    });
-
-    $(".day").tooltip({
-      title: function(){
-        return Dashboard.master_schedule[this.id];
-      }
-    });
-
-    var m = moment();
-    $('.day').removeClass('current-day');
-    $('#'+Dashboard.day_names[m.day()]).addClass('current-day');
-
-    _.each($('.schedulerow'), function(val, idx) {
-      var t = moment(val.getAttribute('data-time'), 'HH:mm');
-      var name = val.getAttribute('id');
-      if (m.unix() > t.unix()) {
-        $('.schedulerow').removeClass('current-period');
-        $('#'+name).addClass('current-period');
-      }
-    });
-
-  }
-
   Template.zone_detail.points = function() {
     return this.points;
   };
@@ -224,7 +223,6 @@ if (Meteor.isClient) {
   };
 
   Template.hvac_zone_widget.rendered = function(){
-
     var restrict0 = 'Path="' + this.data.path;
     var restrict = restrict0 + '/temp_cool" or '
                  + restrict0 + '/temp_heat" or '

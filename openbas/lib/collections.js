@@ -20,5 +20,9 @@ if (Meteor.isServer) {
       Rooms.insert(r);
     });
   }
+  
+  Meteor.publish("schedules", function () {
+    return Schedules.find({});
+  });
 
 }

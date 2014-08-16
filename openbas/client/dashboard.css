@@ -104,7 +104,11 @@ div.HVAC-zone-summary {
   height: 75px;
 }
 
-.current-day {
+td.day {
+  text-align: center;
+}
+
+td.current-day {
   font-weight: bold;
 }
 
