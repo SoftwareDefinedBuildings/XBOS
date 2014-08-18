@@ -33,14 +33,14 @@
 </template>
 
 <template name="configuration">
-  <div class="btn btn-info" data-toggle="modal" data-target="#metadataModal_{{fixPath path}}">Configure {{path}}</div>
+  <div class="btn btn-info" data-toggle="modal" data-target="#metadataModal_{{fixPath path}}">Configure</div>
 
   <div class="modal fade" id="metadataModal_{{fixPath path}}" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-              <h4 class="modal-title" id="modalLabel">Device Configuration {{path}}</h4>
+              <h4 class="modal-title" id="modalLabel">Device Configuration for {{path}}</h4>
             </div>
             <div id="device_{{fixPath path}}" class="modal-body">
               <form class="form-horizontal">
