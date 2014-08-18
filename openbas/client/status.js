@@ -96,15 +96,23 @@ if (Meteor.isClient) {
       }
       record = Monitoring.findOne({'_id': this._id})
       if (record) {
-        Monitoring.update(this._id, {$set: {'lightingzone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
+        res = Monitoring.update(this._id, {$set: {'lightingzone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
       }
-      //TODO: give notification of successful save
+      if (res == 1) {
+        // successful
+        console.log(this);
+        var path = this.path.replace(/\//g,'_');
+        $('#notifications'+path).empty();
+        $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
+        $('#success'+path).html('Successful!');
+        $('#success'+path).css('background-color','#5cb85c');
+        $('#success'+path).fadeOut(2000);
+      }
 
     }
   });
 
   Template.configuration.rendered = function() {
-      console.log("rendered",this);
       var myhvaczone = null;
       var mylightingzone = null;
       var path = this.data.path;
