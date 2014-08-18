@@ -26,6 +26,22 @@ if (Meteor.isClient) {
     return _.pluck(Rooms.find({'LightingZone':zone}).fetch(), 'RoomNumber');
   };
 
+  hvaczoneByID = function(_id) {
+      record = HVAC.findOne({'_id': _id})
+      if (record) {
+        return record.zone;
+      }
+      record = Lighting.findOne({'_id': _id})
+      if (record) {
+        return record.hvaczone;
+      }
+      record = Monitoring.findOne({'_id': _id})
+      if (record) {
+        return record.hvaczone;
+      }
+      return null
+  };
+
 
   UI.registerHelper('fixPath', function(p) {
     return p.replace(/\//g,'_');
@@ -86,13 +102,14 @@ if (Meteor.isClient) {
       var lightingzone = template.find('.lightingzones').value;
       var room = template.find('.rooms').value;
       var record = null;
+      var res = null
       record = HVAC.findOne({'_id': this._id})
       if (record) {
-        HVAC.update(this._id, {$set: {'zone': hvaczone, 'room': room}});
+        res = HVAC.update(this._id, {$set: {'zone': hvaczone, 'lightingzone': lightingzone, 'room': room}});
       }
       record = Lighting.findOne({'_id': this._id})
       if (record) {
-        Lighting.update(this._id, {$set: {'zone': lightingzone, 'room': room}});
+        res = Lighting.update(this._id, {$set: {'zone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
       }
       record = Monitoring.findOne({'_id': this._id})
       if (record) {
@@ -115,23 +132,26 @@ if (Meteor.isClient) {
   Template.configuration.rendered = function() {
       var myhvaczone = null;
       var mylightingzone = null;
+      var myroom = null;
       var path = this.data.path;
       record = HVAC.findOne({'_id': this.data._id})
       if (record) {
         myhvaczone = record.zone;
-        mylightingzone = '';
+        mylightingzone = record.lightingzone;
+        myroom = record.room;
       }
       record = Lighting.findOne({'_id': this.data._id})
       if (record) {
-        myhvaczone = ''
+        myhvaczone = record.hvaczone;
         mylightingzone = record.zone;
+        myroom = record.room;
       }
       record = Monitoring.findOne({'_id': this.data._id})
       if (record) {
         myhvaczone = record.hvaczone;
         mylightingzone = record.lightingzone;
+        myroom = record.room;
       }
-      console.log(myhvaczone, mylightingzone);
       $('.lightingzones').find('option').removeClass('selected')
       _.each($('.lightingzones').find('option'), function(val, idx) {
         if (val.value == mylightingzone) {
@@ -146,12 +166,23 @@ if (Meteor.isClient) {
             $('#device_'+mypath+' .hvaczones').val(val.value);
         }
       });
+      $('.rooms').find('option').removeClass('selected')
+      _.each($('.rooms').find('option'), function(val, idx) {
+        if (val.value == myroom) {
+            mypath = path.replace(/\//g,'_');
+            $('#device_'+mypath+' .room').val(val.value);
+        }
+      });
   };
 
   Template.configuration.derivedrooms = function() {
     var ret = [];
     if (Session.get('selectedhvaczone') != null) {
       ret = roomsForHVACZone(Session.get('selectedhvaczone'));
+    } else {
+      zone = hvaczoneByID(this._id);
+      console.log(this, zone);
+      ret = roomsForHVACZone(zone);
     }
     return ret;
   };
