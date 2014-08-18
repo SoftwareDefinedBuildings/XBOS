@@ -1,6 +1,7 @@
 if (Meteor.isClient) {
 
   Session.set('selectedhvaczone', null);
+  Session.set('selectedlightingzone', null);
 
   hvaczones = function() {
     return _.uniq( _.filter( _.pluck(Rooms.find().fetch(), 'HVACZone'), function(o) { return o != null; }));
@@ -13,6 +14,19 @@ if (Meteor.isClient) {
     return _.pluck(Rooms.find({'HVACZone':zone}).fetch(), 'RoomNumber');
   };
 
+  //TODO: where do we pull lighting zones from? there can be multiple in a room? What defines a lighting zone?
+  lightingzones = function() {
+    return _.uniq( _.filter( _.pluck(Rooms.find().fetch(), 'LightingZone'), function(o) { return o != null; }));
+  };
+
+  roomsForLightingZone = function(zone) {
+    if (!zone) {
+      return []
+    }
+    return _.pluck(Rooms.find({'LightingZone':zone}).fetch(), 'RoomNumber');
+  };
+
+
   UI.registerHelper('fixPath', function(p) {
     return p.replace(/\//g,'_');
   });
@@ -21,18 +35,22 @@ if (Meteor.isClient) {
     return hvaczones();
   });
 
-  Template.status.sources = function () {
+  UI.registerHelper('lightingzones', function() {
+    return lightingzones();
+  });
+
+  Template.status.sources = function() {
     /*
      * Grabs all the HVAC, Lighting and Monitoring points. These
      * have been configured, so we can read their metadata. Thanks
      * to the 'querysystem' function, thse are pre-aggregated by
      * their driver path instead of the individual timeseries
      */
-    var sources = [];
-    sources.push.apply(sources, HVAC.find().fetch());
-    sources.push.apply(sources, Lighting.find().fetch());
-    sources.push.apply(sources, Monitoring.find().fetch());
-    return sources
+    var sources = []
+    sources.push.apply(sources, Lighting.find().fetch())
+    sources.push.apply(sources, HVAC.find().fetch())
+    sources.push.apply(sources, Monitoring.find().fetch())
+    return sources;
   };
 
   Template.device.driverPath = function() {
@@ -49,15 +67,41 @@ if (Meteor.isClient) {
     return baseurl;
   };
 
-
+  //TODO: autopopulate with the current values
   Template.configuration.events({
-    'click div': function(e) {
+    'click .btn-info': function(e) {
         var path = this.path;
         var fixedpath = this.path.replace(/\//g,'_');
     },
 
     'change .hvaczones': function(e, template) {
         Session.set('selectedhvaczone', template.find('.hvaczones').value);
+    },
+
+    'change .lightingzones': function(e, template) {
+        Session.set('selectedlightingzone', template.find('.lightingzones').value);
+    },
+
+    'click .save': function(e, template) {
+      //TODO: save this to mongo. `this` contains the mongo record, including ID
+      var hvaczone = template.find('.hvaczones').value;
+      var lightingzone = template.find('.lightingzones').value;
+      var room = template.find('.rooms').value;
+      var record = null;
+      record = HVAC.findOne({'_id': this._id})
+      if (record) {
+        HVAC.update(this._id, {$set: {'zone': hvaczone, 'room': room}});
+      }
+      record = Lighting.findOne({'_id': this._id})
+      if (record) {
+        Lighting.update(this._id, {$set: {'zone': lightingzone, 'room': room}});
+      }
+      record = Monitoring.findOne({'_id': this._id})
+      if (record) {
+        Monitoring.update(this._id, {$set: {'lightingzone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
+      }
+      //TODO: give notification of successful save
+
     }
   });
 

@@ -15,7 +15,7 @@ if (Meteor.isServer) {
   }
 
   if (Rooms.find({}).fetch().length == 0){
-    var rooms = EJSON.parse(Assets.getText("rooms.json"));
+    var rooms = EJSON.parse(Assets.getText(Meteor.settings.roomsfile));
     _.each(rooms, function(r){
       Rooms.insert(r);
     });

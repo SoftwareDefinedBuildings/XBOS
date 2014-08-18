@@ -33,14 +33,14 @@
 </template>
 
 <template name="configuration">
-  <div class="btn btn-info" data-toggle="modal" data-target="#metadataModal">Configure</div>
+  <div class="btn btn-info" data-toggle="modal" data-target="#metadataModal_{{fixPath path}}">Configure {{path}}</div>
 
-  <div class="modal fade" id="metadataModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal fade" id="metadataModal_{{fixPath path}}" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-              <h4 class="modal-title" id="modalLabel">Device Configuration</h4>
+              <h4 class="modal-title" id="modalLabel">Device Configuration {{path}}</h4>
             </div>
             <div id="device_{{fixPath path}}" class="modal-body">
               <form class="form-horizontal">
@@ -49,9 +49,20 @@
                   <div class="col-sm-8">
                     <select class="hvaczones form-control">
                       <option class="selected" value=""></option>
-                    {{#each hvaczones}}
-                      <option value="{{this}}">{{this}}</option>
-                    {{/each}}
+                      {{#each hvaczones}}
+                        <option value="{{this}}">{{this}}</option>
+                      {{/each}}
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Lighting Zone</label>
+                  <div class="col-sm-8">
+                    <select class="lightingzones form-control">
+                      <option class="selected" value=""></option>
+                      {{#each lightingzones}}
+                        <option value="{{this}}">{{this}}</option>
+                      {{/each}}
                     </select>
                   </div>
                 </div>
@@ -71,7 +82,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="save btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
