@@ -67,7 +67,6 @@ if (Meteor.isClient) {
     return baseurl;
   };
 
-  //TODO: autopopulate with the current values
   Template.configuration.events({
     'click .btn-info': function(e) {
         var path = this.path;
@@ -83,7 +82,6 @@ if (Meteor.isClient) {
     },
 
     'click .save': function(e, template) {
-      //TODO: save this to mongo. `this` contains the mongo record, including ID
       var hvaczone = template.find('.hvaczones').value;
       var lightingzone = template.find('.lightingzones').value;
       var room = template.find('.rooms').value;
@@ -104,6 +102,43 @@ if (Meteor.isClient) {
 
     }
   });
+
+  Template.configuration.rendered = function() {
+      console.log("rendered",this);
+      var myhvaczone = null;
+      var mylightingzone = null;
+      var path = this.data.path;
+      record = HVAC.findOne({'_id': this.data._id})
+      if (record) {
+        myhvaczone = record.zone;
+        mylightingzone = '';
+      }
+      record = Lighting.findOne({'_id': this.data._id})
+      if (record) {
+        myhvaczone = ''
+        mylightingzone = record.zone;
+      }
+      record = Monitoring.findOne({'_id': this.data._id})
+      if (record) {
+        myhvaczone = record.hvaczone;
+        mylightingzone = record.lightingzone;
+      }
+      console.log(myhvaczone, mylightingzone);
+      $('.lightingzones').find('option').removeClass('selected')
+      _.each($('.lightingzones').find('option'), function(val, idx) {
+        if (val.value == mylightingzone) {
+            mypath = path.replace(/\//g,'_');
+            $('#device_'+mypath+' .lightingzones').val(val.value);
+        }
+      });
+      $('.hvaczones').find('option').removeClass('selected')
+      _.each($('.hvaczones').find('option'), function(val, idx) {
+        if (val.value == myhvaczone) {
+            mypath = path.replace(/\//g,'_');
+            $('#device_'+mypath+' .hvaczones').val(val.value);
+        }
+      });
+  };
 
   Template.configuration.derivedrooms = function() {
     var ret = [];
