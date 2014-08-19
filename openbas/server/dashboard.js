@@ -47,6 +47,7 @@ if (Meteor.isServer) {
             var device = my_ts[0].Metadata.Device;
             var model = my_ts[0].Metadata.Model;
             var driver = my_ts[0].Metadata.Driver;
+            var roomname = my_ts[0].Metadata.Room;
             console.log(path)
             if (system == 'HVAC') {
               var zonename = my_ts[0].Metadata.HVACZone;
@@ -54,7 +55,6 @@ if (Meteor.isServer) {
               var zonename = my_ts[0].Metadata.LightingZone;
               var groupname = my_ts[0].Metadata.Group;
             } else if (system == 'Monitoring') {
-              var roomname = my_ts[0].Metadata.Room;
               var lightzonename = my_ts[0].Metadata.LightingZone;
               var hvaczonename = my_ts[0].Metadata.HVACZone || my_ts[0].Metadata.Hvaczone;
             }
@@ -70,6 +70,8 @@ if (Meteor.isServer) {
               HVAC.upsert({'path': path}, {
                 'path': path, 
                 'zone': zonename, 
+                'lightingzone': '',
+                'room': roomname, 
                 'device': device,
                 'model': model,
                 'driver': driver,
@@ -80,6 +82,8 @@ if (Meteor.isServer) {
                 'path': path, 
                 'group': groupname, 
                 'zone': zonename, 
+                'hvaczone': '',
+                'room': roomname, 
                 'role': role, 
                 'device': device,
                 'model': model,

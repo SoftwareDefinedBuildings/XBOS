@@ -5,6 +5,7 @@ Lighting = new Meteor.Collection("lighting");
 Monitoring = new Meteor.Collection("monitoring");
 Schedules = new Meteor.Collection("schedules");
 MasterSchedule = new Meteor.Collection("master_schedule");
+Unconfigured = new Meteor.Collection("unconfigured");
 
 if (Meteor.isServer) {
 

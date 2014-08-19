@@ -41,7 +41,10 @@ if (Meteor.isClient) {
       }
       return null
   };
-
+  
+  get_source_path = function(path) {
+    return path.slice(0,path.lastIndexOf('/'));
+  }
 
   UI.registerHelper('fixPath', function(p) {
     return p.replace(/\//g,'_');
@@ -54,6 +57,33 @@ if (Meteor.isClient) {
   UI.registerHelper('lightingzones', function() {
     return lightingzones();
   });
+
+  /*
+   * Searches the 3 collections HVAC, Lighting and Metadata
+   * for an aggregate path that's the same as our new point.
+   * If we find one, it means we've been placed into an additonal
+   * collection and are probably configured. If not, then we are unconfigured,
+   * so we add ourselves to the Unconfigured collection
+   */
+  Template.status.rendered = function() {
+    Points.find().observe({
+    added: function(doc) {
+        var found = false;
+        _.each([HVAC, Lighting, Monitoring], function(system, index) {
+            if (found) { return }
+            var allpaths = _.pluck(system.find().fetch(), 'path')
+            if (_.contains(allpaths, get_source_path(doc.Path))) {
+                found = true;
+                return
+            }
+        });
+        if (!found) {
+          console.log("Found new unconfigured point",doc);
+          Unconfigured.insert(doc);
+        }
+    }
+    });
+  };
 
   Template.status.sources = function() {
     /*
