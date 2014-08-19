@@ -2,7 +2,6 @@ if (Meteor.isClient) {
 
   Session.set('selectedhvaczone', null);
   Session.set('selectedlightingzone', null);
-
   hvaczones = function() {
     return _.uniq( _.filter( _.pluck(Rooms.find().fetch(), 'HVACZone'), function(o) { return o != null; }));
   };
@@ -27,15 +26,8 @@ if (Meteor.isClient) {
   };
 
   hvaczoneByID = function(_id) {
-      record = HVAC.findOne({'_id': _id})
-      if (record) {
-        return record.zone;
-      }
-      record = Lighting.findOne({'_id': _id})
-      if (record) {
-        return record.hvaczone;
-      }
-      record = Monitoring.findOne({'_id': _id})
+      var predicate = {'_id': _id};
+      record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       if (record) {
         return record.hvaczone;
       }
@@ -43,15 +35,8 @@ if (Meteor.isClient) {
   };
 
   lightingzonebyId = function(_id) {
-      record = HVAC.findOne({'_id': _id})
-      if (record) {
-        return record.lightingzone;
-      }
-      record = Lighting.findOne({'_id': _id})
-      if (record) {
-        return record.zone;
-      }
-      record = Monitoring.findOne({'_id': _id})
+      var predicate = {'_id': _id};
+      record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       if (record) {
         return record.lightingzone;
       }
@@ -75,29 +60,27 @@ if (Meteor.isClient) {
   });
 
   /*
-   * Searches the 3 collections HVAC, Lighting and Metadata
-   * for an aggregate path that's the same as our new point.
-   * If we find one, it means we've been placed into an additonal
-   * collection and are probably configured. If not, then we are unconfigured,
-   * so we add ourselves to the Unconfigured collection
    */
-  Template.status.rendered = function() {
+  Template.status.created = function() {
     Points.find().observe({
     added: function(doc) {
-        var found = false;
-        _.each([HVAC, Lighting, Monitoring], function(system, index) {
-            if (found) { return }
-            var allpaths = _.pluck(system.find().fetch(), 'path')
-            if (_.contains(allpaths, get_source_path(doc.Path))) {
-                found = true;
-                return
-            }
-        });
-        if (!found) {
-          console.log("Found new unconfigured point",doc);
-          if (!Unconfigured.findOne({'uuid': doc.uuid})) {
-            Unconfigured.insert(doc);
-          }
+        if (doc.configured) {
+            return
+        }
+        console.log('unconfigured doc', doc);
+        var src_path = get_source_path(doc.Path);
+        if (!Unconfigured.findOne({'_id': src_path})) {
+          Meteor.call('query', "select * where Path = '"+doc.Path+"'", function(err, res) {
+              var rec = {'device': res[0].Metadata.Device,
+                        'uuid': doc.uuid,
+                        'model': res[0].Metadata.Model,
+                        'driver': res[0].Metadata.Driver,
+                        'path': src_path,
+                        'configured': false,
+                        '_id': src_path};
+              console.log('inserting', rec);
+              Unconfigured.upsert({'_id': src_path}, rec);
+          });
         }
     }
     });
@@ -117,6 +100,26 @@ if (Meteor.isClient) {
     return sources;
   };
 
+  /*
+   * Inside the Unconfigured collection, we have the timeseries endpoints.
+   * We need to group them by their source path, and then retrieve their collective
+   * metadata from the archiver
+   *
+   * Need to add a key to the meteor collections so that we can tell if something
+   * has been configured or not. This should take care of the problem where 
+   * everything is considered 'unconfigured' upon setup.
+   */
+
+  Template.status.unconfigured = function() {
+    return Unconfigured.find();
+  };
+
+  Template.device.color = function() {
+    if (this.configured != null && !this.configured) {
+        return 'warning';
+    }
+    return '';
+  };
   Template.device.driverPath = function() {
     /*
      * From the driver module path (e.g. smap.drivers.lights.VirtualLightDriver),
@@ -163,6 +166,13 @@ if (Meteor.isClient) {
       if (record) {
         res = Monitoring.update(this._id, {$set: {'lightingzone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
       }
+      record = Unconfigured.findOne({'_id': this._id})
+      if (record) {
+        record['lightingzone'] = lightingzone;
+        record['hvaczone'] = hvaczone;
+        record['room'] = room;
+        Unconfigured.remove({'_id': this._id});
+      }
       //TODO: save this metadata update to the archiver
       if (res == 1) {
         // successful
@@ -182,19 +192,8 @@ if (Meteor.isClient) {
       var mylightingzone = null;
       var myroom = null;
       var path = this.data.path;
-      record = HVAC.findOne({'_id': this.data._id})
-      if (record) {
-        myhvaczone = record.zone;
-        mylightingzone = record.lightingzone;
-        myroom = record.room;
-      }
-      record = Lighting.findOne({'_id': this.data._id})
-      if (record) {
-        myhvaczone = record.hvaczone;
-        mylightingzone = record.zone;
-        myroom = record.room;
-      }
-      record = Monitoring.findOne({'_id': this.data._id})
+      var predicate = {'_id': this.data._id};
+      record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       if (record) {
         myhvaczone = record.hvaczone;
         mylightingzone = record.lightingzone;

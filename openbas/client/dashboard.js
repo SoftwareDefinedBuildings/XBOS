@@ -105,15 +105,15 @@ Template.lightingbuildingcolumn.LightingAll = function() {
   var lighting = Lighting.find({'role': 'Building Lighting'}).fetch();
   // for each unique zone
   var zones = [];
-  _.each(_.uniq(_.pluck(lighting, 'zone')), function(val, idx) {
-    var groups = _.filter(lighting, function(o) { return o.zone == val; });
+  _.each(_.uniq(_.pluck(lighting, 'lightingzone')), function(val, idx) {
+    var groups = _.filter(lighting, function(o) { return o.lightingzone == val; });
     zones[idx] = groups;
   });
   return zones;
 };
 
 Template.light_zone_widget.zone = function() {
-  return this[0].zone;
+  return this[0].lightingzone;
 };
 
 Template.light_zone_widget.groups = function() {
@@ -121,16 +121,16 @@ Template.light_zone_widget.groups = function() {
 };
 
 Template.light_zone_widget.internals = function() {
-  var lighting = Lighting.find({'role': 'Task Lighting', 'zone': this[0].zone});
+  var lighting = Lighting.find({'role': 'Task Lighting', 'lightingzone': this[0].lightingzone});
   return lighting;
 };
 
 Template.light_zone_widget.sensors = function() {
-  return Monitoring.find({'lightingzone': this[0].zone});
+  return Monitoring.find({'lightingzone': this[0].lightingzone});
 };
 
 Template.hvac_zone_widget.sensors = function() {
-  return Monitoring.find({'hvaczone': this.zone});
+  return Monitoring.find({'hvaczone': this.hvaczone});
 };
 
 Template.generalbuildingcolumn.powermeterAll = function() {
@@ -299,7 +299,7 @@ Template.hvac_zone_widget.rendered = function(){
   });
 
   // render sparklines for sensors
-  var sensors = Monitoring.find({'hvaczone': this.data.zone}).fetch();
+  var sensors = Monitoring.find({'hvaczone': this.data.hvaczone}).fetch();
   _.each(sensors, function(s){
     var restrict = 'Path="' + s.path + '/temperature"';
     Meteor.call("latest", restrict, 100, function(err, res){

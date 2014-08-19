@@ -69,25 +69,27 @@ if (Meteor.isServer) {
             if (system == 'HVAC') {
               HVAC.upsert({'path': path}, {
                 'path': path, 
-                'zone': zonename, 
+                'hvaczone': zonename, 
                 'lightingzone': '',
                 'room': roomname, 
                 'device': device,
                 'model': model,
                 'driver': driver,
+                'configured': true,
                 'timeseries': record
               });
             } else if (system == 'Lighting') {
               Lighting.upsert({'path': path}, {
                 'path': path, 
                 'group': groupname, 
-                'zone': zonename, 
+                'lightingzone': zonename, 
                 'hvaczone': '',
                 'room': roomname, 
                 'role': role, 
                 'device': device,
                 'model': model,
                 'driver': driver,
+                'configured': true,
                 'timeseries': record
               });
             } else if (system == 'Monitoring') {
@@ -99,6 +101,7 @@ if (Meteor.isServer) {
                 'device': device,
                 'model': model,
                 'driver': driver,
+                'configured': true,
                 'timeseries': record
               });
             }

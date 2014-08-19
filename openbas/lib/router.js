@@ -18,7 +18,16 @@ Router.map(function() {
       },
     });
 
-    this.route('status');
+    this.route('status', {
+      onBeforeAction: function() {
+          console.log("RUNNINg");
+          Meteor.call('querysystem');
+          this.subscribe('Points').wait();
+          this.subscribe('HVAC').wait();
+          this.subscribe('Lighting').wait();
+          this.subscribe('Monitoring').wait();
+      },
+    });
     this.route('points');
     this.route('about');
     this.route('test');
@@ -28,9 +37,9 @@ Router.map(function() {
       data: function() { 
         console.log(this.params.zone);
         if (this.params.zonetype == 'hvac') {
-          return {'type': 'hvac', 'points': HVAC.find({'zone': this.params.zone}).fetch()};
+          return {'type': 'hvac', 'points': HVAC.find({'hvaczone': this.params.zone}).fetch()};
         } else if (this.params.zonetype == 'lighting') {
-          return {'type': 'lighting', 'points': Lighting.find({'zone': this.params.zone}).fetch()};;
+          return {'type': 'lighting', 'points': Lighting.find({'lightingzone': this.params.zone}).fetch()};;
         } else {
           return 0
         }
