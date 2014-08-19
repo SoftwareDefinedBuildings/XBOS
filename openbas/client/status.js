@@ -79,7 +79,9 @@ if (Meteor.isClient) {
         });
         if (!found) {
           console.log("Found new unconfigured point",doc);
-          Unconfigured.insert(doc);
+          if (!Unconfigured.findOne({'uuid': doc.uuid})) {
+            Unconfigured.insert(doc);
+          }
         }
     }
     });
