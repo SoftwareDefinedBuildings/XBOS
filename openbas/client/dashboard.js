@@ -326,6 +326,9 @@ Template.power_meter_widget.rendered = function(){
   var restrict = 'Path="' + this.data.path + '/demand"';
   var myid = this.data._id;
   Meteor.call("latest", restrict, 1000, function(err, res){
+    if (err) {
+        console.log(err);
+    }
     var mydata = res[0].Readings;
     mydata = Dashboard.jsonify(mydata);
     Dashboard.sparkline("#sparkline-container-" + myid, mydata, 250, 50, true);

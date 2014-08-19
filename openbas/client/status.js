@@ -41,6 +41,22 @@ if (Meteor.isClient) {
       }
       return null
   };
+
+  lightingzonebyId = function(_id) {
+      record = HVAC.findOne({'_id': _id})
+      if (record) {
+        return record.lightingzone;
+      }
+      record = Lighting.findOne({'_id': _id})
+      if (record) {
+        return record.zone;
+      }
+      record = Monitoring.findOne({'_id': _id})
+      if (record) {
+        return record.lightingzone;
+      }
+      return null
+  };
   
   get_source_path = function(path) {
     return path.slice(0,path.lastIndexOf('/'));
@@ -130,9 +146,9 @@ if (Meteor.isClient) {
     },
 
     'click .save': function(e, template) {
-      var hvaczone = template.find('.hvaczones').value;
-      var lightingzone = template.find('.lightingzones').value;
-      var room = template.find('.rooms').value;
+      var hvaczone = template.find('.hvaczones').value || null;
+      var lightingzone = template.find('.lightingzones').value || null;
+      var room = template.find('.rooms').value || null;
       var record = null;
       var res = null
       record = HVAC.findOne({'_id': this._id})
@@ -147,9 +163,9 @@ if (Meteor.isClient) {
       if (record) {
         res = Monitoring.update(this._id, {$set: {'lightingzone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
       }
+      //TODO: save this metadata update to the archiver
       if (res == 1) {
         // successful
-        console.log(this);
         var path = this.path.replace(/\//g,'_');
         $('#notifications'+path).empty();
         $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
@@ -213,8 +229,11 @@ if (Meteor.isClient) {
       ret = roomsForHVACZone(Session.get('selectedhvaczone'));
     } else {
       zone = hvaczoneByID(this._id);
-      console.log(this, zone);
       ret = roomsForHVACZone(zone);
+      if (!zone) {
+        zone = lightingzonebyId(this._id);
+        ret = roomsForLightingZone(zone);
+      }
     }
     return ret;
   };
