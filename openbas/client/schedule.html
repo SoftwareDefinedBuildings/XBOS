@@ -1,0 +1,47 @@
+
+<template name="schedule">
+  <div class="master-schedule-container">
+    <div class="panel panel-default">
+      <div class="panel-heading">Weekly schedule</div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Schedule type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each days}}
+          <tr>
+            <td>{{ day }}</td>
+            <td>
+              <select id="{{ day_id }}-schedule" class="schedule-select form-control">
+                <option class="selected" value=""></option>
+                {{#each schedules}}
+                  <option value="{{name}}">{{name}}</option>
+                {{/each}}
+              </select>
+            </td>
+          </tr>
+          {{/each}}
+          <tr>
+            <td align=right colspan=2>
+              <button id="add-schedule" type="button" class="btn btn-default btn-md">
+                <span class="glyphicon glyphicon-plus"></span> Add new schedule
+              </button>
+
+              <button id="save-schedule" type="button" class="btn btn-success btn-md">Save</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="alert alert-success" id="success-alert" style="margin: 10px; display: none;">
+      Successfully updated the weekly schedule.
+    </div>
+  </div>
+</template>  
+
+<template name="add_schedule">
+  Add a new schedule
+</template>

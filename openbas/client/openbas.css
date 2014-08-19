@@ -12,11 +12,6 @@ body {
     user-select: none;
 }
 
-#outer {
-    width: 800px;
-    margin: 0 auto;
-}
-
 .point {
     padding: 5px;
 }
@@ -48,5 +43,15 @@ body {
 
 #actuators {
   width: 900px;
+  margin: 0 auto;
+}
+
+div.container {
+  width: 900px;
+  margin: 0 auto;
+}
+
+div.master-schedule-container {
+  width: 500px;
   margin: 0 auto;
 }

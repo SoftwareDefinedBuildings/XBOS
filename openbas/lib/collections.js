@@ -4,6 +4,7 @@ HVAC = new Meteor.Collection("hvac");
 Lighting = new Meteor.Collection("lighting");
 Monitoring = new Meteor.Collection("monitoring");
 Schedules = new Meteor.Collection("schedules");
+MasterSchedule = new Meteor.Collection("master_schedule");
 
 if (Meteor.isServer) {
 
@@ -14,6 +15,18 @@ if (Meteor.isServer) {
     });
   }
 
+  if (MasterSchedule.find({}).fetch().length == 0){
+    MasterSchedule.insert({
+      'mon': 'weekday',
+      'tue': 'weekday',
+      'wed': 'weekday',
+      'thu': 'weekday',
+      'fri': 'weekday',
+      'sat': 'weekend',
+      'sun': 'weekend',
+    });
+  }
+ 
   if (Rooms.find({}).fetch().length == 0){
     var rooms = EJSON.parse(Assets.getText("rooms.json"));
     _.each(rooms, function(r){
