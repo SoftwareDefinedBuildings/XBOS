@@ -1,16 +1,18 @@
 Meteor.startup(function() {
-    console.log('startup');
-    // populates the HVAC and Lighting collections
-    Meteor.call('querysystem');
-
-    Meteor.subscribe("schedules", Dashboard.render_schedules);
-
+  console.log('startup');
+  // populates the HVAC and Lighting collections
+  Meteor.call('querysystem');
 });
 
 var Dashboard = {};
 
 Dashboard.render_schedules = function(){
   var scheds = Schedules.find().fetch();
+  Dashboard.master_schedule = MasterSchedule.findOne({});
+
+  // Shouldn't be neeed when we remove autopublish
+  delete Dashboard.master_schedule._id;
+
   _.each(Dashboard.master_schedule, function(val, key){
     var day_sched = _.find(scheds, function(s){ return s.name == val });
     $('#'+key).css('background-color', day_sched.color);
@@ -72,16 +74,6 @@ Dashboard.sparkline = function(elemId, data, width, height, display_range) {
     d3.select(elemId)
       .html(extents_label)
   }
-};
-
-Dashboard.master_schedule = {
-    'sun': 'weekend', 
-    'mon': 'weekday',
-    'tue': 'weekday',
-    'wed': 'weekday',
-    'thu': 'weekday',
-    'fri': 'weekday',
-    'sat': 'weekend'
 };
 
 Dashboard.day_names = {'7': 'sun', '1': 'mon', 
@@ -154,10 +146,13 @@ Template.schedule_widget.helpers({
 
 Template.schedule_widget.schedule = function(){
   var m = moment();
-  var sch_name = Dashboard.master_schedule[Dashboard.day_names[m.day()]]
+  var master = MasterSchedule.findOne({});
+  var sch_name = master[Dashboard.day_names[m.day()]]
   var sched = Schedules.find({'name': sch_name}).fetch()[0];
   return sched;
 }; 
+
+Template.schedule_widget.rendered = Dashboard.render_schedules;
 
 Template.zone_detail.points = function() {
   return this.points;

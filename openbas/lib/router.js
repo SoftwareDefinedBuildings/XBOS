@@ -1,6 +1,23 @@
 Router.map(function() {
-    this.route('dashboard', {path: '/'});
-    this.route('schedule');
+    this.route('dashboard', {
+      path: '/',
+      waitOn: function() {
+        return [
+          Meteor.subscribe('schedules'),
+          Meteor.subscribe('master_schedule')
+        ];
+      },  
+    });
+
+    this.route('schedule', {
+      waitOn: function(){
+        return [
+          Meteor.subscribe('schedules'),
+          Meteor.subscribe('master_schedule')
+        ];
+      },
+    });
+
     this.route('status');
     this.route('points');
     this.route('about');

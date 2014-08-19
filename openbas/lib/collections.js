@@ -35,6 +35,9 @@ if (Meteor.isServer) {
     });
   }
   
+  Meteor.publish("master_schedule", function () {
+    return MasterSchedule.find({}, { fields: { '_id': 0 } });
+  });
   Meteor.publish("schedules", function () {
     return Schedules.find({});
   });
