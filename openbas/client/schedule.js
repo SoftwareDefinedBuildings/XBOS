@@ -42,9 +42,6 @@ Template.schedule.events({
       }, 5000);
     }
   },
-  'click #add-schedule': function(){
-    console.log('clicked add-schedule');
-  }
 });
 
 Template.edit_schedule.events({
@@ -57,8 +54,8 @@ Template.edit_schedule.events({
     var id = this._id;
     var periods = _.map($('.schedule-period'), function(p){
       rv = {};
-      rv.name = $(p).find("#period-name").val();
-      rv.start = $(p).find("#period-start").val();
+      rv.name = $(p).find(".period-name").val();
+      rv.start = $(p).find(".period-start").val();
       rv.points = _.map($(p).find(".period-point"), function(point){
         mypoint = {};
         mypoint.path = $(point).find('.period-point-path').val();
@@ -80,3 +77,21 @@ Template.edit_schedule.events({
     }
   }
 });
+
+Template.add_schedule.events({
+  'click #add-period': function(event){
+    var rendered = UI.render(Template.schedule_period);
+    UI.insert(rendered, $('table')[0]);
+  },
+  'click .add-control-point': function(event){
+    var period_id = $(event.target).data('period');
+    var row = '<tr class="period-point"><td><input type="text" class="period-point-path form-control"></td>'
+            + '<td><input type="text" class="period-point-value form-control"></td></tr>';
+    $("#schedule-period-" + period_id).append(row);
+  },
+  'click #add-schedule-save': function(){
+    console.log('clicked add-schedule-save');
+  }
+});
+
+

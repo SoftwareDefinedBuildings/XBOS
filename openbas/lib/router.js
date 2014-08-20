@@ -58,4 +58,8 @@ Router.map(function() {
       data: function() { return Schedules.findOne({_id: this.params.id}); },
     });
     
+    this.route('add_schedule', {
+      path: '/schedule/add/',
+    });
+    
 });

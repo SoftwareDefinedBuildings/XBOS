@@ -80,6 +80,36 @@
   </div>
 </template>  
 
+<template name="add_schedule">
+  <div class="schedule-container">
+    <div class="panel panel-default">
+      <div class="panel-heading">New daily schedule</div>
+      <table class="table table-bordered add-schedule">
+        <tbody>
+          <tr>
+            <td class="text-label" style="padding-top: 15px;">Schedule name</td>
+            <td>
+              <input id="schedule-name" type="text" class="form-control">
+            </td>
+          </tr>
+        </tbody>
+
+        {{> schedule_period}}
+  
+      </table>
+    </div>
+    <div style="text-align:right; margin-bottom: 10px; margin-top: -10px;">
+      <button id="add-period" type="button" class="btn btn-default btn-md">
+        <span class="glyphicon glyphicon-plus"></span>Add period
+      </button>
+      <button id="add-schedule-save" type="button" class="btn btn-success btn-md">Save</button>
+      <div class="alert alert-success" id="success-alert" style="text-align: center; margin: 10px; display: none;">
+        Successfully added the schedule.
+      </div>
+    </div>
+  </div>
+</template>
+
 <template name="edit_schedule">
   <div class="schedule-container">
     <div class="panel panel-default">
@@ -87,7 +117,7 @@
       <table class="table table-bordered edit-schedule">
         <tbody>
           <tr>
-            <td>Schedule name</td>
+            <td class="text-label" style="padding-top: 15px;">Schedule name</td>
             <td>
               <input id="schedule-name" type="text" class="form-control" value="{{name}}">
             </td>
@@ -96,13 +126,13 @@
         {{#each periods}}
         <tbody class="schedule-period" id="schedule-period-{{name}}">
           <tr>
-            <td>Period name</td>
+            <td class="text-label" style="padding-top: 15px;">Period name</td>
             <td>
               <input id="period-name" type="text" class="form-control" value="{{name}}">
             </td>
           </tr>
           <tr>
-            <td>Start time</td>
+            <td class="text-label" style="padding-top: 15px;">Start time</td>
             <td>
               <input id="period-start" type="text" class="form-control" value="{{start}}">
             </td>
@@ -168,4 +198,39 @@
     </div>
    {{/each}}
   </div>
+</template>
+
+<template name="schedule_period">
+  <tbody class="schedule-period" id="schedule-period-0">
+    <tr>
+      <td class="text-label" style="padding-top: 15px;">Period name</td>
+      <td>
+        <input type="text" class="period-name form-control">
+      </td>
+    </tr>
+    <tr>
+      <td class="text-label" style="padding-top: 15px;">Start time</td>
+      <td>
+        <input type="text" class="period-start form-control" placeholder="HH:mm">
+      </td>
+    </tr>
+
+    <tr class="period-point">
+      <td>
+        <input type="text" class="period-point-path form-control">
+      </td>
+      <td>
+        <input type="text" class="period-point-value form-control">
+      </td>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr>
+      <td colspan=2 style="text-align: right;">
+        <button id="add-control-point" data-period="0" type="button" class="btn btn-default btn-md add-control-point">
+          <span class="glyphicon glyphicon-plus"></span> Add control point
+        </button>
+      </td>
+    </tr>
+  </tbody>
 </template>

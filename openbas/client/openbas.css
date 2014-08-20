@@ -56,8 +56,7 @@ div.schedule-container {
   margin: 0 auto;
 }
 
-table.edit-schedule td:first-child {
-  border-spacing: 10px 5px;
+table td.text-label {
   font-weight: bold;
 }
 
