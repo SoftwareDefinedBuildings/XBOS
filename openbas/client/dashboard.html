@@ -92,7 +92,7 @@
 <template name="hvac_zone_widget">
   <div class="dashboard-well">
     <h3 class="dashboard-column-heading centertext">
-      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='hvac' zone=zone }}">{{zone}}</a>
+      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='hvac' zone=hvaczone }}">{{hvaczone}}</a>
     </h3>
     <div class="HVAC-zone-summary" id="HVAC-zone-summary-{{ _id }}"></div>
     <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
@@ -124,7 +124,7 @@
 <template name="light_zone_widget">
   <div class="dashboard-well">
     <h3 class="dashboard-column-heading centertext">
-      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">{{zone}}</a>
+      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=lightingzone }}">{{lightingzone}}</a>
     </h3>
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
@@ -188,7 +188,7 @@
 </template>
 
 <template name="thermostat">
-  <h2 class="dashboard-column-heading">Zone: {{zone}}</h2>
+  <h2 class="dashboard-column-heading">Zone: {{hvaczone}}</h2>
   <h3 class="dashbaord-column-heading">{{path}}</h3>
   <div class='table-responsive'>
     <table class="table table-bordered table-striped">

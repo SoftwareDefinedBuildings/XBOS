@@ -13,6 +13,9 @@
       </tr>
     </thead>
     <tbody>
+      {{#each unconfigured}}
+        {{> device}}
+      {{/each}}
       {{#each sources}}
         {{> device}}
       {{/each}}
@@ -21,7 +24,7 @@
 </template>
 
 <template name="device">
-  <tr>
+  <tr class='{{color}}'>
     <td>{{device}}</td>
     <td>{{model}}</td>
     <td><a href="{{driverPath}}">{{driver}}</a></td>
@@ -44,6 +47,19 @@
             </div>
             <div id="device_{{fixPath path}}" class="modal-body">
               <form class="form-horizontal">
+                {{#if isunconfigured}}
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">System</label>
+                    <div class="col-sm-8">
+                      <select class="system form-control">
+                        <option class="selected" value=""></option>
+                        <option value="HVAC">HVAC</option>
+                        <option value="Lighting">Lighting</option>
+                        <option value="Monitoring">Monitoring</option>
+                      </select>
+                    </div>
+                  </div>
+                {{/if}}
                 <div class="form-group">
                   <label class="col-sm-4 control-label">HVAC Zone</label>
                   <div class="col-sm-8">

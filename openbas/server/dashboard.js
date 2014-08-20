@@ -47,6 +47,7 @@ if (Meteor.isServer) {
             var device = my_ts[0].Metadata.Device;
             var model = my_ts[0].Metadata.Model;
             var driver = my_ts[0].Metadata.Driver;
+            var roomname = my_ts[0].Metadata.Room;
             console.log(path)
             if (system == 'HVAC') {
               var zonename = my_ts[0].Metadata.HVACZone;
@@ -54,7 +55,6 @@ if (Meteor.isServer) {
               var zonename = my_ts[0].Metadata.LightingZone;
               var groupname = my_ts[0].Metadata.Group;
             } else if (system == 'Monitoring') {
-              var roomname = my_ts[0].Metadata.Room;
               var lightzonename = my_ts[0].Metadata.LightingZone;
               var hvaczonename = my_ts[0].Metadata.HVACZone || my_ts[0].Metadata.Hvaczone;
             }
@@ -69,21 +69,27 @@ if (Meteor.isServer) {
             if (system == 'HVAC') {
               HVAC.upsert({'path': path}, {
                 'path': path, 
-                'zone': zonename, 
+                'hvaczone': zonename, 
+                'lightingzone': '',
+                'room': roomname, 
                 'device': device,
                 'model': model,
                 'driver': driver,
+                'configured': true,
                 'timeseries': record
               });
             } else if (system == 'Lighting') {
               Lighting.upsert({'path': path}, {
                 'path': path, 
                 'group': groupname, 
-                'zone': zonename, 
+                'lightingzone': zonename, 
+                'hvaczone': '',
+                'room': roomname, 
                 'role': role, 
                 'device': device,
                 'model': model,
                 'driver': driver,
+                'configured': true,
                 'timeseries': record
               });
             } else if (system == 'Monitoring') {
@@ -95,6 +101,7 @@ if (Meteor.isServer) {
                 'device': device,
                 'model': model,
                 'driver': driver,
+                'configured': true,
                 'timeseries': record
               });
             }
@@ -104,5 +111,51 @@ if (Meteor.isServer) {
       }); 
 
     }, 
+
+    savemetadata: function(objid, update) {
+        /*
+         * Given an object ID, first try to update an existing object. To do this,
+         * we search the HVAC, Lighting and Monitoring collections. If we find a record
+         * with this ID, we update it and save
+         *
+         * If we don't find it, then that means this is an object in the Unconfigured collection.
+         * We remove it from that collection, and then look at update['system'] to figure
+         * out which collection it belongs in. We add any and all extra metadata and commit
+         * it to that collection
+         *
+         * Regardless of what happens above, we have to push the updates to the archiver
+         * and then to the source of the configuration file.
+         */
+        console.log("savemetadata called with",objid, update);
+        var found = false;
+        var tags = [];
+        var path = '';
+        _.each([HVAC, Lighting, Monitoring], function(system, idx) {
+            if (found) { return; } // if we've found, no need to check other collections
+            var record = system.findOne({'_id': objid});
+            if (record) {
+                found = true;
+                delete update['system']
+                system.update(objid, {$set: update});
+                path = record.path;
+            }
+        });
+        if (!found) {
+          // here, we know that we haven't found the object, so it must be in the Unconfigured collection
+          console.log("got this far!");
+          var record = Unconfigured.findOne({'_id': objid});
+          Unconfigured.remove(objid);
+          console.log("unconf record", record);
+          path = objid;
+        }
+        _.each(update, function(v, k) {
+            if (v == null) { // do not erase data. If null, skipit
+                return;
+            }
+            tags.push(['Metadata/'+k, v]);
+        });
+        res = Meteor.call('updatetags', 'Path like "'+path+'/%"', tags);
+        Meteor.call('querysystem');
+    }
   }); 
 } 

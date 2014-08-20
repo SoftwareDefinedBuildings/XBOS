@@ -2,7 +2,6 @@ if (Meteor.isClient) {
 
   Session.set('selectedhvaczone', null);
   Session.set('selectedlightingzone', null);
-
   hvaczones = function() {
     return _.uniq( _.filter( _.pluck(Rooms.find().fetch(), 'HVACZone'), function(o) { return o != null; }));
   };
@@ -27,21 +26,26 @@ if (Meteor.isClient) {
   };
 
   hvaczoneByID = function(_id) {
-      record = HVAC.findOne({'_id': _id})
-      if (record) {
-        return record.zone;
-      }
-      record = Lighting.findOne({'_id': _id})
-      if (record) {
-        return record.hvaczone;
-      }
-      record = Monitoring.findOne({'_id': _id})
+      var predicate = {'_id': _id};
+      record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       if (record) {
         return record.hvaczone;
       }
       return null
   };
 
+  lightingzonebyId = function(_id) {
+      var predicate = {'_id': _id};
+      record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
+      if (record) {
+        return record.lightingzone;
+      }
+      return null
+  };
+  
+  get_source_path = function(path) {
+    return path.slice(0,path.lastIndexOf('/'));
+  }
 
   UI.registerHelper('fixPath', function(p) {
     return p.replace(/\//g,'_');
@@ -54,6 +58,36 @@ if (Meteor.isClient) {
   UI.registerHelper('lightingzones', function() {
     return lightingzones();
   });
+
+  /*
+   */
+  Template.status.created = function() {
+    Points.find().observe({
+    added: function(doc) {
+        if (doc.configured) {
+            return
+        }
+        console.log('unconfigured doc', doc);
+        var src_path = get_source_path(doc.Path);
+        if (!Unconfigured.findOne({'_id': src_path})) {
+          Meteor.call('query', "select * where Path = '"+doc.Path+"'", function(err, res) {
+              if (err) {console.log("error:", err); return; }
+              if (!res) {console.log("no results"); return; }
+              console.log("got result", res);
+              var rec = {'device': res[0].Metadata.Device,
+                        'uuid': doc.uuid,
+                        'model': res[0].Metadata.Model,
+                        'driver': res[0].Metadata.Driver,
+                        'path': src_path,
+                        'configured': false,
+                        '_id': src_path};
+              console.log('inserting', rec);
+              Unconfigured.upsert({'_id': src_path}, rec);
+          });
+        }
+    }
+    });
+  };
 
   Template.status.sources = function() {
     /*
@@ -69,6 +103,26 @@ if (Meteor.isClient) {
     return sources;
   };
 
+  /*
+   * Inside the Unconfigured collection, we have the timeseries endpoints.
+   * We need to group them by their source path, and then retrieve their collective
+   * metadata from the archiver
+   *
+   * Need to add a key to the meteor collections so that we can tell if something
+   * has been configured or not. This should take care of the problem where 
+   * everything is considered 'unconfigured' upon setup.
+   */
+
+  Template.status.unconfigured = function() {
+    return Unconfigured.find().fetch();
+  };
+
+  Template.device.color = function() {
+    if (this.configured != null && !this.configured) {
+        return 'warning';
+    }
+    return '';
+  };
   Template.device.driverPath = function() {
     /*
      * From the driver module path (e.g. smap.drivers.lights.VirtualLightDriver),
@@ -98,55 +152,51 @@ if (Meteor.isClient) {
     },
 
     'click .save': function(e, template) {
-      var hvaczone = template.find('.hvaczones').value;
-      var lightingzone = template.find('.lightingzones').value;
-      var room = template.find('.rooms').value;
+      var path = this.path;
+      var hvaczone = template.find('.hvaczones').value || null;
+      var lightingzone = template.find('.lightingzones').value || null;
+      var room = template.find('.rooms').value || null;
+      var system = null;
+      if (this.configured == null || !this.configured) {
+        system = template.find('.system').value || null;
+      }
       var record = null;
       var res = null
-      record = HVAC.findOne({'_id': this._id})
-      if (record) {
-        res = HVAC.update(this._id, {$set: {'zone': hvaczone, 'lightingzone': lightingzone, 'room': room}});
-      }
-      record = Lighting.findOne({'_id': this._id})
-      if (record) {
-        res = Lighting.update(this._id, {$set: {'zone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
-      }
-      record = Monitoring.findOne({'_id': this._id})
-      if (record) {
-        res = Monitoring.update(this._id, {$set: {'lightingzone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
-      }
-      if (res == 1) {
-        // successful
-        console.log(this);
-        var path = this.path.replace(/\//g,'_');
+      var predicate = {'_id': this._id};
+      // if the record is in HVAC, Lighting or Monitoring, update the record
+      // but if it is in Unconfigured, remove it!
+      var update = {'HVACZone': hvaczone,
+                    'LightingZone': lightingzone,
+                    'Room': room,
+                    'System': system,
+                    'configured': true};
+      console.log("calling", this._id, update);
+      Meteor.call('savemetadata', this._id, update, function() {
+        console.log("returned!");
+        path = path.replace(/\//g,'_');
         $('#notifications'+path).empty();
         $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
         $('#success'+path).html('Successful!');
         $('#success'+path).css('background-color','#5cb85c');
         $('#success'+path).fadeOut(2000);
-      }
-
+        if (system) {
+          location.reload();
+        }
+      });
     }
   });
+
+  Template.configuration.isunconfigured = function() {
+    return !this.configured
+  };
 
   Template.configuration.rendered = function() {
       var myhvaczone = null;
       var mylightingzone = null;
       var myroom = null;
       var path = this.data.path;
-      record = HVAC.findOne({'_id': this.data._id})
-      if (record) {
-        myhvaczone = record.zone;
-        mylightingzone = record.lightingzone;
-        myroom = record.room;
-      }
-      record = Lighting.findOne({'_id': this.data._id})
-      if (record) {
-        myhvaczone = record.hvaczone;
-        mylightingzone = record.zone;
-        myroom = record.room;
-      }
-      record = Monitoring.findOne({'_id': this.data._id})
+      var predicate = {'_id': this.data._id};
+      record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       if (record) {
         myhvaczone = record.hvaczone;
         mylightingzone = record.lightingzone;
@@ -181,8 +231,11 @@ if (Meteor.isClient) {
       ret = roomsForHVACZone(Session.get('selectedhvaczone'));
     } else {
       zone = hvaczoneByID(this._id);
-      console.log(this, zone);
       ret = roomsForHVACZone(zone);
+      if (!zone) {
+        zone = lightingzonebyId(this._id);
+        ret = roomsForLightingZone(zone);
+      }
     }
     return ret;
   };

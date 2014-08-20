@@ -71,7 +71,7 @@ Dashboard.sparkline = function(elemId, data, width, height, display_range) {
   if (display_range){
     var extents_label = "[<span class='sparkline-min'>" + yextents[0].toFixed(2) + "</span>,";
     extents_label += "<span class='sparkline-max'>" + yextents[1].toFixed(2) + "</span>]";
-    d3.select('#sparkline-extents-' + id)
+    d3.select(elemId)
       .html(extents_label)
   }
 };
@@ -105,15 +105,15 @@ Template.lightingbuildingcolumn.LightingAll = function() {
   var lighting = Lighting.find({'role': 'Building Lighting'}).fetch();
   // for each unique zone
   var zones = [];
-  _.each(_.uniq(_.pluck(lighting, 'zone')), function(val, idx) {
-    var groups = _.filter(lighting, function(o) { return o.zone == val; });
+  _.each(_.uniq(_.pluck(lighting, 'lightingzone')), function(val, idx) {
+    var groups = _.filter(lighting, function(o) { return o.lightingzone == val; });
     zones[idx] = groups;
   });
   return zones;
 };
 
 Template.light_zone_widget.zone = function() {
-  return this[0].zone;
+  return this[0].lightingzone;
 };
 
 Template.light_zone_widget.groups = function() {
@@ -121,16 +121,16 @@ Template.light_zone_widget.groups = function() {
 };
 
 Template.light_zone_widget.internals = function() {
-  var lighting = Lighting.find({'role': 'Task Lighting', 'zone': this[0].zone});
+  var lighting = Lighting.find({'role': 'Task Lighting', 'lightingzone': this[0].lightingzone});
   return lighting;
 };
 
 Template.light_zone_widget.sensors = function() {
-  return Monitoring.find({'lightingzone': this[0].zone});
+  return Monitoring.find({'lightingzone': this[0].lightingzone});
 };
 
 Template.hvac_zone_widget.sensors = function() {
-  return Monitoring.find({'hvaczone': this.zone});
+  return Monitoring.find({'hvaczone': this.hvaczone});
 };
 
 Template.generalbuildingcolumn.powermeterAll = function() {
@@ -299,7 +299,7 @@ Template.hvac_zone_widget.rendered = function(){
   });
 
   // render sparklines for sensors
-  var sensors = Monitoring.find({'hvaczone': this.data.zone}).fetch();
+  var sensors = Monitoring.find({'hvaczone': this.data.hvaczone}).fetch();
   _.each(sensors, function(s){
     var restrict = 'Path="' + s.path + '/temperature"';
     Meteor.call("latest", restrict, 100, function(err, res){
@@ -319,10 +319,13 @@ Template.hvac_zone_widget.rendered = function(){
 
 Template.power_meter_widget.rendered = function(){
   var restrict = 'Path="' + this.data.path + '/demand"';
-  var id = this.data._id;
+  var myid = this.data._id;
   Meteor.call("latest", restrict, 1000, function(err, res){
+    if (err) {
+        console.log(err);
+    }
     var mydata = res[0].Readings;
     mydata = Dashboard.jsonify(mydata);
-    Dashboard.sparkline("#sparkline-container-" + id, mydata, 250, 50, true);
+    Dashboard.sparkline("#sparkline-container-" + myid, mydata, 250, 50, true);
   });
 }
