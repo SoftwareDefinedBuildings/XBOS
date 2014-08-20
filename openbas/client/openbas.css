@@ -3,6 +3,7 @@ body {
     font-weight: 200;
     font-size: 150%;
     padding: 0;
+    background-image: url(img/debut-light.png);
     background-repeat: repeat-repeat;
     -webkit-user-select: none;
     -khtml-user-select: none;

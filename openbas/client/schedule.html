@@ -128,13 +128,13 @@
           <tr>
             <td class="text-label" style="padding-top: 15px;">Period name</td>
             <td>
-              <input id="period-name" type="text" class="form-control" value="{{name}}">
+              <input type="text" class="period-name form-control" value="{{name}}">
             </td>
           </tr>
           <tr>
             <td class="text-label" style="padding-top: 15px;">Start time</td>
             <td>
-              <input id="period-start" type="text" class="form-control" value="{{start}}">
+              <input type="text" class="period-start form-control" value="{{start}}">
             </td>
           </tr>
           {{#each points}}
@@ -201,7 +201,7 @@
 </template>
 
 <template name="schedule_period">
-  <tbody class="schedule-period" id="schedule-period-0">
+  <tbody class="schedule-period" id="schedule-period-{{iperiod}}">
     <tr>
       <td class="text-label" style="padding-top: 15px;">Period name</td>
       <td>
@@ -227,7 +227,7 @@
   <tbody>
     <tr>
       <td colspan=2 style="text-align: right;">
-        <button id="add-control-point" data-period="0" type="button" class="btn btn-default btn-md add-control-point">
+        <button id="add-control-point" data-period="{{ iperiod }}" type="button" class="btn btn-default btn-md add-control-point">
           <span class="glyphicon glyphicon-plus"></span> Add control point
         </button>
       </td>

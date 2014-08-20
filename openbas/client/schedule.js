@@ -1,3 +1,5 @@
+var iperiod = 0;
+
 Template.schedule.master = function(){
   return MasterSchedule.findOne({});
 }
@@ -80,17 +82,40 @@ Template.edit_schedule.events({
 
 Template.add_schedule.events({
   'click #add-period': function(event){
-    var rendered = UI.render(Template.schedule_period);
+    iperiod++; 
+    var rendered = UI.renderWithData(Template.schedule_period, {'iperiod': iperiod});
     UI.insert(rendered, $('table')[0]);
   },
   'click .add-control-point': function(event){
-    var period_id = $(event.target).data('period');
+    var clicked_iperiod = $(event.target).data('period');
     var row = '<tr class="period-point"><td><input type="text" class="period-point-path form-control"></td>'
             + '<td><input type="text" class="period-point-value form-control"></td></tr>';
-    $("#schedule-period-" + period_id).append(row);
+    $("#schedule-period-" + clicked_iperiod).append(row);
   },
   'click #add-schedule-save': function(){
-    console.log('clicked add-schedule-save');
+    var sched = {};
+    var periods = _.map($('.schedule-period'), function(p){
+      rv = {};
+      rv.name = $(p).find(".period-name").val();
+      rv.start = $(p).find(".period-start").val();
+      rv.points = _.map($(p).find(".period-point"), function(point){
+        mypoint = {};
+        mypoint.path = $(point).find('.period-point-path').val();
+        mypoint.value = $(point).find('.period-point-value').val();
+        return mypoint;
+      });
+      return rv;
+    });
+    sched.periods = periods;
+    sched.name = $('#schedule-name').val();
+    sched.color = "#EBCACA";
+    var r = Schedules.insert(sched);
+    if (r){
+      $("#success-alert").slideDown(800);
+      window.setTimeout(function(){
+        $("#success-alert").slideUp(800);
+      }, 5000);
+    }
   }
 });
 

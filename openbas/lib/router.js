@@ -18,13 +18,6 @@ Router.map(function() {
       },
     });
     
-    this.route('add_schedule', {
-      path: '/schedule/add',
-      waitOn: function(){
-        return Meteor.subscribe('schedules');
-      }
-    });
-
     this.route('status', {
       onBeforeAction: function() {
           console.log("RUNNINg");
@@ -68,7 +61,8 @@ Router.map(function() {
     });
     
     this.route('add_schedule', {
-      path: '/schedule/add/',
+      path: '/schedule/add',
+      data: {'iperiod': 0},
     });
-    
+
 });
