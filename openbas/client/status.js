@@ -171,28 +171,18 @@ if (Meteor.isClient) {
                     'System': system,
                     'configured': true};
       console.log("calling", this._id, update);
-      Meteor.call('savemetadata', this._id, update);//, function() {
-//        console.log("returned!", res);
-//        path = path.replace(/\//g,'_');
-//        $('#notifications'+path).empty();
-//        $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
-//        $('#success'+path).html('Successful!');
-//        $('#success'+path).css('background-color','#5cb85c');
-//        $('#success'+path).fadeOut(2000);
-//      });
-      //record['configured'] = true;
-      ////TODO: save this metadata update to the archiver
-      //if (res == 1) {
-      //  // successful
-      //  var path = this.path.replace(/\//g,'_');
-      //  $('#notifications'+path).empty();
-      //  $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
-      //  $('#success'+path).html('Successful!');
-      //  $('#success'+path).css('background-color','#5cb85c');
-      //  $('#success'+path).fadeOut(2000);
-      //  //res = Unconfigured.remove({'_id': this._id});
-      //}
-
+      Meteor.call('savemetadata', this._id, update, function() {
+        console.log("returned!");
+        path = path.replace(/\//g,'_');
+        $('#notifications'+path).empty();
+        $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
+        $('#success'+path).html('Successful!');
+        $('#success'+path).css('background-color','#5cb85c');
+        $('#success'+path).fadeOut(2000);
+        if (system) {
+          location.reload();
+        }
+      });
     }
   });
 

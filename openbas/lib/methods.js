@@ -44,7 +44,7 @@ if (Meteor.isServer) {
        * restrict: string 'where' clause telling sMAP which timeseries are to be updated
        * tags: list of [tag, value] arrays to be set
        */
-      var url = Meteor.settings.archiverUrl + "/api/query";
+      var url = Meteor.settings.archiverUrl + "/api/query?key=" + Meteor.settings.apikey;
       console.log(url);
       var results = [];
       _.each(tags, function(val, idx) {

@@ -128,6 +128,8 @@ if (Meteor.isServer) {
          */
         console.log("savemetadata called with",objid, update);
         var found = false;
+        var tags = [];
+        var path = '';
         _.each([HVAC, Lighting, Monitoring], function(system, idx) {
             if (found) { return; } // if we've found, no need to check other collections
             var record = system.findOne({'_id': objid});
@@ -135,23 +137,25 @@ if (Meteor.isServer) {
                 found = true;
                 delete update['system']
                 system.update(objid, {$set: update});
+                path = record.path;
             }
         });
-        if (found) { return; } // skip the rest if we have already updated
-        console.log("got this far!");
-        // here, we know that we haven't found the object, so it must be in the Unconfigured collection
-        var record = Unconfigured.findOne({'_id': objid});
-        Unconfigured.remove(objid);
-        console.log("unconf record", record);
-        var tags = [];
+        if (!found) {
+          // here, we know that we haven't found the object, so it must be in the Unconfigured collection
+          console.log("got this far!");
+          var record = Unconfigured.findOne({'_id': objid});
+          Unconfigured.remove(objid);
+          console.log("unconf record", record);
+          path = objid;
+        }
         _.each(update, function(v, k) {
+            if (v == null) { // do not erase data. If null, skipit
+                return;
+            }
             tags.push(['Metadata/'+k, v]);
         });
-        Meteor.call('updatetags', 'Path like "'+objid+'/%"', tags, function(err, res) {
-            console.log('error', err);
-            console.log('results', res);
-        });
-
+        res = Meteor.call('updatetags', 'Path like "'+path+'/%"', tags);
+        Meteor.call('querysystem');
     }
   }); 
 } 
