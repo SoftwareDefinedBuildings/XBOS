@@ -9,15 +9,3 @@ Template.navbar.helpers({
       template === currentRoute.lookupTemplate() ? 'active' : '';
   }
 });
-
-Template.test.greeting = function () {
-  return "Welcome to openbas.";
-};
-
-Template.test.events({
-  'click input': function () {
-    // template data, if any, is available in 'this'
-    if (typeof console !== 'undefined')
-      console.log("You pressed the button");
-  }
-});

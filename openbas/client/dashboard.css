@@ -57,10 +57,6 @@ h3.dashboard-column-heading {
   margin-right: 6px;
 }
 
-a.detail-link:hover {
-  text-decoration: none;
-}
-
 svg.HVAC-zone-summary {
   display: block;
   margin: 0 auto;

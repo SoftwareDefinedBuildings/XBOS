@@ -1,6 +1,5 @@
-
 <template name="schedule">
-  <div class="master-schedule-container">
+  <div class="schedule-container">
     <div class="panel panel-default">
       <div class="panel-heading">Weekly schedule</div>
       <table class="table table-bordered">
@@ -26,22 +25,147 @@
           {{/each}}
           <tr>
             <td align=right colspan=2>
-              <button id="add-schedule" type="button" class="btn btn-default btn-md">
-                <span class="glyphicon glyphicon-plus"></span> Add new schedule
-              </button>
-
               <button id="save-schedule" type="button" class="btn btn-success btn-md">Save</button>
+              <div class="alert alert-success" id="success-alert" style="text-align: center; margin: 10px; display: none;">
+                Successfully updated the weekly schedule.
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="alert alert-success" id="success-alert" style="margin: 10px; display: none;">
-      Successfully updated the weekly schedule.
+
+    <div class="panel panel-default">
+      <div class="panel-heading">Daily schedules</div>
+      <table class="table table-bordered">
+        <thead>
+         <tr>
+            <th>Name</th>
+            <th>View</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each schedules}}
+          <tr>
+            <td>{{name}}</td>
+            <td>
+              <a href="/schedule/view/{{_id}}">
+                <button type="button" class="btn btn-default btn-md">
+                  <span class="glyphicon glyphicon-eye-open"></span>
+                </button>
+              </a>
+            </td>
+            <td>
+              <a href="/schedule/edit/{{_id}}">
+                <button type="button" class="btn btn-default btn-md">
+                  <span class="glyphicon glyphicon-edit"></span>
+                </button>
+              </a>
+            </td>
+          </tr>
+          {{/each}}
+          <tr>
+            <td colspan=3 style="text-align: right; hover-style: ">
+              <a href="/schedule/add/">
+                <button type="button" class="btn btn-default btn-md">
+                  <span class="glyphicon glyphicon-plus"></span>New daily schedule
+                </button>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>  
 
-<template name="add_schedule">
-  Add a new schedule
+<template name="edit_schedule">
+  <div class="schedule-container">
+    <div class="panel panel-default">
+      <div class="panel-heading">Editing "{{name}}"</div>
+      <table class="table table-bordered edit-schedule">
+        <tbody>
+          <tr>
+            <td>Schedule name</td>
+            <td>
+              <input id="schedule-name" type="text" class="form-control" value="{{name}}">
+            </td>
+          </tr>
+        </tbody>
+        {{#each periods}}
+        <tbody class="schedule-period" id="schedule-period-{{name}}">
+          <tr>
+            <td>Period name</td>
+            <td>
+              <input id="period-name" type="text" class="form-control" value="{{name}}">
+            </td>
+          </tr>
+          <tr>
+            <td>Start time</td>
+            <td>
+              <input id="period-start" type="text" class="form-control" value="{{start}}">
+            </td>
+          </tr>
+          {{#each points}}
+          <tr class="period-point">
+            <td>
+              <input type="text" class="period-point-path form-control" value="{{path}}">
+            </td>
+            <td>
+              <input type="text" class="period-point-value form-control" value="{{value}}">
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+        <tbody>
+          <tr>
+            <td colspan=2 style="text-align: right;">
+              <button id="add-control-point-{{name}}" data-name={{name}} type="button" class="btn btn-default btn-md add-control-point">
+                <span class="glyphicon glyphicon-plus"></span> Add control point
+              </button>
+            </td>
+          </tr>
+        </tbody>
+        {{/each}}
+        <tbody>
+          <tr>
+            <td colspan=2 style="text-align: right;">
+              <button id="edit-schedule-save" type="button" class="btn btn-success btn-md">Save</button>
+              <div class="alert alert-success" id="success-alert" style="text-align: center; margin: 10px; display: none;">
+                Successfully updated the {{name}} schedule.
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<template name="view_schedule">
+  <div class="schedule-container">
+    <h2 style="text-align:center;">{{name}}</h2>
+    {{#each periods}}
+    <div class="panel panel-default">
+      <div class="panel-heading">{{name}}: start time {{start}}</div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Path</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each points}}
+          <tr>
+            <td>{{path}}</td>
+            <td>{{value}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+   {{/each}}
+  </div>
 </template>

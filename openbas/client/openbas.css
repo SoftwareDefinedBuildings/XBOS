@@ -50,7 +50,16 @@ div.container {
   margin: 0 auto;
 }
 
-div.master-schedule-container {
+div.schedule-container {
   width: 500px;
   margin: 0 auto;
+}
+
+table.edit-schedule td:first-child {
+  border-spacing: 10px 5px;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: none;
 }
