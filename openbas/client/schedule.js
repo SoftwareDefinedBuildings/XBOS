@@ -1,4 +1,3 @@
-
 Template.schedule.master = function(){
   return MasterSchedule.findOne({});
 }
@@ -36,14 +35,48 @@ Template.schedule.events({
     });
     delete master_sched._id;
     var r = MasterSchedule.update(id, {$set: master_sched});
-    if (r == 1){
-      $("#success-alert").fadeIn(800);
+    if (r){
+      $("#success-alert").slideDown(800);
       window.setTimeout(function(){
-        $("#success-alert").fadeOut(800);
+        $("#success-alert").slideUp(800);
       }, 5000);
     }
   },
   'click #add-schedule': function(){
     console.log('clicked add-schedule');
+  }
+});
+
+Template.edit_schedule.events({
+  'click .add-control-point': function(){
+    var row = '<tr class="period-point"><td><input type="text" class="period-point-path form-control"></td>'
+            + '<td><input type="text" class="period-point-value form-control"></td></tr>';
+    $("#schedule-period-" + this.name).append(row);
+  },
+  'click #edit-schedule-save': function(){
+    var id = this._id;
+    var periods = _.map($('.schedule-period'), function(p){
+      rv = {};
+      rv.name = $(p).find("#period-name").val();
+      rv.start = $(p).find("#period-start").val();
+      rv.points = _.map($(p).find(".period-point"), function(point){
+        mypoint = {};
+        mypoint.path = $(point).find('.period-point-path').val();
+        mypoint.value = $(point).find('.period-point-value').val();
+        return mypoint;
+      });
+      return rv; 
+    });
+    this.periods = periods;
+    this.name = $('#schedule-name').val();
+    delete this._id;
+
+    var r = Schedules.update(id, {$set: this});
+    if (r){
+      $("#success-alert").slideDown(800);
+      window.setTimeout(function(){
+        $("#success-alert").slideUp(800);
+      }, 5000);
+    }
   }
 });

@@ -35,7 +35,7 @@ if (Meteor.isServer) {
   }
   
   Meteor.publish("master_schedule", function () {
-    return MasterSchedule.find({}, { fields: { '_id': 0 } });
+    return MasterSchedule.find({});
   });
   Meteor.publish("schedules", function () {
     return Schedules.find({});
