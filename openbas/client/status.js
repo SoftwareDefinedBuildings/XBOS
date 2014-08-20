@@ -43,10 +43,6 @@ if (Meteor.isClient) {
       return null
   };
   
-  get_source_path = function(path) {
-    return path.slice(0,path.lastIndexOf('/'));
-  }
-
   UI.registerHelper('fixPath', function(p) {
     return p.replace(/\//g,'_');
   });
@@ -223,6 +219,16 @@ if (Meteor.isClient) {
             $('#device_'+mypath+' .room').val(val.value);
         }
       });
+  };
+
+  Template.configuration.commonmetadata = function() {
+      var predicate = {'_id': this._id};
+      var record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
+      var metadata = [];
+      _.each(common_metadata(record).Metadata, function(val, key) {
+        metadata.push({'key': key, 'val':val});
+      });
+      return metadata;
   };
 
   Template.configuration.derivedrooms = function() {

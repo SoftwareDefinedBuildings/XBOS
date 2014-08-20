@@ -46,6 +46,11 @@
               <h4 class="modal-title" id="modalLabel">Device Configuration for {{path}}</h4>
             </div>
             <div id="device_{{fixPath path}}" class="modal-body">
+              <!--TODO: here, make this a bit prettier and editable. Need the completion method in lib/methods
+                 USE http://jqueryui.com/autocomplete/-->
+              {{#each commonmetadata}}
+                <p>{{key}} : {{val}}</p>
+              {{/each}}
               <form class="form-horizontal">
                 {{#if isunconfigured}}
                   <div class="form-group">

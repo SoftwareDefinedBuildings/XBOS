@@ -1,3 +1,45 @@
+common_metadata = function(o) {
+    /*
+     * Given a System object (from HVAC, Lighting or Monitoring) with a .timeseries attribute,
+     * finds the metadata common for this source
+     */
+    return intersect_json(_.values(o.timeseries))
+};
+
+intersect_json = function(o){
+  /*
+   * Finds common metadata recursively. Takes as an argument
+   * a list of objects
+   */
+  var ks = []
+  _.each(o, function(el){
+    ks.push(_.keys(el))
+  });
+  ks = _.uniq(_.flatten(ks))
+  var r = {}
+  _.each(ks, function(k){
+    vs = _.uniq(_.pluck(o, k))
+    if (typeof vs[0] == "object") {
+      var r_rec = intersect_json(vs)
+      if (!$.isEmptyObject(r_rec)) {
+        r[k] = r_rec  
+      }
+    } else if (vs.length == 1){
+      r[k] = vs[0]
+    }
+  });
+  return r
+};
+
+get_source_path = function(path) {
+  return path.slice(0,path.lastIndexOf('/'));
+};
+
+/*
+ * need a method that for a given metadata key, gives
+ * a list of possible options
+ */
+
 if (Meteor.isServer) {
   Meteor.methods({
     // in the client:
