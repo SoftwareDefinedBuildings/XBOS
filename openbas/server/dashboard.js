@@ -111,5 +111,47 @@ if (Meteor.isServer) {
       }); 
 
     }, 
+
+    savemetadata: function(objid, update) {
+        /*
+         * Given an object ID, first try to update an existing object. To do this,
+         * we search the HVAC, Lighting and Monitoring collections. If we find a record
+         * with this ID, we update it and save
+         *
+         * If we don't find it, then that means this is an object in the Unconfigured collection.
+         * We remove it from that collection, and then look at update['system'] to figure
+         * out which collection it belongs in. We add any and all extra metadata and commit
+         * it to that collection
+         *
+         * Regardless of what happens above, we have to push the updates to the archiver
+         * and then to the source of the configuration file.
+         */
+        console.log("savemetadata called with",objid, update);
+        var found = false;
+        _.each([HVAC, Lighting, Monitoring], function(system, idx) {
+            if (found) { return; } // if we've found, no need to check other collections
+            var record = system.findOne({'_id': objid});
+            if (record) {
+                found = true;
+                delete update['system']
+                system.update(objid, {$set: update});
+            }
+        });
+        if (found) { return; } // skip the rest if we have already updated
+        console.log("got this far!");
+        // here, we know that we haven't found the object, so it must be in the Unconfigured collection
+        var record = Unconfigured.findOne({'_id': objid});
+        Unconfigured.remove(objid);
+        console.log("unconf record", record);
+        var tags = [];
+        _.each(update, function(v, k) {
+            tags.push(['Metadata/'+k, v]);
+        });
+        Meteor.call('updatetags', 'Path like "'+objid+'/%"', tags, function(err, res) {
+            console.log('error', err);
+            console.log('results', res);
+        });
+
+    }
   }); 
 } 

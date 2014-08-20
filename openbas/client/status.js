@@ -71,6 +71,9 @@ if (Meteor.isClient) {
         var src_path = get_source_path(doc.Path);
         if (!Unconfigured.findOne({'_id': src_path})) {
           Meteor.call('query', "select * where Path = '"+doc.Path+"'", function(err, res) {
+              if (err) {console.log("error:", err); return; }
+              if (!res) {console.log("no results"); return; }
+              console.log("got result", res);
               var rec = {'device': res[0].Metadata.Device,
                         'uuid': doc.uuid,
                         'model': res[0].Metadata.Model,
@@ -111,7 +114,7 @@ if (Meteor.isClient) {
    */
 
   Template.status.unconfigured = function() {
-    return Unconfigured.find();
+    return Unconfigured.find().fetch();
   };
 
   Template.device.color = function() {
@@ -149,43 +152,53 @@ if (Meteor.isClient) {
     },
 
     'click .save': function(e, template) {
+      var path = this.path;
       var hvaczone = template.find('.hvaczones').value || null;
       var lightingzone = template.find('.lightingzones').value || null;
       var room = template.find('.rooms').value || null;
+      var system = null;
+      if (this.configured == null || !this.configured) {
+        system = template.find('.system').value || null;
+      }
       var record = null;
       var res = null
-      record = HVAC.findOne({'_id': this._id})
-      if (record) {
-        res = HVAC.update(this._id, {$set: {'zone': hvaczone, 'lightingzone': lightingzone, 'room': room}});
-      }
-      record = Lighting.findOne({'_id': this._id})
-      if (record) {
-        res = Lighting.update(this._id, {$set: {'zone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
-      }
-      record = Monitoring.findOne({'_id': this._id})
-      if (record) {
-        res = Monitoring.update(this._id, {$set: {'lightingzone': lightingzone, 'hvaczone': hvaczone, 'room': room}});
-      }
-      record = Unconfigured.findOne({'_id': this._id})
-      if (record) {
-        record['lightingzone'] = lightingzone;
-        record['hvaczone'] = hvaczone;
-        record['room'] = room;
-        Unconfigured.remove({'_id': this._id});
-      }
-      //TODO: save this metadata update to the archiver
-      if (res == 1) {
-        // successful
-        var path = this.path.replace(/\//g,'_');
-        $('#notifications'+path).empty();
-        $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
-        $('#success'+path).html('Successful!');
-        $('#success'+path).css('background-color','#5cb85c');
-        $('#success'+path).fadeOut(2000);
-      }
+      var predicate = {'_id': this._id};
+      // if the record is in HVAC, Lighting or Monitoring, update the record
+      // but if it is in Unconfigured, remove it!
+      var update = {'HVACZone': hvaczone,
+                    'LightingZone': lightingzone,
+                    'Room': room,
+                    'System': system,
+                    'configured': true};
+      console.log("calling", this._id, update);
+      Meteor.call('savemetadata', this._id, update);//, function() {
+//        console.log("returned!", res);
+//        path = path.replace(/\//g,'_');
+//        $('#notifications'+path).empty();
+//        $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
+//        $('#success'+path).html('Successful!');
+//        $('#success'+path).css('background-color','#5cb85c');
+//        $('#success'+path).fadeOut(2000);
+//      });
+      //record['configured'] = true;
+      ////TODO: save this metadata update to the archiver
+      //if (res == 1) {
+      //  // successful
+      //  var path = this.path.replace(/\//g,'_');
+      //  $('#notifications'+path).empty();
+      //  $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
+      //  $('#success'+path).html('Successful!');
+      //  $('#success'+path).css('background-color','#5cb85c');
+      //  $('#success'+path).fadeOut(2000);
+      //  //res = Unconfigured.remove({'_id': this._id});
+      //}
 
     }
   });
+
+  Template.configuration.isunconfigured = function() {
+    return !this.configured
+  };
 
   Template.configuration.rendered = function() {
       var myhvaczone = null;
