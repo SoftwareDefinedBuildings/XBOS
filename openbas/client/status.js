@@ -226,14 +226,10 @@ if (Meteor.isClient) {
                   var data = ["Soda","Bancroft"];
                   var mykey = $(this).get(0).element.get(0).dataset['mykey'];
                   get_autocomplete_options(mykey, response);
-                  //response(data);
                 },
                 minLength: 0,
             }
       );
-
-
-
   };
 
   Template.configuration.commonmetadata = function() {
@@ -241,7 +237,9 @@ if (Meteor.isClient) {
       var record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       var metadata = [];
       var path = fix_path(record.path);
-      _.each(common_metadata(record).Metadata, function(val, key) {
+      var common = common_metadata(record).Metadata;
+      delete common['configured'];
+      _.each(common, function(val, key) {
         metadata.push({'path': path,'key': key, 'val':val});
       });
       return metadata;

@@ -11,8 +11,10 @@ intersect_json = function(o){
    * Finds common metadata recursively. Takes as an argument
    * a list of objects
    */
+  o = _.compact(o);
   var ks = []
   _.each(o, function(el){
+    if (!el) { return; }
     ks.push(_.keys(el))
   });
   ks = _.uniq(_.flatten(ks))
