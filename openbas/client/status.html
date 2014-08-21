@@ -48,10 +48,14 @@
             <div id="device_{{fixPath path}}" class="modal-body">
               <!--TODO: here, make this a bit prettier and editable. Need the completion method in lib/methods
                  USE http://jqueryui.com/autocomplete/-->
-              {{#each commonmetadata}}
-                <p>{{key}} : {{val}}</p>
-              {{/each}}
               <form class="form-horizontal">
+                  <!-- form group-->
+                {{#each commonmetadata}}
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{key}}</label>
+                    <input id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-4 text" value="{{val}}">
+                  </div>
+                {{/each}}
                 {{#if isunconfigured}}
                   <div class="form-group">
                     <label class="col-sm-4 control-label">System</label>
