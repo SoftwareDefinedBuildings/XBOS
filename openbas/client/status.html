@@ -52,8 +52,8 @@
                   <!-- form group-->
                 {{#each commonmetadata}}
                   <div class="form-group">
-                    <label class="col-sm-4 control-label">{{key}}</label>
-                    <input id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-4 text" value="{{val}}">
+                    <label data-mykey="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                    <input data-mykey="{{key}}" id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-4 text" value="{{val}}">
                   </div>
                 {{/each}}
                 {{#if isunconfigured}}

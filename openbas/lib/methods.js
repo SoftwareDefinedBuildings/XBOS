@@ -35,10 +35,33 @@ get_source_path = function(path) {
   return path.slice(0,path.lastIndexOf('/'));
 };
 
+fix_path = function(path) {
+  return path.replace(/\//g,'_');
+};
+
 /*
  * need a method that for a given metadata key, gives
- * a list of possible options
+ * a list of possible options. This should probably be done using
+ *
+ * select distinct metadata/tag;
+ *
+ * and looking at output, but that's asynchronous, so we can't do it UNLESS
+ * we have it as a callback or some weird shit like that
  */
+
+get_autocomplete_options = function(metadatakey, callback) {
+    var data = [];
+
+    var query = 'select distinct Metadata/'+metadatakey;
+    Meteor.call('query', query, function(err, val) {
+        if (err) {
+          console.log(err);
+          callback(data);
+        }
+        console.log('autocomplete options for',metadatakey,':',val);
+        callback(val);
+    });
+};
 
 if (Meteor.isServer) {
   Meteor.methods({

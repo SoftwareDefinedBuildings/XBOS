@@ -220,12 +220,19 @@ if (Meteor.isClient) {
         }
       });
 
-      $('.autocompletefield').each(function() {
-        $(this).autocomplete({
-                              source: ['Soda Hall', 'Bancroft Library'],
-                              minLength: 0,
-                            });
-      });
+      $('.autocompletefield').autocomplete(
+            {
+                source: function(request, response) {
+                  var data = ["Soda","Bancroft"];
+                  var mykey = $(this).get(0).element.get(0).dataset['mykey'];
+                  get_autocomplete_options(mykey, response);
+                  //response(data);
+                },
+                minLength: 0,
+            }
+      );
+
+
 
   };
 
@@ -233,7 +240,7 @@ if (Meteor.isClient) {
       var predicate = {'_id': this._id};
       var record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       var metadata = [];
-      var path = get_source_path(record.path);
+      var path = fix_path(record.path);
       _.each(common_metadata(record).Metadata, function(val, key) {
         metadata.push({'path': path,'key': key, 'val':val});
       });
