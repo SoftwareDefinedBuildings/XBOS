@@ -5,6 +5,7 @@
     "bootstrap-3": {},
     "houston": {},
     "bootstrap-slider": {},
-    "moment": {}
+    "moment": {},
+    "jqueryui": {}
   }
 }
