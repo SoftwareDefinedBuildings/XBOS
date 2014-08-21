@@ -22,7 +22,7 @@ intersect_json = function(o){
     if (typeof vs[0] == "object") {
       var r_rec = intersect_json(vs)
       if (!$.isEmptyObject(r_rec)) {
-        r[k] = r_rec  
+        r[k] = r_rec
       }
     } else if (vs.length == 1){
       r[k] = vs[0]
@@ -105,7 +105,7 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-  /* 
+  /*
    * Removes everything after the last '/' in a path and returns
    */
   get_source_path:  function(path) {

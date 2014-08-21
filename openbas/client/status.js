@@ -219,14 +219,23 @@ if (Meteor.isClient) {
             $('#device_'+mypath+' .room').val(val.value);
         }
       });
+
+      $('.autocompletefield').each(function() {
+        $(this).autocomplete({
+                              source: ['Soda Hall', 'Bancroft Library'],
+                              minLength: 0,
+                            });
+      });
+
   };
 
   Template.configuration.commonmetadata = function() {
       var predicate = {'_id': this._id};
       var record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       var metadata = [];
+      var path = get_source_path(record.path);
       _.each(common_metadata(record).Metadata, function(val, key) {
-        metadata.push({'key': key, 'val':val});
+        metadata.push({'path': path,'key': key, 'val':val});
       });
       return metadata;
   };
