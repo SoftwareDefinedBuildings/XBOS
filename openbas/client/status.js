@@ -147,39 +147,40 @@ if (Meteor.isClient) {
         Session.set('selectedlightingzone', template.find('.lightingzones').value);
     },
 
-    'click .save': function(e, template) {
-      var path = this.path;
-      var hvaczone = template.find('.hvaczones').value || null;
-      var lightingzone = template.find('.lightingzones').value || null;
-      var room = template.find('.rooms').value || null;
-      var system = null;
-      if (this.configured == null || !this.configured) {
-        system = template.find('.system').value || null;
-      }
-      var record = null;
-      var res = null
-      var predicate = {'_id': this._id};
-      // if the record is in HVAC, Lighting or Monitoring, update the record
-      // but if it is in Unconfigured, remove it!
-      var update = {'HVACZone': hvaczone,
-                    'LightingZone': lightingzone,
-                    'Room': room,
-                    'System': system,
-                    'configured': true};
-      console.log("calling", this._id, update);
-      Meteor.call('savemetadata', this._id, update, function() {
-        console.log("returned!");
-        path = path.replace(/\//g,'_');
-        $('#notifications'+path).empty();
-        $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
-        $('#success'+path).html('Successful!');
-        $('#success'+path).css('background-color','#5cb85c');
-        $('#success'+path).fadeOut(2000);
-        if (system) {
-          location.reload();
-        }
-      });
-    }
+    //'click .save': function(e, template) {
+    //  var path = this.path;
+    //  console.log('form save',template, e);
+    //  var hvaczone = template.find('.hvaczones').value || null;
+    //  var lightingzone = template.find('.lightingzones').value || null;
+    //  var room = template.find('.rooms').value || null;
+    //  var system = null;
+    //  if (this.configured == null || !this.configured) {
+    //    system = template.find('.system').value || null;
+    //  }
+    //  var record = null;
+    //  var res = null
+    //  var predicate = {'_id': this._id};
+    //  // if the record is in HVAC, Lighting or Monitoring, update the record
+    //  // but if it is in Unconfigured, remove it!
+    //  var update = {'HVACZone': hvaczone,
+    //                'LightingZone': lightingzone,
+    //                'Room': room,
+    //                'System': system,
+    //                'configured': true};
+    //  console.log("calling", this._id, update);
+    //  Meteor.call('savemetadata', this._id, update, function() {
+    //    console.log("returned!");
+    //    path = path.replace(/\//g,'_');
+    //    $('#notifications'+path).empty();
+    //    $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
+    //    $('#success'+path).html('Successful!');
+    //    $('#success'+path).css('background-color','#5cb85c');
+    //    $('#success'+path).fadeOut(2000);
+    //    if (system) {
+    //      location.reload();
+    //    }
+    //  });
+    //}
   });
 
   Template.configuration.isunconfigured = function() {
@@ -193,50 +194,113 @@ if (Meteor.isClient) {
       var path = this.data.path;
       var predicate = {'_id': this.data._id};
       record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
-      if (record) {
-        myhvaczone = record.hvaczone;
-        mylightingzone = record.lightingzone;
-        myroom = record.room;
-      }
-      $('.lightingzones').find('option').removeClass('selected')
-      _.each($('.lightingzones').find('option'), function(val, idx) {
-        if (val.value == mylightingzone) {
-            mypath = path.replace(/\//g,'_');
-            $('#device_'+mypath+' .lightingzones').val(val.value);
-        }
-      });
-      $('.hvaczones').find('option').removeClass('selected')
-      _.each($('.hvaczones').find('option'), function(val, idx) {
-        if (val.value == myhvaczone) {
-            mypath = path.replace(/\//g,'_');
-            $('#device_'+mypath+' .hvaczones').val(val.value);
-        }
-      });
-      $('.rooms').find('option').removeClass('selected')
-      _.each($('.rooms').find('option'), function(val, idx) {
-        if (val.value == myroom) {
-            mypath = path.replace(/\//g,'_');
-            $('#device_'+mypath+' .room').val(val.value);
-        }
-      });
+      $('.autocompletefield').autocomplete(
+            {
+                source: function(request, response) {
+                  var mykey = $(this).get(0).element.get(0).dataset['mykey'];
+                  get_autocomplete_options(mykey, response);
+                },
+                minLength: 0,
+            }
+      );
 
-      $('.autocompletefield').each(function() {
-        $(this).autocomplete({
-                              source: ['Soda Hall', 'Bancroft Library'],
-                              minLength: 0,
-                            });
+      $('form').on('submit', function(e) {
+        var inputs = $(this).find(':input');
+        var towrite = {};
+        _.each(inputs , function(val, idx) {
+            towrite[val.dataset['mykey']] = val.value;
+        });
+        console.log("towrite");
+        var update = {'HVACZone': towrite['HVACZone'],
+                      'LightingZone': towrite['LightingZone'],
+                      'Room': towrite['Room'],
+                      'System': towrite['System'],
+                      'configured': true};
+        Meteor.call('savemetadata', towrite['_id'], towrite, function() {
+          console.log("returned!");
+        });
+        console.log(towrite);
+        e.preventDefault();
+        return false;
       });
-
   };
 
+  /*
+   * This function extracts all the timeseries metadata from a record
+   * and computes the intersection of keys to be displayed.
+   *
+   * This method should return a minimum subset of keys that are expected
+   * by everyone:
+   * - Building 
+   * - Name
+   * - Floor
+   * - SourceName (static?)
+   * - Driver (static)
+   * - Site (static)
+   * - System
+   * - Role
+   * - Device 
+   * - Model (static)
+   *
+   * HVAC specific:
+   * - HVACZone
+   *
+   * Lighting specific:
+   * - Lightingzone
+   *
+   * Monitoring specific:
+   * - HVACZone + Lightingzone
+   *
+   */
   Template.configuration.commonmetadata = function() {
-      var predicate = {'_id': this._id};
-      var record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
+      var tmp = find_by_id(this._id);
+      var record = tmp[0];
+      var type = tmp[1];
       var metadata = [];
-      var path = get_source_path(record.path);
-      _.each(common_metadata(record).Metadata, function(val, key) {
-        metadata.push({'path': path,'key': key, 'val':val});
+      var path = fix_path(record.path);
+      var common = common_metadata(record).Metadata;
+      /*
+       * Now, we add the system-specific stuff. Check if it is HVAC, Lighting or Monitoring
+       */
+      if (type == 'HVAC') {
+        metadata.push({'path': path, 'key': 'HVACZone', 'val': common['HVACZone'] || '', 'static': false});
+      }
+      if (type == 'Lighting') {
+        metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
+      }
+      if (type == 'Monitoring') {
+        metadata.push({'path': path, 'key': 'HVACZone', 'val': common['HVACZone'] || '', 'static': false});
+        metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
+      }
+
+      delete common['configured']; // unneeded
+      delete common['LightingZone']; // delete this and the next one bc we used it earlier
+      delete common['HVACZone'];
+
+
+      common['Site'] = Meteor.settings.public.site;
+      var required_keys = ['Room','Building','Name','Floor','System','Role','Device'];
+      var static_keys = ['Site','Driver','Model','_id'];
+      var static_vals = {}
+      _.each(static_keys, function(key, idx) {
+        static_vals[key] = common[key] || '';
+        delete common[key];
       });
+      static_vals['_id'] = this._id;
+      // ensure all required keys are present
+      _.each(required_keys, function(key, idx) {
+        common[key] = common[key] || '';
+      });
+      // push all required key values onto the returned metadata list
+      _.each(common, function(val, key) {
+        metadata.push({'path': path,'key': key, 'val':val, 'static': false});
+      });
+
+      // add all static keys
+      _.each(static_keys, function(key, idx) {
+        metadata.push({'path': path, 'key': key, 'val': static_vals[key], 'static': true});
+      });
+
       return metadata;
   };
 

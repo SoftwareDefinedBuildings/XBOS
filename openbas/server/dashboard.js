@@ -136,6 +136,7 @@ if (Meteor.isServer) {
             if (record) {
                 found = true;
                 delete update['system']
+                delete update['_id']
                 system.update(objid, {$set: update});
                 path = record.path;
             }
@@ -154,6 +155,8 @@ if (Meteor.isServer) {
             }
             tags.push(['Metadata/'+k, v]);
         });
+
+        // here, update archiver with tags
         res = Meteor.call('updatetags', 'Path like "'+path+'/%"', tags);
         Meteor.call('querysystem');
     }
