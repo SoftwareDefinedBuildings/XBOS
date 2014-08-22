@@ -210,13 +210,9 @@ if (Meteor.isClient) {
         _.each(inputs , function(val, idx) {
             towrite[val.dataset['mykey']] = val.value;
         });
-        var update = {'HVACZone': towrite['HVACZone'],
-                      'LightingZone': towrite['LightingZone'],
-                      'Room': towrite['Room'],
-                      'System': towrite['System'],
-                      'configured': true};
         Meteor.call('savemetadata', towrite['_id'], towrite, function() {
           console.log("returned!");
+          location.reload();
         });
         console.log(towrite);
         e.preventDefault();
@@ -297,7 +293,7 @@ if (Meteor.isClient) {
 
       // add all static keys
       _.each(static_keys, function(key, idx) {
-        metadata.push({'path': path, 'key': key, 'val': static_vals[key], 'static': true});
+        metadata.push({'path': path, 'key': key.toProperCase(), 'val': static_vals[key], 'static': true});
       });
 
       return metadata;

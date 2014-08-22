@@ -130,6 +130,7 @@ if (Meteor.isServer) {
         var found = false;
         var tags = [];
         var path = '';
+        var goalsystem = update['System']
         _.each([HVAC, Lighting, Monitoring], function(system, idx) {
             if (found) { return; } // if we've found, no need to check other collections
             var record = system.findOne({'_id': objid});
@@ -141,14 +142,29 @@ if (Meteor.isServer) {
                 path = record.path;
             }
         });
+
+        // here, we know that we haven't found the object, so it must be in the Unconfigured collection
         if (!found) {
-          // here, we know that we haven't found the object, so it must be in the Unconfigured collection
           console.log("got this far!");
+          update['configured'] = true;
           var record = Unconfigured.findOne({'_id': objid});
-          Unconfigured.remove(objid);
+          Unconfigured.remove({'_id': record['_id']});
+          record = Unconfigured.findOne({'_id': objid});
           console.log("unconf record", record);
           path = objid;
+          
+          var allpoints = Points.find({}).fetch();
+          var mypoints = _.pluck(_.filter(allpoints, function(o) { return get_source_path(o.Path) == path; }), 'uuid');
+          console.log(mypoints);
+          _.each(mypoints, function(val, idx) {
+            Points.update({'uuid': val},{$set: {'configured': true}})
+          });
+
+          //TODO: find all uuids for timeseries and update db.points to be configured=true!
+          //
         }
+
+        // prepare data for committing to archiver
         _.each(update, function(v, k) {
             if (v == null) { // do not erase data. If null, skipit
                 return;

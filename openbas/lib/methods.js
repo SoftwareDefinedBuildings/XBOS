@@ -4,8 +4,12 @@ common_metadata = function(o) {
      * finds the metadata common for this source
      */
     if (!o.timeseries) {
-        o['configured'] = false;
-        return {'Metadata': o};
+        var ret = {};
+        _.each(o, function(val, key) {
+            ret[key.toProperCase()] = val;
+        });
+        ret['configured'] = false;
+        return {'Metadata': ret};
     }
     return intersect_json(_.values(o.timeseries))
 };
