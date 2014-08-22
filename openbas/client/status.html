@@ -3,6 +3,9 @@
   <table class="table table-hover">
     <thead>
       <tr>
+        <th>Unconfigured Devices</th>
+      </tr>
+      <tr>
         <th>Type</th>
         <th>Model</th>
         <th>Driver</th>
@@ -16,6 +19,22 @@
       {{#each unconfigured}}
         {{> device}}
       {{/each}}
+    </tbody>
+    <thead>
+      <tr>
+        <th>Configured Devices</th>
+      </tr>
+      <tr>
+        <th>Type</th>
+        <th>Model</th>
+        <th>Driver</th>
+        <th>IP Address</th>
+        <th>MAC Address</th>
+        <th>Path</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
       {{#each sources}}
         {{> device}}
       {{/each}}
