@@ -204,13 +204,12 @@ if (Meteor.isClient) {
             }
       );
 
-      $('form').on('submit', function(e) {
+      $('.form_'+fix_path(path)).on('submit', function(e) {
         var inputs = $(this).find(':input');
         var towrite = {};
         _.each(inputs , function(val, idx) {
             towrite[val.dataset['mykey']] = val.value;
         });
-        console.log("towrite");
         var update = {'HVACZone': towrite['HVACZone'],
                       'LightingZone': towrite['LightingZone'],
                       'Room': towrite['Room'],
