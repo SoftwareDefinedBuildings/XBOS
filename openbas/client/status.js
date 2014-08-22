@@ -147,39 +147,40 @@ if (Meteor.isClient) {
         Session.set('selectedlightingzone', template.find('.lightingzones').value);
     },
 
-    'click .save': function(e, template) {
-      var path = this.path;
-      var hvaczone = template.find('.hvaczones').value || null;
-      var lightingzone = template.find('.lightingzones').value || null;
-      var room = template.find('.rooms').value || null;
-      var system = null;
-      if (this.configured == null || !this.configured) {
-        system = template.find('.system').value || null;
-      }
-      var record = null;
-      var res = null
-      var predicate = {'_id': this._id};
-      // if the record is in HVAC, Lighting or Monitoring, update the record
-      // but if it is in Unconfigured, remove it!
-      var update = {'HVACZone': hvaczone,
-                    'LightingZone': lightingzone,
-                    'Room': room,
-                    'System': system,
-                    'configured': true};
-      console.log("calling", this._id, update);
-      Meteor.call('savemetadata', this._id, update, function() {
-        console.log("returned!");
-        path = path.replace(/\//g,'_');
-        $('#notifications'+path).empty();
-        $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
-        $('#success'+path).html('Successful!');
-        $('#success'+path).css('background-color','#5cb85c');
-        $('#success'+path).fadeOut(2000);
-        if (system) {
-          location.reload();
-        }
-      });
-    }
+    //'click .save': function(e, template) {
+    //  var path = this.path;
+    //  console.log('form save',template, e);
+    //  var hvaczone = template.find('.hvaczones').value || null;
+    //  var lightingzone = template.find('.lightingzones').value || null;
+    //  var room = template.find('.rooms').value || null;
+    //  var system = null;
+    //  if (this.configured == null || !this.configured) {
+    //    system = template.find('.system').value || null;
+    //  }
+    //  var record = null;
+    //  var res = null
+    //  var predicate = {'_id': this._id};
+    //  // if the record is in HVAC, Lighting or Monitoring, update the record
+    //  // but if it is in Unconfigured, remove it!
+    //  var update = {'HVACZone': hvaczone,
+    //                'LightingZone': lightingzone,
+    //                'Room': room,
+    //                'System': system,
+    //                'configured': true};
+    //  console.log("calling", this._id, update);
+    //  Meteor.call('savemetadata', this._id, update, function() {
+    //    console.log("returned!");
+    //    path = path.replace(/\//g,'_');
+    //    $('#notifications'+path).empty();
+    //    $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
+    //    $('#success'+path).html('Successful!');
+    //    $('#success'+path).css('background-color','#5cb85c');
+    //    $('#success'+path).fadeOut(2000);
+    //    if (system) {
+    //      location.reload();
+    //    }
+    //  });
+    //}
   });
 
   Template.configuration.isunconfigured = function() {
@@ -193,11 +194,6 @@ if (Meteor.isClient) {
       var path = this.data.path;
       var predicate = {'_id': this.data._id};
       record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
-      if (record) {
-        myhvaczone = record.hvaczone;
-        mylightingzone = record.lightingzone;
-        myroom = record.room;
-      }
       $('.autocompletefield').autocomplete(
             {
                 source: function(request, response) {
@@ -214,12 +210,13 @@ if (Meteor.isClient) {
         _.each(inputs , function(val, idx) {
             towrite[val.dataset['mykey']] = val.value;
         });
+        console.log("towrite");
         var update = {'HVACZone': towrite['HVACZone'],
                       'LightingZone': towrite['LightingZone'],
                       'Room': towrite['Room'],
                       'System': towrite['System'],
                       'configured': true};
-        Meteor.call('savemetadata', towrite['_id'], update, function() {
+        Meteor.call('savemetadata', towrite['_id'], towrite, function() {
           console.log("returned!");
         });
         console.log(towrite);

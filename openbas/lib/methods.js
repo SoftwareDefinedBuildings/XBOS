@@ -3,6 +3,10 @@ common_metadata = function(o) {
      * Given a System object (from HVAC, Lighting or Monitoring) with a .timeseries attribute,
      * finds the metadata common for this source
      */
+    if (!o.timeseries) {
+        o['configured'] = false;
+        return {'Metadata': o};
+    }
     return intersect_json(_.values(o.timeseries))
 };
 
@@ -60,7 +64,8 @@ find_by_id = function(_id) {
     if (record) {
         return [record, 'Monitoring'];
     }
-    return [record, ""];
+    record = Unconfigured.findOne(predicate);
+    return [record, "Unconfigured"];
 };
 
 /*
@@ -75,10 +80,10 @@ find_by_id = function(_id) {
 get_autocomplete_options = function(metadatakey, callback) {
     var data = [];
 
-    var query = 'select distinct Metadata/'+metadatakey;
+    var query = 'select distinct Metadata/'+metadatakey+' where Metadata/Site="'+Meteor.settings.public.site+'"';
     Meteor.call('query', query, function(err, val) {
         if (err) {
-          console.log(err);
+          console.log('err',err);
           callback(data);
         }
         console.log('autocomplete options for',metadatakey,':',val);

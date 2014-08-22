@@ -136,6 +136,7 @@ if (Meteor.isServer) {
             if (record) {
                 found = true;
                 delete update['system']
+                delete update['_id']
                 system.update(objid, {$set: update});
                 path = record.path;
             }
