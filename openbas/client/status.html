@@ -48,61 +48,19 @@
             <div id="device_{{fixPath path}}" class="modal-body">
               <!--TODO: here, make this a bit prettier and editable. Need the completion method in lib/methods
                  USE http://jqueryui.com/autocomplete/-->
-              <form class="form-horizontal">
+              <form data-formlabel="{{fixPath path}}" class="form-horizontal">
                   <!-- form group-->
                 {{#each commonmetadata}}
                   <div class="form-group">
                     <label data-mykey="{{key}}" class="col-sm-4 control-label">{{key}}</label>
-                    <input data-mykey="{{key}}" id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-4 text" value="{{val}}">
+                    {{#if static}}
+                      <input data-mykey="{{key}}" id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-7 text" value="{{val}}" readonly>
+                    {{else}}
+                      <input data-mykey="{{key}}" id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-7 text" value="{{val}}">
+                    {{/if}}
                   </div>
                 {{/each}}
-                {{#if isunconfigured}}
-                  <div class="form-group">
-                    <label class="col-sm-4 control-label">System</label>
-                    <div class="col-sm-8">
-                      <select class="system form-control">
-                        <option class="selected" value=""></option>
-                        <option value="HVAC">HVAC</option>
-                        <option value="Lighting">Lighting</option>
-                        <option value="Monitoring">Monitoring</option>
-                      </select>
-                    </div>
-                  </div>
-                {{/if}}
-                <div class="form-group">
-                  <label class="col-sm-4 control-label">HVAC Zone</label>
-                  <div class="col-sm-8">
-                    <select class="hvaczones form-control">
-                      <option class="selected" value=""></option>
-                      {{#each hvaczones}}
-                        <option value="{{this}}">{{this}}</option>
-                      {{/each}}
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-4 control-label">Lighting Zone</label>
-                  <div class="col-sm-8">
-                    <select class="lightingzones form-control">
-                      <option class="selected" value=""></option>
-                      {{#each lightingzones}}
-                        <option value="{{this}}">{{this}}</option>
-                      {{/each}}
-                    </select>
-                  </div>
-                </div>
-                {{#if derivedrooms}}
-                  <div class="form-group">
-                    <label class="col-sm-4 control-label">Room</label>
-                    <div class="col-sm-8">
-                      <select class="rooms form-control">
-                          {{#each derivedrooms}}
-                            <option value="{{this}}">{{this}}</option>
-                          {{/each}}
-                      </select>
-                    </div>
-                  </div>
-                {{/if}}
+                <input id="submit_{{fixPath path}}" type="submit" class="submit btn btn-primary" value="Submit" />
               </form>
             </div>
             <div id="notifications{{fixPath path}}">

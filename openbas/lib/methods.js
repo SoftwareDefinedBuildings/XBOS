@@ -42,15 +42,36 @@ fix_path = function(path) {
 };
 
 /*
+ * finds a meteor record in the HVAC, Lighting or Monitoring collections
+ * and returns both the record and which collection it found it in
+ */
+find_by_id = function(_id) {
+    var predicate = {'_id': _id};
+    var record = null;
+    record = HVAC.findOne(predicate);
+    if (record) {
+        return [record, 'HVAC'];
+    }
+    record = Lighting.findOne(predicate);
+    if (record) {
+        return [record, 'Lighting'];
+    }
+    record = Monitoring.findOne(predicate);
+    if (record) {
+        return [record, 'Monitoring'];
+    }
+    return [record, ""];
+};
+
+/*
  * need a method that for a given metadata key, gives
  * a list of possible options. This should probably be done using
  *
  * select distinct metadata/tag;
  *
- * and looking at output, but that's asynchronous, so we can't do it UNLESS
- * we have it as a callback or some weird shit like that
+ * Takes two arguments: metadatakey, which is the name of <key> in Metadata/<key>,
+ * and a callback function which takes the results of the query as an argument
  */
-
 get_autocomplete_options = function(metadatakey, callback) {
     var data = [];
 

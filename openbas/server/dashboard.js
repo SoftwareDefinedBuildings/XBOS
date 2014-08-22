@@ -154,6 +154,8 @@ if (Meteor.isServer) {
             }
             tags.push(['Metadata/'+k, v]);
         });
+
+        // here, update archiver with tags
         res = Meteor.call('updatetags', 'Path like "'+path+'/%"', tags);
         Meteor.call('querysystem');
     }
