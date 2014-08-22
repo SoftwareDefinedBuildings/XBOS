@@ -1,5 +1,6 @@
 import urlparse
 import datetime
+import urllib2
 from smap.driver import SmapDriver
 from smap.util import periodicSequentialCall
 from smap.contrib import dtutil
@@ -37,15 +38,28 @@ class Scheduler(SmapDriver):
         schedule_points = current_period['points']
 
         # get the relevant points in openbas
-        paths = [x['path'] for x in schedule_points]
-        control_points = self.get_control_points(paths)
-        for x in control_points:
-            print x
- 
-    def get_control_points(self, paths):
-        # use $or and $regex
-        regex_list = [{'Path': { '$regex': '.*%s$' % p }} for p in paths]
-        clause = {'$or': regex_list} 
+        for sp in schedule_points:
+            control_points = list(self.get_control_points(sp['path']))
+            self.actuate_points(control_points, sp['value'])
+
+    def actuate_points(self, cp, val):
+        for p in cp:
+            # check if it's already reporting the desired value
+            # todo: if point['OverrideSchedule'] is not None
+            if p['value'] != val and hasattr(p, 'ActuatorUUID'):
+                url = "http://localhost:%s%s_act" % (p['ServerPort'], p['Path'])
+                opener = urllib2.build_opener(urllib2.HTTPHandler)
+                request = urllib2.Request(url, data='')
+                request.get_method = lambda: 'PUT'
+                try: 
+                    fp = opener.open(request)
+                except urllib2.HTTPError:
+                    print "Invalid path:" + url
+                res = json.loads(fp.read())
+                return res
+
+    def get_control_points(self, path):
+        clause = {'Path': { '$regex': '.*%s$' % path }}
         return self.MongoDatabase.points.find(clause)
 
     def get_schedule(self, sched_type):
