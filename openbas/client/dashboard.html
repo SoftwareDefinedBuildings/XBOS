@@ -124,7 +124,7 @@
 <template name="light_zone_widget">
   <div class="dashboard-well">
     <h3 class="dashboard-column-heading centertext">
-      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=lightingzone }}">{{lightingzone}}</a>
+      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">{{zone}}</a>
     </h3>
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
@@ -263,7 +263,7 @@
 </template>
 
 <template name="lightinggroup">
-  <h2 class="dashboard-column-heading">{{zone}}</h2>
+  <h2 class="dashboard-column-heading">{{lightingzone}}</h2>
   <h3 class="dashboard-column-heading">{{path}}</h3>
   <div class='table-responsive'>
     <table class="table table-bordered table-striped">
