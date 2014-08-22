@@ -119,6 +119,7 @@ if (Meteor.isClient) {
     }
     return '';
   };
+
   Template.device.driverPath = function() {
     /*
      * From the driver module path (e.g. smap.drivers.lights.VirtualLightDriver),
@@ -131,6 +132,11 @@ if (Meteor.isClient) {
     });
     baseurl += '.py';
     return baseurl;
+  };
+
+  Template.configuration.nosystem = function() {
+    var tmp = common_metadata(this).Metadata;
+    return (!tmp.LightingZone && !tmp.HVACZone);
   };
 
   Template.configuration.events({
