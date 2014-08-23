@@ -11,6 +11,7 @@
         <th>Driver</th>
         <th>IP Address</th>
         <th>MAC Address</th>
+        <th>Last Seen</th>
         <th>Path</th>
         <th></th>
       </tr>
@@ -30,6 +31,7 @@
         <th>Driver</th>
         <th>IP Address</th>
         <th>MAC Address</th>
+        <th>Last Seen</th>
         <th>Path</th>
         <th></th>
       </tr>
@@ -49,6 +51,7 @@
     <td><a href="{{driverPath}}">{{driver}}</a></td>
     <td>ip</td>
     <td>mac</td>
+    <td class='{{timecolor}}'>{{lastseen}}</td>
     <td>{{path}}</td>
     <td>{{> configuration}}</td>
   </tr>

@@ -113,6 +113,21 @@ if (Meteor.isClient) {
     return Unconfigured.find().fetch();
   };
 
+  Template.device.lastseen = function() {
+    //return get_last_seen(this.path).format("ddd D MMM hh:mmA");
+    var time = get_last_seen(this.path);
+    var duration = moment.duration(-moment().diff(time));
+    return duration.humanize(true);
+  };
+
+  Template.device.timecolor = function() {
+    var time = get_last_seen(this.path);
+    var duration = moment.duration(moment().diff(time));
+    if (duration.hours() > 0 || duration.minutes() > 10) {
+        return 'danger';
+    }
+  };
+
   Template.device.color = function() {
     if (this.configured != null && !this.configured) {
         return 'warning';

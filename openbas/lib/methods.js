@@ -95,6 +95,13 @@ get_autocomplete_options = function(metadatakey, callback) {
     });
 };
 
+get_last_seen = function(path) {
+    var allpoints = Points.find({}).fetch();
+    var mypoints = _.filter(allpoints, function(o) { return get_source_path(o.Path) == path; });
+    var maxtimestamp = _.max(_.pluck(mypoints, 'time'));
+    return moment(new Date(maxtimestamp * 1000));
+};
+
 if (Meteor.isServer) {
   Meteor.methods({
     // in the client:
