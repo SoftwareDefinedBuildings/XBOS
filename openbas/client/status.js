@@ -79,6 +79,7 @@ if (Meteor.isClient) {
                         '_id': src_path};
               console.log('inserting', rec);
               Unconfigured.upsert({'_id': src_path}, rec);
+              location.reload();
           });
         }
     }
