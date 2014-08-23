@@ -179,6 +179,7 @@ if (Meteor.isClient) {
       var mylightingzone = null;
       var myroom = null;
       var path = this.data.path;
+      var myid = this.data._id;
       var predicate = {'_id': this.data._id};
       record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       $('.autocompletefield').autocomplete(
