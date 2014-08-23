@@ -63,3 +63,7 @@ table td.text-label {
 a:hover {
   text-decoration: none;
 }
+
+.ui-autocomplete {
+    z-index: 5000;
+}

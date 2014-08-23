@@ -124,7 +124,7 @@
 <template name="light_zone_widget">
   <div class="dashboard-well">
     <h3 class="dashboard-column-heading centertext">
-      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=lightingzone }}">{{lightingzone}}</a>
+      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">{{zone}}</a>
     </h3>
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
@@ -148,17 +148,45 @@
         </tbody>
       </table>
     </div>
-    {{#each internals}}
-    <div class="infobox dark well">
-      <p><b>Task Light:</b> {{path}} </p>
+
+    <div class="panel panel-default">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Task Light</th>
+            <th>On/Off</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each internals}}
+          <tr>
+            <td>{{ path }} </td>
+            <td></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
     </div>
-    {{/each}}
-    {{#each sensors}}
-    <div class="infobox dark well">
-      <p><b>Room:</b> {{room}} </p>
-      <p><b>Illumination:</b> {{getValue 'illumination'}} </p>
+
+    <div class="panel panel-default">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Room</th>
+            <th>Illumination</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each sensors}}
+          <tr>
+            <td>{{room}} </td>
+            <td>{{getValue 'illumination'}} </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
     </div>
-    {{/each}}
+
   </div>
 </template>
 
@@ -263,7 +291,7 @@
 </template>
 
 <template name="lightinggroup">
-  <h2 class="dashboard-column-heading">{{zone}}</h2>
+  <h2 class="dashboard-column-heading">{{lightingzone}}</h2>
   <h3 class="dashboard-column-heading">{{path}}</h3>
   <div class='table-responsive'>
     <table class="table table-bordered table-striped">

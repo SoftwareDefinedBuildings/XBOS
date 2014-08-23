@@ -20,7 +20,6 @@ Router.map(function() {
     
     this.route('status', {
       onBeforeAction: function() {
-          console.log("RUNNINg");
           Meteor.call('querysystem');
           this.subscribe('Points').wait();
           this.subscribe('HVAC').wait();
@@ -28,6 +27,7 @@ Router.map(function() {
           this.subscribe('Monitoring').wait();
       },
     });
+
     this.route('points');
     this.route('about');
     this.route('plot');

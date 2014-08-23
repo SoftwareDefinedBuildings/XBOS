@@ -28,6 +28,16 @@ Template.schedule.rendered = function(){
   });
 };
 
+Template.period_point.path_names = function(){
+  var rv = [
+    {"path": "temp_heat", "name": "Heating setpoint"},
+    {"path": "temp_cool", "name": "Cooling setpoint"},
+    {"path": "hvac_state", "name": "HVAC state"},
+    {"path": "on", "name": "Lights"},
+  ];
+  return rv
+};
+
 Template.schedule.events({
   'click #save-schedule': function(){
     var master_sched = MasterSchedule.findOne({});
@@ -48,9 +58,12 @@ Template.schedule.events({
 
 Template.edit_schedule.events({
   'click .add-control-point': function(){
-    var row = '<tr class="period-point"><td><input type="text" class="period-point-path form-control"></td>'
-            + '<td><input type="text" class="period-point-value form-control"></td></tr>';
-    $("#schedule-period-" + this.name).append(row);
+    var clicked_iperiod = $(event.target).data('period');
+    var rendered = UI.render(Template.period_point);
+    UI.insert(rendered, $("#schedule-period-" + clicked_iperiod)[0]);
+  },
+  'click #edit-schedule-cancel': function(){
+    window.location.href = "/schedule/";
   },
   'click #edit-schedule-save': function(){
     var id = this._id;
@@ -72,13 +85,23 @@ Template.edit_schedule.events({
 
     var r = Schedules.update(id, {$set: this});
     if (r){
-      $("#success-alert").slideDown(800);
-      window.setTimeout(function(){
-        $("#success-alert").slideUp(800);
-      }, 5000);
+      window.location.href = "/schedule/";
     }
   }
 });
+
+Template.edit_schedule.rendered = function(){
+  console.log($('.schedule-period'))
+  _.each(this.data.periods, function(p){
+    var el_period = $('#schedule-period-'+p.name);
+    var el_period_point_name = $(el_period).find(".period-point-name");
+    var el_period_point_value = $(el_period).find(".period-point-value");
+    _.each(_.zip(el_period_point_name, el_period_point_value, p.points), function(x){
+      x[0].value = x[2].path;
+      x[1].value = x[2].value;
+    });
+  });
+};
 
 Template.add_schedule.events({
   'click #add-period': function(event){
@@ -88,9 +111,11 @@ Template.add_schedule.events({
   },
   'click .add-control-point': function(event){
     var clicked_iperiod = $(event.target).data('period');
-    var row = '<tr class="period-point"><td><input type="text" class="period-point-path form-control"></td>'
-            + '<td><input type="text" class="period-point-value form-control"></td></tr>';
-    $("#schedule-period-" + clicked_iperiod).append(row);
+    var rendered = UI.render(Template.period_point);
+    UI.insert(rendered, $("#schedule-period-" + clicked_iperiod)[0]);
+  },
+  'click #add-schedule-cancel': function(){
+    window.location.href = "/schedule/";
   },
   'click #add-schedule-save': function(){
     var sched = {};
@@ -111,12 +136,7 @@ Template.add_schedule.events({
     sched.color = "#EBCACA";
     var r = Schedules.insert(sched);
     if (r){
-      $("#success-alert").slideDown(800);
-      window.setTimeout(function(){
-        $("#success-alert").slideUp(800);
-      }, 5000);
+      window.location.href = "/schedule/";
     }
   }
 });
-
-

@@ -103,6 +103,7 @@
         <span class="glyphicon glyphicon-plus"></span>Add period
       </button>
       <button id="add-schedule-save" type="button" class="btn btn-success btn-md">Save</button>
+      <button id="add-schedule-cancel" type="button" class="btn btn-danger btn-md">Cancel</button>
       <div class="alert alert-success" id="success-alert" style="text-align: center; margin: 10px; display: none;">
         Successfully added the schedule.
       </div>
@@ -138,14 +139,7 @@
             </td>
           </tr>
           {{#each points}}
-          <tr class="period-point">
-            <td>
-              <input type="text" class="period-point-path form-control" value="{{path}}">
-            </td>
-            <td>
-              <input type="text" class="period-point-value form-control" value="{{value}}">
-            </td>
-          </tr>
+            {{ > period_point }}
           {{/each}}
         </tbody>
         <tbody>
@@ -162,6 +156,7 @@
           <tr>
             <td colspan=2 style="text-align: right;">
               <button id="edit-schedule-save" type="button" class="btn btn-success btn-md">Save</button>
+              <button id="edit-schedule-cancel" type="button" class="btn btn-danger btn-md">Cancel</button>
               <div class="alert alert-success" id="success-alert" style="text-align: center; margin: 10px; display: none;">
                 Successfully updated the {{name}} schedule.
               </div>
@@ -214,15 +209,9 @@
         <input type="text" class="period-start form-control" placeholder="HH:mm">
       </td>
     </tr>
+    
+    {{ > period_point }}
 
-    <tr class="period-point">
-      <td>
-        <input type="text" class="period-point-path form-control">
-      </td>
-      <td>
-        <input type="text" class="period-point-value form-control">
-      </td>
-    </tr>
   </tbody>
   <tbody>
     <tr>
@@ -233,4 +222,19 @@
       </td>
     </tr>
   </tbody>
+</template>
+
+<template name="period_point">
+  <tr class="period-point">
+    <td>
+      <select class="period-point-name schedule-select form-control">
+        {{#each path_names}}
+        <option value="{{path}}">{{name}}</option>
+        {{/each}}
+      </select>
+    </td>
+    <td>
+      <input type="text" class="period-point-value form-control">
+    </td>
+  </tr>
 </template>

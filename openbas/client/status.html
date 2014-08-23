@@ -3,11 +3,15 @@
   <table class="table table-hover">
     <thead>
       <tr>
+        <th>Unconfigured Devices</th>
+      </tr>
+      <tr>
         <th>Type</th>
         <th>Model</th>
         <th>Driver</th>
         <th>IP Address</th>
         <th>MAC Address</th>
+        <th>Last Seen</th>
         <th>Path</th>
         <th></th>
       </tr>
@@ -16,6 +20,23 @@
       {{#each unconfigured}}
         {{> device}}
       {{/each}}
+    </tbody>
+    <thead>
+      <tr>
+        <th>Configured Devices</th>
+      </tr>
+      <tr>
+        <th>Type</th>
+        <th>Model</th>
+        <th>Driver</th>
+        <th>IP Address</th>
+        <th>MAC Address</th>
+        <th>Last Seen</th>
+        <th>Path</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
       {{#each sources}}
         {{> device}}
       {{/each}}
@@ -30,13 +51,20 @@
     <td><a href="{{driverPath}}">{{driver}}</a></td>
     <td>ip</td>
     <td>mac</td>
+    <td class='{{timecolor}}'>{{lastseen}}</td>
     <td>{{path}}</td>
     <td>{{> configuration}}</td>
   </tr>
 </template>
 
 <template name="configuration">
-  <div class="btn btn-info" data-toggle="modal" data-target="#metadataModal_{{fixPath path}}">Configure</div>
+  {{#if isunconfigured}}
+  <div class="btn btn-warning" data-toggle="modal" data-target="#metadataModal_{{fixPath path}}">Automap</div>
+  {{else}}{{#if nosystem}}
+  <div class="btn btn-danger" data-toggle="modal" data-target="#metadataModal_{{fixPath path}}">Configure</div>
+  {{else}}
+  <div class="btn btn-info" data-toggle="modal" data-target="#metadataModal_{{fixPath path}}">Reconfigure</div>
+  {{/if}}{{/if}}
 
   <div class="modal fade" id="metadataModal_{{fixPath path}}" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -46,66 +74,26 @@
               <h4 class="modal-title" id="modalLabel">Device Configuration for {{path}}</h4>
             </div>
             <div id="device_{{fixPath path}}" class="modal-body">
-              <!--TODO: here, make this a bit prettier and editable. Need the completion method in lib/methods
-                 USE http://jqueryui.com/autocomplete/-->
-              {{#each commonmetadata}}
-                <p>{{key}} : {{val}}</p>
-              {{/each}}
-              <form class="form-horizontal">
-                {{#if isunconfigured}}
+              <form data-formlabel="{{fixPath path}}" class="form_{{fixPath path}} form-horizontal">
+                  <!-- form group-->
+                {{#each commonmetadata}}
                   <div class="form-group">
-                    <label class="col-sm-4 control-label">System</label>
-                    <div class="col-sm-8">
-                      <select class="system form-control">
-                        <option class="selected" value=""></option>
-                        <option value="HVAC">HVAC</option>
-                        <option value="Lighting">Lighting</option>
-                        <option value="Monitoring">Monitoring</option>
-                      </select>
-                    </div>
+                    <label data-mykey="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                    {{#if static}}
+                      <input data-mykey="{{key}}" id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-7 text" value="{{val}}" readonly>
+                    {{else}}
+                      <input data-mykey="{{key}}" id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-7 text" value="{{val}}">
+                    {{/if}}
                   </div>
-                {{/if}}
-                <div class="form-group">
-                  <label class="col-sm-4 control-label">HVAC Zone</label>
-                  <div class="col-sm-8">
-                    <select class="hvaczones form-control">
-                      <option class="selected" value=""></option>
-                      {{#each hvaczones}}
-                        <option value="{{this}}">{{this}}</option>
-                      {{/each}}
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-4 control-label">Lighting Zone</label>
-                  <div class="col-sm-8">
-                    <select class="lightingzones form-control">
-                      <option class="selected" value=""></option>
-                      {{#each lightingzones}}
-                        <option value="{{this}}">{{this}}</option>
-                      {{/each}}
-                    </select>
-                  </div>
-                </div>
-                {{#if derivedrooms}}
-                  <div class="form-group">
-                    <label class="col-sm-4 control-label">Room</label>
-                    <div class="col-sm-8">
-                      <select class="rooms form-control">
-                          {{#each derivedrooms}}
-                            <option value="{{this}}">{{this}}</option>
-                          {{/each}}
-                      </select>
-                    </div>
-                  </div>
-                {{/if}}
-              </form>
-            </div>
-            <div id="notifications{{fixPath path}}">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="button" class="save btn btn-primary">Save changes</button>
+                {{/each}}
+              <div id="notifications{{fixPath path}}">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <!--<button type="button" class="save btn btn-primary">Save changes</button>-->
+                <input id="submit_{{fixPath path}}" type="submit" class="submit btn btn-primary" value="Submit" />
+              </div>
+            </form>
             </div>
         </div>
     </div>

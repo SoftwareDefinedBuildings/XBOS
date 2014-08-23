@@ -3,6 +3,14 @@ common_metadata = function(o) {
      * Given a System object (from HVAC, Lighting or Monitoring) with a .timeseries attribute,
      * finds the metadata common for this source
      */
+    if (!o.timeseries) {
+        var ret = {};
+        _.each(o, function(val, key) {
+            ret[key.toProperCase()] = val;
+        });
+        ret['configured'] = false;
+        return {'Metadata': ret};
+    }
     return intersect_json(_.values(o.timeseries))
 };
 
@@ -11,8 +19,10 @@ intersect_json = function(o){
    * Finds common metadata recursively. Takes as an argument
    * a list of objects
    */
+  o = _.compact(o);
   var ks = []
   _.each(o, function(el){
+    if (!el) { return; }
     ks.push(_.keys(el))
   });
   ks = _.uniq(_.flatten(ks))
@@ -22,7 +32,7 @@ intersect_json = function(o){
     if (typeof vs[0] == "object") {
       var r_rec = intersect_json(vs)
       if (!$.isEmptyObject(r_rec)) {
-        r[k] = r_rec  
+        r[k] = r_rec
       }
     } else if (vs.length == 1){
       r[k] = vs[0]
@@ -35,10 +45,62 @@ get_source_path = function(path) {
   return path.slice(0,path.lastIndexOf('/'));
 };
 
+fix_path = function(path) {
+  return path.replace(/\//g,'_');
+};
+
+/*
+ * finds a meteor record in the HVAC, Lighting or Monitoring collections
+ * and returns both the record and which collection it found it in
+ */
+find_by_id = function(_id) {
+    var predicate = {'_id': _id};
+    var record = null;
+    record = HVAC.findOne(predicate);
+    if (record) {
+        return [record, 'HVAC'];
+    }
+    record = Lighting.findOne(predicate);
+    if (record) {
+        return [record, 'Lighting'];
+    }
+    record = Monitoring.findOne(predicate);
+    if (record) {
+        return [record, 'Monitoring'];
+    }
+    record = Unconfigured.findOne(predicate);
+    return [record, "Unconfigured"];
+};
+
 /*
  * need a method that for a given metadata key, gives
- * a list of possible options
+ * a list of possible options. This should probably be done using
+ *
+ * select distinct metadata/tag;
+ *
+ * Takes two arguments: metadatakey, which is the name of <key> in Metadata/<key>,
+ * and a callback function which takes the results of the query as an argument
  */
+get_autocomplete_options = function(metadatakey, callback) {
+    var data = [];
+
+    var query = 'select distinct Metadata/'+metadatakey+' where Metadata/Site="'+Meteor.settings.public.site+'"';
+    Meteor.call('query', query, function(err, val) {
+        if (err) {
+          console.log('err',err);
+          callback(data);
+        }
+        console.log('autocomplete options for',metadatakey,':',val);
+        callback(val);
+    });
+};
+
+get_last_seen = function(path) {
+    var allpoints = Points.find({}).fetch();
+    var mypoints = _.filter(allpoints, function(o) { return get_source_path(o.Path) == path; });
+    var maxtimestamp = _.max(_.pluck(mypoints, 'time'));
+    return moment(new Date(maxtimestamp * 1000));
+};
 
 if (Meteor.isServer) {
   Meteor.methods({
@@ -105,7 +167,7 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-  /* 
+  /*
    * Removes everything after the last '/' in a path and returns
    */
   get_source_path:  function(path) {
