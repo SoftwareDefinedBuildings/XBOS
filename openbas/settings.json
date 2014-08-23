@@ -1,7 +1,7 @@
 { 
-  "archiverUrl": "http://localhost:8079",
+  "archiverUrl": "http://localhost:49154",
   "roomsfile": "testrooms.json",
   "apikey": "lVzBMDpnkXApJmpjUDSvm4ceGfpbrLLSd9cq",
-  "public": {"archiverUrl":  "http://localhost:8079",
+  "public": {"archiverUrl":  "http://localhost:49154",
              "site": "0273d18f-1c03-11e4-a490-6003089ed1d0"}
 }
