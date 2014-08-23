@@ -1,0 +1,3 @@
+[submodule "upmu-plotter"]
+	path = upmu-plotter
+	url = https://github.com/SoftwareDefinedBuildings/upmu-plotter.git
