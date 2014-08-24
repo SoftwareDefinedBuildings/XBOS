@@ -198,6 +198,9 @@ if (Meteor.isClient) {
         _.each(inputs , function(val, idx) {
             towrite[val.dataset['mykey']] = val.value;
         });
+        delete towrite['undefined'];
+        delete towrite['configured'];
+        delete towrite['Configured'];
         Meteor.call('savemetadata', towrite['_id'], towrite, function() {
           console.log("returned!");
           location.reload();
@@ -256,6 +259,7 @@ if (Meteor.isClient) {
         metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
       }
 
+      delete common['Configured']; // unneeded
       delete common['configured']; // unneeded
       delete common['LightingZone']; // delete this and the next one bc we used it earlier
       delete common['HVACZone'];
