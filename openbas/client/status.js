@@ -1,5 +1,15 @@
 if (Meteor.isClient) {
 
+  $('.autocompletefield').autocomplete(
+        {
+            source: function(request, response) {
+              var mykey = $(this).get(0).element.get(0).dataset['mykey'];
+              get_autocomplete_options(mykey, response);
+            },
+            minLength: 0,
+        }
+  );
+
   Session.set('selectedhvaczone', null);
   Session.set('selectedlightingzone', null);
   hvaczones = function() {
