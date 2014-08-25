@@ -159,9 +159,6 @@ if (Meteor.isServer) {
           _.each(mypoints, function(val, idx) {
             Points.update({'uuid': val},{$set: {'configured': true}})
           });
-
-          //TODO: find all uuids for timeseries and update db.points to be configured=true!
-          //
         }
 
         // prepare data for committing to archiver

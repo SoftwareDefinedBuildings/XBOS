@@ -108,13 +108,15 @@ if (Meteor.isServer) {
     // Meteor.call('method_name', param, param, function(err, data){ ... });
 
     query: function(q){
-      var url = Meteor.settings.archiverUrl + "/api/query";
+      this.unblock();
+      var url = Meteor.settings.archiverUrl + "/api/query?key="+Meteor.settings.apikey;
       console.log("Query:",q);
       var r = HTTP.call("POST", url, {content: q});
       return EJSON.parse(r.content);
     },
 
     latest: function(restrict, n){
+      this.unblock();
       var q = "select data before now limit " + n + " where " + restrict;
       var url = Meteor.settings.archiverUrl + "/api/query";
       console.log(restrict);
@@ -148,6 +150,7 @@ if (Meteor.isServer) {
        * restrict: string 'where' clause telling sMAP which timeseries are to be updated
        * tags: list of [tag, value] arrays to be set
        */
+      this.unblock();
       var url = Meteor.settings.archiverUrl + "/api/query?key=" + Meteor.settings.apikey;
       console.log(url);
       var results = [];
