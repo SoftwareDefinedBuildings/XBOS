@@ -219,6 +219,45 @@ if (Meteor.isClient) {
         e.preventDefault();
         return false;
       });
+
+      $('#delete_'+fix_path(path)).on('click', function(e) {
+        console.log("Deleting", path, myid);
+
+        var query = 'delete configured, Metadata/Role, Metadata/configured, Metadata/System where Path like "'+path+'%"';
+        Meteor.call('query', query, function(err, val) {
+          console.log('err',err);
+          console.log("deleting", val);
+        });
+
+        var allpoints = Points.find({}).fetch();
+        var mypoints = _.filter(allpoints, function(o) { return get_source_path(o.Path) == path; });
+        _.each(_.pluck(mypoints, '_id'), function(_id, idx) {
+            Points.remove(_id);
+        });
+        var tmp = find_by_id(myid);
+        console.log("Deleting", tmp[0]._id);
+        var record = tmp[0];
+        var system = tmp[1];
+        if (system == 'HVAC') {
+            console.log("HVAC")
+            HVAC.remove(record._id);
+        }
+        if (system == 'Lighting') {
+            console.log("Lighting", record._id)
+            Lighting.remove(record._id);
+        }
+        if (system == 'Monitoring') {
+            console.log("monitoring")
+            Monitoring.remove(record._id);
+        }
+        if (system == 'Unconfigured') {
+            console.log("unconfigured")
+            Unconfigured.remove(record._id);
+        }
+
+        location.reload();
+      });
+
   };
 
   /*
@@ -251,6 +290,9 @@ if (Meteor.isClient) {
   Template.configuration.commonmetadata = function() {
       var tmp = find_by_id(this._id);
       var record = tmp[0];
+      if (!record) {
+        return [];
+      }
       var type = tmp[1];
       var metadata = [];
       var path = fix_path(record.path);
