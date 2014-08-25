@@ -30,7 +30,8 @@ Router.map(function() {
 
     this.route('points');
     this.route('about');
-
+    this.route('plot');
+    
     this.route('zone_detail', {
       path: '/dashboard/:zonetype/:zone',
       data: function() { 

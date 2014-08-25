@@ -3,11 +3,15 @@
   <table class="table table-hover">
     <thead>
       <tr>
+        <th>Unconfigured Devices</th>
+      </tr>
+      <tr>
         <th>Type</th>
         <th>Model</th>
         <th>Driver</th>
         <th>IP Address</th>
         <th>MAC Address</th>
+        <th>Last Seen</th>
         <th>Path</th>
         <th></th>
       </tr>
@@ -16,6 +20,23 @@
       {{#each unconfigured}}
         {{> device}}
       {{/each}}
+    </tbody>
+    <thead>
+      <tr>
+        <th>Configured Devices</th>
+      </tr>
+      <tr>
+        <th>Type</th>
+        <th>Model</th>
+        <th>Driver</th>
+        <th>IP Address</th>
+        <th>MAC Address</th>
+        <th>Last Seen</th>
+        <th>Path</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
       {{#each sources}}
         {{> device}}
       {{/each}}
@@ -30,6 +51,7 @@
     <td><a href="{{driverPath}}">{{driver}}</a></td>
     <td>ip</td>
     <td>mac</td>
+    <td class='{{timecolor}}'>{{lastseen}}</td>
     <td>{{path}}</td>
     <td>{{> configuration}}</td>
   </tr>
@@ -64,14 +86,15 @@
                     {{/if}}
                   </div>
                 {{/each}}
+              <div id="notifications{{fixPath path}}">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <!--<button type="button" class="save btn btn-primary">Save changes</button>-->
+                <button id="delete_{{fixPath path}}" type="button" class="delete btn btn-danger">Delete</button>
                 <input id="submit_{{fixPath path}}" type="submit" class="submit btn btn-primary" value="Submit" />
-              </form>
-            </div>
-            <div id="notifications{{fixPath path}}">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="button" class="save btn btn-primary">Save changes</button>
+              </div>
+            </form>
             </div>
         </div>
     </div>

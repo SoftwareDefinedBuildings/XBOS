@@ -1,5 +1,15 @@
 if (Meteor.isClient) {
 
+  $('.autocompletefield').autocomplete(
+        {
+            source: function(request, response) {
+              var mykey = $(this).get(0).element.get(0).dataset['mykey'];
+              get_autocomplete_options(mykey, response);
+            },
+            minLength: 0,
+        }
+  );
+
   Session.set('selectedhvaczone', null);
   Session.set('selectedlightingzone', null);
   hvaczones = function() {
@@ -79,6 +89,7 @@ if (Meteor.isClient) {
                         '_id': src_path};
               console.log('inserting', rec);
               Unconfigured.upsert({'_id': src_path}, rec);
+              location.reload();
           });
         }
     }
@@ -111,6 +122,21 @@ if (Meteor.isClient) {
 
   Template.status.unconfigured = function() {
     return Unconfigured.find().fetch();
+  };
+
+  Template.device.lastseen = function() {
+    //return get_last_seen(this.path).format("ddd D MMM hh:mmA");
+    var time = get_last_seen(this.path);
+    var duration = moment.duration(-moment().diff(time));
+    return duration.humanize(true);
+  };
+
+  Template.device.timecolor = function() {
+    var time = get_last_seen(this.path);
+    var duration = moment.duration(moment().diff(time));
+    if (duration.hours() > 0 || duration.minutes() > 10) {
+        return 'danger';
+    }
   };
 
   Template.device.color = function() {
@@ -152,41 +178,6 @@ if (Meteor.isClient) {
     'change .lightingzones': function(e, template) {
         Session.set('selectedlightingzone', template.find('.lightingzones').value);
     },
-
-    //'click .save': function(e, template) {
-    //  var path = this.path;
-    //  console.log('form save',template, e);
-    //  var hvaczone = template.find('.hvaczones').value || null;
-    //  var lightingzone = template.find('.lightingzones').value || null;
-    //  var room = template.find('.rooms').value || null;
-    //  var system = null;
-    //  if (this.configured == null || !this.configured) {
-    //    system = template.find('.system').value || null;
-    //  }
-    //  var record = null;
-    //  var res = null
-    //  var predicate = {'_id': this._id};
-    //  // if the record is in HVAC, Lighting or Monitoring, update the record
-    //  // but if it is in Unconfigured, remove it!
-    //  var update = {'HVACZone': hvaczone,
-    //                'LightingZone': lightingzone,
-    //                'Room': room,
-    //                'System': system,
-    //                'configured': true};
-    //  console.log("calling", this._id, update);
-    //  Meteor.call('savemetadata', this._id, update, function() {
-    //    console.log("returned!");
-    //    path = path.replace(/\//g,'_');
-    //    $('#notifications'+path).empty();
-    //    $('#notifications'+path).append('<p id="success'+path+'" style="padding: 5px"><br/></p>');
-    //    $('#success'+path).html('Successful!');
-    //    $('#success'+path).css('background-color','#5cb85c');
-    //    $('#success'+path).fadeOut(2000);
-    //    if (system) {
-    //      location.reload();
-    //    }
-    //  });
-    //}
   });
 
   Template.configuration.isunconfigured = function() {
@@ -198,6 +189,7 @@ if (Meteor.isClient) {
       var mylightingzone = null;
       var myroom = null;
       var path = this.data.path;
+      var myid = this.data._id;
       var predicate = {'_id': this.data._id};
       record = HVAC.findOne(predicate) || Lighting.findOne(predicate) || Monitoring.findOne(predicate);
       $('.autocompletefield').autocomplete(
@@ -216,6 +208,9 @@ if (Meteor.isClient) {
         _.each(inputs , function(val, idx) {
             towrite[val.dataset['mykey']] = val.value;
         });
+        delete towrite['undefined'];
+        delete towrite['configured'];
+        delete towrite['Configured'];
         Meteor.call('savemetadata', towrite['_id'], towrite, function() {
           console.log("returned!");
           location.reload();
@@ -224,6 +219,45 @@ if (Meteor.isClient) {
         e.preventDefault();
         return false;
       });
+
+      $('#delete_'+fix_path(path)).on('click', function(e) {
+        console.log("Deleting", path, myid);
+
+        var query = 'delete configured, Metadata/Role, Metadata/configured, Metadata/System where Path like "'+path+'%"';
+        Meteor.call('query', query, function(err, val) {
+          console.log('err',err);
+          console.log("deleting", val);
+        });
+
+        var allpoints = Points.find({}).fetch();
+        var mypoints = _.filter(allpoints, function(o) { return get_source_path(o.Path) == path; });
+        _.each(_.pluck(mypoints, '_id'), function(_id, idx) {
+            Points.remove(_id);
+        });
+        var tmp = find_by_id(myid);
+        console.log("Deleting", tmp[0]._id);
+        var record = tmp[0];
+        var system = tmp[1];
+        if (system == 'HVAC') {
+            console.log("HVAC")
+            HVAC.remove(record._id);
+        }
+        if (system == 'Lighting') {
+            console.log("Lighting", record._id)
+            Lighting.remove(record._id);
+        }
+        if (system == 'Monitoring') {
+            console.log("monitoring")
+            Monitoring.remove(record._id);
+        }
+        if (system == 'Unconfigured') {
+            console.log("unconfigured")
+            Unconfigured.remove(record._id);
+        }
+
+        location.reload();
+      });
+
   };
 
   /*
@@ -256,6 +290,9 @@ if (Meteor.isClient) {
   Template.configuration.commonmetadata = function() {
       var tmp = find_by_id(this._id);
       var record = tmp[0];
+      if (!record) {
+        return [];
+      }
       var type = tmp[1];
       var metadata = [];
       var path = fix_path(record.path);
@@ -274,6 +311,7 @@ if (Meteor.isClient) {
         metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
       }
 
+      delete common['Configured']; // unneeded
       delete common['configured']; // unneeded
       delete common['LightingZone']; // delete this and the next one bc we used it earlier
       delete common['HVACZone'];

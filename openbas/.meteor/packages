@@ -13,9 +13,14 @@ accounts-password
 accounts-ui-bootstrap-3
 bootstrap-3
 houston
-d3
 http
 jquery
 bootstrap-slider
 moment
+s3ui
+anytime
+vakata-jstree
+timezone-js
+jquery-simplecolorpicker
+newd3
 jqueryui
