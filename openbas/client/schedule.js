@@ -29,13 +29,7 @@ Template.schedule.rendered = function(){
 };
 
 Template.period_point.path_names = function(){
-  var rv = [
-    {"path": "temp_heat", "name": "Heating setpoint"},
-    {"path": "temp_cool", "name": "Cooling setpoint"},
-    {"path": "hvac_state", "name": "HVAC state"},
-    {"path": "on", "name": "Lights"},
-  ];
-  return rv
+  return OpenBAS.PathNames;
 };
 
 Template.schedule.events({
@@ -54,13 +48,17 @@ Template.schedule.events({
       }, 5000);
     }
   },
+  'click .delete-schedule': function(){
+    var clicked_id = $(event.target).data('id');
+    Schedules.remove({ _id: clicked_id});
+  },
 });
 
 Template.edit_schedule.events({
   'click .add-control-point': function(){
-    var clicked_iperiod = $(event.target).data('period');
+    var clicked_name = $(event.target).data('name');
     var rendered = UI.render(Template.period_point);
-    UI.insert(rendered, $("#schedule-period-" + clicked_iperiod)[0]);
+    UI.insert(rendered, $("#schedule-period-" + clicked_name)[0]);
   },
   'click #edit-schedule-cancel': function(){
     window.location.href = "/schedule/";
@@ -73,7 +71,7 @@ Template.edit_schedule.events({
       rv.start = $(p).find(".period-start").val();
       rv.points = _.map($(p).find(".period-point"), function(point){
         mypoint = {};
-        mypoint.path = $(point).find('.period-point-path').val();
+        mypoint.path = $(point).find('.period-point-name').val();
         mypoint.value = $(point).find('.period-point-value').val();
         return mypoint;
       });
@@ -91,7 +89,6 @@ Template.edit_schedule.events({
 });
 
 Template.edit_schedule.rendered = function(){
-  console.log($('.schedule-period'))
   _.each(this.data.periods, function(p){
     var el_period = $('#schedule-period-'+p.name);
     var el_period_point_name = $(el_period).find(".period-point-name");
@@ -139,4 +136,13 @@ Template.add_schedule.events({
       window.location.href = "/schedule/";
     }
   }
+});
+
+Template.view_schedule.helpers({
+  getPathName: function(path){
+    var mypath = _.find(OpenBAS.PathNames, function(p){
+      return p.path == path;
+    });
+    return mypath.name;
+  },
 });

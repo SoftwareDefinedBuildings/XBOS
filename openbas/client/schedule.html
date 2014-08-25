@@ -43,6 +43,7 @@
             <th>Name</th>
             <th>View</th>
             <th>Edit</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -63,10 +64,15 @@
                 </button>
               </a>
             </td>
+            <td>
+              <button type="button" data-id="{{_id}}" class="delete-schedule btn btn-default btn-md">
+                <span class="glyphicon glyphicon-trash"></span>
+              </button>
+            </td>
           </tr>
           {{/each}}
           <tr>
-            <td colspan=3 style="text-align: right; hover-style: ">
+            <td colspan=4 style="text-align: right; hover-style: ">
               <a href="/schedule/add/">
                 <button type="button" class="btn btn-default btn-md">
                   <span class="glyphicon glyphicon-plus"></span>New daily schedule
@@ -177,14 +183,14 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>Path</th>
+            <th>Control point</th>
             <th>Value</th>
           </tr>
         </thead>
         <tbody>
           {{#each points}}
           <tr>
-            <td>{{path}}</td>
+            <td>{{ getPathName path }}</td>
             <td>{{value}}</td>
           </tr>
           {{/each}}

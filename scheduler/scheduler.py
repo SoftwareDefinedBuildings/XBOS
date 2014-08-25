@@ -46,8 +46,10 @@ class Scheduler(SmapDriver):
         for p in cp:
             # check if it's already reporting the desired value
             # todo: if point['OverrideSchedule'] is not None
-            if p['value'] != val and hasattr(p, 'ActuatorUUID'):
-                url = "http://localhost:%s%s_act" % (p['ServerPort'], p['Path'])
+            if p['value'] != val and 'ActuatorUUID' in p:
+                print "setting %s to %s" % (p['Path'], val)
+                url = "http://localhost:%s/data%s_act?state=%s" % (p['ServerPort'], p['Path'], str(val))
+                print url
                 opener = urllib2.build_opener(urllib2.HTTPHandler)
                 request = urllib2.Request(url, data='')
                 request.get_method = lambda: 'PUT'
@@ -55,9 +57,7 @@ class Scheduler(SmapDriver):
                     fp = opener.open(request)
                 except urllib2.HTTPError:
                     print "Invalid path:" + url
-                res = json.loads(fp.read())
-                return res
-
+                    
     def get_control_points(self, path):
         clause = {'Path': { '$regex': '.*%s$' % path }}
         return self.MongoDatabase.points.find(clause)
