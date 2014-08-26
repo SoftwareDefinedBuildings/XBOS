@@ -10,6 +10,8 @@ class Scheduler(SmapDriver):
         self.connect(opts)
         self.rate = float(opts.get('Rate', 1))
         self.day_map = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+        self.previous_period = None
+        self.changed = False
 
     def start(self):
         periodicSequentialCall(self.read).start(self.rate)
@@ -22,6 +24,8 @@ class Scheduler(SmapDriver):
         
         today_sched = self.get_schedule(master_sched[day])
         current_period = self.get_current_period(today_sched)
+        self.changed = self.previous_period != current_period
+        self.previous_period = current_period
 
         if not current_period:
             # carry over from yesterday
@@ -38,9 +42,10 @@ class Scheduler(SmapDriver):
         schedule_points = current_period['points']
 
         # get the relevant points in openbas
-        for sp in schedule_points:
-            control_points = list(self.get_control_points(sp['path']))
-            self.actuate_points(control_points, sp['value'])
+        if self.changed:
+            for sp in schedule_points:
+                control_points = list(self.get_control_points(sp['path']))
+                self.actuate_points(control_points, sp['value'])
 
     def actuate_points(self, cp, val):
         for p in cp:
