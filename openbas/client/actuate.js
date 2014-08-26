@@ -43,20 +43,19 @@ if (Meteor.isClient) {
       }
       updateActuators(res[0].uuid, res[0]);
     });
-    var uuid = this.data.uuid;
     Meteor.call('createPermalink', 
     {
        "streams":
        [
            {
-               "uuid": uuid,
+               "stream": this.data.uuid,
                "color": "#000000"
            },
        ],
        "autoupdate": true,
        "window_type": "now",
        "window_width": 86400000000000,
-       "tz": "America/Los_Angeles",
+       "tz": "UTC",
      }, function(err, res) {
        updatePermalink(uuid, res);
     });
@@ -92,7 +91,7 @@ if (Meteor.isClient) {
   };
 
   Template.actuator_display.ploturl = function() {
-    return Meteor.absoluteUrl('plot?'+getPermalink(this.uuid));
+    return Meteor.absoluteUrl('plot?'+getPermalink(this.ActuatorUUID));
   };
 
   Template.point_display.point = function(uuid) {
@@ -107,14 +106,14 @@ if (Meteor.isClient) {
       "streams":
       [
           {
-              "uuid": uuid,
+              "stream": uuid,
               "color": "#000000"
           },
       ],
       "autoupdate": true,
       "window_type": "now",
       "window_width": 86400000000000,
-      "tz": "America/Los_Angeles",
+      "tz": "UTC",
     }, function(err, res) {
       updatePermalink(uuid, res);
     });
