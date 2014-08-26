@@ -86,7 +86,7 @@
 
 <template name="actuator_display">
   {{#with point uuid}}
-    <td>{{name}}</td>
+    <td><a href="{{ploturl}}">{{name}}</a></td>
     <td>{{value}}</td>
     {{#if isDiscrete}}
       <td>{{> actuator_discrete}}</td>

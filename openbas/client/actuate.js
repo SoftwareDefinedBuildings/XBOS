@@ -43,6 +43,23 @@ if (Meteor.isClient) {
       }
       updateActuators(res[0].uuid, res[0]);
     });
+    var uuid = this.data.uuid;
+    Meteor.call('createPermalink', 
+    {
+       "streams":
+       [
+           {
+               "uuid": uuid,
+               "color": "#000000"
+           },
+       ],
+       "autoupdate": true,
+       "window_type": "now",
+       "window_width": 86400000000000,
+       "tz": "America/Los_Angeles",
+     }, function(err, res) {
+       updatePermalink(uuid, res);
+    });
   };
 
   Template.actuator_display.type = function() {
@@ -74,6 +91,10 @@ if (Meteor.isClient) {
     return pathcomponents[pathcomponents.length - 1].replace('_',' ').toProperCase();
   };
 
+  Template.actuator_display.ploturl = function() {
+    return Meteor.absoluteUrl('plot?'+getPermalink(this.uuid));
+  };
+
   Template.point_display.point = function(uuid) {
     var p = Points.find({'uuid': uuid}, {'reactive': !Session.get('loading')}).fetch()[0];
     return p;
@@ -86,7 +107,7 @@ if (Meteor.isClient) {
       "streams":
       [
           {
-              "uuid": this.data.uuid,
+              "uuid": uuid,
               "color": "#000000"
           },
       ],
@@ -100,7 +121,7 @@ if (Meteor.isClient) {
   };
 
   Template.point_display.ploturl = function() {
-    console.log(this.uuid);
+    return Meteor.absoluteUrl('plot?'+getPermalink(this.uuid));
   };
 
   Template.point_display.name = function() {
