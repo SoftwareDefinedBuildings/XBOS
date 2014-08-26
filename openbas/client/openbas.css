@@ -56,6 +56,16 @@ div.schedule-container {
   margin: 0 auto;
 }
 
+div.rooms-container {
+  width: 600px;
+  margin: 0 auto;
+}
+
+div.add-room-container {
+  width: 400px;
+  margin: 0 auto;
+}
+
 table td.text-label {
   font-weight: bold;
 }

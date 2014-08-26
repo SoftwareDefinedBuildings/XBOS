@@ -1,0 +1,107 @@
+<template name='building'>
+  <div class="rooms-container">
+    <div class="panel panel-default">
+      <div class="panel-heading">Rooms</div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Room number</th>
+            <th>Description</th> 
+            <th>Exposure</th> 
+            <th>HVAC zone</th> 
+            <th>Lighting zone</th> 
+          </tr>
+        </thead>
+        <tbody>
+          {{#each rooms}}
+          <tr>
+            <td>{{RoomNumber}}</td>
+            <td>{{Description}}</td>
+            <td>{{Exposure}}</td>
+            <td>{{HVACZone}}</td>
+            <td>{{LightingZone}}</td>
+          </tr>
+          {{/each}}
+          <tr>
+            <td colspan=5 style="text-align: right; hover-style: none;">
+              <a href="/building/add_room">
+                <button type="button" class="btn btn-default btn-md">
+                  <span class="glyphicon glyphicon-plus"></span>Add zone
+                </button>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    {{#each floorplans}}
+      {{> floorplan}}
+    {{/each}}
+  </div>
+</template>
+
+<template name='add_room'>
+  <div class="add-room-container">
+    <div class="panel panel-default"> 
+      <div class="panel-heading">Add room</div>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td class="text-label" style="padding-top:15px;">Room number</td>
+            <td>
+              <input id="room-number" type="text" class="form-control">
+            </td>
+          </tr>
+          <tr>
+            <td class="text-label" style="padding-top:15px;">Description</td>
+            <td>
+              <input id="room-description" type="text" class="form-control autocompletefield">
+            </td>
+          </tr>
+          <tr>
+            <td class="text-label" style="padding-top:15px;">HVAC zone</td>
+            <td>
+              <input id="hvac-zone" type="text" class="form-control autocompletefield">
+            </td>
+          </tr>
+          <tr>
+            <td class="text-label" style="padding-top:15px;">Lighting zone</td>
+            <td>
+              <input id="lighting-zone" type="text" class="form-control autocompletefield">
+            </td>
+          </tr>
+          <tr>
+            <td class="text-label" style="padding-top:15px;">Exposure</td>
+            <td>
+              <select id="exposure" class="exposure-select form-control">
+                <option class="selected" value=""></option>
+                <option value="N">N</option>
+                <option value="S">S</option>
+                <option value="E">E</option>
+                <option value="W">W</option>
+                <option value="Core">Core</option>
+                <option value="NE">NE</option>
+                <option value="NW">NW</option>
+                <option value="SE">SE</option>
+                <option value="SW">SW</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td colspan=2 style="text-align: right; hover-style: none;">
+              <button id="save-room" type="button" class="btn btn-success btn-md">Save</button>
+              <button id="cancel-room" type="button" class="btn btn-danger btn-md">Cancel</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> 
+</template>
+
+<template name='floorplan'>
+  <div class="panel panel-default"> 
+    <div class="panel-heading">{{name}}</div>
+    <img src="/img/{{filename}}" class="img-responsive" alt="Responsive image">
+  </div>
+</template>
