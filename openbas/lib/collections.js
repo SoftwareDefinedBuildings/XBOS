@@ -6,6 +6,7 @@ Monitoring = new Meteor.Collection("monitoring");
 Schedules = new Meteor.Collection("schedules");
 MasterSchedule = new Meteor.Collection("master_schedule");
 Unconfigured = new Meteor.Collection("unconfigured");
+Floorplans = new Meteor.Collection("floorplans");
 
 if (Meteor.isServer) {
 
@@ -35,6 +36,10 @@ if (Meteor.isServer) {
     });
   }
   
+  if (Floorplans.find({}).fetch().length == 0){
+    Floorplans.insert({'filename': 'CIEE-floorplan.png', 'name': 'CIEE main floor'});
+  }
+
   Meteor.publish("master_schedule", function () {
     return MasterSchedule.find({});
   });

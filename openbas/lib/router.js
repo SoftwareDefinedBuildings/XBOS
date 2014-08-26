@@ -66,4 +66,9 @@ Router.map(function() {
       data: {'iperiod': 0},
     });
 
+    this.route('building');
+
+    this.route('add_room', {
+      path: '/building/add_room', 
+    });
 });
