@@ -4,7 +4,11 @@ Router.map(function() {
       waitOn: function() {
         return [
           Meteor.subscribe('schedules'),
-          Meteor.subscribe('master_schedule')
+          Meteor.subscribe('master_schedule'),
+          Meteor.subscribe('points'),
+          Meteor.subscribe('hvac'),
+          Meteor.subscribe('lighting'),
+          Meteor.subscribe('monitoring')
         ];
       },  
     });
@@ -20,11 +24,12 @@ Router.map(function() {
     
     this.route('status', {
       onBeforeAction: function() {
-          Meteor.call('querysystem');
-          this.subscribe('Points').wait();
-          this.subscribe('HVAC').wait();
-          this.subscribe('Lighting').wait();
-          this.subscribe('Monitoring').wait();
+        Meteor.call('querysystem');
+        this.subscribe('hvac').wait();
+        this.subscribe('monitoring').wait();
+        this.subscribe('lighting').wait();
+        this.subscribe('points').wait();
+        this.subscribe('unconfigured').wait();
       },
     });
 
@@ -34,6 +39,14 @@ Router.map(function() {
     
     this.route('zone_detail', {
       path: '/dashboard/:zonetype/:zone',
+      waitOn: function() {
+        return [
+          Meteor.subscribe('points'),
+          Meteor.subscribe('hvac'),
+          Meteor.subscribe('lighting'),
+          Meteor.subscribe('monitoring')
+        ];
+      },
       data: function() { 
         console.log(this.params.zone);
         if (this.params.zonetype == 'hvac') {
