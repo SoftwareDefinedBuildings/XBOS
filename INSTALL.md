@@ -42,24 +42,24 @@ you aren't, turn your computer on.
 
 2. **Make sure you have `curl` installed**: type the following command into the Terminal and press 'Enter':
 
-```
-which curl
-```
+  ```
+  which curl
+  ```
 
-If this gives you output, like printing out `/usr/bin/curl`, then you are fine! If not, you will need to install
-it:
+  If this gives you output, like printing out `/usr/bin/curl`, then you are fine! If not, you will need to install
+  it:
 
-```
-sudo apt-get install -y curl
-```
+  ```
+  sudo apt-get install -y curl
+  ```
 
-You will probably need to type in your password.
+  You will probably need to type in your password.
 
 3. **Install OpenBAS:** We've made this part very easy! Simply type into the terminal the following:
 
-```
-curl http://miranda.cs.berkeley.edu:10000/install.sh | sudo sh
-```
+  ```
+  curl http://miranda.cs.berkeley.edu:10000/install.sh | sudo sh
+  ```
 
-which will install and configure your system to run OpenBAS. It will tell you exactly what it is doing,
-and by the end of the process, your computer should have OpenBAS installed and running.
+  which will install and configure your system to run OpenBAS. It will tell you exactly what it is doing,
+  and by the end of the process, your computer should have OpenBAS installed and running.
