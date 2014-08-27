@@ -12,6 +12,14 @@ cd openbas
 mrt --settings settings.json
 ```
 
+When cloning this for the first time, make sure that you have the `upmu-plotter` submodule updated. To do this,
+run the following command from the same directory as this README:
+
+```
+git submodule update --init
+git submodule foreach git pull origin master
+```
+
 #### If on Ubuntu system:
 
 Install Meteor
