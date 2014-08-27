@@ -34,9 +34,11 @@
         </tbody>
       </table>
     </div>
+
     {{#each floorplans}}
       {{> floorplan}}
     {{/each}}
+
   </div>
 </template>
 
@@ -88,20 +90,30 @@
             </td>
           </tr>
           <tr>
-            <td colspan=2 style="text-align: right; hover-style: none;">
-              <button id="save-room" type="button" class="btn btn-success btn-md">Save</button>
-              <button id="cancel-room" type="button" class="btn btn-danger btn-md">Cancel</button>
+            <td colspan=2 style="text-align: center;">
+              <i>Place a marker on a floorplan below</i>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div> 
+
+  <div class="rooms-container">
+    {{#each floorplans}}
+      {{> floorplan}}
+    {{/each}}
+    <div style="margin-bottom: 20px; float: right">
+      <button id="save-room" type="button" class="btn btn-success btn-md">Save</button>
+      <button id="cancel-room" type="button" class="btn btn-danger btn-md">Cancel</button>
+    </div>
+  </div>
+
 </template>
 
 <template name='floorplan'>
-  <div class="panel panel-default"> 
+  <div id="floorplan-{{_id}}" class="panel panel-default"> 
     <div class="panel-heading">{{name}}</div>
-    <img src="/img/{{filename}}" class="img-responsive" alt="Responsive image">
+    <img id="{{_id}}" src="/img/{{filename}}" class="floorplan img-responsive" alt="Responsive image">
   </div>
 </template>
