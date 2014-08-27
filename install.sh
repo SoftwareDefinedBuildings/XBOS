@@ -53,11 +53,14 @@ expect {
 }
 "
 
-echo "Installing Meteor..."
-curl https://install.meteor.com | sh
+curl -O http://54.183.169.17/openbas.tgz
+tar xzf openbas.tgz
 
-echo "Adding Meteor's Node to PATH..."
-export PATH=~/.meteor/tools/latest/bin:$PATH
-
-echo "Installing meteorite..."
-sudo -H npm install -g meteorite
+#echo "Installing Meteor..."
+#curl https://install.meteor.com | sh
+#
+#echo "Adding Meteor's Node to PATH..."
+#export PATH=~/.meteor/tools/latest/bin:$PATH
+#
+#echo "Installing meteorite..."
+#sudo -H npm install -g meteorite
