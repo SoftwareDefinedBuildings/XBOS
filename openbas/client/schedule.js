@@ -122,7 +122,7 @@ Template.add_schedule.events({
       rv.start = $(p).find(".period-start").val();
       rv.points = _.map($(p).find(".period-point"), function(point){
         mypoint = {};
-        mypoint.path = $(point).find('.period-point-path').val();
+        mypoint.path = $(point).find('.period-point-name').val();
         mypoint.value = $(point).find('.period-point-value').val();
         return mypoint;
       });

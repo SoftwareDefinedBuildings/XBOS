@@ -40,11 +40,4 @@ if (Meteor.isServer) {
     Floorplans.insert({'filename': 'CIEE-floorplan.png', 'name': 'CIEE main floor'});
   }
 
-  Meteor.publish("master_schedule", function () {
-    return MasterSchedule.find({});
-  });
-  Meteor.publish("schedules", function () {
-    return Schedules.find({});
-  });
-
 }
