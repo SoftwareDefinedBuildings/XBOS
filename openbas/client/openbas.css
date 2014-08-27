@@ -77,3 +77,13 @@ a:hover {
 .ui-autocomplete {
     z-index: 5000;
 }
+
+.floorplan-marker {
+  position: absolute;
+  font-size: 2em;
+  color: #E00000;
+}
+
+.floorplan-marker-static:hover{
+  color: red;
+}
