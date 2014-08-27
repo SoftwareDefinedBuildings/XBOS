@@ -81,7 +81,7 @@ Router.map(function() {
 
     this.route('building', {
       waitOn: function(){
-        return Meteor.subscribe("rooms");
+        return [Meteor.subscribe("rooms"), Meteor.subscribe("floorplans")];
       },
     });
 
