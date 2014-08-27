@@ -72,6 +72,24 @@ find_by_id = function(_id) {
     return [record, "Unconfigured"];
 };
 
+find_by_path = function(path) {
+    var predicate = {'path': path};
+    var record = null;
+    record = HVAC.findOne(predicate);
+    if (record) {
+        return [record, 'HVAC'];
+    }
+    record = Lighting.findOne(predicate);
+    if (record) {
+        return [record, 'Lighting'];
+    }
+    record = Monitoring.findOne(predicate);
+    if (record) {
+        return [record, 'Monitoring'];
+    }
+    return [null, null]
+};
+
 /*
  * need a method that for a given metadata key, gives
  * a list of possible options. This should probably be done using

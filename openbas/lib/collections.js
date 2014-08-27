@@ -40,4 +40,26 @@ if (Meteor.isServer) {
     Floorplans.insert({'filename': 'CIEE-floorplan.png', 'name': 'CIEE main floor'});
   }
 
+  Meteor.publish("master_schedule", function () {
+    return MasterSchedule.find({});
+  });
+  Meteor.publish("schedules", function () {
+    return Schedules.find({});
+  });
+  Meteor.publish("hvac", function () {
+    return HVAC.find({});
+  });
+  Meteor.publish("lighting", function () {
+    return Lighting.find({});
+  });
+  Meteor.publish("points", function () {
+    return Points.find({});
+  });
+  Meteor.publish("monitoring", function () {
+    return Monitoring.find({});
+  });
+  Meteor.publish("unconfigured", function () {
+    return Monitoring.find({});
+  });
+
 }
