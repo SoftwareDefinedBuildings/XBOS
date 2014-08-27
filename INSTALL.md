@@ -58,9 +58,7 @@ you aren't, turn your computer on.
 3. **Install OpenBAS:** We've made this part very easy! Simply type into the terminal the following:
 
   ```
-  curl http://install.openbas.cal-sdb.org/install.sh | sudo sh
-  -- OR --
-  curl http://http://54.183.169.17/install.sh | sudo sh 
+  curl http://install.openbas.cal-sdb.org/install.sh | bash
   ```
 
   which will install and configure your system to run OpenBAS. It will tell you exactly what it is doing,
