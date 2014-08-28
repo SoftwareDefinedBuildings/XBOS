@@ -11,6 +11,13 @@ Router.map(function() {
           Meteor.subscribe('monitoring')
         ];
       },  
+      action: function () {
+        if (this.ready()){ 
+          this.render();
+        } else {
+            this.render('loading');
+        } 
+      }
     });
 
     this.route('schedule', {
@@ -59,6 +66,13 @@ Router.map(function() {
       }
     });
 
+    this.route('room_detail', {
+      path: '/room/:room',
+      data: function(){
+        return {'room': this.params.room, 'points': GeneralControl.find({'room': this.params.room}) };
+      }
+    });
+
     this.route('pointDetail', {
       path: '/points/:uuid',
       data: function() { return Points.findOne({uuid: this.params.uuid}); },
@@ -87,5 +101,8 @@ Router.map(function() {
 
     this.route('add_room', {
       path: '/building/add_room', 
+      waitOn: function(){
+        return [Meteor.subscribe("rooms"), Meteor.subscribe("floorplans")];
+      }
     });
 });
