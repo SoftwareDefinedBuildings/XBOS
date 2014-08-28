@@ -3,6 +3,7 @@ Rooms = new Meteor.Collection("rooms");
 HVAC = new Meteor.Collection("hvac");
 Lighting = new Meteor.Collection("lighting");
 Monitoring = new Meteor.Collection("monitoring");
+GeneralControl = new Meteor.Collection("general_control");
 Schedules = new Meteor.Collection("schedules");
 MasterSchedule = new Meteor.Collection("master_schedule");
 Unconfigured = new Meteor.Collection("unconfigured");
