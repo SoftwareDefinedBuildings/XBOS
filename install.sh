@@ -77,6 +77,40 @@ EOF
 
 sudo mv openbas.conf /etc/supervisor/conf.d/openbas.conf
 
+cat <<EOF > discovery.ini
+[/]
+uuid = 85d97cac-9345-11e3-898b-0001c009bf3f
+
+[/discovery]
+type = smap.services.discovery.DiscoveryDriver
+dhcp_iface = eth1
+supervisord_conf_file = supervisord.conf
+dhcpdump_path = /usr/sbin/dhcpdump
+nmap_path = /usr/bin/nmap
+config_repo = .
+scripts_path = /usr/local/lib/python2.7/dist-packages/smap/services/scripts
+EOF
+
+sudo mv discovery.ini /etc/smap/.
+
+cat <<EOF > discovery.conf
+[program:hue]
+command = /usr/bin/twistd -n smap /etc/smap/discovery.ini
+directory = /var/smap
+environment=PYTHONPATH="/home/oski/smap"
+priority = 2
+autorestart = true
+user = oski
+stdout_logfile = /var/log/discovery.stdout.log
+stderr_logfile = /var/log/discovery.stderr.log
+stdout_logfile_maxbytes = 50MB
+stdout_logfile_backups = 5
+stderr_logfile_maxbytes = 50MB
+stderr_logfile_backups = 5
+EOF
+
+sudo mv discovery.conf /etc/supervisor/conf.d/discovery.conf
+
 sudo supervisorctl update
 
 sudo npm install -g spin
