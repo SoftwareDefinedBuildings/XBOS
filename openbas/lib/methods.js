@@ -113,7 +113,8 @@ get_autocomplete_options = function(metadatakey, callback) {
           callback(data);
         }
         console.log('autocomplete options for',metadatakey,':',val);
-        callback(val);
+        val.push.apply(val, data)
+        callback(_.uniq(val));
     });
 };
 
