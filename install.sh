@@ -30,7 +30,7 @@ if [ "$ISUBUNTU" != "Ubuntu" -o "$UBUNTUVERSION" != "14.04" ] ; then
 fi
 
 notify "Installing APT packages... (this will take a few minutes)"
-sudo apt-get install -y expect mongodb npm libssl-dev git-core pkg-config build-essential 2>&1 > /dev/null
+sudo apt-get install -y expect python-pip mongodb npm libssl-dev git-core pkg-config build-essential nmap dhcpdump arp-scan 2>&1 > /dev/null
 
 notify "Installing Meteor..."
 curl https://install.meteor.com | sh
@@ -50,6 +50,11 @@ sudo apt-get update
 
 notify "Installing sMAP and sMAP dependencies... (this will take a few minutes)"
 sudo apt-get install -y python-smap readingdb 2>&1 > /dev/null
+sudo pip install pymongo netifaces
+sudo mkdir -p /var/run/smap
+sudo mkdir /var/smap
+sudo chown -R oski /var/smap
+sudo chown -R smap /var/run/smap
 
 notify "Downloading OpenBAS..."
 curl -O http://install.openbas.cal-sdb.org/openbas.tgz
