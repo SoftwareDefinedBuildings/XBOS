@@ -111,6 +111,39 @@ EOF
 
 sudo mv discovery.conf /etc/supervisor/conf.d/discovery.conf
 
+cat <<EOF > scheduler.ini
+[/]
+uuid = 6d39e9ba-28b3-11e4-a7d9-e4ce8f4229ee
+
+[server]
+port = 8080
+
+[/scheduler]
+type = scheduler.Scheduler
+Rate = 1
+MongoUrl = http://localhost:3001
+EOF
+
+sudo mv scheduler.ini /etc/smap.
+
+cat <<EOF > scheduler.conf
+[program:scheduler]
+command = /usr/bin/twistd -n smap /etc/smap/scheduler.ini
+directory = /var/smap
+environment=PYTHONPATH="/home/oski/smap"
+priority = 2
+autorestart = true
+user = oski
+stdout_logfile = /var/log/scheduler.stdout.log
+stderr_logfile = /var/log/scheduler.stderr.log
+stdout_logfile_maxbytes = 50MB
+stdout_logfile_backups = 5
+stderr_logfile_maxbytes = 50MB
+stderr_logfile_backups = 5
+EOF
+
+sudo mv scheduler.conf /etc/supervisor/conf.d/scheduler.conf
+
 sudo supervisorctl update
 
 sudo npm install -g spin
