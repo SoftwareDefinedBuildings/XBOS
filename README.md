@@ -1,6 +1,12 @@
 OpenBAS
 ===============
 
+## Deployment Setup
+
+See `INSTALL.md` in this directory
+
+## Development Setup
+
 ### Getting Started
 
 Install [Meteorite](http://atmospherejs.com/docs/installing).
