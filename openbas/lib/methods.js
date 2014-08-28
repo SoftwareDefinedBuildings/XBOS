@@ -102,6 +102,10 @@ find_by_path = function(path) {
 get_autocomplete_options = function(metadatakey, callback) {
     var data = [];
 
+    if (metadatakey == 'Room') {
+        data = _.pluck(Rooms.find().fetch(), 'RoomNumber');
+    }
+
     var query = 'select distinct Metadata/'+metadatakey+' where Metadata/Site="'+Meteor.settings.public.site+'"';
     Meteor.call('query', query, function(err, val) {
         if (err) {

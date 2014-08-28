@@ -1,4 +1,4 @@
-rm openbas/private/*.json
+echo "[]" > openbas/private/testrooms.json
 cd openbas
 mrt reset
 cd ..
