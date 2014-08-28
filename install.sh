@@ -91,3 +91,11 @@ EOF
 sudo mv openbas.conf /etc/supervisor/conf.d/openbas.conf
 
 sudo supervisorctl update
+
+sudo npm install -g spin
+sudo chown -R oski .npm
+sudo chown -R oski tmp
+sudo chown -R oski .meteor
+sudo mkdir -p .meteorite
+sudo chown -R oski .meteorite
+sudo chown -R oski openbas/.meteor
