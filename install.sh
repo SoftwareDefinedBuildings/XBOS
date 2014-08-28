@@ -51,24 +51,6 @@ sudo apt-get update
 notify "Installing sMAP and sMAP dependencies... (this will take a few minutes)"
 sudo apt-get install -y python-smap readingdb 2>&1 > /dev/null
 
-#sudo expect -c "
-#spawn apt-get install -y powerdb2
-#expect {
-# 'Would you like to create one now' {
-#    send \"yes\r\"
-#    expect \"Username\"
-#    send \"oski\r\"
-#    expect \"E-mail\"
-#    send \"\r\"
-#    expect \"Password\"
-#    send \"openbas\r\"
-#    expect \"Password\"
-#    send \"openbas\r\"
-#    exp_continue
-# }
-#}
-#"
-
 notify "Downloading OpenBAS..."
 curl -O http://install.openbas.cal-sdb.org/openbas.tgz
 tar xzf openbas.tgz
@@ -98,4 +80,4 @@ sudo chown -R oski tmp
 sudo chown -R oski .meteor
 sudo mkdir -p .meteorite
 sudo chown -R oski .meteorite
-sudo chown -R oski openbas/.meteor
+sudo chown -R oski openbas
