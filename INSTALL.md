@@ -63,3 +63,23 @@ you aren't, turn your computer on.
 
   which will install and configure your system to run OpenBAS. It will tell you exactly what it is doing,
   and by the end of the process, your computer should have OpenBAS installed and running.
+
+4. **Configure the sMAP Archiver** (this part will soon be integrated into step 3)
+
+   ```
+   sudo apt-get install -y powerdb2
+   ```
+
+   This will ask if you want to create a superuser (type 'yes' and press enter). Enter a username,
+   an optional email, and a password.
+
+5. TODO: instructions on setting up:
+    * subscription key
+    * site id
+    * configure settings.json file
+    * what URLs to visit
+
+## Getting Started
+
+Here will go instructions on how to use OpenBAS and get devices registered. We should probably start
+with how to run the virtual building
