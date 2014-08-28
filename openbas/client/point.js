@@ -98,7 +98,7 @@ Template.pointDetail.rendered = function() {
             path.transition()
                 .duration(duration)
                 .ease("linear")
-                .attr("transform", "translate(" + x(time[1]) + ")")
+                .attr("transform", "translate(" + x(time[0]) + ")")
                 .each("end", tick);
 
             // pop the old data point off the front

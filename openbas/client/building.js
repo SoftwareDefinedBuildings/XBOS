@@ -19,10 +19,10 @@ Template.add_room.events({
       'MarkerPosition': marker_position_rel,
     };
     Rooms.insert(r);
-    window.location.href = '/building/';
+    Router.go('/building/');
   },
   'click #cancel-room': function(){ 
-    window.location.href = '/building/';
+    Router.go('/building/');
   },
   'click .floorplan': function(){
     $('.floorplan-marker').remove();
