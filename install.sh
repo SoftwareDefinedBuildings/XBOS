@@ -2,9 +2,9 @@
 
 # This is the install script for OpenBAS
 
-export DEBIAN_FRONTEND=noninteractive 
+export DEBIAN_FRONTEND=noninteractive
 
-function notify() { 
+function notify() {
 msg=$1
 length=$((${#msg}+4))
 buf=$(printf "%-${length}s" "#")
@@ -89,6 +89,3 @@ stderr_logfile_backups = 5
 EOF
 
 sudo mv openbas.conf /etc/supervisor/conf.d/openbas.conf
-
-#sudo dpkg --configure -a
-
