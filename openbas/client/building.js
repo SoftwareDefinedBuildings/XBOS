@@ -52,7 +52,6 @@ Template.building.events({
   'hover .floorplan-marker': function(){
     var room_id = $(event.target).data('room');
     var room = Rooms.find({_id: room_id}).fetch();
-    console.log(room);
   }
 });
 

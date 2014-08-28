@@ -7,35 +7,43 @@ Meteor.startup(function() {
 var Dashboard = {};
 
 Dashboard.render_schedules = function(){
-  var scheds = Schedules.find().fetch();
-  Dashboard.master_schedule = MasterSchedule.findOne({});
+  // This seems to insure that schedules and master_schedule are loaded
+  // .. but I thought this would be taken care of by waitOn?
+  Meteor.subscribe('schedules', function(){
+    Meteor.subscribe('master_schedule', function(){
+      var scheds = Schedules.find().fetch();
+      Dashboard.master_schedule = MasterSchedule.findOne({});
 
-  // Shouldn't be neeed when we remove autopublish
-  delete Dashboard.master_schedule._id;
+      // Shouldn't be neeed when we remove autopublish
+      delete Dashboard.master_schedule._id;
 
-  _.each(Dashboard.master_schedule, function(val, key){
-    var day_sched = _.find(scheds, function(s){ return s.name == val });
-    $('#'+key).css('background-color', day_sched.color);
-  });
+      _.each(Dashboard.master_schedule, function(val, key){
+        var day_sched = _.find(scheds, function(s){ return s.name == val });
+        $('#'+key).css('background-color', day_sched.color);
+      });
 
-  $(".day-tooltip").tooltip({
-    title: function(){
-      return Dashboard.master_schedule[this.id];
-    },
-    placement: 'bottom',
-  });
+      /*
+      $(".day-tooltip").tooltip({
+        title: function(){
+          return Dashboard.master_schedule[this.id];
+        },
+        placement: 'bottom',
+      });
+      */
 
-  var m = moment();
-  $('.day').removeClass('current-day');
-  $('#'+Dashboard.day_names[m.day()]).addClass('current-day');
+      var m = moment();
+      $('.day').removeClass('current-day');
+      $('#'+Dashboard.day_names[m.day()]).addClass('current-day');
 
-  _.each($('.schedulerow'), function(val, idx) {
-    var t = moment(val.getAttribute('data-time'), 'HH:mm');
-    var name = val.getAttribute('id');
-    if (m.unix() > t.unix()) {
-      $('.schedulerow').removeClass('current-period');
-      $('#'+name).addClass('current-period');
-    }
+      _.each($('.schedulerow'), function(val, idx) {
+        var t = moment(val.getAttribute('data-time'), 'HH:mm');
+        var name = val.getAttribute('id');
+        if (m.unix() > t.unix()) {
+          $('.schedulerow').removeClass('current-period');
+          $('#'+name).addClass('current-period');
+        }
+      });
+    });
   });
 };
 
@@ -83,13 +91,15 @@ Dashboard.day_names = {'7': 'sun', '1': 'mon',
 };
 
 UI.registerHelper('getValue', function(obj) {
-  var unit = this.timeseries[obj].Properties.UnitofMeasure;
-  var p = Points.find({'uuid': this.timeseries[obj].uuid}).fetch()[0];
-  var value = p.value;
-  if (unit == 'C') {
-    value = value * 1.8 + 32;
-  }
-  return Number((value).toFixed(1));
+  if (this.timeseries[obj] != undefined){
+    var unit = this.timeseries[obj].Properties.UnitofMeasure;
+    var p = Points.find({'uuid': this.timeseries[obj].uuid}).fetch()[0];
+    var value = p.value;
+    if (unit == 'C') {
+      value = value * 1.8 + 32;
+    }
+    return Number((value).toFixed(1));
+  } 
 });
 
 Template.dashboard.created = function() {
@@ -303,8 +313,11 @@ Template.hvac_zone_widget.rendered = function(){
   _.each(sensors, function(s){
     var restrict = 'Path="' + s.path + '/temperature"';
     Meteor.call("latest", restrict, 100, function(err, res){
-      var mydata = Dashboard.jsonify(res[0].Readings);
-      Dashboard.sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 25, false);
+      if (res[0] != undefined){
+        console.log(res[0]);
+        var mydata = Dashboard.jsonify(res[0].Readings);
+        Dashboard.sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 25, false);
+      }
     });
   });
   _.each(sensors, function(s){

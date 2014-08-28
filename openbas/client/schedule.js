@@ -55,13 +55,18 @@ Template.schedule.events({
 });
 
 Template.edit_schedule.events({
+  'click #add-period': function(event){
+    iperiod++; 
+    var rendered = UI.renderWithData(Template.schedule_period, {'iperiod': iperiod});
+    UI.insert(rendered, $('table')[0]);
+  },
   'click .add-control-point': function(){
-    var clicked_name = $(event.target).data('name');
+    var clicked_name = $(event.target).data('name') || $(event.target).data('period');
     var rendered = UI.render(Template.period_point);
     UI.insert(rendered, $("#schedule-period-" + clicked_name)[0]);
   },
   'click #edit-schedule-cancel': function(){
-    window.location.href = "/schedule/";
+    Router.go("/schedule");
   },
   'click #edit-schedule-save': function(){
     var id = this._id;
@@ -83,7 +88,7 @@ Template.edit_schedule.events({
 
     var r = Schedules.update(id, {$set: this});
     if (r){
-      window.location.href = "/schedule/";
+      Router.go("/schedule/");
     }
   }
 });
@@ -112,7 +117,7 @@ Template.add_schedule.events({
     UI.insert(rendered, $("#schedule-period-" + clicked_iperiod)[0]);
   },
   'click #add-schedule-cancel': function(){
-    window.location.href = "/schedule/";
+    Router.go("/schedule/");
   },
   'click #add-schedule-save': function(){
     var sched = {};
@@ -133,7 +138,7 @@ Template.add_schedule.events({
     sched.color = "#EBCACA";
     var r = Schedules.insert(sched);
     if (r){
-      window.location.href = "/schedule/";
+      Router.go("/schedule/");
     }
   }
 });
