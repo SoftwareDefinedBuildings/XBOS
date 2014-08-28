@@ -89,3 +89,5 @@ stderr_logfile_backups = 5
 EOF
 
 sudo mv openbas.conf /etc/supervisor/conf.d/openbas.conf
+
+sudo supervisorctl update
