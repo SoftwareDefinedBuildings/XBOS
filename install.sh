@@ -2,13 +2,14 @@
 
 # This is the install script for OpenBAS
 
+export DEBIAN_FRONTEND=noninteractive 
+
 function notify() { 
-sleep 1
 msg=$1
 length=$((${#msg}+4))
 buf=$(printf "%-${length}s" "#")
 echo ${buf// /#}
-echo "  "$msg
+echo "# "$msg" #"
 echo ${buf// /#}
 sleep 2 ;}
 
@@ -28,55 +29,57 @@ if [ "$ISUBUNTU" != "Ubuntu" -o "$UBUNTUVERSION" != "14.04" ] ; then
     exit 1
 fi
 
-notify "Installing APT packages..."
-`sudo apt-get install -y expect mongodb npm libssl-dev git-core pkg-config build-essential gcc g++`
+notify "Installing APT packages... (this will take a few minutes)"
+sudo apt-get install -y expect mongodb npm libssl-dev git-core pkg-config build-essential 2>&1 > /dev/null
+
+notify "Installing Meteor..."
+curl https://install.meteor.com | sh
+export PATH=~/.meteor/tools/latest/bin:$PATH
+sudo npm install -g meteorite
+
+notify "Fetching latest node..."
+curl -sL https://deb.nodesource.com/setup | sudo bash -
+
+sudo apt-get install -y nodejs nodejs-legacy 2>&1 > /dev/null
 
 notify "Adding cal-sdb package repository..."
 sudo add-apt-repository ppa:cal-sdb/smap
 
-notify "Updating to receive packages from cal-sdb..."
+notify "Updating APT for latest packages..."
 sudo apt-get update
 
-notify "Installing NVM and latest NodeJS..."
-git clone git://github.com/creationix/nvm.git $HOME/nvm
-source $HOME/nvm/nvm.sh
-latestnode=$(nvm ls-remote | tail -n 1)
-nvm install $latestnode
-nvm use $latestnode
+notify "Installing sMAP and sMAP dependencies... (this will take a few minutes)"
+sudo apt-get install -y python-smap readingdb 2>&1 > /dev/null
 
-notify "Installing sMAP and sMAP dependencies..."
-`sudo apt-get install -y python-smap readingdb`
-
-expect -c "
-spawn sudo apt-get install -y powerdb2
-expect {
- 'Would you like to create one now' {
-    send \"yes\r\"
-    expect \"Username\"
-    send \"oski\r\"
-    expect \"E-mail\"
-    send \"\r\"
-    expect \"Password\"
-    send \"openbas\r\"
-    expect \"Password\"
-    send \"openbas\r\"
-    exp_continue
- }
-}
-"
+#sudo expect -c "
+#spawn apt-get install -y powerdb2
+#expect {
+# 'Would you like to create one now' {
+#    send \"yes\r\"
+#    expect \"Username\"
+#    send \"oski\r\"
+#    expect \"E-mail\"
+#    send \"\r\"
+#    expect \"Password\"
+#    send \"openbas\r\"
+#    expect \"Password\"
+#    send \"openbas\r\"
+#    exp_continue
+# }
+#}
+#"
 
 notify "Downloading OpenBAS..."
-curl -O http://54.183.169.17/openbas.tgz
+curl -O http://install.openbas.cal-sdb.org/openbas.tgz
 tar xzf openbas.tgz
 
-sudo mkdir -p /data/mongodb
-cat <<EOF >> /etc/supervisor/conf.d/openbas.conf
+cat <<EOF > openbas.conf
 [program:openbas]
-command = /usr/bin/nodejs main.js
-directory = /home/oski/bundle
+command = mrt --settings settings.json
+user = oski
+directory = /home/oski/openbas
 priority = 2
 autorestart = true
-environment = PORT=3000, MONGO_URL=mongodb://localhost:27017/meteor
 stdout_logfile = /var/log/openbas.stdout.log
 stdout_logfile_maxbytes = 50MB
 stdout_logfile_backups = 5
@@ -85,5 +88,7 @@ stderr_logfile_maxbytes = 50MB
 stderr_logfile_backups = 5
 EOF
 
-sudo dpkg --configure -a
+sudo mv openbas.conf /etc/supervisor/conf.d/openbas.conf
+
+#sudo dpkg --configure -a
 
