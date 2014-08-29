@@ -39,6 +39,8 @@
       {{> floorplan}}
     {{/each}}
 
+    {{> upload}}
+
   </div>
 </template>
 
@@ -115,5 +117,16 @@
   <div id="floorplan-{{_id}}" class="panel panel-default"> 
     <div class="panel-heading">{{name}}</div>
     <img id="{{_id}}" src="/img/{{filename}}" class="floorplan img-responsive" alt="Responsive image">
+  </div>
+</template>
+
+<template name="upload">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Select a floorplan image file to upload:
+    </div>
+    <div class="panel-body">
+      <input name="files" type="file" class="fileUploader" multiple>
+    </div>
   </div>
 </template>

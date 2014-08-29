@@ -6,6 +6,7 @@
     "houston": {},
     "bootstrap-slider": {},
     "moment": {},
-    "jqueryui": {}
+    "jqueryui": {},
+    "collectionFS": {}
   }
 }
