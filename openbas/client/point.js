@@ -117,7 +117,7 @@ Template.points.rendered = function(){
     var elementId = '#trend-' + uuid; 
     var width = 150;
     var height = 25;
-    var N = 500;
+    var N = width;
     Meteor.call('latest', restrict, N, function(err, res){
       if (res[0] != undefined){
         var mydata = jsonify(res[0].Readings);

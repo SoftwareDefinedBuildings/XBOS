@@ -21,7 +21,7 @@ sparkline = function(elemId, data, width, height, display_range) {
   var svg = d3.select(elemId)
     .append('svg')
     .attr('width', width)
-    .attr('height', height)
+    .attr('height', height + 1) // 1px margin 
     .append('path')
     .datum(data)
     .attr('class', 'sparkline')
@@ -187,8 +187,6 @@ if (Meteor.isServer) {
       this.unblock();
       var q = "select data before now limit " + n + " where " + restrict;
       var url = Meteor.settings.archiverUrl + "/api/query";
-      console.log(restrict);
-      console.log(url);
       var r = HTTP.call("POST", url, {content: q});
       return EJSON.parse(r.content);
     },
