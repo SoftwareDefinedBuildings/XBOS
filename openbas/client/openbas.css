@@ -87,3 +87,7 @@ a:hover {
 .floorplan-marker-static:hover {
   color: red;
 }
+
+.modal {
+  overflow-y:auto;
+}
