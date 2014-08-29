@@ -26,6 +26,11 @@
     {{> schedule_widget}}
 
   </div>
+  <div class="dashboard-well">
+
+    {{> general_control_widget}}
+
+  </div>
 </template>
 
 <template name="schedule_widget">
@@ -75,11 +80,61 @@
   </div>
 </template>
 
+<template name="general_control_widget">
+  <h3 class="dashboard-column-heading centertext">General control</h3>
+  <div class="panel panel-default">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Room</th>
+          <th>Controller</th>
+          <th>State</th>
+        </tr>
+      </thead>
+      <tbody>
+      {{#each GeneralControlAll}}
+        <tr>
+          <td>
+            <a href="/room/{{room}}">{{room}}</a>
+          </td>
+          <td>{{path}}</td>
+          <td>{{getValue 'on'}}</td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<template name="room_detail">
+<div class="panel panel-default" style="margin: 0 auto; width: 60%;">
+    <div class="panel-heading">General controllers: {{room}}</div>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Path</th>
+          <th>State</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each points}}
+          <tr>
+            <td>{{path}}</td>
+            <td>{{getValue 'on'}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</template>
+
 <template name="hvacbuildingcolumn">
   <h2 class="dashboard-column-heading">HVAC</h2>
+
   {{#each HVACAll}}
     {{> hvac_zone_widget}}
   {{/each}}
+
 </template>
 
 <template name="lightingbuildingcolumn">

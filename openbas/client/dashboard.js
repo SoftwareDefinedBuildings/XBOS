@@ -107,6 +107,10 @@ Template.dashboard.created = function() {
   Meteor.call('querysystem');
 };
 
+Template.general_control_widget.GeneralControlAll = function() {
+  return GeneralControl.find({});
+};
+
 Template.hvacbuildingcolumn.HVACAll = function() {
   return HVAC.find({});
 };
