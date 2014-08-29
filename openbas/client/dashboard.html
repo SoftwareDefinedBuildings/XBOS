@@ -114,13 +114,13 @@
         <tr>
           <th>Path</th>
           <th>State</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         {{#each points}}
-          <tr>
-            <td>{{path}}</td>
-            <td>{{getValue 'on'}}</td>
+          <tr id="{{uuid 'on'}}">
+            {{> point timeseries.on}}
           </tr>
         {{/each}}
       </tbody>
