@@ -45,27 +45,35 @@
 </template>
 
 <template name="points">
-  <div class="container">
-    <div class="point">
-      <span class="Path">Path</span>
-      <span class="value">value</span>
-    </div>
-    {{#each pointsAll}}
-      {{> point_row}}
-    {{/each}}
+  <div class="panel panel-default" style="margin: 0 auto; width: 60%; margin-bottom: 10px;">
+    <div class="panel-heading">Points</div>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th class="Path">Path</th>
+          <th class="sparkline">Trend</th>
+          <th class="value">value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each pointsAll}}
+          {{> point_row}}
+        {{/each}}
+      </tbody>
+    </table>
   </div>
 </template>
 
 <template name="point_row">
-  <div class="point">
-    <span class="Path">
+  <tr class="point" data-uuid="{{uuid}}">
+    <td class="Path">
       <a href="{{ pathFor 'pointDetail'}}">
         {{Path}}
       </a>
-    </span>
-    <span class="value">{{value}}</span>
-    <span class="actuator">{{ActuatorPath}}</span>
-  </div>
+    </td>
+    <td class="trend" id="trend-{{uuid}}"></td>
+    <td class="value">{{value}}</td>
+  </tr>
 </template>
 
 <template name="actuators">

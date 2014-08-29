@@ -16,17 +16,8 @@ body {
     padding: 5px;
 }
 
-.point .Path {
-    display: inline-block;
-    width: 600px;
-    font-size: 1.75em;
-}
-
-.point .value {
-    display: inline-block;
-    width: 100px;
-    text-align: right;
-    font-size: 2em;
+.value {
+    font-size: 1.25em;
     font-weight: bold;
     color: #777;
 }

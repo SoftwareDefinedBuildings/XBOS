@@ -1,3 +1,40 @@
+jsonify = function (readings){
+  return _.map(readings, function(r){
+    var o = {};
+    o.time = r[0];
+    o.value = r[1];
+    return o;
+  });
+};
+
+sparkline = function(elemId, data, width, height, display_range) {
+  var x = d3.scale.linear().range([0, width]);
+  var y = d3.scale.linear().range([height, 0]);
+  var line = d3.svg.line()
+               .interpolate("basis")
+               .x(function(d) { return x(d.time); })
+               .y(function(d) { return y(d.value); });
+  x.domain(d3.extent(data, function(d) { return d.time; }));
+  var yextents = d3.extent(data, function(d) { return d.value; });
+  y.domain(yextents);
+
+  var svg = d3.select(elemId)
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height)
+    .append('path')
+    .datum(data)
+    .attr('class', 'sparkline')
+    .attr('d', line);
+
+  if (display_range){
+    var extents_label = "[<span class='sparkline-min'>" + yextents[0].toFixed(2) + "</span>,";
+    extents_label += "<span class='sparkline-max'>" + yextents[1].toFixed(2) + "</span>]";
+    d3.select(elemId)
+      .html(extents_label)
+  }
+};
+
 common_metadata = function(o) {
     /*
      * Given a System object (from HVAC, Lighting or Monitoring) with a .timeseries attribute,

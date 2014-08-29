@@ -108,3 +108,21 @@ Template.pointDetail.rendered = function() {
           }
       }
 }
+
+Template.points.rendered = function(){
+  var rows = $(".point");
+  _.each(rows, function(row){
+    var uuid = $(row).data('uuid');     
+    var restrict = 'uuid="' + uuid + '"';
+    var elementId = '#trend-' + uuid; 
+    var width = 150;
+    var height = 25;
+    var N = 500;
+    Meteor.call('latest', restrict, N, function(err, res){
+      if (res[0] != undefined){
+        var mydata = jsonify(res[0].Readings);
+        sparkline(elementId, mydata, width, height, false);
+      }
+    });
+  });
+};
