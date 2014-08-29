@@ -57,7 +57,9 @@
       </thead>
       <tbody>
         {{#each pointsAll}}
-          {{> point_row}}
+          {{#if notActuator}}
+            {{> point_row}}
+          {{/if}}
         {{/each}}
       </tbody>
     </table>

@@ -11,10 +11,18 @@ Template.points.pointsAll = function() {
   return Points.find({});
 };
 
+Template.points.helpers({
+  notActuator: function(template){
+    var re = /.*_act$/;
+    var result = re.exec(this.Path);
+    return result == null;
+  }
+});
+
 Template.navbar.helpers({
   activeIf: function (template) {
     var currentRoute = Router.current();
     return currentRoute &&
       template === currentRoute.lookupTemplate() ? 'active' : '';
-  }
+  },
 });
