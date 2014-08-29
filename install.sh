@@ -120,12 +120,12 @@ uuid = 6d39e9ba-28b3-11e4-a7d9-e4ce8f4229ee
 port = 8080
 
 [/scheduler]
-type = scheduler.Scheduler
+type = smap.services.scheduler.Scheduler
 Rate = 1
 MongoUrl = http://localhost:3001
 EOF
 
-sudo mv scheduler.ini /etc/smap.
+sudo mv scheduler.ini /etc/smap/.
 
 cat <<EOF > scheduler.conf
 [program:scheduler]
