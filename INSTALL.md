@@ -73,7 +73,13 @@ you aren't, turn your computer on.
    This will ask if you want to create a superuser (type 'yes' and press enter). Enter a username,
    an optional email, and a password.
 
-5. TODO: instructions on setting up:
+5. After `powerdb2` is installed, visit to [http://localhost/admin](http://localhost/admin) and type in the username and password you created in the last step. Click '+Add' next to 'Subscriptions', enter a description (e.g. 'OpenBAS deployment') and replace the 'Key' field with the default key:
+  ```
+  lVzBMDpnkXApJmpjUDSvm4ceGfpbrLLSd9cq
+  ```
+  Then click 'Save'.
+  
+6. TODO: instructions on setting up:
     * subscription key
     * site id
     * configure settings.json file
