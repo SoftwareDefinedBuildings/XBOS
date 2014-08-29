@@ -89,6 +89,6 @@ Links generated:
 
 When first bringing up OpenBAS for your installation, follow the following steps:
 
-1. Create rooms
+1. Create rooms: visit [http://localhost:3000/building](http://localhost:3000/building) and create some rooms, making sure to place markers on the map.
 2. Plug in devices!
 3. Configure devices on the status page [http://localhost:3000/status](http://localhost:3000/status)

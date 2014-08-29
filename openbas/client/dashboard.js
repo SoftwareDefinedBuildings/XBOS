@@ -47,43 +47,6 @@ Dashboard.render_schedules = function(){
   });
 };
 
-Dashboard.jsonify = function (readings){
-  return _.map(readings, function(r){
-    var o = {};
-    o.time = r[0];
-    o.value = r[1];
-    return o;
-  });
-};
-
-Dashboard.sparkline = function(elemId, data, width, height, display_range) {
-  var x = d3.scale.linear().range([0, width]);
-  var y = d3.scale.linear().range([height, 0]);
-  var line = d3.svg.line()
-               .interpolate("basis")
-               .x(function(d) { return x(d.time); })
-               .y(function(d) { return y(d.value); });
-  x.domain(d3.extent(data, function(d) { return d.time; }));
-  var yextents = d3.extent(data, function(d) { return d.value; });
-  y.domain(yextents);
-
-  d3.select(elemId)
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height)
-    .append('path')
-    .datum(data)
-    .attr('class', 'sparkline')
-    .attr('d', line);
-
-  if (display_range){
-    var extents_label = "[<span class='sparkline-min'>" + yextents[0].toFixed(2) + "</span>,";
-    extents_label += "<span class='sparkline-max'>" + yextents[1].toFixed(2) + "</span>]";
-    d3.select(elemId)
-      .html(extents_label)
-  }
-};
-
 Dashboard.day_names = {'7': 'sun', '1': 'mon', 
                        '2': 'tue', '3': 'wed', 
                        '4': 'thu', '5': 'fri', 
@@ -297,9 +260,9 @@ Template.hvac_zone_widget.rendered = function(){
           return _.last(d.Path.split("/")) == "temp_heat";
         });
 
-        temp = Dashboard.jsonify(temp.Readings);
-        temp_cool = Dashboard.jsonify(temp_cool.Readings);
-        temp_heat = Dashboard.jsonify(temp_heat.Readings);
+        temp = jsonify(temp.Readings);
+        temp_cool = jsonify(temp_cool.Readings);
+        temp_heat = jsonify(temp_heat.Readings);
 
         var svg = d3.select(elemId)
           .append('svg')
@@ -333,17 +296,16 @@ Template.hvac_zone_widget.rendered = function(){
     var restrict = 'Path="' + s.path + '/temperature"';
     Meteor.call("latest", restrict, 100, function(err, res){
       if (res[0] != undefined){
-        console.log(res[0]);
-        var mydata = Dashboard.jsonify(res[0].Readings);
-        Dashboard.sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 25, false);
+        var mydata = jsonify(res[0].Readings);
+        sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 25, false);
       }
     });
   });
   _.each(sensors, function(s){
     var restrict = 'Path="' + s.path + '/humidity"';
     Meteor.call("latest", restrict, 100, function(err, res){
-      var mydata = Dashboard.jsonify(res[0].Readings);
-      Dashboard.sparkline("#sparkline-humidity-container-" + s._id, mydata, 100, 25, false);
+      var mydata = jsonify(res[0].Readings);
+      sparkline("#sparkline-humidity-container-" + s._id, mydata, 100, 25, false);
     });
   });
 
@@ -357,7 +319,7 @@ Template.power_meter_widget.rendered = function(){
         console.log(err);
     }
     var mydata = res[0].Readings;
-    mydata = Dashboard.jsonify(mydata);
-    Dashboard.sparkline("#sparkline-container-" + myid, mydata, 250, 50, false);
+    mydata = jsonify(mydata);
+    sparkline("#sparkline-container-" + myid, mydata, 250, 50, false);
   });
 }

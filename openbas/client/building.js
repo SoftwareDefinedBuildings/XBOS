@@ -24,7 +24,7 @@ Template.add_room.events({
   'click #cancel-room': function(){ 
     Router.go('/building/');
   },
-  'click .floorplan': function(){
+  'click .floorplan': function(event){
     $('.floorplan-marker').remove();
     var offsetX = -15;
     var offsetY = -31;
@@ -49,7 +49,7 @@ Template.add_room.events({
 });
 
 Template.building.events({
-  'hover .floorplan-marker': function(){
+  'hover .floorplan-marker': function(event){
     var room_id = $(event.target).data('room');
     var room = Rooms.find({_id: room_id}).fetch();
   }
@@ -82,3 +82,14 @@ Template.add_room.floorplans = Template.building.floorplans;
 Template.building.rooms = function() {
   return Rooms.find({});
 };
+
+Template.upload.events({
+  'change .fileUploader': function(event, template) {
+    var files = event.target.files;
+    for (var i = 0, ln = files.length; i < ln; i++) {
+      Images.insert(files[i], function (err, fileObj) {
+        console.log('Inserted new doc with ID fileObj._id, and kicked off the data upload using HTTP');
+      });
+    }
+  }
+});
