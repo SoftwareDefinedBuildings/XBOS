@@ -83,6 +83,8 @@ you aren't, turn your computer on.
 
 ## Getting Started
 
+**Note:** if you are running anti-virus software, it can misclassify OpenBAS's discovery service as a malignant process and block your access to OpenBAS. Please disable any anti-virus on your personal computer when installing OpenBAS.
+
 Links generated:
 
 * OpenBAS Building Dashboard: [http://localhost:3000](http://localhost:3000)
