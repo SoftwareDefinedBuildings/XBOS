@@ -213,6 +213,19 @@ Template.lightinggroup.helpers({
   }
 });
 
+Template.room_detail.helpers({
+  uuid: function(val) {
+    if (this.timeseries[val]) {
+      if (this.timeseries[val].Actuator) {
+        return this.timeseries[val].Actuator.uuid+"_control";
+      } else {
+        return this.timeseries[val].uuid+"_control";
+      }
+    }
+    return ''
+  }
+});
+
 Template.point.rendered = function(arg) {
   var p = Points.find({'uuid': this.data.uuid}).fetch()[0];
   if (p.ActuatorUUID) {
@@ -226,6 +239,8 @@ Template.point.rendered = function(arg) {
     UI.insert(rend, $(pointid+'_lighting').get(0));
   } else if (this.data.Metadata.System == 'HVAC') {
     UI.insert(rend, $(pointid+'_hvac').get(0));
+  } else if (this.data.Metadata.System == 'GeneralControl') {
+    UI.insert(rend, $(pointid+'_control').get(0));
   }
 };
 
@@ -343,6 +358,6 @@ Template.power_meter_widget.rendered = function(){
     }
     var mydata = res[0].Readings;
     mydata = Dashboard.jsonify(mydata);
-    Dashboard.sparkline("#sparkline-container-" + myid, mydata, 250, 50, true);
+    Dashboard.sparkline("#sparkline-container-" + myid, mydata, 250, 50, false);
   });
 }
