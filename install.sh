@@ -88,7 +88,7 @@ dhcp_iface = eth1
 supervisord_conf_file = supervisord.conf
 dhcpdump_path = /usr/sbin/dhcpdump
 nmap_path = /usr/bin/nmap
-config_repo = .
+config_repo = /etc/smap
 scripts_path = /usr/lib/python2.7/dist-packages/smap/services/scripts
 EOF
 
