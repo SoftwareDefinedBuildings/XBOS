@@ -11,7 +11,7 @@ See `INSTALL.md` in this directory
 
 Install [Meteorite](http://atmospherejs.com/docs/installing).
 
-To install all the dependencies and run the app,
+To install all the dependencies and run the app:
 
 ```
 cd openbas
