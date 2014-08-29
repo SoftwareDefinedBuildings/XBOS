@@ -78,6 +78,8 @@ you aren't, turn your computer on.
   lVzBMDpnkXApJmpjUDSvm4ceGfpbrLLSd9cq
   ```
   Then click 'Save'.
+  
+6. At this point, you have now installed all the needed OpenBAS software. You can now proceed to configuration your installation for this building.
 
 ## Getting Started
 
