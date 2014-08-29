@@ -78,14 +78,17 @@ you aren't, turn your computer on.
   lVzBMDpnkXApJmpjUDSvm4ceGfpbrLLSd9cq
   ```
   Then click 'Save'.
-  
-6. TODO: instructions on setting up:
-    * subscription key
-    * site id
-    * configure settings.json file
-    * what URLs to visit
 
 ## Getting Started
 
-Here will go instructions on how to use OpenBAS and get devices registered. We should probably start
-with how to run the virtual building
+Links generated:
+
+* OpenBAS Building Dashboard: [http://localhost:3000](http://localhost:3000)
+* Plotting Interace: [http://localhost](http://localhost)
+* Admin Interface: [http://localhost/admin](http://localhost/admin)
+
+When first bringing up OpenBAS for your installation, follow the following steps:
+
+1. Create rooms
+2. Plug in devices!
+3. Configure devices on the status page [http://localhost:3000/status](http://localhost:3000/status)
