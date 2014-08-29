@@ -106,6 +106,14 @@ get_autocomplete_options = function(metadatakey, callback) {
         data = _.pluck(Rooms.find().fetch(), 'RoomNumber');
     }
 
+    if (metadatakey == 'System') {
+        data = ['Monitoring','HVAC','Lighting','GeneralControl'];
+    }
+
+    if (metadatakey == 'Role') {
+        data = ['Building Lighting','Task Lighting','Building HVAC'];
+    }
+
     var query = 'select distinct Metadata/'+metadatakey+' where Metadata/Site="'+Meteor.settings.public.site+'"';
     Meteor.call('query', query, function(err, val) {
         if (err) {

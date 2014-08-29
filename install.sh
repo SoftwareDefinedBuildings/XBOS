@@ -96,7 +96,7 @@ sudo mv discovery.ini /etc/smap/.
 
 cat <<EOF > discovery.conf
 [program:discovery]
-command = twistd --pidfile=discovery.pid -n smap /etc/smap/discovery.ini
+command = twistd --pidfile=discovery.pid -n smap --port=7979 /etc/smap/discovery.ini
 directory = /var/smap
 environment=PYTHONPATH="/home/oski/smap"
 priority = 2
