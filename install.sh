@@ -34,14 +34,14 @@ notify "Installing APT packages... (this will take a few minutes)"
 sudo apt-get update
 sudo apt-get install -y expect python-pip mongodb npm libssl-dev git-core pkg-config build-essential nmap dhcpdump arp-scan 2>&1 > /tmp/install.0.log
 
-if [ $? ] ; then
+if [ $? -neq 0 ] ; then
 	echo "There was an unexpected error installing the first set of packages"
 	exit 1
 fi
 
 notify "Installing Meteor..."
 curl https://install.meteor.com | sh
-if [ $? ] ; then
+if [ $? -neq 0 ] ; then
 	echo "There was an error installing meteor"
 	exit 1
 fi
@@ -62,26 +62,26 @@ sudo npm install -g meteorite
 
 notify "Adding cal-sdb package repository..."
 sudo add-apt-repository ppa:cal-sdb/smap
-if [ $? ] ; then
+if [ $? -neq 0 ] ; then
 	echo "There was an error adding the repository"
 	exit 1
 fi
 
 notify "Updating APT for latest packages..."
 sudo apt-get update
-if [ $? ] ; then
+if [ $? -neq 0 ] ; then
 	echo "There was an error updating the package index"
 	exit 1
 fi
 
 notify "Installing sMAP and sMAP dependencies... (this will take a few minutes)"
 apt-get install -y python-smap readingdb 2>&1 > /tmp/install.2.log
-if [ $? ] ; then
+if [ $? -neq 0 ] ; then
 	echo "There was an error installing smap packages"
 	exit 1
 fi
 pip install pymongo netifaces
-if [ $? ] ; then
+if [ $? -neq 0 ] ; then
 	echo "There was an error updating installing pythong packages"
 	exit 1
 fi
