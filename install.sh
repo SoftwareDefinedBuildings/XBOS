@@ -49,16 +49,16 @@ echo "export PATH=~/.meteor/tools/latest/bin:\$PATH" >> ~/.profile
 export PATH=~/.meteor/tools/latest/bin:$PATH
 sudo npm install -g meteorite
 
-#notify "Fetching latest node..."
-#curl -sL https://deb.nodesource.com/setup | sudo bash -
-#if [ $? ]; then
-#	echo "There was an error installing node"
-#	exit 1
-#fi
-#sudo apt-get install -y nodejs nodejs-legacy 2>&1 > /tmp/install.1.log
-#if [ $? ]; then
-#	echo ""
-#fi
+notify "Fetching latest node..."
+curl -sL https://deb.nodesource.com/setup | sudo bash -
+if [ $? ]; then
+	echo "There was an error installing node"
+	exit 1
+fi
+sudo apt-get install -y nodejs nodejs-legacy 2>&1 > /tmp/install.1.log
+if [ $? != 0 ]; then
+	echo ""
+fi
 
 notify "Adding cal-sdb package repository..."
 add-apt-repository ppa:cal-sdb/smap
@@ -82,7 +82,7 @@ if [ $? != 0 ] ; then
 fi
 pip install pymongo netifaces
 if [ $? != 0 ] ; then
-	echo "There was an error updating installing pythong packages"
+	echo "There was an error updating installing python packages"
 	exit 1
 fi
 mkdir -p /var/run/smap
