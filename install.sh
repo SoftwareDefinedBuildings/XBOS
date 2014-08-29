@@ -31,8 +31,8 @@ if [ "$ISUBUNTU" != "Ubuntu" -o "$UBUNTUVERSION" != "14.04" ] ; then
 fi
 
 notify "Installing APT packages... (this will take a few minutes)"
-sudo apt-get update
-sudo apt-get install -y expect python-pip mongodb npm libssl-dev git-core pkg-config build-essential nmap dhcpdump arp-scan 2>&1 > /tmp/install.0.log
+apt-get update
+apt-get install -y expect software-properties-common python-pip mongodb npm libssl-dev git-core pkg-config build-essential nmap dhcpdump arp-scan 2>&1 > /tmp/install.0.log
 
 if [ $? != 0 ] ; then
 	echo "There was an unexpected error installing the first set of packages"
@@ -61,14 +61,14 @@ sudo npm install -g meteorite
 #fi
 
 notify "Adding cal-sdb package repository..."
-sudo add-apt-repository ppa:cal-sdb/smap
+add-apt-repository ppa:cal-sdb/smap
 if [ $? != 0 ] ; then
 	echo "There was an error adding the repository"
 	exit 1
 fi
 
 notify "Updating APT for latest packages..."
-sudo apt-get update
+apt-get update
 if [ $? != 0 ] ; then
 	echo "There was an error updating the package index"
 	exit 1
@@ -110,7 +110,7 @@ stderr_logfile_maxbytes = 50MB
 stderr_logfile_backups = 5
 EOF
 
-sudo mv openbas.conf /etc/supervisor/conf.d/openbas.conf
+mv openbas.conf /etc/supervisor/conf.d/openbas.conf
 
 cat <<EOF > discovery.ini
 [/]
@@ -126,7 +126,7 @@ config_repo = /etc/smap
 scripts_path = /usr/lib/python2.7/dist-packages/smap/services/scripts
 EOF
 
-sudo mv discovery.ini /etc/smap/.
+mv discovery.ini /etc/smap/.
 
 cat <<EOF > discovery.conf
 [program:discovery]
@@ -144,7 +144,7 @@ stderr_logfile_maxbytes = 50MB
 stderr_logfile_backups = 5
 EOF
 
-sudo mv discovery.conf /etc/supervisor/conf.d/discovery.conf
+mv discovery.conf /etc/supervisor/conf.d/discovery.conf
 
 cat <<EOF > scheduler.ini
 [/]
@@ -159,7 +159,7 @@ Rate = 1
 MongoUrl = http://localhost:3001
 EOF
 
-sudo mv scheduler.ini /etc/smap/.
+mv scheduler.ini /etc/smap/.
 
 cat <<EOF > scheduler.conf
 [program:scheduler]
