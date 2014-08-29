@@ -9,6 +9,10 @@ MasterSchedule = new Meteor.Collection("master_schedule");
 Unconfigured = new Meteor.Collection("unconfigured");
 Floorplans = new Meteor.Collection("floorplans");
 
+Images = new FS.Collection("images", {
+    stores: [new FS.Store.FileSystem("images", {path: "~/public/img"})]
+});
+
 if (Meteor.isServer) {
 
   if (Schedules.find({}).fetch().length == 0){

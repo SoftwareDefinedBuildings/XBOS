@@ -83,13 +83,13 @@ Template.building.rooms = function() {
   return Rooms.find({});
 };
 
-FilesFS = new CollectionFS('files');
-
-if (Meteor.isClient) {
-  Template.upload.events({
-    'change .fileUploader': function (e) {
-      var files = e.target.files;
-      FilesFS.storeFiles(files);
+Template.upload.events({
+  'change .fileUploader': function(event, template) {
+    var files = event.target.files;
+    for (var i = 0, ln = files.length; i < ln; i++) {
+      Images.insert(files[i], function (err, fileObj) {
+        console.log('Inserted new doc with ID fileObj._id, and kicked off the data upload using HTTP');
+      });
     }
-  });
-}
+  }
+});
