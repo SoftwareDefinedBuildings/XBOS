@@ -66,6 +66,7 @@ command = mrt --settings settings.json
 user = oski
 directory = /home/oski/openbas
 priority = 2
+environment = HOME = "/home/oski"
 autorestart = true
 stdout_logfile = /var/log/openbas.stdout.log
 stdout_logfile_maxbytes = 50MB
@@ -88,7 +89,7 @@ supervisord_conf_file = supervisord.conf
 dhcpdump_path = /usr/sbin/dhcpdump
 nmap_path = /usr/bin/nmap
 config_repo = .
-scripts_path = /usr/local/lib/python2.7/dist-packages/smap/services/scripts
+scripts_path = /usr/lib/python2.7/dist-packages/smap/services/scripts
 EOF
 
 sudo mv discovery.ini /etc/smap/.
@@ -100,7 +101,7 @@ directory = /var/smap
 environment=PYTHONPATH="/home/oski/smap"
 priority = 2
 autorestart = true
-user = oski
+user = root
 stdout_logfile = /var/log/discovery.stdout.log
 stderr_logfile = /var/log/discovery.stderr.log
 stdout_logfile_maxbytes = 50MB
