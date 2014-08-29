@@ -358,6 +358,6 @@ Template.power_meter_widget.rendered = function(){
     }
     var mydata = res[0].Readings;
     mydata = Dashboard.jsonify(mydata);
-    Dashboard.sparkline("#sparkline-container-" + myid, mydata, 250, 50, true);
+    Dashboard.sparkline("#sparkline-container-" + myid, mydata, 250, 50, false);
   });
 }
