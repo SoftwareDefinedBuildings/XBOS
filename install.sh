@@ -96,7 +96,7 @@ sudo mv discovery.ini /etc/smap/.
 
 cat <<EOF > discovery.conf
 [program:discovery]
-command = twistd -n smap /etc/smap/discovery.ini
+command = twistd --pidfile=discovery.pid -n smap /etc/smap/discovery.ini
 directory = /var/smap
 environment=PYTHONPATH="/home/oski/smap"
 priority = 2
@@ -129,7 +129,7 @@ sudo mv scheduler.ini /etc/smap/.
 
 cat <<EOF > scheduler.conf
 [program:scheduler]
-command = twistd -n smap /etc/smap/scheduler.ini
+command = twistd --pidfile=scheduler.pid -n smap /etc/smap/scheduler.ini
 directory = /var/smap
 environment=PYTHONPATH="/home/oski/smap"
 priority = 2
