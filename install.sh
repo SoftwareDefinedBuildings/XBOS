@@ -51,7 +51,7 @@ sudo npm install -g meteorite
 
 notify "Fetching latest node..."
 curl -sL https://deb.nodesource.com/setup | sudo bash -
-if [ $? ]; then
+if [ $? != 0 ]; then
 	echo "There was an error installing node"
 	exit 1
 fi
