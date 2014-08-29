@@ -48,7 +48,7 @@ Template.schedule.events({
       }, 5000);
     }
   },
-  'click .delete-schedule': function(){
+  'click .delete-schedule': function(event){
     var clicked_id = $(event.target).data('id');
     Schedules.remove({ _id: clicked_id});
   },
@@ -60,7 +60,7 @@ Template.edit_schedule.events({
     var rendered = UI.renderWithData(Template.schedule_period, {'iperiod': iperiod});
     UI.insert(rendered, $('table')[0]);
   },
-  'click .add-control-point': function(){
+  'click .add-control-point': function(event){
     var clicked_name = $(event.target).data('name') || $(event.target).data('period');
     var rendered = UI.render(Template.period_point);
     UI.insert(rendered, $("#schedule-period-" + clicked_name)[0]);
