@@ -47,7 +47,7 @@ if [ $? != 0 ] ; then
 fi
 echo "export PATH=~/.meteor/tools/latest/bin:\$PATH" >> ~/.profile
 export PATH=~/.meteor/tools/latest/bin:$PATH
-sudo npm install -g meteorite
+npm install -g meteorite
 
 notify "Fetching latest node..."
 curl -sL https://deb.nodesource.com/setup | sudo bash -
@@ -55,7 +55,7 @@ if [ $? != 0 ]; then
 	echo "There was an error installing node"
 	exit 1
 fi
-sudo apt-get install -y nodejs nodejs-legacy 2>&1 > /tmp/install.1.log
+apt-get install -y nodejs nodejs-legacy 2>&1 > /tmp/install.1.log
 if [ $? != 0 ]; then
 	echo ""
 fi
