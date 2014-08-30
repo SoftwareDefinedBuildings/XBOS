@@ -115,8 +115,8 @@
 
 <template name='floorplan'>
   <div id="floorplan-{{_id}}" class="panel panel-default"> 
-    <div class="panel-heading">{{name}}</div>
-    <img id="{{_id}}" src="/img/{{filename}}" class="floorplan img-responsive" alt="Responsive image">
+    <div class="panel-heading">{{description}}</div>
+    <img id="{{_id}}" src="/img/{{getImgPath}}" class="floorplan img-responsive" alt="Responsive image">
   </div>
 </template>
 
@@ -125,8 +125,28 @@
     <div class="panel-heading">
       Select a floorplan image file to upload:
     </div>
-    <div class="panel-body">
-      <input name="files" type="file" class="fileUploader" multiple>
-    </div>
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <td>Description</td>
+          <td>
+            <input id="floorplan-description" type="text" class="form-control">
+          </td>
+        </tr>
+        <tr>
+          <td>Select a file</td>
+          <td>
+            <input name="files" type="file" id="floorplan-file" class="fileUploader" multiple>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td style="text-align:right;"> 
+            <button type="button" id="upload-floorplan" class="btn btn-success btn-md">Upload</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+
 </template>
