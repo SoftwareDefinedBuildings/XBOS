@@ -9,10 +9,6 @@ MasterSchedule = new Meteor.Collection("master_schedule");
 Unconfigured = new Meteor.Collection("unconfigured");
 Floorplans = new Meteor.Collection("floorplans");
 
-Images = new FS.Collection("images", {
-    stores: [new FS.Store.FileSystem("images", {path: "~/public/img"})]
-});
-
 if (Meteor.isServer) {
 
   if (Schedules.find({}).fetch().length == 0){
@@ -41,9 +37,9 @@ if (Meteor.isServer) {
     });
   }
   
-  if (Floorplans.find({}).fetch().length == 0){
-    Floorplans.insert({'filename': 'CIEE-floorplan.png', 'name': 'CIEE main floor'});
-  }
+  //if (Floorplans.find({}).fetch().length == 0){
+  //  Floorplans.insert({'filename': 'CIEE-floorplan.png', 'name': 'CIEE main floor'});
+  //}
 
   Meteor.publish("master_schedule", function () {
     return MasterSchedule.find({});
@@ -68,3 +64,7 @@ if (Meteor.isServer) {
   });
 
 }
+
+FloorplansFS = new FS.Collection("floorplans_fs", {
+  stores: [new FS.Store.FileSystem("images", {path: Meteor.settings.public.project_root + "/public/img"})]
+});

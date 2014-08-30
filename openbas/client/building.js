@@ -83,13 +83,20 @@ Template.building.rooms = function() {
   return Rooms.find({});
 };
 
+Template.floorplan.helpers({
+  getImgPath: function(id){
+    var fpfile = FloorplansFS.findOne({'_id': this.file_id});
+    return fpfile.copies.images.key;
+  }, 
+});
+
 Template.upload.events({
-  'change .fileUploader': function(event, template) {
-    var files = event.target.files;
-    for (var i = 0, ln = files.length; i < ln; i++) {
-      Images.insert(files[i], function (err, fileObj) {
-        console.log('Inserted new doc with ID fileObj._id, and kicked off the data upload using HTTP');
-      });
-    }
+  'click #upload-floorplan': function(event, template) {
+    var file = $('#floorplan-file')[0].files[0];
+    var description = $('#floorplan-description').val();
+    FloorplansFS.insert(file, function (err, fileObj) {
+      console.log(fileObj);
+      Floorplans.insert({"description": description, "file_id": fileObj._id});
+    });
   }
 });
