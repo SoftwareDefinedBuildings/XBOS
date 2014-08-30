@@ -11,3 +11,4 @@ cd ..
 rm -f openbas.tgz
 tar zcf openbas.tgz openbas upmu-plotter
 git checkout openbas/private
+echo "Done"
