@@ -5,13 +5,14 @@
 export DEBIAN_FRONTEND=noninteractive
 
 function notify() {
-msg=$1
-length=$((${#msg}+4))
-buf=$(printf "%-${length}s" "#")
-echo ${buf// /#}
-echo "# "$msg" #"
-echo ${buf// /#}
-sleep 2 ;}
+	msg=$1
+	length=$((${#msg}+4))
+	buf=$(printf "%-${length}s" "#")
+	echo ${buf// /#}
+	echo "# "$msg" #"
+	echo ${buf// /#}
+	sleep 2
+}
 
 # display on stderr
 exec 1>&2
@@ -30,31 +31,64 @@ if [ "$ISUBUNTU" != "Ubuntu" -o "$UBUNTUVERSION" != "14.04" ] ; then
 fi
 
 notify "Installing APT packages... (this will take a few minutes)"
-sudo apt-get install -y expect python-pip mongodb npm libssl-dev git-core pkg-config build-essential nmap dhcpdump arp-scan 2>&1 > /dev/null
+apt-get update
+apt-get install -y expect software-properties-common python-pip mongodb npm libssl-dev git-core pkg-config build-essential nmap dhcpdump arp-scan 2>&1 > /tmp/install.0.log
+
+if [ $? != 0 ] ; then
+	echo "There was an unexpected error installing the first set of packages"
+	exit 1
+fi
 
 notify "Installing Meteor..."
 curl https://install.meteor.com | sh
+if [ $? != 0 ] ; then
+	echo "There was an error installing meteor"
+	exit 1
+fi
+echo "export PATH=~/.meteor/tools/latest/bin:\$PATH" >> ~/.profile
 export PATH=~/.meteor/tools/latest/bin:$PATH
 sudo npm install -g meteorite
 
 notify "Fetching latest node..."
 curl -sL https://deb.nodesource.com/setup | sudo bash -
-
-sudo apt-get install -y nodejs nodejs-legacy 2>&1 > /dev/null
+if [ $? != 0 ]; then
+	echo "There was an error installing node"
+	exit 1
+fi
+sudo apt-get install -y nodejs nodejs-legacy 2>&1 > /tmp/install.1.log
+if [ $? != 0 ]; then
+	echo ""
+fi
 
 notify "Adding cal-sdb package repository..."
-sudo add-apt-repository ppa:cal-sdb/smap
+add-apt-repository ppa:cal-sdb/smap
+if [ $? != 0 ] ; then
+	echo "There was an error adding the repository"
+	exit 1
+fi
 
 notify "Updating APT for latest packages..."
-sudo apt-get update
+apt-get update
+if [ $? != 0 ] ; then
+	echo "There was an error updating the package index"
+	exit 1
+fi
 
 notify "Installing sMAP and sMAP dependencies... (this will take a few minutes)"
-sudo apt-get install -y python-smap readingdb 2>&1 > /dev/null
-sudo pip install pymongo netifaces
-sudo mkdir -p /var/run/smap
-sudo mkdir /var/smap
-sudo chown -R oski /var/smap
-sudo chown -R smap /var/run/smap
+apt-get install -y python-smap readingdb 2>&1 > /tmp/install.2.log
+if [ $? != 0 ] ; then
+	echo "There was an error installing smap packages"
+	exit 1
+fi
+pip install pymongo netifaces
+if [ $? != 0 ] ; then
+	echo "There was an error updating installing python packages"
+	exit 1
+fi
+mkdir -p /var/run/smap
+mkdir /var/smap
+chown -R $SUDO_USER /var/smap
+chown -R smap /var/run/smap
 
 notify "Downloading OpenBAS..."
 curl -O http://install.openbas.cal-sdb.org/openbas.tgz
@@ -63,10 +97,10 @@ tar xzf openbas.tgz
 cat <<EOF > openbas.conf
 [program:openbas]
 command = mrt --settings settings.json
-user = oski
-directory = /home/oski/openbas
+user = $SUDO_USER
+directory = /home/$SUDO_USER/openbas
 priority = 2
-environment = HOME = "/home/oski"
+environment = HOME = "/home/$SUDO_USER"
 autorestart = true
 stdout_logfile = /var/log/openbas.stdout.log
 stdout_logfile_maxbytes = 50MB
@@ -76,7 +110,7 @@ stderr_logfile_maxbytes = 50MB
 stderr_logfile_backups = 5
 EOF
 
-sudo mv openbas.conf /etc/supervisor/conf.d/openbas.conf
+mv openbas.conf /etc/supervisor/conf.d/openbas.conf
 
 cat <<EOF > discovery.ini
 [/]
@@ -92,13 +126,13 @@ config_repo = /etc/smap
 scripts_path = /usr/lib/python2.7/dist-packages/smap/services/scripts
 EOF
 
-sudo mv discovery.ini /etc/smap/.
+mv discovery.ini /etc/smap/.
 
 cat <<EOF > discovery.conf
 [program:discovery]
 command = twistd --pidfile=discovery.pid -n smap --port=7979 /etc/smap/discovery.ini
 directory = /var/smap
-environment=PYTHONPATH="/home/oski/smap"
+environment=PYTHONPATH="/home/$SUDO_USER/smap"
 priority = 2
 autorestart = true
 user = root
@@ -110,7 +144,7 @@ stderr_logfile_maxbytes = 50MB
 stderr_logfile_backups = 5
 EOF
 
-sudo mv discovery.conf /etc/supervisor/conf.d/discovery.conf
+mv discovery.conf /etc/supervisor/conf.d/discovery.conf
 
 cat <<EOF > scheduler.ini
 [/]
@@ -125,16 +159,16 @@ Rate = 1
 MongoUrl = http://localhost:3001
 EOF
 
-sudo mv scheduler.ini /etc/smap/.
+mv scheduler.ini /etc/smap/.
 
 cat <<EOF > scheduler.conf
 [program:scheduler]
 command = twistd --pidfile=scheduler.pid -n smap /etc/smap/scheduler.ini
 directory = /var/smap
-environment=PYTHONPATH="/home/oski/smap"
+environment=PYTHONPATH="/home/$SUDO_USER/smap"
 priority = 2
 autorestart = true
-user = oski
+user = $SUDO_USER
 stdout_logfile = /var/log/scheduler.stdout.log
 stderr_logfile = /var/log/scheduler.stderr.log
 stdout_logfile_maxbytes = 50MB
@@ -143,14 +177,14 @@ stderr_logfile_maxbytes = 50MB
 stderr_logfile_backups = 5
 EOF
 
-sudo mv scheduler.conf /etc/supervisor/conf.d/scheduler.conf
+mv scheduler.conf /etc/supervisor/conf.d/scheduler.conf
 
-sudo supervisorctl update
+supervisorctl update
 
-sudo npm install -g spin
-sudo chown -R oski .npm
-sudo chown -R oski tmp
-sudo chown -R oski .meteor
-sudo mkdir -p .meteorite
-sudo chown -R oski .meteorite
-sudo chown -R oski openbas
+npm install -g spin
+chown -R $SUDO_USER .npm
+chown -R $SUDO_USER tmp
+chown -R $SUDO_USER .meteor
+mkdir -p .meteorite
+chown -R $SUDO_USER .meteorite
+chown -R $SUDO_USER openbas
