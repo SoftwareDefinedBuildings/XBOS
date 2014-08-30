@@ -50,6 +50,7 @@ Template.add_room.events({
 
 Template.building.events({
   'click #upload-floorplan': function(event, template) {
+    $("#loading-gif").show();
     var file = $('#floorplan-file')[0].files[0];
     var description = $('#floorplan-description').val();
     FloorplansFS.insert(file, function (err, fileObj) {
@@ -85,7 +86,7 @@ Template.building.rendered = function() {
 };
 
 Template.building.floorplans = function() {
-  return Floorplans.find({});
+  return Floorplans.find({}, {reactive: false});
 };
 Template.add_room.floorplans = Template.building.floorplans;
 
