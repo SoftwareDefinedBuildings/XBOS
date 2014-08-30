@@ -91,7 +91,7 @@ if (Meteor.isClient) {
   };
 
   Template.actuator_display.ploturl = function() {
-    return Meteor.absoluteUrl('plot?'+getPermalink(this.ActuatorUUID));
+    return '/plot?'+getPermalink(this.ActuatorUUID);
   };
 
   Template.point_display.point = function(uuid) {
@@ -120,7 +120,7 @@ if (Meteor.isClient) {
   };
 
   Template.point_display.ploturl = function() {
-    return Meteor.absoluteUrl('plot?'+getPermalink(this.uuid));
+    return '/plot?'+getPermalink(this.uuid);
   };
 
   Template.point_display.name = function() {
