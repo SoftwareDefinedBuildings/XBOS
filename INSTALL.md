@@ -73,7 +73,7 @@ you aren't, turn your computer on.
    This will ask if you want to create a superuser (type 'yes' and press enter). Enter a username,
    an optional email, and a password.
 
-5. After `powerdb2` is installed, visit to [http://localhost/admin](http://localhost/admin) and type in the username and password you created in the last step. Click '+Add' next to 'Subscriptions', enter a description (e.g. 'OpenBAS deployment') and replace the 'Key' field with the default key:
+5. After `powerdb2` is installed, go to http://<servername>/admin and type in the username and password you created in the last step. If you are installing on a machine locally, this would be [http://localhost/admin](http://localhost/admin). Click '+Add' next to 'Subscriptions', enter a description (e.g. 'OpenBAS deployment') and replace the 'Key' field with the default key:
   ```
   lVzBMDpnkXApJmpjUDSvm4ceGfpbrLLSd9cq
   ```
@@ -87,12 +87,12 @@ you aren't, turn your computer on.
 
 Links generated:
 
-* OpenBAS Building Dashboard: [http://localhost:3000](http://localhost:3000)
-* Plotting Interace: [http://localhost](http://localhost)
-* Admin Interface: [http://localhost/admin](http://localhost/admin)
+* OpenBAS Building Dashboard: http://<servername>:3000 e.g [http://localhost:3000](http://localhost:3000)
+* Plotting Interace: http://<servername> e.g [http://localhost](http://localhost)
+* Admin Interface: http://<servername>/admin e.g [http://localhost/admin](http://localhost/admin)
 
 When first bringing up OpenBAS for your installation, follow the following steps:
 
-1. Create rooms: visit [http://localhost:3000/building](http://localhost:3000/building) and create some rooms, making sure to place markers on the map.
+1. Create rooms: visit http://<servername>/building e.g [http://localhost:3000/building](http://localhost:3000/building) and create some rooms, making sure to place markers on the map.
 2. Plug in devices!
-3. Configure devices on the status page [http://localhost:3000/status](http://localhost:3000/status)
+3. Configure devices on the status page http://<servername>/status e.g [http://localhost:3000/status](http://localhost:3000/status)
