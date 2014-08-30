@@ -39,7 +39,7 @@
       {{> floorplan}}
     {{/each}}
 
-    {{> upload}}
+    {{> upload_floorplan }}
 
   </div>
 </template>
@@ -116,37 +116,38 @@
 <template name='floorplan'>
   <div id="floorplan-{{_id}}" class="panel panel-default"> 
     <div class="panel-heading">{{description}}</div>
-    <img id="{{_id}}" src="/img/{{getImgPath}}" class="floorplan img-responsive" alt="Responsive image">
+    <img id="{{_id}}" src="{{getImgPath}}" class="floorplan img-responsive" alt="Responsive image">
   </div>
 </template>
 
-<template name="upload">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      Select a floorplan image file to upload:
+<template name="upload_floorplan">
+  <div class="rooms-container">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Select a floorplan image file to upload:
+      </div>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td>Description</td>
+            <td>
+              <input id="floorplan-description" type="text" class="form-control">
+            </td>
+          </tr>
+          <tr>
+            <td>Select a file</td>
+            <td>
+              <input name="files" type="file" id="floorplan-file" class="fileUploader" multiple>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td style="text-align:right;"> 
+              <button type="button" id="upload-floorplan" class="btn btn-success btn-md">Upload</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <table class="table table-bordered">
-      <tbody>
-        <tr>
-          <td>Description</td>
-          <td>
-            <input id="floorplan-description" type="text" class="form-control">
-          </td>
-        </tr>
-        <tr>
-          <td>Select a file</td>
-          <td>
-            <input name="files" type="file" id="floorplan-file" class="fileUploader" multiple>
-          </td>
-        </tr>
-        <tr>
-          <td></td>
-          <td style="text-align:right;"> 
-            <button type="button" id="upload-floorplan" class="btn btn-success btn-md">Upload</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
-
 </template>

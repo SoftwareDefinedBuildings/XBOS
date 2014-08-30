@@ -49,6 +49,13 @@ Template.add_room.events({
 });
 
 Template.building.events({
+  'click #upload-floorplan': function(event, template) {
+    var file = $('#floorplan-file')[0].files[0];
+    var description = $('#floorplan-description').val();
+    FloorplansFS.insert(file, function (err, fileObj) {
+      Floorplans.insert({"description": description, "file_id": fileObj._id});
+    });
+  },
   'hover .floorplan-marker': function(event){
     var room_id = $(event.target).data('room');
     var room = Rooms.find({_id: room_id}).fetch();
@@ -56,21 +63,24 @@ Template.building.events({
 });
 
 Template.building.rendered = function() {
-  var rooms = Rooms.find({}).fetch();
-  _.each(rooms, function(room){
-    if (room.hasOwnProperty('MarkerPosition')){
-      var img_pos = $('img#' + room.FloorplanId).position();
-      var marker = $('<span />')
-          .attr('title', room.RoomNumber)
-          .attr('class', 'floorplan-marker floorplan-marker-static glyphicon glyphicon-map-marker')
-          .attr('data-room', room._id)
-          .css('left', img_pos.left + room.MarkerPosition.left + "px")
-          .css('top', img_pos.top + room.MarkerPosition.top + "px");
-      $('div#floorplan-' + room.FloorplanId).append(marker);
-    }
-  });
-  $(".floorplan-marker").tooltip({
-    placement: "top",
+  // make sure all images are loaded
+  $(window).load(function(){
+    var rooms = Rooms.find({}).fetch();
+    _.each(rooms, function(room){
+      if (room.hasOwnProperty('MarkerPosition')){
+        var img_pos = $('img#' + room.FloorplanId).position();
+        var marker = $('<span />')
+            .attr('title', room.RoomNumber)
+            .attr('class', 'floorplan-marker floorplan-marker-static glyphicon glyphicon-map-marker')
+            .attr('data-room', room._id)
+            .css('left', img_pos.left + room.MarkerPosition.left + "px")
+            .css('top', img_pos.top + room.MarkerPosition.top + "px");
+        $('div#floorplan-' + room.FloorplanId).append(marker);
+      }
+    });
+    $(".floorplan-marker").tooltip({
+      placement: "top",
+    });
   });
 };
 
@@ -84,19 +94,12 @@ Template.building.rooms = function() {
 };
 
 Template.floorplan.helpers({
-  getImgPath: function(id){
+  getImgPath: function(){
     var fpfile = FloorplansFS.findOne({'_id': this.file_id});
-    return fpfile.copies.images.key;
+    if (fpfile.hasCopy('images')){
+      return '/floorplans/' + fpfile.copies.images.key;
+    } else {
+      return '/img/ajax-loader.gif';
+    }
   }, 
-});
-
-Template.upload.events({
-  'click #upload-floorplan': function(event, template) {
-    var file = $('#floorplan-file')[0].files[0];
-    var description = $('#floorplan-description').val();
-    FloorplansFS.insert(file, function (err, fileObj) {
-      console.log(fileObj);
-      Floorplans.insert({"description": description, "file_id": fileObj._id});
-    });
-  }
 });
