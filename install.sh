@@ -124,7 +124,7 @@ uuid = 85d97cac-9345-11e3-898b-0001c009bf3f
 
 [/discovery]
 type = smap.services.discovery.DiscoveryDriver
-dhcp_iface = eth1
+dhcp_iface = eth0
 supervisord_conf_file = supervisord.conf
 dhcpdump_path = /usr/sbin/dhcpdump
 nmap_path = /usr/bin/nmap
