@@ -2,6 +2,12 @@
 
 # This is the install script for OpenBAS
 
+if [ $(whoami) != "root" ]
+then
+	echo "You need to curl this script into 'sudo bash' not just 'bash'"
+	exit 1
+fi
+
 export DEBIAN_FRONTEND=noninteractive
 
 function notify() {
