@@ -69,6 +69,10 @@ a:hover {
     z-index: 5000;
 }
 
+.popover {
+    z-index: 6000;
+}
+
 .floorplan-marker {
   position: absolute;
   font-size: 2em;
@@ -81,4 +85,44 @@ a:hover {
 
 .modal {
   overflow-y:auto;
+}
+
+
+.atooltip {
+    display: inline;
+    position: relative;
+}
+
+.atooltip:hover {
+    color: #c00;
+    text-decoration: none;
+}
+
+.atooltip:hover:after {
+    background: #111;
+    background: rgba(0,0,0,.8);
+    border-radius: .5em;
+    bottom: 1.35em;
+    color: #fff;
+    content: attr(title);
+    display: block;
+    left: 1em;
+    padding: .3em 1em;
+    position: absolute;
+    text-shadow: 0 1px 0 #000;
+    white-space: nowrap;
+    z-index: 98;
+}
+
+.atooltip:hover:before {
+    border: solid;
+    border-color: #111 transparent;
+    border-color: rgba(0,0,0,.8) transparent;
+    border-width: .4em .4em 0 .4em;
+    bottom: 1em;
+    content: "";
+    display: block;
+    left: 2em;
+    position: absolute;
+    z-index: 99;
 }

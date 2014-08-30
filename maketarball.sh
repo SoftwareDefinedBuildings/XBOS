@@ -8,6 +8,7 @@ else
   mrt reset
 fi
 cd ..
+git submodule update --init
 rm -f openbas.tgz
 tar zcf openbas.tgz openbas upmu-plotter
 git checkout openbas/private

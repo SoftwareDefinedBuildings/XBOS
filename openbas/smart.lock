@@ -9,7 +9,7 @@
       "bootstrap-slider": {},
       "moment": {},
       "jqueryui": {},
-      "collectionFS": {}
+      "collectionfs": {}
     },
     "packages": {
       "iron-router": {
@@ -47,10 +47,10 @@
         "tag": "v1.11.0",
         "commit": "06194edc0bdbb28c34b3a656bf9cb6a32718b44e"
       },
-      "collectionFS": {
+      "collectionfs": {
         "git": "https://github.com/CollectionFS/Meteor-CollectionFS.git",
-        "tag": "v0.4.8",
-        "commit": "fea890b1e27799ccc9f71046748fb23a84330a16"
+        "tag": "v0.4.9",
+        "commit": "987d96610b02eb33f617edd1a9436afe7f44221d"
       },
       "iron-layout": {
         "git": "https://github.com/EventedMind/iron-layout.git",
@@ -161,11 +161,6 @@
         "git": "https://github.com/CollectionFS/Meteor-cfs-tempstore.git",
         "tag": "v0.0.29",
         "commit": "079dd636dfaae45d41b55126e0a5d97c64a92bfb"
-      },
-      "collectionfs": {
-        "git": "https://github.com/CollectionFS/Meteor-CollectionFS.git",
-        "tag": "v0.4.9",
-        "commit": "987d96610b02eb33f617edd1a9436afe7f44221d"
       },
       "http-publish": {
         "git": "https://github.com/CollectionFS/Meteor-http-publish.git",
