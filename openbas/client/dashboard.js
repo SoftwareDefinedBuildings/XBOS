@@ -4,6 +4,24 @@ Meteor.startup(function() {
   Meteor.call('querysystem');
 });
 
+var metadatakeydescriptions = {
+'LightingZone': 'Name for logical space that is under common lighting control, e.g. "Room 213 Overheads"',
+'HVACZone': 'Name for the group of spaces that are controlled by the same thermostat, e.g. "South Offices"',
+'Building': 'Name of the building',
+'SourceName': 'Auto-generated name of sMAP Driver',
+'System': 'Which domain this device belongs to (Auto-generated)',
+'Driver': 'sMAP Driver module path',
+'Device': 'What is this device? e.g. Thermostat, Lighting Controller, Sensor',
+'Group': 'Unique number for a lighting controller (start at 1, 2, etc)',
+'Floor': 'Which floor in the building this is installed',
+'Model': 'The model of the device, e.g. "CT80 RTA"',
+'Name': 'Human-readable name for your convenience',
+'Room': 'Room where device is installed',
+'Role': 'What purpose this device fulfills within the system, e.g. "Building Lighting", "Task Lighting", etc',
+'Site': 'Auto-generated unique identifier for this installation',
+'_id': 'Mongo record identifier',
+};
+
 var Dashboard = {};
 
 Dashboard.render_schedules = function(){
@@ -63,6 +81,13 @@ UI.registerHelper('getValue', function(obj) {
     }
     return Number((value).toFixed(1));
   } 
+});
+
+/*
+ * Returns a text description of a metadata key
+ */
+UI.registerHelper('getDescription', function(key) {
+    return metadatakeydescriptions[key] || '';
 });
 
 Template.dashboard.created = function() {

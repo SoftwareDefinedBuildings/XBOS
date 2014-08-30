@@ -72,7 +72,8 @@
                   <!-- form group-->
                 {{#each commonmetadata}}
                   <div class="form-group">
-                    <label data-mykey="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                    
+                    <label data-mykey="{{key}}" class="col-sm-4 control-label"><a href='#' class='atooltip' title="{{getDescription key}}"><span class="glyphicon glyphicon-question-sign"></span></a>  {{key}}</label>
                     {{#if static}}
                       <input data-mykey="{{key}}" id="{{fixPath path}}_{{key}}" class="autocompletefield col-sm-7 text" value="{{val}}" readonly>
                     {{else}}
