@@ -102,9 +102,9 @@
   </div> 
 
   <div class="rooms-container">
-    {{#each floorplans}}
-      {{> floorplan}}
-    {{/each}}
+      {{#each floorplans}}
+        {{> floorplan}}
+      {{/each}}
     <div style="margin-bottom: 20px; float: right">
       <button id="save-room" type="button" class="btn btn-success btn-md">Save</button>
       <button id="cancel-room" type="button" class="btn btn-danger btn-md">Cancel</button>
@@ -143,6 +143,7 @@
           <tr>
             <td></td>
             <td style="text-align:right;"> 
+              <span id="loading-gif" style="display:none"><img src="/img/ajax-loader.gif"></span>
               <button type="button" id="upload-floorplan" class="btn btn-success btn-md">Upload</button>
             </td>
           </tr>
