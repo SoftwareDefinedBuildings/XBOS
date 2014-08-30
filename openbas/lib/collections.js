@@ -66,5 +66,11 @@ if (Meteor.isServer) {
 }
 
 FloorplansFS = new FS.Collection("floorplans_fs", {
-  stores: [new FS.Store.FileSystem("images", {path: Meteor.settings.public.project_root + "/public/img"})]
+  stores: [new FS.Store.FileSystem("images", {path: Meteor.settings.public.project_root + "/public/floorplans"})]
+});
+
+Meteor.startup(function(){
+  if (Meteor.isServer){
+    Meteor.settings.public.project_root = process.env.PWD;
+  };
 });
