@@ -145,10 +145,11 @@
 </template>
 
 <template name="hvac_zone_widget">
-  <div class="dashboard-well">
+  <div style="text-align: center" class="dashboard-well">
     <h3 class="dashboard-column-heading centertext">
-      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='hvac' zone=hvaczone }}">{{hvaczone}}</a>
+      {{hvaczone}}
     </h3>
+    <a class="btn btn-default" role="button" href="{{pathFor 'zone_detail' zonetype='hvac' zone=hvaczone }}">Thermostat Override</a>
     <div class="HVAC-zone-summary" id="HVAC-zone-summary-{{ _id }}"></div>
     <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
     <p><b>Temp:</b> {{getValue 'temp'}}</p>
@@ -177,10 +178,11 @@
 </template>
 
 <template name="light_zone_widget">
-  <div class="dashboard-well">
+  <div style="text-align: center" class="dashboard-well">
     <h3 class="dashboard-column-heading centertext">
-      <a class="detail-link" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">{{zone}}</a>
+      {{zone}}
     </h3>
+    <a class="btn btn-default" role="button" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">Lighting Override</a>
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>
