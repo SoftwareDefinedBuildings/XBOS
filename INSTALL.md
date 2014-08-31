@@ -102,3 +102,24 @@ When first bringing up OpenBAS for your installation, follow the following steps
 1. Create rooms: visit http://servername/building e.g [http://localhost:3000/building](http://localhost:3000/building) and create some rooms, making sure to place markers on the map.
 2. Plug in devices!
 3. Configure devices on the status page http://servername/status e.g [http://localhost:3000/status](http://localhost:3000/status)
+
+## Running a virtual building
+
+If you do not have devices to plug in, or are simply wanting to evaluate the system in a virtual machine, you can also utilise our support for *virtual devices*. A small representative set of preconfigured virtual devices can be added to the system by executing:
+
+```
+curl http://install.openbas.cal-sdb.org/vbuilding | sudo bash -
+```
+
+## Troubleshooting
+
+1. When I curl into sudo bash, nothing happens after the curl output.
+
+   In some cases, the prompt for sudo can be hidden. The system is waiting for you to enter your password before proceeding. We recommend running a simple sudo command beforehand to cache the password for sudo so that this does not happen, for example:
+   ```
+   sudo echo
+   ```
+   before running a curl into sudo.
+   
+   
+
