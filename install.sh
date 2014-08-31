@@ -198,3 +198,4 @@ addgroup smap
 adduser $SUDO_USER smap
 adduser smap smap
 chgrp -R smap /var/smap
+chmod g+rwx /var/smap
