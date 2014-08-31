@@ -26,4 +26,5 @@ EOF
 
 mv vbuilding.conf /etc/supervisor/conf.d/
 
+echo "Configuration files added, updating supervisor"
 supervisorctl update
