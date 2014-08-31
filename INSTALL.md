@@ -12,7 +12,7 @@ OpenBAS requires either Ubuntu Server 14.04 or Ubuntu Desktop 14.04 (Trusty Tahr
 * 2 GB RAM
 * 5 GB disk space
 
-Any relatively recent consumer-grade machine from the past 5 years should have no problem running Ubuntu and OpenBAS.
+Any relatively recent consumer-grade machine from the past 5 years should have no problem running Ubuntu and OpenBAS. If you want to do a real deployment, we recommend installing OpenBAS on a dedicated Ubuntu machine. If you are interested in sampling the install process, you can achieve this by using a virtual machine.
 
 ### Installing Ubuntu 14.04
 
@@ -32,6 +32,10 @@ graphical environment on your OpenBAS server is not necessary. The Ubuntu
 Server edition will work just as well, if not better, than the Desktop edition.
 
 **NOTE: do not forget the username and password that you input during the installation process!**
+
+### Using a Virtual Machine
+
+A virtual machine allows you to emulate another operating system on your computer, regardless of which operating system you are running. [VirtualBox](https://www.virtualbox.org/wiki/Downloads) is a free virtual machine. Download the appropriate VirtualBox for your operating system (~128 MB) and download Ubuntu using the links above. When you start up VirtualBox, press "New" to create a new virtual machine, and follow the installation wizard along with the Ubuntu installation instructions (linked above) to create a new Ubuntu installation.
 
 ## Installing
 
