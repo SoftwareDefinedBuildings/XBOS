@@ -194,3 +194,7 @@ chown -R $SUDO_USER .meteor
 mkdir -p .meteorite
 chown -R $SUDO_USER .meteorite
 chown -R $SUDO_USER openbas
+addgroup smap
+adduser $SUDO_USER smap
+adduser smap smap
+chgrp -R smap /var/smap
