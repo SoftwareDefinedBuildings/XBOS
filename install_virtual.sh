@@ -2,8 +2,6 @@
 
 # This is the install script for the virtual building drivers
 
-set -x
-
 if [ $(whoami) != "root" ]
 then
 	echo "You need to curl this script into 'sudo bash' not just 'bash'"
@@ -18,6 +16,7 @@ command = /usr/bin/twistd --pidfile=/var/run/smap/vbuilding.pid -n smap /etc/sma
 priority = 2
 autorestart = true
 user = smap
+directory = /var/smap/
 stdout_logfile = /var/log/vbuilding.stdout.log
 stdout_logfile_maxbytes = 50MB
 stdout_logfile_backups = 5
