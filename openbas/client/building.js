@@ -63,25 +63,33 @@ Template.building.events({
   }
 });
 
+function draw_markers() {
+  var rooms = Rooms.find({}).fetch();
+  _.each(rooms, function(room){
+    if (room.hasOwnProperty('MarkerPosition')){
+      var img_pos = $('img#' + room.FloorplanId).position();
+      var marker = $('<span />')
+          .attr('title', room.RoomNumber)
+          .attr('class', 'floorplan-marker floorplan-marker-static glyphicon glyphicon-map-marker')
+          .attr('data-room', room._id)
+          .css('left', img_pos.left + room.MarkerPosition.left + "px")
+          .css('top', img_pos.top + room.MarkerPosition.top + "px");
+      $('div#floorplan-' + room.FloorplanId).append(marker);
+    }
+  });
+  $(".floorplan-marker").tooltip({
+    placement: "top",
+  });
+}
+
 Template.building.rendered = function() {
   // make sure all images are loaded
   $(window).load(function(){
-    var rooms = Rooms.find({}).fetch();
-    _.each(rooms, function(room){
-      if (room.hasOwnProperty('MarkerPosition')){
-        var img_pos = $('img#' + room.FloorplanId).position();
-        var marker = $('<span />')
-            .attr('title', room.RoomNumber)
-            .attr('class', 'floorplan-marker floorplan-marker-static glyphicon glyphicon-map-marker')
-            .attr('data-room', room._id)
-            .css('left', img_pos.left + room.MarkerPosition.left + "px")
-            .css('top', img_pos.top + room.MarkerPosition.top + "px");
-        $('div#floorplan-' + room.FloorplanId).append(marker);
-      }
-    });
-    $(".floorplan-marker").tooltip({
-      placement: "top",
-    });
+    draw_markers();
+  });
+  $(window).resize(function(){
+    $('.floorplan-marker').remove();
+    draw_markers();
   });
 };
 
