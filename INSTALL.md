@@ -39,6 +39,8 @@ Server edition will work just as well, if not better, than the Desktop edition.
 `Ctl-Alt-T` (pressing the 'Control', 'Alt' and the 't' keys at the same time).
 If you are on Ubuntu Server, you should already be looking at a terminal. If
 you aren't, turn your computer on.
+  
+  **NOTE: when you begin the installation, make sure you are in your home directory. If you are unsure, run the command `cd` in the terminal -- this will place you in your home directory.**
 
 2. **Make sure you have `curl` installed**: type the following command into the Terminal and press 'Enter':
 
