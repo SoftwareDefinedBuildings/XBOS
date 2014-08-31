@@ -2,6 +2,8 @@
 
 # This is the install script for the virtual building drivers
 
+set -x
+
 if [ $(whoami) != "root" ]
 then
 	echo "You need to curl this script into 'sudo bash' not just 'bash'"
