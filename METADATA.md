@@ -98,7 +98,7 @@ are room names, or are based on room names, e.g. '410 Soda' or '420 Soda West'.
 
 #### `Metadata/HVACZone`
 
-Definition here...
+An HVAC zone is defined as a space or collections of spaces that are controlled by a single RTU or thermostat. In the case of multiple RTUs and thermostats, an HVAC zone can more generally be thought of as the collection of spaces that are all affected when settings are changed on a single thermostat.
 
 ## Timeseries-level Metadata
 
