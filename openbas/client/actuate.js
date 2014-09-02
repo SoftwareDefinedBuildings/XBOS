@@ -146,8 +146,8 @@ if (Meteor.isClient) {
         max = states[1]
       }
       $("#"+this.data.ActuatorUUID).slider({
-        min: min,
-        max: max,
+        min: Number(min),
+        max: Number(max),
         step: 1,
         value: this.data.value
       }).on('slideStop', function(e) {
