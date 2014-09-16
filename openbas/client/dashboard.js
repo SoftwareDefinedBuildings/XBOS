@@ -241,7 +241,9 @@ Template.hvac_zone_widget.rendered = function(){
   var q = "select * where " + restrict;
   Meteor.call("query", q, function(err, res) {
     var tags = res;
-    Meteor.call("latest", restrict, 1000, function(err, res){
+    // get 4 hours of data 
+    var qq = "select data in (now -4h, now) where " + restrict
+    Meteor.call("query", qq, function(err, res){
       var mydata = _.map(res, function(o){
         var tag = _.find(tags, function(t){ return t.uuid == o.uuid });
         var rv = _.extend(o, tag);
