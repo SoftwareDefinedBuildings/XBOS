@@ -7,5 +7,10 @@ class FollowMaster(ZoneController):
         self.add_timeseries('/temp_cool','F',data_type='double')
 
     def step(self):
+        """
+        self.points contains the most recent advertised values
+        for 'temp_haet' and 'temp_cool' from the master scheduler.
+        We add 5 to these, and then republish to our end points
+        """
         self.add('/temp_heat', self.points['temp_heat'] + 5)
         self.add('/temp_cool', self.points['temp_cool'] + 5)

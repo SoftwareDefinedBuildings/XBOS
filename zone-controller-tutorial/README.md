@@ -1,5 +1,10 @@
 # Zone Controller Example
 
+Before reading this, please read the following sMAP wiki pages:
+
+* [Schedules](https://github.com/SoftwareDefinedBuildings/smap/wiki/Scheduler-Service)
+* [Zone Controllers](https://github.com/SoftwareDefinedBuildings/smap/wiki/Scheduler-Service)
+
 We consider the following small, 3-room, 2-zone building:
 
 ```
