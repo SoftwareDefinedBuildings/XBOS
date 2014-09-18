@@ -19,7 +19,8 @@ We consider the following small, 3-room, 2-zone building:
 +--------------------------------------------------------+
 ```
 
-Each room has a temperature/humidity sensor, but only Rooms 1 and 3 have thermostats. Each room also has an independent lighting controller.
+Each room has a temperature/humidity sensor, but only Rooms 1 and 3 have
+thermostats. Each room also has an independent lighting controller.
 
 We have a master schedule and a zone controller each for Zone 1 and Zone 2. We
 will have Zone 2 follow the master schedule with a simple trim of 5 degrees F,
