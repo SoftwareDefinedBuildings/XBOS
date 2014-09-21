@@ -11,7 +11,7 @@ We consider the following small, 3-room, 2-zone building:
 <---------------Zone 1-----------------><-----Zone 2----->
 +--------------------------------------------------------+
 |              |                        |                |
-|              |                        |                |
+|   *sensor    |    *sensor             |   *sensor      |
 |              |                        |                |
 |              |                        |                |
 |              |                        |                |
