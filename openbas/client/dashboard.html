@@ -26,11 +26,13 @@
     {{> schedule_widget}}
 
   </div>
+
+  {{#if hasGeneralControl}}
   <div class="dashboard-well">
-
     {{> general_control_widget}}
-
   </div>
+  {{/if}}
+
 </template>
 
 <template name="schedule_widget">
@@ -145,15 +147,14 @@
 </template>
 
 <template name="hvac_zone_widget">
-  <div style="text-align: center" class="dashboard-well">
-    <h3 class="dashboard-column-heading centertext">
-      {{hvaczone}}
-    </h3>
-    <a class="btn btn-default" role="button" href="{{pathFor 'zone_detail' zonetype='hvac' zone=hvaczone }}">Thermostat Override</a>
+  <div class="dashboard-well">
+    <a href="{{pathFor 'zone_detail' zonetype='hvac' zone=hvaczone }}">
+      <h3 class="dashboard-column-heading centertext">
+        {{hvaczone}}
+      </h3>
+    </a>
     <div class="HVAC-zone-summary" id="HVAC-zone-summary-{{ _id }}"></div>
-    <p><b>Cool Setpoint:</b> {{getValue 'temp_cool'}}</p>
-    <p><b>Temp:</b> {{getValue 'temp'}}</p>
-    <p><b>Heat Setpoint:</b> {{getValue 'temp_heat'}}</p>
+    <p><b>State:</b> {{getValue 'hvac_state'}}</p>
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>
@@ -178,11 +179,13 @@
 </template>
 
 <template name="light_zone_widget">
-  <div style="text-align: center" class="dashboard-well">
-    <h3 class="dashboard-column-heading centertext">
-      {{zone}}
-    </h3>
-    <a class="btn btn-default" role="button" href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">Lighting Override</a>
+  <div class="dashboard-well">
+    <a href="{{pathFor 'zone_detail' zonetype='lighting' zone=zone }}">
+      <h3 class="dashboard-column-heading centertext">
+        {{zone}}
+      </h3>
+    </a>
+    {{#if groups}}
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>
@@ -205,7 +208,9 @@
         </tbody>
       </table>
     </div>
-
+    {{/if}}
+    
+    {{#if internals}}
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>
@@ -224,7 +229,9 @@
         </tbody>
       </table>
     </div>
+    {{/if}}
 
+    {{#if sensors}}
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>
@@ -243,6 +250,7 @@
         </tbody>
       </table>
     </div>
+    {{/if}}
 
   </div>
 </template>

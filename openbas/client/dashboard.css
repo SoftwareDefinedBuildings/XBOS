@@ -111,3 +111,12 @@ td.current-day {
 .current-period{
   background-color: #FEFFF2;
 }
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus text {
+  font-size: 1.2em;
+}

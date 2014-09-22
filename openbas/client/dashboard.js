@@ -140,6 +140,10 @@ Template.generalbuildingcolumn.powermeterAll = function() {
   return Monitoring.find({'timeseries.demand': {'$exists': true}});
 };
 
+Template.generalbuildingcolumn.hasGeneralControl = function() {
+   return (GeneralControl.find({}).fetch().length > 0);
+}
+
 Template.schedule_widget.helpers({
   isNamed: function(path){
     return path == this.path;
@@ -311,6 +315,69 @@ Template.hvac_zone_widget.rendered = function(){
           .datum(temp_heat)
           .attr('class', 'heattempline')
           .attr('d', line);
+
+        var focus = svg.append("g")
+          .attr("class", "focus")
+          .style("display", "none");
+
+        var myrect = focus.append("rect")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("width", 1)
+          .attr("height", height)
+          .attr("opacity", 0.5)
+
+        var bisectTime = d3.bisector(function(d) { return d.time; }).left
+        var formatValue = d3.format(".1f");
+
+        focus.append("text")
+          .attr("id", "temp_text") 
+          .attr("dy", ".35em");
+
+        focus.append("text")
+          .attr("id", "temp_heat_text")
+          .attr("fill", "red")
+          .attr("dy", "1.75em");
+
+        focus.append("text")
+          .attr("id", "temp_cool_text")
+          .attr("fill", "blue")
+          .attr("dy", "-1.15em");
+
+        svg.append("rect")
+          .attr("class", "overlay")
+          .attr("width", width)
+          .attr("height", height)
+          .on("mouseover", function() { focus.style("display", null); })
+          .on("mouseout", function() { focus.style("display", "none"); })
+          .on("mousemove", mousemove);
+
+        function mousemove() {
+          var xpos = d3.mouse(this)[0];
+          var ypos = d3.mouse(this)[1];
+          var x0 = x.invert(xpos)
+          var ti = bisectTime(temp, x0, 1)
+          var hi = bisectTime(temp_heat, x0, 1);
+          var ci = bisectTime(temp_cool, x0, 1);
+          var temp_tooltip = formatValue(temp[ti].value);
+          var temp_heat_tooltip = formatValue(temp_heat[hi].value);
+          var temp_cool_tooltip = formatValue(temp_cool[ci].value);
+          var mytext = focus.selectAll("text");
+          if ((width - xpos) < 40) {
+            mytext.attr("text-anchor", "end").attr("dx", "-1em");
+          } else {
+            mytext.attr("text-anchor", "start").attr("dx", "1em");
+          }
+          myrect.attr("x", xpos);
+          mytext.attr("x", xpos).attr("y", ypos);
+
+          focus.select("#temp_text")
+            .text(temp_tooltip)
+          focus.select("#temp_heat_text")
+            .text(temp_heat_tooltip)
+          focus.select("#temp_cool_text")
+            .text(temp_cool_tooltip)
+        }
 
       }
       hvac_zone_summary("#HVAC-zone-summary-" + id, mydata);
