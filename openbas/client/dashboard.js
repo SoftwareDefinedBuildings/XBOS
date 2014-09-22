@@ -144,6 +144,21 @@ Template.generalbuildingcolumn.hasGeneralControl = function() {
    return (GeneralControl.find({}).fetch().length > 0);
 }
 
+Template.hvac_zone_widget.helpers({
+  isOff: function(){
+    var p = Points.findOne({'uuid': this.timeseries.hvac_state.uuid});
+    return (p.value == 0);
+  },
+  isHeating: function(){
+    var p = Points.findOne({'uuid': this.timeseries.hvac_state.uuid});
+    return (p.value == 1);
+  },
+  isCooling: function(){
+    var p = Points.findOne({'uuid': this.timeseries.hvac_state.uuid});
+    return (p.value == 2);
+  }
+});
+
 Template.schedule_widget.helpers({
   isNamed: function(path){
     return path == this.path;

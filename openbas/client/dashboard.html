@@ -154,7 +154,16 @@
       </h3>
     </a>
     <div class="HVAC-zone-summary" id="HVAC-zone-summary-{{ _id }}"></div>
-    <p><b>State:</b> {{getValue 'hvac_state'}}</p>
+
+    <div class="HVAC-state-container" id="HVAC-state-container-{{ _id }}">
+      {{#if isOff}}
+      {{else}}{{#if isHeating}}
+        <span class="glyphicon glyphicon-fire" id="flame"></span><span class="HVAC-status-label">Heating</span>
+      {{else}}{{#if isCooling}}
+        <span class="icon-snowflake" id="snowflake">❄</span><span class="HVAC-status-label">Cooling</span>
+      {{/if}}{{/if}}{{/if}}
+    </div>
+    
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>

@@ -120,3 +120,63 @@ td.current-day {
 .focus text {
   font-size: 1.2em;
 }
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes snowflake {
+  0%   {color: blue;}
+  50%  {color: #ADD8E6;}
+  100% {color: red;}
+}
+
+/* Standard syntax */
+@keyframes snowflake {
+  0%   {color: blue;}
+  30%  {color: #ADD8E6;}
+  100% {color: blue;}
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes flame {
+  0%   {color: red;}
+  50%  {color: #FFA500;}
+  100% {color: red;}
+}
+
+/* Standard syntax */
+@keyframes flame {
+  0%   {color: red;}
+  30%  {color: #FFA500;}
+  100% {color: red;}
+}
+
+span#snowflake {
+   -webkit-animation-name: snowflake;
+   -webkit-animation-duration: 1.5s;
+   -webkit-animation-iteration-count: infinite;
+   -webkit-animation-timing-function: linear;
+}
+
+@-webkit-keyframes snowflake {
+ from { 
+        -webkit-transform: rotate( 0deg );  
+    }
+ to { 
+        -webkit-transform: rotate( 360deg ); 
+    }
+}
+
+span#flame {
+  -webkit-animation: flame 4s linear infinite; /* Chrome, Safari, Opera */
+  animation: flame 4s linear infinite;
+}
+
+.HVAC-status-label {
+  margin-left: 7px;
+}
+
+.HVAC-state-container {
+  font-size: 1.2em;
+  text-align: center;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
