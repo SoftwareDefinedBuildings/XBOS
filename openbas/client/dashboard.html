@@ -290,10 +290,10 @@
 </template>
 
 <template name="thermostat">
-  <h2 class="dashboard-column-heading">Zone: {{hvaczone}}</h2>
-  <h3 class="dashbaord-column-heading">{{path}}</h3>
-  <div class='table-responsive'>
-    <table class="table table-bordered table-striped">
+  <h2 class="dashboard-column-heading" style="margin-bottom: 20px;">Zone: {{hvaczone}}</h2>
+  <div class='panel panel-default'>
+    <div class="panel-heading">{{path}}</div>
+    <table class="table table-bordered table-striped hvac-zone-table" style="font-size: 1.2em;">
       <thead>
         <tr>
           <th>Path</th>

@@ -126,3 +126,7 @@ a:hover {
     position: absolute;
     z-index: 99;
 }
+
+.hvac-zone-table tr {
+  height: 51px;
+}

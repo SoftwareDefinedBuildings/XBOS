@@ -121,7 +121,7 @@
   {{#with point uuid}}
   <td><a href="{{ploturl}}">{{name}}</a></td>
   <td>{{value}}</td>
-  <td></td>
+  <td id="sparkline-{{uuid}}"></td>
   {{/with}}
 </template>
 
@@ -131,11 +131,12 @@
 </template>
 
 <template name="actuator_continuous">
-  <div id="{{ActuatorUUID}}" data-value="{{value}}"></div>
+  <!--div id="{{ActuatorUUID}}" data-value="{{value}}"></div-->
+  <div id="{{ActuatorUUID}}"></div>
 </template>
 
 <template name="actuator_binary">
-  <div id="{{ActuatorUUID}}" class="button button-3d-caution button-small" data-value="{{value}}">Binary Actuator</div><br>
+  <div id="{{ActuatorUUID}}" class="button button-3d-caution button-small" data-value="{{value}}">Toggle</div><br>
 </template>
 
 <template name="loading">
