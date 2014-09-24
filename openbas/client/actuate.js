@@ -171,6 +171,7 @@ Template.actuator_continuous.rendered = function() {
 Template.actuator_discrete.rendered = function() {
   var that = getActuators(this.data.ActuatorUUID);
   var uuid = this.data.ActuatorUUID;
+  var port = this.data.ServerPort;
   $.each(that.Actuator.Values, function(idx, val) {
     $('#'+uuid).append($("<option></option>")
         .attr("value", idx)
@@ -180,13 +181,19 @@ Template.actuator_discrete.rendered = function() {
 
 Template.actuator_discrete.events({
   'change': function(e) {
-    console.log(e.target.selectedIndex);
+    var that = getActuators(this.ActuatorUUID);
+    Meteor.call("actuate", this.ServerPort, that.Path, e.target.selectedIndex, function(err, res) {
+        if (err) {
+            console.log("ERROR", err);
+        }
+        $('#'+this.ActuatorUUID).val(e.target.selectedIndex);
+    });
   }
 });
 
 Template.actuator_discrete.value = function() {
   var p = Points.find({'_id': this._id}).fetch();
-  $('#'+this.ActuatorUUID).val("0");
+  $('#'+this.ActuatorUUID).val(p[0].value);
   return p[0].value;
 };
 
