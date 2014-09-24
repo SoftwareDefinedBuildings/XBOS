@@ -8,6 +8,7 @@ Schedules = new Meteor.Collection("schedules");
 MasterSchedule = new Meteor.Collection("master_schedule");
 Unconfigured = new Meteor.Collection("unconfigured");
 Floorplans = new Meteor.Collection("floorplans");
+Site = new Meteor.Collection("site");
 
 if (Meteor.isServer) {
 
@@ -60,7 +61,10 @@ if (Meteor.isServer) {
     return Monitoring.find({});
   });
   Meteor.publish("unconfigured", function () {
-    return Monitoring.find({});
+    return Unconfigured.find({});
+  });
+  Meteor.publish("site", function () {
+    return Site.find({});
   });
 
 }

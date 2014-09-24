@@ -52,7 +52,7 @@ if (Meteor.isClient) {
       }
       return null
   };
-  
+
   UI.registerHelper('fixPath', function(p) {
     return p.replace(/\//g,'_');
   });
@@ -116,7 +116,7 @@ if (Meteor.isClient) {
    * metadata from the archiver
    *
    * Need to add a key to the meteor collections so that we can tell if something
-   * has been configured or not. This should take care of the problem where 
+   * has been configured or not. This should take care of the problem where
    * everything is considered 'unconfigured' upon setup.
    */
 
@@ -266,7 +266,7 @@ if (Meteor.isClient) {
    *
    * This method should return a minimum subset of keys that are expected
    * by everyone:
-   * - Building 
+   * - Building
    * - Name
    * - Floor
    * - SourceName (static?)
@@ -274,7 +274,7 @@ if (Meteor.isClient) {
    * - Site (static)
    * - System
    * - Role
-   * - Device 
+   * - Device
    * - Model (static)
    *
    * HVAC specific:
@@ -311,15 +311,17 @@ if (Meteor.isClient) {
         metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
       }
 
+      delete common['SourceName'];
       delete common['Configured']; // unneeded
       delete common['configured']; // unneeded
       delete common['LightingZone']; // delete this and the next one bc we used it earlier
       delete common['HVACZone'];
 
 
-      common['Site'] = Meteor.settings.public.site;
-      var required_keys = ['Room','Building','Name','Floor','System','Role','Device'];
-      var static_keys = ['Site','Driver','Model','_id'];
+
+      common['Site'] = Meteor.settings.public.site; //make this hidden
+      var required_keys = ['Room','Name','Floor','System','Role'];
+      var static_keys = ['Building','Driver','Model','Device'];
       var static_vals = {}
       _.each(static_keys, function(key, idx) {
         static_vals[key] = common[key] || '';
