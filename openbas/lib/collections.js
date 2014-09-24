@@ -72,4 +72,5 @@ Meteor.startup(function(){
   FloorplansFS = new FS.Collection("floorplans_fs", {
     stores: [new FS.Store.FileSystem("images", {path: Meteor.settings.public.project_root + "/public/floorplans"})]
   });
+  Site.upsert({'_id':'Site'},{'_id': 'Site', 'Site': Meteor.settings.public.site});
 });

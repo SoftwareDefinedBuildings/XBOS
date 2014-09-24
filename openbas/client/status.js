@@ -10,6 +10,16 @@ if (Meteor.isClient) {
         }
   );
 
+  Meteor.call('query', 'select distinct Metadata/Building where has Metadata/Site', function(err, res) {
+    if (err) {
+        console.log("ERROR", err);
+    }
+    console.log(res);
+    _.each(res, function(val, idx) {
+        Site.upsert({'_id':'Building'},{'_id': 'Building', 'Building': val});
+    });
+  });
+
   Session.set('selectedhvaczone', null);
   Session.set('selectedlightingzone', null);
   hvaczones = function() {

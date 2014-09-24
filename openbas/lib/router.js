@@ -37,6 +37,7 @@ Router.map(function() {
         this.subscribe('lighting').wait();
         this.subscribe('points').wait();
         this.subscribe('unconfigured').wait();
+        this.subscribe('site').wait();
       },
     });
 

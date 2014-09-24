@@ -144,7 +144,7 @@ if (Meteor.isServer) {
              */
             console.log("savemetadata called with", objid, update);
             var found = false;
-            var tags = [];
+            var tags = [['Metadata/Site',Site.findOne({'_id':'Site'})['Site']],['Metadata/Building',Site.findOne({'_id':'Building'})['Building']]];
             var path = '';
             var goalsystem = update['System']
             _.each([HVAC, Lighting, Monitoring, GeneralControl], function(system, idx) {
