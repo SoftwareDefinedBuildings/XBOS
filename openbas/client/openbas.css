@@ -130,3 +130,8 @@ a:hover {
 .hvac-zone-table tr {
   height: 51px;
 }
+
+.focus-sparkline text {
+  font-size: 1.1em;
+  opacity: 0.7;
+}

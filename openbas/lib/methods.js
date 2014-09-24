@@ -22,10 +22,51 @@ sparkline = function(elemId, data, width, height, display_range) {
     .append('svg')
     .attr('width', width)
     .attr('height', height + 1) // 1px margin 
-    .append('path')
+
+  svg.append('path')
     .datum(data)
     .attr('class', 'sparkline')
     .attr('d', line);
+
+  var focus = svg.append("g")
+    .attr("class", "focus-sparkline")
+    .style("display", "none");
+
+  var mycircle = focus.append("circle")
+    .attr("r", 2.5)
+
+  var bisectTime = d3.bisector(function(d) { return d.time; }).left
+  var formatValue = d3.format(".1f");
+
+  focus.append("text")
+    .attr("id", "value_text") 
+    .attr("dy", ".35em");
+
+  svg.append("rect")
+    .attr("class", "overlay")
+    .attr("width", width)
+    .attr("height", height)
+    .on("mouseover", function() { focus.style("display", null); })
+    .on("mouseout", function() { focus.style("display", "none"); })
+    .on("mousemove", mousemove);
+
+  function mousemove() {
+    var xpos = d3.mouse(this)[0];
+    var ypos = d3.mouse(this)[1];
+    var x0 = x.invert(xpos)
+    var i = bisectTime(data, x0, 1)
+    var value_text = formatValue(data[i].value);
+    var mytext = focus.selectAll("text");
+    if ((width - xpos) < 40) {
+      mytext.attr("text-anchor", "end").attr("dx", "-1em");
+    } else {
+      mytext.attr("text-anchor", "start").attr("dx", "1em");
+    }
+    mycircle.attr("cx", xpos).attr("cy", y(data[i].value));
+    mytext.attr("x", xpos).attr("y", ypos);
+
+    focus.select("#value_text").text(value_text)
+  }
 
   if (display_range){
     var extents_label = "[<span class='sparkline-min'>" + yextents[0].toFixed(2) + "</span>,";
