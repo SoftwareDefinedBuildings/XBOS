@@ -37,10 +37,6 @@ if (Meteor.isServer) {
       Rooms.insert(r);
     });
   }
-  
-  //if (Floorplans.find({}).fetch().length == 0){
-  //  Floorplans.insert({'filename': 'CIEE-floorplan.png', 'name': 'CIEE main floor'});
-  //}
 
   Meteor.publish("master_schedule", function () {
     return MasterSchedule.find({});
