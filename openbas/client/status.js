@@ -326,12 +326,11 @@ if (Meteor.isClient) {
       delete common['configured']; // unneeded
       delete common['LightingZone']; // delete this and the next one bc we used it earlier
       delete common['HVACZone'];
+      delete common['Building'];
+      delete common['Site'];
 
-
-
-      common['Site'] = Meteor.settings.public.site; //make this hidden
       var required_keys = ['Room','Name','Floor','System','Role'];
-      var static_keys = ['Building','Driver','Model','Device'];
+      var static_keys = ['Driver','Model','Device'];
       var static_vals = {}
       _.each(static_keys, function(key, idx) {
         static_vals[key] = common[key] || '';

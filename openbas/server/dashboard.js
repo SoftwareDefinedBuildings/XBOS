@@ -164,7 +164,9 @@ if (Meteor.isServer) {
               console.log("got this far!");
               update['configured'] = true;
               var record = Unconfigured.findOne({'_id': objid});
-              Unconfigured.remove({'_id': record['_id']});
+              if (record) {
+                Unconfigured.remove({'_id': record['_id']});
+              }
               record = Unconfigured.findOne({'_id': objid});
               console.log("unconf record", record);
               path = objid;
