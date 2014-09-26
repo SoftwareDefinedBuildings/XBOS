@@ -11,7 +11,7 @@ sparkline = function(elemId, data, width, height, display_range) {
   var x = d3.scale.linear().range([0, width]);
   var y = d3.scale.linear().range([height, 0]);
   var line = d3.svg.line()
-               .interpolate("basis")
+               .interpolate("step-before")
                .x(function(d) { return x(d.time); })
                .y(function(d) { return y(d.value); });
   x.domain(d3.extent(data, function(d) { return d.time; }));

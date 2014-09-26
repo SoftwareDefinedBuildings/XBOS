@@ -285,7 +285,7 @@ Template.hvac_zone_widget.rendered = function(){
       var x = d3.scale.linear().range([0, width]);
       var y = d3.scale.linear().range([height, 0]);
       var line = d3.svg.line()
-                   .interpolate("basis")
+                   .interpolate("step-before")
                    .x(function(d) { return x(d.time); })
                    .y(function(d) { return y(d.value); });
 
