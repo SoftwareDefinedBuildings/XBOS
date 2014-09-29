@@ -346,6 +346,15 @@ Template.hvac_zone_widget.rendered = function(){
           .attr("class", "focus")
           .style("display", "none");
 
+        svg.append("text")
+          .attr("fill", "#696969")
+          .attr("x", width - 5)
+          .attr("y", height - 5)
+          .attr("opacity", "0.8")
+          .attr("font-size", "1.2em")
+          .attr("text-anchor", "end")
+          .text("last 4 hours")
+
         var myrect = focus.append("rect")
           .attr("x", 0)
           .attr("y", 0)
@@ -357,15 +366,18 @@ Template.hvac_zone_widget.rendered = function(){
         var formatValue = d3.format(".1f");
 
         focus.append("text")
+          .attr("class", "hvac_tooltip")
           .attr("id", "temp_text") 
           .attr("dy", ".35em");
 
         focus.append("text")
+          .attr("class", "hvac_tooltip")
           .attr("id", "temp_heat_text")
           .attr("fill", "red")
           .attr("dy", "1.75em");
 
         focus.append("text")
+          .attr("class", "hvac_tooltip")
           .attr("id", "temp_cool_text")
           .attr("fill", "blue")
           .attr("dy", "-1.15em");
@@ -385,10 +397,24 @@ Template.hvac_zone_widget.rendered = function(){
           var ti = bisectTime(temp, x0, 1)
           var hi = bisectTime(temp_heat, x0, 1);
           var ci = bisectTime(temp_cool, x0, 1);
-          var temp_tooltip = formatValue(temp[ti].value);
-          var temp_heat_tooltip = formatValue(temp_heat[hi].value);
-          var temp_cool_tooltip = formatValue(temp_cool[ci].value);
-          var mytext = focus.selectAll("text");
+
+          if (temp[ti].value) { 
+            var temp_tooltip = formatValue(temp[ti].value); 
+            focus.select("#temp_text")
+              .text(temp_tooltip)
+          }
+          if (temp_heat[hi].value) { 
+            var temp_heat_tooltip = formatValue(temp_heat[hi].value); 
+            focus.select("#temp_heat_text")
+              .text(temp_heat_tooltip)
+          }
+          if (temp_cool[ci].value) { 
+            var temp_cool_tooltip = formatValue(temp_cool[ci].value); 
+            focus.select("#temp_cool_text")
+              .text(temp_cool_tooltip)
+          }
+
+          var mytext = focus.selectAll(".hvac_tooltip");
           if ((width - xpos) < 40) {
             mytext.attr("text-anchor", "end").attr("dx", "-1em");
           } else {
@@ -397,12 +423,6 @@ Template.hvac_zone_widget.rendered = function(){
           myrect.attr("x", xpos);
           mytext.attr("x", xpos).attr("y", ypos);
 
-          focus.select("#temp_text")
-            .text(temp_tooltip)
-          focus.select("#temp_heat_text")
-            .text(temp_heat_tooltip)
-          focus.select("#temp_cool_text")
-            .text(temp_cool_tooltip)
         }
 
       }
