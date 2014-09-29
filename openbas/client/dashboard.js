@@ -253,11 +253,12 @@ Template.point.rendered = function(arg) {
 
 Template.point_display.rendered = function(){
   var myuuid = this.data.uuid;
-  restrict = "uuid='" + this.data.uuid + "'";
-  Meteor.call("latest", restrict, 1000, function(err, res){
+  var restrict = "uuid='" + this.data.uuid + "'";
+  var q = "select data in (now - 4h, now) where " + restrict;
+  Meteor.call("query", q, function(err, res){
     if (res[0] != undefined){
       var mydata = jsonify(res[0].Readings);
-      sparkline("#sparkline-" + myuuid, mydata, 300, 30, false);
+      sparkline("#sparkline-" + myuuid, mydata, 300, 50, "last 4 hours");
     }
   });
 };
@@ -434,18 +435,20 @@ Template.hvac_zone_widget.rendered = function(){
   var sensors = Monitoring.find({'hvaczone': this.data.hvaczone}).fetch();
   _.each(sensors, function(s){
     var restrict = 'Path="' + s.path + '/temperature"';
-    Meteor.call("latest", restrict, 100, function(err, res){
+    var q = "select data in (now -4h, now) where " + restrict;
+    Meteor.call("query", q, function(err, res){
       if (res[0] != undefined){
         var mydata = jsonify(res[0].Readings);
-        sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 25, false);
+        sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 30, "");
       }
     });
   });
   _.each(sensors, function(s){
     var restrict = 'Path="' + s.path + '/humidity"';
-    Meteor.call("latest", restrict, 100, function(err, res){
+    var q = "select data in (now -4h, now) where " + restrict;
+    Meteor.call("query", q, function(err, res){
       var mydata = jsonify(res[0].Readings);
-      sparkline("#sparkline-humidity-container-" + s._id, mydata, 100, 25, false);
+      sparkline("#sparkline-humidity-container-" + s._id, mydata, 100, 30, "");
     });
   });
 
@@ -454,12 +457,13 @@ Template.hvac_zone_widget.rendered = function(){
 Template.power_meter_widget.rendered = function(){
   var restrict = 'Path="' + this.data.path + '/demand"';
   var myid = this.data._id;
-  Meteor.call("latest", restrict, 1000, function(err, res){
+  var q = "select data in (now -4h, now) where " + restrict;
+  Meteor.call("query", q, function(err, res){
     if (err) {
         console.log(err);
     }
     var mydata = res[0].Readings;
     mydata = jsonify(mydata);
-    sparkline("#sparkline-container-" + myid, mydata, 250, 50, false);
+    sparkline("#sparkline-container-" + myid, mydata, 250, 50, "last 4 hours");
   });
 }

@@ -7,9 +7,9 @@ jsonify = function (readings){
   });
 };
 
-sparkline = function(elemId, data, width, height, display_range) {
+sparkline = function(elemId, data, width, height, interval_label) {
   var x = d3.scale.linear().range([0, width]);
-  var y = d3.scale.linear().range([height, 0]);
+  var y = d3.scale.linear().range([height, 1]);
   var line = d3.svg.line()
                .interpolate("step-before")
                .x(function(d) { return x(d.time); })
@@ -31,6 +31,13 @@ sparkline = function(elemId, data, width, height, display_range) {
   var focus = svg.append("g")
     .attr("class", "focus-sparkline")
     .style("display", "none");
+
+  focus.append('text')
+    .attr('text-anchor', 'end')
+    .attr('fill', '#696969')
+    .attr('x', width - 2)
+    .attr('y', height - 2)
+    .text(interval_label)
 
   var mycircle = focus.append("circle")
     .attr("r", 2.5)
@@ -56,7 +63,7 @@ sparkline = function(elemId, data, width, height, display_range) {
     var x0 = x.invert(xpos)
     var i = bisectTime(data, x0, 1)
     var value_text = formatValue(data[i].value);
-    var mytext = focus.selectAll("text");
+    var mytext = focus.selectAll("#value_text");
     if ((width - xpos) < 40) {
       mytext.attr("text-anchor", "end").attr("dx", "-1em");
     } else {
