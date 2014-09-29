@@ -347,7 +347,7 @@ Template.hvac_zone_widget.rendered = function(){
           .attr("class", "focus")
           .style("display", "none");
 
-        svg.append("text")
+        focus.append("text")
           .attr("fill", "#696969")
           .attr("x", width - 5)
           .attr("y", height - 5)
