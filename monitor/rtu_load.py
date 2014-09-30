@@ -89,11 +89,11 @@ def resample_and_merge():
     for each zone
     """
     demand = get_demand()
-    demand_rs = demand.resample('5S',pd.np.max,closed='left')
+    demand_rs = demand.resample('5S',pd.np.median,closed='left')
     hvacs = get_hvacstates()
     for zone,hvac in hvacs.iteritems():
         # resample every minute
-        hvac_rs = hvac.resample('5S',pd.np.max,closed='left')
+        hvac_rs = hvac.resample('5S',pd.np.median,closed='left')
         # join on the timestamps to filter out missing data
         merge = hvac_rs.merge(demand_rs, left_index=True, right_index=True)
         merge.columns = ['state','demand']
@@ -104,14 +104,14 @@ def resample_and_merge_cumulative():
     Adds the HVAC states together, does 5second resampling and returns a single dataframe
     """
     demand = get_demand()
-    demand_rs = demand.resample('5S',pd.np.max,closed='left')
+    demand_rs = demand.resample('5S',pd.np.median,closed='left')
     cumulative = demand_rs.copy()
     cumulative[1] = 0
     cumulative[1] = cumulative[1].fillna(0)
     hvacs = get_hvacstates()
     for zone,hvac in hvacs.iteritems():
         # resample every minute
-        hvac_rs = hvac.resample('5S',pd.np.max,closed='left')
+        hvac_rs = hvac.resample('5S',pd.np.median,closed='left')
         # join on the timestamps to filter out missing data
         merge = hvac_rs.merge(demand_rs, left_index=True, right_index=True)
         merge.columns = ['state','demand']
@@ -189,8 +189,7 @@ def disaggregate():
             before_demand = merge.iloc[idx[0]]['demand']
             after_demand = merge.iloc[idx[3]]['demand']
             if idx[4]:
-                #print 'Mean during: {0}, Before: {1}, After: {2}, Samples: {3}'.format(mean_demand, before_demand, after_demand, idx[2]-idx[1])
-                base = (after_demand + before_demand) / 2.0
+                base = min(after_demand, before_demand)
                 diff = mean_demand - base
                 guesses.append(diff)
         if len(guesses):
