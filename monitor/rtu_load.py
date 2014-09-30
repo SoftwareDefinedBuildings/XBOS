@@ -112,26 +112,26 @@ def plot_cumulative():
     fig.set_title('Demand over time with HVAC state')
     fig.get_figure().savefig('cumulative.png')
 
-def hvac_report():
-    results = {'Demand': {}, 'HVAC': {}}
+def demand_report():
+    results = {}
     demand = get_demand()
     # total demand
-    results['Demand']['Total Demand'] = demand[1].sum()
-    results['Demand']['Max Inst Demand Amount'] = demand[1].max()
-    results['Demand']['Max Inst Demand Date'] = str(demand[1].argmax())
-    results['Demand']['Min Inst Demand Amount'] = demand[1].min()
-    results['Demand']['Min Inst Demand Date'] = str(demand[1].argmin())
+    results['Total Demand'] = demand[1].sum()
+    results['Max Inst Demand Amount'] = demand[1].max()
+    results['Max Inst Demand Date'] = str(demand[1].argmax())
+    results['Min Inst Demand Amount'] = demand[1].min()
+    results['Min Inst Demand Date'] = str(demand[1].argmin())
     # get daily averages of demand
     daily = demand.resample('D',pd.np.sum)
-    results['Demand']['Max Daily Total Demand Amount'] = daily[1].max()
-    results['Demand']['Max Daily Total Demand Date'] = str(daily[1].argmax())
-    results['Demand']['Min Daily Total Demand Amount'] = daily[1].min()
-    results['Demand']['Min Daily Total Demand Date'] = str(daily[1].argmin())
+    results['Max Daily Total Demand Amount'] = daily[1].max()
+    results['Max Daily Total Demand Date'] = str(daily[1].argmax())
+    results['Min Daily Total Demand Amount'] = daily[1].min()
+    results['Min Daily Total Demand Date'] = str(daily[1].argmin())
     daily = demand.resample('D',pd.np.mean)
-    results['Demand']['Max Daily Avg Demand Amount'] = daily[1].max()
-    results['Demand']['Max Daily Avg Demand Date'] = str(daily[1].argmax())
-    results['Demand']['Min Daily Avg Demand Amount'] = daily[1].min()
-    results['Demand']['Min Daily Avg Demand Date'] = str(daily[1].argmin())
+    results['Max Daily Avg Demand Amount'] = daily[1].max()
+    results['Max Daily Avg Demand Date'] = str(daily[1].argmax())
+    results['Min Daily Avg Demand Amount'] = daily[1].min()
+    results['Min Daily Avg Demand Date'] = str(daily[1].argmin())
 
     print results
     return results
@@ -146,16 +146,16 @@ def format_report():
     Max Inst. Demand: {Max Inst Demand Amount:10.2f} kW, {Max Inst Demand Date}
     Min Inst. Demand: {Min Inst Demand Amount:10.2f} kW, {Min Inst Demand Date}
     ==================
-    Max Daily Demand: {Max Daily Total Demand Amount:10.2f} kW, {Max Daily Total Demand Date}
-    Min Daily Demand: {Min Daily Total Demand Amount:10.2f} kW, {Min Daily Total Demand Date}
+    Max Daily Total Demand: {Max Daily Total Demand Amount:10.2f} kW, {Max Daily Total Demand Date}
+    Min Daily Total Demand: {Min Daily Total Demand Amount:10.2f} kW, {Min Daily Total Demand Date}
     ==================
     Max Daily Avg Demand: {Max Daily Avg Demand Amount:10.2f} kW, {Max Daily Avg Demand Date}
     Min Daily Avg Demand: {Min Daily Avg Demand Amount:10.2f} kW, {Min Daily Avg Demand Date}
     ==================
     """
-    results = hvac_report()
-
-    print report.format(**results['Demand'])
+    results = demand_report()
+    report = report.format(**results)
+    print report
 
 if __name__ == '__main__':
     #for zone, merge in resample_and_merge():
