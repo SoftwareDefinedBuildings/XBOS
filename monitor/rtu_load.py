@@ -177,7 +177,25 @@ def hvac_report():
         results[zone]['Min Avg Temperature Date'] = daily[1].argmin()
     return results
 
-
+def disaggregate():
+    results = {}
+    for zone, merge in resample_and_merge():
+        merge = merge.dropna()
+        idxs = group_contiguous(merge, 'state', 2)
+        guesses = []
+        for idx in idxs:
+            mean_demand = merge.iloc[idx[1]:idx[2]]['demand'].mean()
+            if not mean_demand > 0: continue # check for NaN and skip
+            before_demand = merge.iloc[idx[0]]['demand']
+            after_demand = merge.iloc[idx[3]]['demand']
+            if idx[4]:
+                #print 'Mean during: {0}, Before: {1}, After: {2}, Samples: {3}'.format(mean_demand, before_demand, after_demand, idx[2]-idx[1])
+                base = (after_demand + before_demand) / 2.0
+                diff = mean_demand - base
+                guesses.append(diff)
+        if len(guesses):
+            results[zone] = sum(guesses) / float(len(guesses)) # use average
+    return results
 
 def format_report():
     report = """\
@@ -202,38 +220,32 @@ Min Daily Avg Demand: {Min Daily Avg Demand Amount:10.2f} kW, {Min Daily Avg Dem
 
 ##### Zones #####
 """
-    for zone, hvac in hvac_report().iteritems():
+    hr = hvac_report()
+    kw_for_zone = disaggregate()
+    for zone, hvac in hr.iteritems():
         report += """\
 **** {Zone} ****
 Total Cooling Time (past 30 days): {Total Cooling Time}
 Total Heating Time (past 30 days): {Total Heating Time}
 Total Off Time (past 30 days): {Total Off Time}
+kW for cooling: {kw_cooling}
 ==================
 Max Inst. Temperature : {Max Inst Temperature Amount} F, {Max Inst Temperature Date}
 Min Inst. Temperature: {Min Inst Temperature Amount} F, {Min Inst Temperature Date}
 Max Avg. Temperature: {Max Avg Temperature Amount} F, {Max Avg Temperature Date}
 Min Avg. Temperature: {Min Avg Temperature Amount} F, {Min Avg Temperature Date}
 
-""".format(Zone=zone, **hvac)
-    print hvac_report()
+""".format(Zone=zone, kw_cooling=kw_for_zone.get(zone,0), **hvac)
     print report
 
 if __name__ == '__main__':
-    #for zone, merge in resample_and_merge():
-    #    merge = merge.dropna(how='any')
-    #    idxs = group_contiguous(merge, 'state', 4)
-    #    for idx in idxs:
-    #        mean_demand = merge.iloc[idx[1]:idx[2]]['demand'].mean()
-    #        before_demand = merge.iloc[idx[0]]['demand']
-    #        after_demand = merge.iloc[idx[3]]['demand']
-    #        print 'Mean during: {0}, Before: {1}, After: {2}, Samples: {3}'.format(mean_demand, before_demand, after_demand, idx[2]-idx[1])
-    merge = resample_and_merge_cumulative()
-    merge = merge.dropna(how='any')
-    idxs = group_contiguous(merge, 'state', 0)
-    for idx in idxs:
-        mean_demand = merge.iloc[idx[1]:idx[2]]['demand'].mean()
-        before_demand = merge.iloc[idx[0]]['demand']
-        after_demand = merge.iloc[idx[3]]['demand']
-        print 'State: {0}, Mean during: {1}, Before: {2}, After: {3}, Samples: {4}'.format(idx[4], mean_demand, before_demand, after_demand, idx[2]-idx[1])
+    #merge = resample_and_merge_cumulative()
+    #merge = merge.dropna(how='any')
+    #idxs = group_contiguous(merge, 'state', 0)
+    #for idx in idxs:
+    #    mean_demand = merge.iloc[idx[1]:idx[2]]['demand'].mean()
+    #    before_demand = merge.iloc[idx[0]]['demand']
+    #    after_demand = merge.iloc[idx[3]]['demand']
+    #    print 'State: {0}, Mean during: {1}, Before: {2}, After: {3}, Samples: {4}'.format(idx[4], mean_demand, before_demand, after_demand, idx[2]-idx[1])
     plot_cumulative()
     format_report()
