@@ -1,0 +1,13 @@
+.center {
+  text-align: center; 
+}
+path {
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
+}
+
+.x.axis line, .x.axis path, .y.axis line, .y.axis path {
+  fill: none;
+  stroke: #000;
+}

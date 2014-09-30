@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Building Report</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="static/report.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="static/report.js"></script>
+
+    </head>
+
+    <body>
+        <div class="container">
+          <h1 class="center well">Building Report</h1>
+
+          <div>
+            <h3 class="center well">Demand</h3>
+            <p><b>Total Demand</b></p>
+            <p>{{ total_demand['Amount'] }} kW : {{ total_demand['Date'] }}</p>
+            <div id="totaldemandplot"></div>
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Value</th>
+                    <th>When</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k,v in demand.iteritems() %}
+                <tr>
+                    <td>{{ k }}</td>
+                    <td>{{ v['Amount'] }}</td>
+                    <td>{{ v['Date'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+          </div>
+        </div>
+    </body>
+
+</html>
