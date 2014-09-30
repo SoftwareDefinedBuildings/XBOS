@@ -83,6 +83,7 @@ function draw_markers() {
 }
 
 Template.building.rendered = function() {
+  draw_markers();
   // make sure all images are loaded
   $(window).load(function(){
     draw_markers();
