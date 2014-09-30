@@ -1,0 +1,59 @@
+********** HVAC Monthly Report **********
+
+##### Demand #####
+Total Demand (past 30 days): 113208.4
+==================
+Max Inst. Demand:      19.96 kW, 2014-09-26 20:41:15
+Min Inst. Demand:       0.00 kW, 2014-09-25 23:12:55
+==================
+Max Daily Total Demand:   34845.76 kW, 2014-09-30 00:00:00
+Min Daily Total Demand:    6166.08 kW, 2014-09-27 00:00:00
+==================
+Max Daily Avg Demand:      11.40 kW, 2014-09-25 00:00:00
+Min Daily Avg Demand:       2.91 kW, 2014-09-28 00:00:00
+==================
+
+##### Zones #####
+**** DOSA ****
+Total Cooling Time (past 30 days): 1:55:25
+Total Heating Time (past 30 days): 0:03:00
+Total Off Time (past 30 days): 4 days, 17:40:00
+kW for cooling: 4.84933884298
+==================
+Max Inst. Temperature : 74.0 F, 2014-09-26 02:55:39
+Min Inst. Temperature: -1.0 F, 2014-09-25 19:52:50
+Max Avg. Temperature: 73.0850853549 F, 2014-09-28 00:00:00
+Min Avg. Temperature: 72.1263818794 F, 2014-09-27 00:00:00
+
+**** Open ****
+Total Cooling Time (past 30 days): 0:00:00
+Total Heating Time (past 30 days): 0:03:35
+Total Off Time (past 30 days): 4 days, 18:15:40
+kW for cooling: 0
+==================
+Max Inst. Temperature : 75.0 F, 2014-09-27 23:24:58
+Min Inst. Temperature: -1.0 F, 2014-09-25 19:46:07
+Max Avg. Temperature: 73.3124163116 F, 2014-09-28 00:00:00
+Min Avg. Temperature: 72.1644907648 F, 2014-09-30 00:00:00
+
+**** South ****
+Total Cooling Time (past 30 days): 6:02:15
+Total Heating Time (past 30 days): 0:00:00
+Total Off Time (past 30 days): 2 days, 1:37:30
+kW for cooling: 5.4542680359
+==================
+Max Inst. Temperature : 214748364.7 F, 2014-09-26 23:58:04
+Min Inst. Temperature: -214748364.7 F, 2014-09-25 21:17:58
+Max Avg. Temperature: -103711.277503 F, 2014-09-29 00:00:00
+Min Avg. Temperature: -1143607.9526 F, 2014-09-26 00:00:00
+
+**** Server ****
+Total Cooling Time (past 30 days): 22:16:55
+Total Heating Time (past 30 days): 0:00:00
+Total Off Time (past 30 days): 2 days, 11:19:40
+kW for cooling: 3.8184901401
+==================
+Max Inst. Temperature : 214748364.7 F, 2014-09-29 18:27:07
+Min Inst. Temperature: -214748364.7 F, 2014-09-29 18:25:55
+Max Avg. Temperature: 72.0344349347 F, 2014-09-28 00:00:00
+Min Avg. Temperature: -137469.736315 F, 2014-09-30 00:00:00
