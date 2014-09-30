@@ -106,7 +106,11 @@ def plot_zones():
 
 def plot_cumulative():
     merge = resample_and_merge_cumulative()
-    merge.plot(figsize=(30,10)).get_figure().savefig('cumulative.png')
+    fig = merge.plot(figsize=(30,10))
+    fig.set_xlabel('Time')
+    fig.set_ylabel('Energy')
+    fig.set_title('Demand over time with HVAC state')
+    fig.get_figure().savefig('cumulative.png')
 
 if __name__ == '__main__':
     #for zone, merge in resample_and_merge():
