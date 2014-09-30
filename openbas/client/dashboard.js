@@ -253,11 +253,12 @@ Template.point.rendered = function(arg) {
 
 Template.point_display.rendered = function(){
   var myuuid = this.data.uuid;
-  restrict = "uuid='" + this.data.uuid + "'";
-  Meteor.call("latest", restrict, 1000, function(err, res){
+  var restrict = "uuid='" + this.data.uuid + "'";
+  var q = "select data in (now - 4h, now) where " + restrict;
+  Meteor.call("query", q, function(err, res){
     if (res[0] != undefined){
       var mydata = jsonify(res[0].Readings);
-      sparkline("#sparkline-" + myuuid, mydata, 300, 30, false);
+      sparkline("#sparkline-" + myuuid, mydata, 300, 50, "last 4 hours");
     }
   });
 };
@@ -346,6 +347,15 @@ Template.hvac_zone_widget.rendered = function(){
           .attr("class", "focus")
           .style("display", "none");
 
+        focus.append("text")
+          .attr("fill", "#696969")
+          .attr("x", width - 5)
+          .attr("y", height - 5)
+          .attr("opacity", "0.8")
+          .attr("font-size", "1.2em")
+          .attr("text-anchor", "end")
+          .text("last 4 hours")
+
         var myrect = focus.append("rect")
           .attr("x", 0)
           .attr("y", 0)
@@ -357,15 +367,18 @@ Template.hvac_zone_widget.rendered = function(){
         var formatValue = d3.format(".1f");
 
         focus.append("text")
+          .attr("class", "hvac_tooltip")
           .attr("id", "temp_text") 
           .attr("dy", ".35em");
 
         focus.append("text")
+          .attr("class", "hvac_tooltip")
           .attr("id", "temp_heat_text")
           .attr("fill", "red")
           .attr("dy", "1.75em");
 
         focus.append("text")
+          .attr("class", "hvac_tooltip")
           .attr("id", "temp_cool_text")
           .attr("fill", "blue")
           .attr("dy", "-1.15em");
@@ -385,10 +398,24 @@ Template.hvac_zone_widget.rendered = function(){
           var ti = bisectTime(temp, x0, 1)
           var hi = bisectTime(temp_heat, x0, 1);
           var ci = bisectTime(temp_cool, x0, 1);
-          var temp_tooltip = formatValue(temp[ti].value);
-          var temp_heat_tooltip = formatValue(temp_heat[hi].value);
-          var temp_cool_tooltip = formatValue(temp_cool[ci].value);
-          var mytext = focus.selectAll("text");
+
+          if (temp[ti].value) { 
+            var temp_tooltip = formatValue(temp[ti].value); 
+            focus.select("#temp_text")
+              .text(temp_tooltip)
+          }
+          if (temp_heat[hi].value) { 
+            var temp_heat_tooltip = formatValue(temp_heat[hi].value); 
+            focus.select("#temp_heat_text")
+              .text(temp_heat_tooltip)
+          }
+          if (temp_cool[ci].value) { 
+            var temp_cool_tooltip = formatValue(temp_cool[ci].value); 
+            focus.select("#temp_cool_text")
+              .text(temp_cool_tooltip)
+          }
+
+          var mytext = focus.selectAll(".hvac_tooltip");
           if ((width - xpos) < 40) {
             mytext.attr("text-anchor", "end").attr("dx", "-1em");
           } else {
@@ -397,12 +424,6 @@ Template.hvac_zone_widget.rendered = function(){
           myrect.attr("x", xpos);
           mytext.attr("x", xpos).attr("y", ypos);
 
-          focus.select("#temp_text")
-            .text(temp_tooltip)
-          focus.select("#temp_heat_text")
-            .text(temp_heat_tooltip)
-          focus.select("#temp_cool_text")
-            .text(temp_cool_tooltip)
         }
 
       }
@@ -414,18 +435,20 @@ Template.hvac_zone_widget.rendered = function(){
   var sensors = Monitoring.find({'hvaczone': this.data.hvaczone}).fetch();
   _.each(sensors, function(s){
     var restrict = 'Path="' + s.path + '/temperature"';
-    Meteor.call("latest", restrict, 100, function(err, res){
+    var q = "select data in (now -4h, now) where " + restrict;
+    Meteor.call("query", q, function(err, res){
       if (res[0] != undefined){
         var mydata = jsonify(res[0].Readings);
-        sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 25, false);
+        sparkline("#sparkline-temperature-container-" + s._id, mydata, 100, 30, "");
       }
     });
   });
   _.each(sensors, function(s){
     var restrict = 'Path="' + s.path + '/humidity"';
-    Meteor.call("latest", restrict, 100, function(err, res){
+    var q = "select data in (now -4h, now) where " + restrict;
+    Meteor.call("query", q, function(err, res){
       var mydata = jsonify(res[0].Readings);
-      sparkline("#sparkline-humidity-container-" + s._id, mydata, 100, 25, false);
+      sparkline("#sparkline-humidity-container-" + s._id, mydata, 100, 30, "");
     });
   });
 
@@ -434,12 +457,13 @@ Template.hvac_zone_widget.rendered = function(){
 Template.power_meter_widget.rendered = function(){
   var restrict = 'Path="' + this.data.path + '/demand"';
   var myid = this.data._id;
-  Meteor.call("latest", restrict, 1000, function(err, res){
+  var q = "select data in (now -4h, now) where " + restrict;
+  Meteor.call("query", q, function(err, res){
     if (err) {
         console.log(err);
     }
     var mydata = res[0].Readings;
     mydata = jsonify(mydata);
-    sparkline("#sparkline-container-" + myid, mydata, 250, 50, false);
+    sparkline("#sparkline-container-" + myid, mydata, 250, 50, "last 4 hours");
   });
 }
