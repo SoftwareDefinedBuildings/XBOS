@@ -1,5 +1,6 @@
 from smap.archiver.client import SmapClient
 import time
+import datetime
 import pandas as pd
 #pd.options.display.mpl_style = 'default'
 
@@ -38,6 +39,24 @@ def get_hvacstates():
         zone = client.query("select Metadata/HVACZone where uuid = '{0}'".format(uuid))[0]['Metadata']['HVACZone']
         ret[zone] = hvac
     return ret
+
+def get_zonetemps():
+    # get all hvac_state timeseries
+    res = client.query('select uuid where Metadata/System = "HVAC" and Path like "%temp"')
+    uuids = [x['uuid'] for x in res]
+    data = dict(zip(uuids,client.data_uuid(uuids, start, end, cache=False)))
+
+    ret = {}
+
+    for uuid in data.iterkeys():
+        hvac = pd.DataFrame(data[uuid])
+        hvac[0] = pd.to_datetime(hvac[0], unit='ms')
+        hvac.index = hvac[0]
+        del hvac[0]
+        zone = client.query("select Metadata/HVACZone where uuid = '{0}'".format(uuid))[0]['Metadata']['HVACZone']
+        ret[zone] = hvac
+    return ret
+
 
 def group_contiguous(df, key, value):
     """
@@ -133,28 +152,70 @@ def demand_report():
     results['Min Daily Avg Demand Amount'] = daily[1].min()
     results['Min Daily Avg Demand Date'] = str(daily[1].argmin())
 
-    print results
     return results
+
+def hvac_report():
+    results = {}
+    hvacs = get_hvacstates()
+    for zone,hvac in hvacs.iteritems():
+        results[zone] = {}
+        total_cooling = hvac[hvac[1] == 2].count()[1] * 5 # number of seconds
+        total_heating = hvac[hvac[1] == 1].count()[1] * 5 # number of seconds
+        total_off = hvac[hvac[1] == 0].count()[1] * 5 # number of seconds
+        results[zone]['Total Cooling Time'] = str(datetime.timedelta(seconds = total_cooling))
+        results[zone]['Total Heating Time'] = str(datetime.timedelta(seconds = total_heating))
+        results[zone]['Total Off Time'] = str(datetime.timedelta(seconds = total_off))
+    for zone,hvac in get_zonetemps().iteritems():
+        results[zone]['Max Inst Temperature Amount'] = hvac[1].max()
+        results[zone]['Max Inst Temperature Date'] = hvac[1].argmax()
+        results[zone]['Min Inst Temperature Amount'] = hvac[1].min()
+        results[zone]['Min Inst Temperature Date'] = hvac[1].argmin()
+        daily = hvac.resample('D',pd.np.mean)
+        results[zone]['Max Avg Temperature Amount'] = daily[1].max()
+        results[zone]['Max Avg Temperature Date'] = daily[1].argmax()
+        results[zone]['Min Avg Temperature Amount'] = daily[1].min()
+        results[zone]['Min Avg Temperature Date'] = daily[1].argmin()
+    return results
+
+
 
 def format_report():
     report = """\
 ********** HVAC Monthly Report **********
 
-    ***** Demand *****
-    Total Demand (past 30 days): {Total Demand}
-    ==================
-    Max Inst. Demand: {Max Inst Demand Amount:10.2f} kW, {Max Inst Demand Date}
-    Min Inst. Demand: {Min Inst Demand Amount:10.2f} kW, {Min Inst Demand Date}
-    ==================
-    Max Daily Total Demand: {Max Daily Total Demand Amount:10.2f} kW, {Max Daily Total Demand Date}
-    Min Daily Total Demand: {Min Daily Total Demand Amount:10.2f} kW, {Min Daily Total Demand Date}
-    ==================
-    Max Daily Avg Demand: {Max Daily Avg Demand Amount:10.2f} kW, {Max Daily Avg Demand Date}
-    Min Daily Avg Demand: {Min Daily Avg Demand Amount:10.2f} kW, {Min Daily Avg Demand Date}
-    ==================
-    """
+##### Demand #####
+Total Demand (past 30 days): {Total Demand}
+==================
+Max Inst. Demand: {Max Inst Demand Amount:10.2f} kW, {Max Inst Demand Date}
+Min Inst. Demand: {Min Inst Demand Amount:10.2f} kW, {Min Inst Demand Date}
+==================
+Max Daily Total Demand: {Max Daily Total Demand Amount:10.2f} kW, {Max Daily Total Demand Date}
+Min Daily Total Demand: {Min Daily Total Demand Amount:10.2f} kW, {Min Daily Total Demand Date}
+==================
+Max Daily Avg Demand: {Max Daily Avg Demand Amount:10.2f} kW, {Max Daily Avg Demand Date}
+Min Daily Avg Demand: {Min Daily Avg Demand Amount:10.2f} kW, {Min Daily Avg Demand Date}
+==================
+"""
     results = demand_report()
     report = report.format(**results)
+    report += """\
+
+##### Zones #####
+"""
+    for zone, hvac in hvac_report().iteritems():
+        report += """\
+**** {Zone} ****
+Total Cooling Time (past 30 days): {Total Cooling Time}
+Total Heating Time (past 30 days): {Total Heating Time}
+Total Off Time (past 30 days): {Total Off Time}
+==================
+Max Inst. Temperature : {Max Inst Temperature Amount} F, {Max Inst Temperature Date}
+Min Inst. Temperature: {Min Inst Temperature Amount} F, {Min Inst Temperature Date}
+Max Avg. Temperature: {Max Avg Temperature Amount} F, {Max Avg Temperature Date}
+Min Avg. Temperature: {Min Avg Temperature Amount} F, {Min Avg Temperature Date}
+
+""".format(Zone=zone, **hvac)
+    print hvac_report()
     print report
 
 if __name__ == '__main__':
