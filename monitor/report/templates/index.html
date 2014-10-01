@@ -12,27 +12,31 @@
     </head>
 
     <body>
-        <div class="container">
-          <h1 class="center well">Building Report</h1>
-
+        <div class="limit">
           <div>
-            <h3 class="center well">Demand</h3>
-            <p><b>Total Demand</b></p>
-            <p>{{ total_demand['Amount'] }} kW : {{ total_demand['Date'] }}</p>
-            <div id="totaldemandplot"></div>
-            {% for k,v in demand.iteritems() %}
-              <p><b>{{ k }}</b></p>
-              <p>{{ v['Amount'] }}</p>
-              <p>{{ v['Date'] }}</p>
-              <div class="plots">
-                {% if v.has_key('Data') %}
-                  {% for zone, plotnames in v['Data'].iteritems() %}
-                      <p>Zone: {{ zone }}</p>
-                      <div id="{{ fix_name(k) }}_{{ zone }}" class="dailyplot" data-zone="{{ zone }}" data-key="{{ fix_name(k) }}"></div>
-                  {% endfor %}
-                {% endif %}
-              </div>
-            {% endfor %}
+            <h1 class="center well">Building Report</h1>
+
+            <div>
+              <h3 class="center well">Demand</h3>
+              <p><b>Total Demand</b></p>
+              <p>{{ total_demand['Amount'] }} kW : {{ total_demand['Date'] }}</p>
+              <div class="center" id="totaldemandplot"></div>
+              {% for k,v in demand.iteritems() %}
+                <p><b>{{ k }}</b></p>
+                <p>{{ v['Amount'] }} kW : {{ v['Date'] }}</p>
+                <div class="plots">
+                  <div class="row">
+                    {% if v.has_key('Data') %}
+                      {% for zone, plotnames in v['Data'].iteritems() %}
+                          <div class="col-xs-3 col plot-well">
+                            <div id="{{ fix_name(k) }}_{{ zone }}" class="dailyplot" data-zone="{{ zone }}" data-key="{{ fix_name(k) }}"></div>
+                          </div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
           </div>
         </div>
     </body>

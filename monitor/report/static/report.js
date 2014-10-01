@@ -9,8 +9,8 @@
                 bottom: 50,
                 left: 50
               },
-              width = 900,
-              height = 200;
+              width = 1600,
+              height = 400;
             
             var x = d3.time.scale()
                 .range([0, width]);
@@ -67,7 +67,7 @@
               .attr("d", line);
         });
 
-        $('.dailyplot').each(function( idx) {
+        $('.dailyplot').each(function(idx) {
             var val = $( this );
             var key = val.data("key");
             var zone = val.data("zone");
@@ -145,7 +145,7 @@
                   .attr("y", 6)
                   .attr("dy", ".71em")
                   .style("text-anchor", "end")
-                  .text("kW");
+                  .text("F");
 
                 svg.append("path")
                   .datum(data_temp)
@@ -159,6 +159,12 @@
                   .datum(data_temp_cool)
                   .attr("class", "temp_cool")
                   .attr("d", temp_line);
+                svg.append("text")
+                  .attr("x", (width / 2))
+                  .attr("y", margin.top)
+                  .attr("text-anchor", "middle")
+                  .style("font-size", "16px")
+                  .text(zone);
               });
         });
 
