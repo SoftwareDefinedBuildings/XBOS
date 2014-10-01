@@ -14,12 +14,15 @@ start = end - 60*60*24*30 # last month
 zones = client.query('select distinct Metadata/HVACZone')
 
 def getdataasjson(query, start, end):
-    tmp_data = client.data(query,start,end,cache=False)
+    tmp_data = client.data(query,start,end,cache=False,limit=100000)
     if not len(tmp_data[0]):
         return {}
     tmp = pd.DataFrame(tmp_data[1][0])
+    if len(tmp.notnull()) == 0:
+        return {}
     tmp[0] = pd.to_datetime(tmp[0], unit='ms')
     tmp.index = tmp[0]
+    tmp = tmp[pd.np.abs(tmp[1] - tmp[1].mean()) <= 2*tmp[1].std()]
     del tmp[0]
     return json.loads(tmp.to_json())["1"]
     
@@ -165,15 +168,19 @@ def demand_report():
     results['Min Daily Total Demand'] = {}
     results['Max Daily Total Demand']['Amount'] = daily[1].max()
     results['Max Daily Total Demand']['Date'] = str(daily[1].argmax())
+    results['Max Daily Total Demand']['Data'] = {k: data_hvaczone_day(k, daily[1].argmax()) for k in zones}
     results['Min Daily Total Demand']['Amount'] = daily[1].min()
     results['Min Daily Total Demand']['Date'] = str(daily[1].argmin())
+    results['Max Daily Total Demand']['Data'] = {k: data_hvaczone_day(k, daily[1].argmin()) for k in zones}
     daily = demand.resample('D',pd.np.mean)
     results['Max Daily Avg Demand'] = {}
     results['Min Daily Avg Demand'] = {}
     results['Max Daily Avg Demand']['Amount'] = daily[1].max()
     results['Max Daily Avg Demand']['Date'] = str(daily[1].argmax())
+    results['Max Daily Avg Demand']['Data'] = {k: data_hvaczone_day(k, daily[1].argmax()) for k in zones}
     results['Min Daily Avg Demand']['Amount'] = daily[1].min()
     results['Min Daily Avg Demand']['Date'] = str(daily[1].argmin())
+    results['Max Daily Avg Demand']['Data'] = {k: data_hvaczone_day(k, daily[1].argmax()) for k in zones}
 
     return results
 
@@ -209,7 +216,7 @@ def data_hvaczone(zone):
     temp_heat = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp_heat'".format(zone),start,end)
     temp = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp'".format(zone),start,end)
 
-    return {'hvac_state': hvac_state, 'temp_cool': temp_cool, 'temp_heat': temp_heat, 'temp': temp}
+    return {'hvac_state': hvac_state.copy(), 'temp_cool': temp_cool.copy(), 'temp_heat': temp_heat.copy(), 'temp': temp.copy()}
 
 def data_hvaczone_day(zone, day):
     """
@@ -222,7 +229,7 @@ def data_hvaczone_day(zone, day):
     temp_heat = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp_heat'".format(zone),start,end)
     temp = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp'".format(zone),start,end)
 
-    return {'hvac_state': hvac_state, 'temp_cool': temp_cool, 'temp_heat': temp_heat, 'temp': temp}
+    return {'hvac_state': hvac_state.copy(), 'temp_cool': temp_cool.copy(), 'temp_heat': temp_heat.copy(), 'temp': temp.copy()}
 
 def disaggregate():
     results = {}

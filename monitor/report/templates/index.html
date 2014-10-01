@@ -29,9 +29,6 @@
                   {% for zone, plotnames in v['Data'].iteritems() %}
                       <p>Zone: {{ zone }}</p>
                       <div id="{{ fix_name(k) }}_{{ zone }}" class="dailyplot" data-zone="{{ zone }}" data-key="{{ fix_name(k) }}"></div>
-                      {% for ts in plotnames.iterkeys() %}
-                          <p>TS {{ ts }}</p>
-                      {% endfor %}
                   {% endfor %}
                 {% endif %}
               </div>
