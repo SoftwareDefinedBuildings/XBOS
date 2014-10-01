@@ -154,6 +154,9 @@
               <button id="add-control-point-{{name}}" data-name={{name}} type="button" class="btn btn-default btn-md add-control-point">
                 <span class="glyphicon glyphicon-plus"></span> Add control point
               </button>
+              <button type="button" data-name="{{name}}" class="btn btn-default btn-md remove-period">
+                <span class="glyphicon glyphicon-minus"></span> Remove period
+              </button>
             </td>
           </tr>
         </tbody>
@@ -224,6 +227,9 @@
         <button id="add-control-point" data-period="{{ iperiod }}" type="button" class="btn btn-default btn-md add-control-point">
           <span class="glyphicon glyphicon-plus"></span> Add control point
         </button>
+        <button type="button" data-period="{{iperiod}}" class="btn btn-default btn-md remove-period">
+          <span class="glyphicon glyphicon-minus"></span> Remove period
+        </button>
       </td>
     </tr>
   </tbody>
@@ -239,7 +245,10 @@
       </select>
     </td>
     <td>
-      <input type="text" class="period-point-value form-control">
+      <input type="text" class="period-point-value form-control" style="width: 84%; display: inline-block;">
+      <button type="button" class="btn btn-default btn-md remove-control-point" style="margin-bottom: 3px;">
+        <span class="glyphicon glyphicon-minus"></span>
+      </button>
     </td>
   </tr>
 </template>
