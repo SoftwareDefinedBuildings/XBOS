@@ -93,6 +93,11 @@ Template.edit_schedule.events({
   },
   'click .remove-control-point': function(){
     $(event.target).closest('tr').remove();
+  },
+  'click .remove-period': function(){
+    var name = $(event.target).data('name');
+    $('#schedule-period-'+name).remove();
+    $(event.target).closest('tbody').remove();
   }
 });
 
@@ -146,6 +151,11 @@ Template.add_schedule.events({
   },
   'click .remove-control-point': function(){
     $(event.target).closest('tr').remove();
+  },
+  'click .remove-period': function(){
+    var period = $(event.target).data('period');
+    $('#schedule-period-'+period).remove();
+    $(event.target).closest('tbody').remove();
   }
 });
 
