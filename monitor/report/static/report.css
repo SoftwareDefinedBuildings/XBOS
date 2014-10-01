@@ -7,6 +7,21 @@ path {
     fill: none;
 }
 
+.temp {
+  fill: none;
+    stroke: black;
+}
+
+.temp_heat {
+  fill: none;
+    stroke: red;
+}
+
+.temp_cool {
+  fill: none;
+    stroke: blue;
+}
+
 .x.axis line, .x.axis path, .y.axis line, .y.axis path {
   fill: none;
   stroke: #000;

@@ -72,10 +72,9 @@
             var key = val.data("key");
             var zone = val.data("zone");
             d3.json("/zonedata/"+key+"/"+zone, function(err, data) {
-                data = data['temp'];
                 var margin = {
                     top: 10,
-                    right: 10,
+                    right: 50,
                     bottom: 20,
                     left: 50
                   },
@@ -83,32 +82,56 @@
                   height = 200;
                 var x = d3.time.scale()
                     .range([0, width]);
-                var y = d3.scale.linear()
-                    .range([height, 0]);
+                var y_demand = d3.scale.linear()
+                    .range([0, height]);
+                var y_temp = d3.scale.linear()
+                    .range([0, height]);
                 var xAxis = d3.svg.axis()
                     .scale(x)
-                    .tickSubdivide(true)
                     .orient("bottom");
-                var yAxis = d3.svg.axis()
-                    .scale(y)
+                var y_demandAxis = d3.svg.axis()
+                    .scale(y_demand)
+                    .orient("right");
+                var y_tempAxis = d3.svg.axis()
+                    .scale(y_temp)
                     .orient("left");
-                var line = d3.svg.line()
+                var demand_line = d3.svg.line()
                     .x(function(d) { return x(d.date); })
-                    .y(function(d) { return y(d.value); });
+                    .y(function(d) { return y_demand(d.value); });
+                var temp_line = d3.svg.line()
+                    .x(function(d) { return x(d.date); })
+                    .y(function(d) { return y_temp(d.value); });
 
                 var svg = d3.select("#"+key+"_"+zone).append("svg")
                     .attr("width", width+margin.left+margin.right)
                     .attr("height", height+margin.top+margin.bottom)
                   .append("g")
                     .attr("transform","translate("+margin.left+","+margin.top+")");
-                data = data.sort(function(a,b) { return b.date - a.date; });
-                data.forEach(function(d) {
+                data_hvac_state = data['hvac_state'].sort(function(a,b) { return b.date - a.date; });
+                data_hvac_state.forEach(function(d) {
+                    d.date = new Date(d['date']*1);
+                    d.value = d['value'];
+                });
+                data_temp_heat = data['temp_heat'].sort(function(a,b) { return b.date - a.date; });
+                data_temp_heat.forEach(function(d) {
+                    d.date = new Date(d['date']*1);
+                    d.value = d['value'];
+                });
+                data_temp_cool = data['temp_cool'].sort(function(a,b) { return b.date - a.date; });
+                data_temp_cool.forEach(function(d) {
+                    d.date = new Date(d['date']*1);
+                    d.value = d['value'];
+                });
+                data_temp = data['temp'].sort(function(a,b) { return b.date - a.date; });
+                data_temp.forEach(function(d) {
                     d.date = new Date(d['date']*1);
                     d.value = d['value'];
                 });
 
-                x.domain(d3.extent(data, function(d) { return d.date; }));
-                y.domain(d3.extent(data, function(d) { return d.value; }));
+                x.domain(d3.extent(data_temp, function(d) { return d.date; }));
+                //TODO: bring in demand data
+                //y_demand.domain(d3.extent(data, function(d) { return d.value; }));
+                y_temp.domain([10 + d3.max(data_temp_cool, function(d) {return Math.max(d.value)}), d3.min(data_temp_heat,function(d) {return Math.min(d.value)}) - 10]);
                 svg.append("g")
                   .attr("class", "x axis")
                   .attr("transform", "translate(0," + height + ")")
@@ -116,7 +139,7 @@
 
                 svg.append("g")
                   .attr("class", "y axis")
-                  .call(yAxis)
+                  .call(y_tempAxis)
                   .append("text")
                   .attr("transform", "rotate(-90)")
                   .attr("y", 6)
@@ -125,9 +148,17 @@
                   .text("kW");
 
                 svg.append("path")
-                  .datum(data)
-                  .attr("class", "line")
-                  .attr("d", line);
+                  .datum(data_temp)
+                  .attr("class", "temp")
+                  .attr("d", temp_line);
+                svg.append("path")
+                  .datum(data_temp_heat)
+                  .attr("class", "temp_heat")
+                  .attr("d", temp_line);
+                svg.append("path")
+                  .datum(data_temp_cool)
+                  .attr("class", "temp_cool")
+                  .attr("d", temp_line);
               });
         });
 
