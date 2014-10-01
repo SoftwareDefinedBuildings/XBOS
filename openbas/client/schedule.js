@@ -90,6 +90,9 @@ Template.edit_schedule.events({
     if (r){
       Router.go("/schedule/");
     }
+  },
+  'click .remove-control-point': function(){
+    $(event.target).closest('tr').remove();
   }
 });
 
@@ -140,6 +143,9 @@ Template.add_schedule.events({
     if (r){
       Router.go("/schedule/");
     }
+  },
+  'click .remove-control-point': function(){
+    $(event.target).closest('tr').remove();
   }
 });
 
