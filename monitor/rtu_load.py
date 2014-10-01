@@ -1,6 +1,7 @@
 from smap.archiver.client import SmapClient
 import time
 import datetime
+import json
 import pandas as pd
 #pd.options.display.mpl_style = 'default'
 
@@ -167,14 +168,14 @@ def hvac_report():
         results[zone]['Total Off Time'] = str(datetime.timedelta(seconds = total_off))
     for zone,hvac in get_zonetemps().iteritems():
         results[zone]['Max Inst Temperature Amount'] = hvac[1].max()
-        results[zone]['Max Inst Temperature Date'] = hvac[1].argmax()
+        results[zone]['Max Inst Temperature Date'] = str(hvac[1].argmax())
         results[zone]['Min Inst Temperature Amount'] = hvac[1].min()
-        results[zone]['Min Inst Temperature Date'] = hvac[1].argmin()
+        results[zone]['Min Inst Temperature Date'] = str(hvac[1].argmin())
         daily = hvac.resample('D',pd.np.mean)
         results[zone]['Max Avg Temperature Amount'] = daily[1].max()
-        results[zone]['Max Avg Temperature Date'] = daily[1].argmax()
+        results[zone]['Max Avg Temperature Date'] = str(daily[1].argmax())
         results[zone]['Min Avg Temperature Amount'] = daily[1].min()
-        results[zone]['Min Avg Temperature Date'] = daily[1].argmin()
+        results[zone]['Min Avg Temperature Date'] = str(daily[1].argmin())
     return results
 
 def disaggregate():
@@ -237,6 +238,13 @@ Min Avg. Temperature: {Min Avg Temperature Amount} F, {Min Avg Temperature Date}
 """.format(Zone=zone, kw_cooling=kw_for_zone.get(zone,0), **hvac)
     print report
 
+def save_as_json():
+    d = {}
+    d['demand'] = demand_report()
+    d['hvac'] = hvac_report()
+    d['disaggregate'] = disaggregate()
+    json.dump(d,open('report.json','w+'))
+
 if __name__ == '__main__':
     #merge = resample_and_merge_cumulative()
     #merge = merge.dropna(how='any')
@@ -246,5 +254,6 @@ if __name__ == '__main__':
     #    before_demand = merge.iloc[idx[0]]['demand']
     #    after_demand = merge.iloc[idx[3]]['demand']
     #    print 'State: {0}, Mean during: {1}, Before: {2}, After: {3}, Samples: {4}'.format(idx[4], mean_demand, before_demand, after_demand, idx[2]-idx[1])
+    save_as_json()
     plot_cumulative()
     format_report()

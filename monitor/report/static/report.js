@@ -2,10 +2,10 @@
     $(document).ready(function() {
         var data = [];
         var margin = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
+            top: 50,
+            right: 50,
+            bottom: 50,
+            left: 50
           },
           width = 900,
           height = 200;
@@ -16,7 +16,6 @@
             .range([height, 0]);
         var xAxis = d3.svg.axis()
             .scale(x)
-            .tickSize(-height)
             .tickSubdivide(true)
             .orient("bottom");
         var yAxis = d3.svg.axis()
