@@ -20,24 +20,22 @@
             <p><b>Total Demand</b></p>
             <p>{{ total_demand['Amount'] }} kW : {{ total_demand['Date'] }}</p>
             <div id="totaldemandplot"></div>
-            <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Value</th>
-                    <th>When</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for k,v in demand.iteritems() %}
-                <tr>
-                    <td>{{ k }}</td>
-                    <td>{{ v['Amount'] }}</td>
-                    <td>{{ v['Date'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            </table>
+            {% for k,v in demand.iteritems() %}
+              <p><b>{{ k }}</b></p>
+              <p>{{ v['Amount'] }}</p>
+              <p>{{ v['Date'] }}</p>
+              <div class="plots">
+                {% if v.has_key('Data') %}
+                  {% for zone, plotnames in v['Data'].iteritems() %}
+                      <p>Zone: {{ zone }}</p>
+                      <div id="{{ fix_name(k) }}_{{ zone }}" class="dailyplot" data-zone="{{ zone }}" data-key="{{ fix_name(k) }}"></div>
+                      {% for ts in plotnames.iterkeys() %}
+                          <p>TS {{ ts }}</p>
+                      {% endfor %}
+                  {% endfor %}
+                {% endif %}
+              </div>
+            {% endfor %}
           </div>
         </div>
     </body>
