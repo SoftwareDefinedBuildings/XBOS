@@ -5,11 +5,24 @@ import json
 import pandas as pd
 #pd.options.display.mpl_style = 'default'
 
-client = SmapClient('http://ciee.cal-sdb.org:8079')
+client = SmapClient('http://128.32.211.229:8079')
+#client = SmapClient('http://ciee.cal-sdb.org:8079')
 # timestamps
 end = int(time.time())
 start = end - 60*60*24*30 # last month
-print start, end
+
+zones = client.query('select distinct Metadata/HVACZone')
+
+def getdataasjson(query, start, end):
+    tmp_data = client.data(query,start,end,cache=False)
+    if not len(tmp_data[0]):
+        return {}
+    tmp = pd.DataFrame(tmp_data[1][0])
+    tmp[0] = pd.to_datetime(tmp[0], unit='ms')
+    tmp.index = tmp[0]
+    del tmp[0]
+    return json.loads(tmp.to_json())["1"]
+    
 
 def get_demand():
     # get energy data for same timeframe
@@ -142,8 +155,10 @@ def demand_report():
     results['Min Inst Demand'] = {}
     results['Max Inst Demand']['Amount'] = demand[1].max()
     results['Max Inst Demand']['Date'] = str(demand[1].argmax())
+    results['Max Inst Demand']['Data'] = {k: data_hvaczone_day(k, demand[1].argmax()) for k in zones}
     results['Min Inst Demand']['Amount'] = demand[1].min()
     results['Min Inst Demand']['Date'] = str(demand[1].argmin())
+    results['Min Inst Demand']['Data'] = {k: data_hvaczone_day(k, demand[1].argmax()) for k in zones}
     # get daily averages of demand
     daily = demand.resample('D',pd.np.sum)
     results['Max Daily Total Demand'] = {}
@@ -185,6 +200,30 @@ def hvac_report():
         results[zone]['Min Avg Temperature Date'] = str(daily[1].argmin())
     return results
 
+def data_hvaczone(zone):
+    """
+    For given HVACzone, get hvac_state, temp_cool, temp_heat and temp
+    """
+    hvac_state = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%hvac_state'".format(zone),start,end)
+    temp_cool = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp_cool'".format(zone),start,end)
+    temp_heat = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp_heat'".format(zone),start,end)
+    temp = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp'".format(zone),start,end)
+
+    return {'hvac_state': hvac_state, 'temp_cool': temp_cool, 'temp_heat': temp_heat, 'temp': temp}
+
+def data_hvaczone_day(zone, day):
+    """
+    Gets hvac_state, temp_cool, temp_heat, temp for ZONE on a given day ([day] is a pandas Timestamp object)
+    """
+    start = int((datetime.datetime.combine(day.date(), datetime.datetime.min.time()) - datetime.datetime(1970,1,1)).total_seconds())
+    end = start + 60*60*24
+    hvac_state = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%hvac_state'".format(zone),start,end)
+    temp_cool = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp_cool'".format(zone),start,end)
+    temp_heat = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp_heat'".format(zone),start,end)
+    temp = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp'".format(zone),start,end)
+
+    return {'hvac_state': hvac_state, 'temp_cool': temp_cool, 'temp_heat': temp_heat, 'temp': temp}
+
 def disaggregate():
     results = {}
     for zone, merge in resample_and_merge():
@@ -207,7 +246,7 @@ def disaggregate():
 def save_as_json():
     d = {}
     d['demand'] = demand_report()
-    #d['hvac'] = hvac_report()
+    d['hvac'] = hvac_report()
     #d['disaggregate'] = disaggregate()
     json.dump(d,open('report.json','w+'))
 
