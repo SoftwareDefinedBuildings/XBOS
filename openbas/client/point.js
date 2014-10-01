@@ -53,6 +53,16 @@ Template.pointDetail.rendered = function() {
     var data, time;
     var restrict = 'uuid="'+ this.data.uuid + '"';
 
+    var q = "select Properties/UnitofMeasure where " + restrict;
+    Meteor.call("query", q, function(err, res){
+      var unit = res[0].Properties.UnitofMeasure;
+      svg.append("text")
+        .attr("transform", "translate(20,10)rotate(-90)")
+        .attr("text-anchor", "end")
+        .attr("font-size", "1.2em")
+        .text(unit)
+    });
+
     Meteor.call("latest", restrict, n, function(err, res){
       var readings = _.zip.apply(_, res[0].Readings);
       time = _.map(readings[0], function(d){
@@ -105,8 +115,8 @@ Template.pointDetail.rendered = function() {
             time.shift();
             data.shift();
          
-          }
-      }
+        }
+    }
 }
 
 Template.points.rendered = function(){
