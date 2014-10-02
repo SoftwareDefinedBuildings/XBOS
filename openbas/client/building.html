@@ -10,6 +10,7 @@
             <th>Exposure</th> 
             <th>HVAC zone</th> 
             <th>Lighting zone</th> 
+            <th>Edit</th> 
           </tr>
         </thead>
         <tbody>
@@ -20,10 +21,17 @@
             <td>{{Exposure}}</td>
             <td>{{HVACZone}}</td>
             <td>{{LightingZone}}</td>
+            <td>
+              <a href="/building/edit_room/{{ _id }}">
+                <button type="button" class="btn btn-default btn-md">
+                  <span class="glyphicon glyphicon-edit"></span>
+                </button>
+              </a>
+            </td>
           </tr>
           {{/each}}
           <tr>
-            <td colspan=5 style="text-align: right; hover-style: none;">
+            <td colspan=6 style="text-align: right; hover-style: none;">
               <a href="/building/add_room">
                 <button type="button" class="btn btn-default btn-md">
                   <span class="glyphicon glyphicon-plus"></span>Add room
@@ -42,6 +50,10 @@
     {{> upload_floorplan }}
 
   </div>
+</template>
+
+<template name='edit_room'>
+  {{> add_room }}
 </template>
 
 <template name='add_room'>

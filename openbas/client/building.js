@@ -18,7 +18,11 @@ Template.add_room.events({
       'FloorplanId': floorplan_id,
       'MarkerPosition': marker_position_rel,
     };
-    Rooms.insert(r);
+    if (this._id != undefined){
+      Rooms.update({_id: this._id}, r);
+    } else {
+      Rooms.insert(r);
+    }
     Router.go('/building/');
   },
   'click #cancel-room': function(){ 
@@ -63,19 +67,23 @@ Template.building.events({
   }
 });
 
+function place_marker(room){
+  if (room.hasOwnProperty('MarkerPosition')){
+    var img_pos = $('img#' + room.FloorplanId).position();
+    var marker = $('<span />')
+        .attr('title', room.RoomNumber)
+        .attr('class', 'floorplan-marker floorplan-marker-static glyphicon glyphicon-map-marker')
+        .attr('data-room', room._id)
+        .css('left', img_pos.left + room.MarkerPosition.left + "px")
+        .css('top', img_pos.top + room.MarkerPosition.top + "px");
+    $('div#floorplan-' + room.FloorplanId).append(marker);
+  }
+}
+
 function draw_markers() {
   var rooms = Rooms.find({}).fetch();
   _.each(rooms, function(room){
-    if (room.hasOwnProperty('MarkerPosition')){
-      var img_pos = $('img#' + room.FloorplanId).position();
-      var marker = $('<span />')
-          .attr('title', room.RoomNumber)
-          .attr('class', 'floorplan-marker floorplan-marker-static glyphicon glyphicon-map-marker')
-          .attr('data-room', room._id)
-          .css('left', img_pos.left + room.MarkerPosition.left + "px")
-          .css('top', img_pos.top + room.MarkerPosition.top + "px");
-      $('div#floorplan-' + room.FloorplanId).append(marker);
-    }
+    place_marker(room);
   });
   $(".floorplan-marker").tooltip({
     placement: "top",
@@ -113,3 +121,13 @@ Template.floorplan.helpers({
     }
   }, 
 });
+
+Template.edit_room.rendered = function() {
+  $('.add-room-container').find('.panel-heading').html('Edit room');
+  $('#room-number').val(this.data.RoomNumber);
+  $('#room-description').val(this.data.Description);
+  $('#hvac-zone').val(this.data.HVACZone);
+  $('#lighting-zone').val(this.data.LightingZone);
+  $('#exposure').val(this.data.Exposure);
+  place_marker(this.data);
+};

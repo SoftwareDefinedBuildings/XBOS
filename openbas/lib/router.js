@@ -56,7 +56,6 @@ Router.map(function() {
         ];
       },
       data: function() { 
-        console.log(this.params.zone);
         if (this.params.zonetype == 'hvac') {
           return {'type': 'hvac', 'points': HVAC.find({'hvaczone': this.params.zone}).fetch()};
         } else if (this.params.zonetype == 'lighting') {
@@ -106,4 +105,13 @@ Router.map(function() {
         return [Meteor.subscribe("rooms"), Meteor.subscribe("floorplans")];
       }
     });
+
+    this.route('edit_room', {
+      path: '/building/edit_room/:id',
+      data: function() { return Rooms.findOne({_id: this.params.id}); },
+      waitOn: function(){
+        return [Meteor.subscribe("rooms"), Meteor.subscribe("floorplans")];
+      }
+    });
+
 });
