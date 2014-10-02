@@ -12,5 +12,5 @@ class FollowMaster(ZoneController):
         for 'temp_haet' and 'temp_cool' from the master scheduler.
         We add 5 to these, and then republish to our end points
         """
-        self.add('/temp_heat', self.points['temp_heat'] + 5)
-        self.add('/temp_cool', self.points['temp_cool'] + 5)
+        self.add('/temp_heat', float(self.points['temp_heat']) + 5)
+        self.add('/temp_cool', float(self.points['temp_cool']) + 5)

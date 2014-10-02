@@ -16,8 +16,8 @@ class AvgSensorFollowMaster(ZoneController):
         new_diff = self.points['thermostat_temp'] - self.points['avg_temp']
         self.points['temp_heat'] += new_diff
         self.points['temp_cool'] += new_diff
-        self.add('/temp_heat', self.points['temp_heat'])
-        self.add('/temp_cool', self.points['temp_cool'])
+        self.add('/temp_heat', float(self.points['temp_heat']))
+        self.add('/temp_cool', float(self.points['temp_cool']))
 
     def avg_temp(self, point, uuids, data):
         # averages the readings
