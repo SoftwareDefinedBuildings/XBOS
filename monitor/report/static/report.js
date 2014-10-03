@@ -108,23 +108,24 @@
                   .append("g")
                     .attr("transform","translate("+margin.left+","+margin.top+")");
                 data_hvac_state = data['hvac_state'].sort(function(a,b) { return b.date - a.date; });
+                console.log("new")
                 data_hvac_state.forEach(function(d) {
-                    d.date = new Date(d['date']*1);
+                    d.date = moment(new Date(d['date']*1)).add(7,'hours').toDate();
                     d.value = d['value'];
                 });
                 data_temp_heat = data['temp_heat'].sort(function(a,b) { return b.date - a.date; });
                 data_temp_heat.forEach(function(d) {
-                    d.date = new Date(d['date']*1);
+                    d.date = moment(new Date(d['date']*1)).add(7,'hours').toDate();
                     d.value = d['value'];
                 });
                 data_temp_cool = data['temp_cool'].sort(function(a,b) { return b.date - a.date; });
                 data_temp_cool.forEach(function(d) {
-                    d.date = new Date(d['date']*1);
+                    d.date = moment(new Date(d['date']*1)).add(7,'hours').toDate();
                     d.value = d['value'];
                 });
                 data_temp = data['temp'].sort(function(a,b) { return b.date - a.date; });
                 data_temp.forEach(function(d) {
-                    d.date = new Date(d['date']*1);
+                    d.date = moment(new Date(d['date']*1)).add(7,'hours').toDate();
                     d.value = d['value'];
                 });
                 var minx = moment(d3.min(data_temp, function(d) { return Math.min(d.date);}));
@@ -167,6 +168,7 @@
                   .attr("x", (width / 2))
                   .attr("y", margin.top)
                   .attr("text-anchor", "middle")
+
                   .style("font-size", "16px")
                   .text(zone);
               });

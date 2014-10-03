@@ -36,4 +36,4 @@ def histogram(zone):
     return jsonify({'data': data['disaggregate_histograms'][zone]})
 
 if __name__=='__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0",debug=True)
