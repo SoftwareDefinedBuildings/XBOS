@@ -11,8 +11,9 @@ app.add_template_global(fix_name)
 @app.route("/")
 def report():
     total_demand = data['demand']['Total Demand']
+    disaggregation_results = data['disaggregate']
     reportdata = {k:v for k,v in data['demand'].iteritems() if k not in ["Demand Data", "Total Demand"]}
-    return render_template("index.html", total_demand=total_demand, demand=reportdata)
+    return render_template("index.html", total_demand=total_demand, demand=reportdata, disaggregation_results=disaggregation_results, zones=data['zones'])
 
 @app.route("/demanddata")
 def demanddata():

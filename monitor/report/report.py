@@ -27,7 +27,7 @@ def getdataasjson(query, start, end):
     tmp = tmp.drop_duplicates()
     del tmp[0]
     return json.loads(tmp.to_json())["1"]
-    
+
 
 def get_demand():
     # get energy data for same timeframe
@@ -239,6 +239,7 @@ def data_demand_day(day):
 
 def disaggregate():
     results = {}
+    histograms = {}
     for zone, merge in resample_and_merge():
         merge = merge.dropna()
         idxs = group_contiguous(merge, 'state', 2)
@@ -254,13 +255,18 @@ def disaggregate():
             guesses.append(diff)
         if len(guesses):
             results[zone] = pd.Series(guesses).median()
+            histograms[zone] = guesses
     print results
-    return results
+    return results, histograms
 
 def save_as_json():
     d = {}
     d['demand'] = demand_report()
     d['hvac'] = hvac_report()
+    results, histograms = disaggregate()
+    d['disaggregate'] = results
+    d['disaggregate_histograms'] = histograms
+    d['zones'] = zones
     #d['disaggregate'] = disaggregate()
     json.dump(d,open('report.json','w+'))
 
@@ -273,5 +279,4 @@ if __name__ == '__main__':
     #    before_demand = merge.iloc[idx[0]]['demand']
     #    after_demand = merge.iloc[idx[3]]['demand']
     #    print 'State: {0}, Mean during: {1}, Before: {2}, After: {3}, Samples: {4}'.format(idx[4], mean_demand, before_demand, after_demand, idx[2]-idx[1])
-    disaggregate()
     save_as_json()

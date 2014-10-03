@@ -23,6 +23,9 @@
               <p><b>Total Demand</b></p>
               <p>{{ total_demand['Amount'] }} kW : {{ total_demand['Date'] }}</p>
               <div class="center" id="totaldemandplot"></div>
+              {% for zone in zones %}
+                <p><b>{{ zone }}</b> : {{ disaggregation_results[zone] }} kW</p>
+              {% endfor %}
               {% for k,v in demand.iteritems() %}
                 <p><b>{{ k }}</b></p>
                 <p>{{ v['Amount'] }} kW : {{ v['Date'] }}</p>
