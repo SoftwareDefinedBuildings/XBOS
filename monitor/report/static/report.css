@@ -1,9 +1,24 @@
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 200;
+    font-size: 150%;
+    padding: 0;
+    background-image: url('debut-light.png');
+    background-repeat: repeat-repeat;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
 .center {
   text-align: center; 
 }
 
 .col {
-    padding: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
 }
 
 .plot-well {
@@ -54,4 +69,9 @@ path {
 .bar rect {
     fill: lightcoral;
     shape-rendering: crispEdges;
+}
+
+.cleanwell {
+    background-color: #fff;
+    padding: 50px;
 }

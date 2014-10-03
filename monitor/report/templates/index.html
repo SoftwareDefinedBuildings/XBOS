@@ -22,19 +22,23 @@
               <h3 class="center well">Demand</h3>
               <p><b>Total Demand</b></p>
               <p>{{ total_demand['Amount'] }} kW : {{ total_demand['Date'] }}</p>
-              <div class="center" id="totaldemandplot"></div>
+              <div class="cleanwell center" id="totaldemandplot"></div>
               {% for zone in zones %}
-                <p><b>{{ zone }}</b> : {{ disaggregation_results[zone] }} kW</p>
-                <div id="{{ zone }}_hist" class="histogram_disaggregate" data-zone="{{ zone }}"></div>
+                <div class="row" style="padding:20px">
+                  <div class="col-xs-12 col">
+                    <p><b>{{ zone }}</b> : {{ disaggregation_results[zone] }} kW</p>
+                    <div id="{{ zone }}_hist" class="cleanwell histogram_disaggregate" data-zone="{{ zone }}"></div>
+                  </div>
+                </div>
               {% endfor %}
               {% for k,v in demand.iteritems() %}
                 <p><b>{{ k }}</b></p>
                 <p>{{ v['Amount'] }} kW : {{ v['Date'] }}</p>
-                <div class="plots">
+                <div class="cleanwell well plots">
                   <div class="row">
                     {% if v.has_key('Data') %}
                       {% for zone, plotnames in v['Data'].iteritems() %}
-                          <div class="col-xs-3 col plot-well">
+                          <div class="col-xs-3 col">
                             <div id="{{ fix_name(k) }}_{{ zone }}" class="dailyplot" data-zone="{{ zone }}" data-key="{{ fix_name(k) }}"></div>
                           </div>
                       {% endfor %}
