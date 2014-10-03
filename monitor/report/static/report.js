@@ -171,8 +171,61 @@
                   .text(zone);
               });
         });
+        
+        $('.histogram_disaggregate').each(function(idx) {
+            var val = $( this );
+            var zone = val.data("zone");
+            d3.json("/histogram/"+zone, function(err, data) {
+              if (err) {
+                return true;
+              }
+              data = data.data;
+              var margin = {top: 10, right:30, bottom: 30, left: 30},
+                  width = 400, height = 200;
+              var x = d3.scale.linear()
+                  .domain(d3.extent(data))
+                  .range([0, width]);
+              var histdata = d3.layout.histogram()
+                      .bins(x.ticks(10))(data);
+
+              var y = d3.scale.linear()
+                  .domain([0, d3.max(histdata, function(d) { return d.y; })])
+                  .range([height,0]);
+
+              var xAxis = d3.svg.axis()
+                  .scale(x)
+                  .orient("bottom");
+
+              var svg = d3.select("#"+zone+"_hist").append("svg")
+                  .attr("width", width+margin.left+margin.right)
+                  .attr("height", height+margin.top+margin.bottom)
+                .append("g")
+                  .attr("transform", "translate("+margin.left+","+margin.top+")");
+              
+              var bar = svg.selectAll(".bar")
+                  .data(histdata)
+                .enter().append("g")
+                  .attr("class", "bar")
+                  .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")";});
+              
+              bar.append("rect")
+                  .attr("x", 1)
+                  .attr("width", x(histdata[0].dx) - 1)
+                  .attr("height", function(d) { return height - y(d.y); });
+
+              bar.append("text")
+                  .attr("dy", ".75em")
+                  .attr("y", 6)
+                  .attr("x", x(histdata[0].dx / 2))
+                  .attr("text-anchor", "middle")
+                  .text("");
+
+              svg.append("g")
+                  .attr("class", "x axis")
+                  .attr("transform", "translate(0,"+height+")")
+                  .call(xAxis);
+            });
+        });
 
     });
-
-
 })(jQuery);

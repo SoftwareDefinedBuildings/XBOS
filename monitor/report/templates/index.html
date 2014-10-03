@@ -25,6 +25,7 @@
               <div class="center" id="totaldemandplot"></div>
               {% for zone in zones %}
                 <p><b>{{ zone }}</b> : {{ disaggregation_results[zone] }} kW</p>
+                <div id="{{ zone }}_hist" class="histogram_disaggregate" data-zone="{{ zone }}"></div>
               {% endfor %}
               {% for k,v in demand.iteritems() %}
                 <p><b>{{ k }}</b></p>
