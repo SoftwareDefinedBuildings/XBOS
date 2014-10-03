@@ -99,7 +99,8 @@ def group_contiguous(df, key, value):
     pairs = zip(transitions[:-1], transitions[1:])
     ret = []
     for start,end in pairs:
-        ret.append((start,start+1,end,end+1,df.iloc[start+1][key] == value))
+        if df.iloc[start+1][key] == value and df.iloc[end][key] == value:
+            ret.append((start+1,end))
     return ret
 
 def resample_and_merge():
@@ -243,16 +244,17 @@ def disaggregate():
         idxs = group_contiguous(merge, 'state', 2)
         guesses = []
         for idx in idxs:
-            mean_demand = merge.iloc[idx[1]:idx[2]]['demand'].mean()
-            if not mean_demand > 0: continue # check for NaN and skip
-            before_demand = merge.iloc[idx[0]]['demand']
-            after_demand = merge.iloc[idx[3]]['demand']
-            if idx[4]:
-                base = min(after_demand, before_demand)
-                diff = mean_demand - base
-                guesses.append(diff)
+            # transition off to on
+            offtoon = merge.iloc[idx[0]:idx[0]+6]
+            diff = offtoon.diff()['demand'].max()
+            guesses.append(diff)
+            # transition on to off
+            ontooff = merge.iloc[idx[1]:idx[1]+6]
+            diff = pd.np.abs(ontooff.diff()['demand']).max()
+            guesses.append(diff)
         if len(guesses):
-            results[zone] = sum(guesses) / float(len(guesses)) # use average
+            results[zone] = pd.Series(guesses).median()
+    print results
     return results
 
 def save_as_json():
@@ -271,4 +273,5 @@ if __name__ == '__main__':
     #    before_demand = merge.iloc[idx[0]]['demand']
     #    after_demand = merge.iloc[idx[3]]['demand']
     #    print 'State: {0}, Mean during: {1}, Before: {2}, After: {3}, Samples: {4}'.format(idx[4], mean_demand, before_demand, after_demand, idx[2]-idx[1])
+    disaggregate()
     save_as_json()
