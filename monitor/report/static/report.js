@@ -108,7 +108,6 @@
                   .append("g")
                     .attr("transform","translate("+margin.left+","+margin.top+")");
                 data_hvac_state = data['hvac_state'].sort(function(a,b) { return b.date - a.date; });
-                console.log("new")
                 data_hvac_state.forEach(function(d) {
                     d.date = moment(new Date(d['date']*1)).add(7,'hours').toDate();
                     d.value = d['value'];
@@ -135,7 +134,13 @@
                 x.domain([start,end]);
                 //TODO: bring in demand data
                 //y_demand.domain(d3.extent(data, function(d) { return d.value; }));
-                y_temp.domain(d3.extent(data_temp, function(d) { return d.value; }));
+                var miny_a = d3.min(data_temp, function(d) { return Math.min(d.value); });
+                var maxy_a = d3.max(data_temp, function(d) { return Math.max(d.value); });
+                var miny_b = d3.min(data_temp_cool, function(d) { return Math.min(d.value); });
+                var maxy_b = d3.max(data_temp_cool, function(d) { return Math.max(d.value); });
+                var miny_c = d3.min(data_temp_heat, function(d) { return Math.min(d.value); });
+                var maxy_c = d3.max(data_temp_heat, function(d) { return Math.max(d.value); });
+                y_temp.domain(d3.extent([miny_a,miny_b,miny_c,maxy_b,maxy_c,maxy_a]));
                 //y_temp.domain([10 + d3.max(data_temp_cool, function(d) {return Math.max(d.value)}), d3.min(data_temp_heat,function(d) {return Math.min(d.value)}) - 10]);
                 svg.append("g")
                   .attr("class", "x axis")
