@@ -85,7 +85,7 @@
                 var y_demand = d3.scale.linear()
                     .range([0, height]);
                 var y_temp = d3.scale.linear()
-                    .range([0, height]);
+                    .range([height, 0]);
                 var xAxis = d3.svg.axis()
                     .scale(x)
                     .orient("bottom");
