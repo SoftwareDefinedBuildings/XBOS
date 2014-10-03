@@ -9,20 +9,22 @@ client = SmapClient('http://128.32.211.229:8079')
 #client = SmapClient('http://ciee.cal-sdb.org:8079')
 # timestamps
 end = int(time.time())
-start = end - 60*60*24*30 # last month
+#start = end - 60*60*24*30 # last month
+start = end - 60*60*24*7 # last week
 
 zones = client.query('select distinct Metadata/HVACZone')
 
 def getdataasjson(query, start, end):
-    tmp_data = client.data(query,start,end,cache=False,limit=100000)
+    tmp_data = client.data(query,start,end,cache=True,limit=500000)
     if not len(tmp_data[0]):
         return {}
     tmp = pd.DataFrame(tmp_data[1][0])
     if len(tmp.notnull()) == 0:
         return {}
+    tmp = tmp[pd.np.abs(tmp[1] - tmp[1].mean()) <= 5*tmp[1].std()]
     tmp[0] = pd.to_datetime(tmp[0], unit='ms')
     tmp.index = tmp[0]
-    tmp = tmp[pd.np.abs(tmp[1] - tmp[1].mean()) <= 2*tmp[1].std()]
+    tmp = tmp.drop_duplicates()
     del tmp[0]
     return json.loads(tmp.to_json())["1"]
     
@@ -161,7 +163,7 @@ def demand_report():
     results['Max Inst Demand']['Data'] = {k: data_hvaczone_day(k, demand[1].argmax()) for k in zones}
     results['Min Inst Demand']['Amount'] = demand[1].min()
     results['Min Inst Demand']['Date'] = str(demand[1].argmin())
-    results['Min Inst Demand']['Data'] = {k: data_hvaczone_day(k, demand[1].argmax()) for k in zones}
+    results['Min Inst Demand']['Data'] = {k: data_hvaczone_day(k, demand[1].argmin()) for k in zones}
     # get daily averages of demand
     daily = demand.resample('D',pd.np.sum)
     results['Max Daily Total Demand'] = {}
@@ -180,7 +182,7 @@ def demand_report():
     results['Max Daily Avg Demand']['Data'] = {k: data_hvaczone_day(k, daily[1].argmax()) for k in zones}
     results['Min Daily Avg Demand']['Amount'] = daily[1].min()
     results['Min Daily Avg Demand']['Date'] = str(daily[1].argmin())
-    results['Max Daily Avg Demand']['Data'] = {k: data_hvaczone_day(k, daily[1].argmax()) for k in zones}
+    results['Max Daily Avg Demand']['Data'] = {k: data_hvaczone_day(k, daily[1].argmin()) for k in zones}
 
     return results
 
@@ -230,6 +232,9 @@ def data_hvaczone_day(zone, day):
     temp = getdataasjson("Metadata/System = 'HVAC' and Metadata/HVACZone = '{0}' and Path like '%temp'".format(zone),start,end)
 
     return {'hvac_state': hvac_state.copy(), 'temp_cool': temp_cool.copy(), 'temp_heat': temp_heat.copy(), 'temp': temp.copy()}
+
+def data_demand_day(day):
+    pass
 
 def disaggregate():
     results = {}
