@@ -31,5 +31,9 @@ def zonedata(key, zone):
         ret[ts] = [{'date': k, 'value': v} for k,v in dd.iteritems()]
     return jsonify(ret)
 
+@app.route("/histogram/<zone>")
+def histogram(zone):
+    return jsonify({'data': data['disaggregate_histograms'][zone]})
+
 if __name__=='__main__':
     app.run(debug=True)
