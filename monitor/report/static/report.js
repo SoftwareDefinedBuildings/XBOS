@@ -127,11 +127,15 @@
                     d.date = new Date(d['date']*1);
                     d.value = d['value'];
                 });
-
-                x.domain(d3.extent(data_temp, function(d) { return d.date; }));
+                var minx = moment(d3.min(data_temp, function(d) { return Math.min(d.date);}));
+                var start = minx.startOf('day').toDate();
+                var minx = moment(d3.min(data_temp, function(d) { return Math.min(d.date);}));
+                var end = minx.endOf('day').toDate();
+                x.domain([start,end]);
                 //TODO: bring in demand data
                 //y_demand.domain(d3.extent(data, function(d) { return d.value; }));
-                y_temp.domain([10 + d3.max(data_temp_cool, function(d) {return Math.max(d.value)}), d3.min(data_temp_heat,function(d) {return Math.min(d.value)}) - 10]);
+                y_temp.domain(d3.extent(data_temp, function(d) { return d.value; }));
+                //y_temp.domain([10 + d3.max(data_temp_cool, function(d) {return Math.max(d.value)}), d3.min(data_temp_heat,function(d) {return Math.min(d.value)}) - 10]);
                 svg.append("g")
                   .attr("class", "x axis")
                   .attr("transform", "translate(0," + height + ")")
