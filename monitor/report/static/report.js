@@ -140,7 +140,8 @@
                 var maxy_b = d3.max(data_temp_cool, function(d) { return Math.max(d.value); });
                 var miny_c = d3.min(data_temp_heat, function(d) { return Math.min(d.value); });
                 var maxy_c = d3.max(data_temp_heat, function(d) { return Math.max(d.value); });
-                y_temp.domain(d3.extent([miny_a,miny_b,miny_c,maxy_b,maxy_c,maxy_a]));
+                var extent = d3.extent([miny_a,miny_b,miny_c,maxy_b,maxy_c,maxy_a])
+                y_temp.domain([extent[0]-5, extent[1]+5]);
                 //y_temp.domain([10 + d3.max(data_temp_cool, function(d) {return Math.max(d.value)}), d3.min(data_temp_heat,function(d) {return Math.min(d.value)}) - 10]);
                 svg.append("g")
                   .attr("class", "x axis")
