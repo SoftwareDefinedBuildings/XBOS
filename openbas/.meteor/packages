@@ -2,28 +2,26 @@
 #
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
-
 standard-app-packages
 autopublish
 insecure
-iron-router
 underscore
 accounts-base
 accounts-password
 accounts-ui-bootstrap-3
-bootstrap-3
-houston
 http
 jquery
-bootstrap-slider
-moment
+kidovate:bootstrap-slider
+mrt:moment
 s3ui
 anytime
 vakata-jstree
 timezone-js
 jquery-simplecolorpicker
 newd3
-jqueryui
-collectionfs
-cfs-filesystem
+iron:router
+mizzao:jquery-ui
+mizzao:bootstrap-3
+cfs:standard-packages
+cfs:filesystem
 
