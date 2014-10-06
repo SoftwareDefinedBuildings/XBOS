@@ -59,7 +59,7 @@ Router.map(function() {
         if (this.params.zonetype == 'hvac') {
           return {'type': 'hvac', 'points': HVAC.find({'hvaczone': this.params.zone}).fetch()};
         } else if (this.params.zonetype == 'lighting') {
-          return {'type': 'lighting', 'points': Lighting.find({'lightingzone': this.params.zone}).fetch()};;
+          return {'type': 'lighting', 'points': Lighting.find({'lightingzone': this.params.zone}).fetch()};
         } else {
           return 0
         }
@@ -112,6 +112,13 @@ Router.map(function() {
       waitOn: function(){
         return [Meteor.subscribe("rooms"), Meteor.subscribe("floorplans")];
       }
+    });
+
+    this.route('view_room', {
+      path: '/building/view_room/:id',
+      data: function(){ 
+        return Rooms.findOne({_id: this.params.id})
+      },
     });
 
 });
