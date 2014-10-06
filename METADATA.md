@@ -110,3 +110,13 @@ These should be defined for each timeseries within the driver:
 * `Command`: changes some aspect of the device, e.g. 'on' to 'off'
 * `Reading`: reads an aspect or state of the device, e.g. "what is my light's brightness level?"
 * `Sensor`: reports an aspect of the physical world
+
+#### `Metadata/Sensor`
+
+For a sensor, we define what the sensor measures. This is to avoid dependence on any specific timeseries endpoint:
+
+* `Occupancy`: this sensor measures occupancy
+* `Humidity`: relative humidity
+* `Temperature`: temperature. Units should be obtained from `Properties/UnitofMeasure`
+* `Illumination`: illumination
+* `CO2`: carbon-dioxide
