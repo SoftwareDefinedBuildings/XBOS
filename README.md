@@ -26,6 +26,31 @@ git submodule update --init
 git submodule foreach git pull origin master
 ```
 
+#### Problems Being up to date?
+
+1. from clean openbas install
+2. `mrt migrate-app` -- this will fail
+3. remove accounts-ui-bootstrap-3 and collectionfs from smart.json, remove trailing comma from line 8
+4. `mrt install`
+5. `mrt migrate-app`
+6. remove `cfs-*`, `collectionfs` from packages, .meteor/packages
+7. `meteor remove cmather:iron-router`
+8. `meteor add iron:router`
+9. `meteor add mizzao:jquery-ui`
+10. `meteor remove mizzao:jqueryui`
+11. `meteor remove mrt:bootstrap-3`
+12. `meteor add mizzao:bootstrap-3`
+13. `sed -e 's/^[a-zA-Z0-9]/meteor remove &/' .meteor/packages | sed 's/\@[0-9\.]*//g' > packages-rm.sh`
+14. `sed -e 's/ remove / add /' packages-rm.sh > packages-add.sh`
+15. `bash packages-rm.sh`
+16. `meteor list`
+17. `meteor update`
+18. `bash packages-add.sh`
+19. `meteor add cfs:standard-packages`
+20. `meteor add cfs:filesystem`
+21. `meteor --settings settings.json` should work
+
+
 #### If on Ubuntu system:
 
 Install Meteor
