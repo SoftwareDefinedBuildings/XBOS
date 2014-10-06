@@ -75,12 +75,6 @@ sparkline = function(elemId, data, width, height, interval_label) {
     focus.select("#value_text").text(value_text)
   }
 
-  if (display_range){
-    var extents_label = "[<span class='sparkline-min'>" + yextents[0].toFixed(2) + "</span>,";
-    extents_label += "<span class='sparkline-max'>" + yextents[1].toFixed(2) + "</span>]";
-    d3.select(elemId)
-      .html(extents_label)
-  }
 };
 
 common_metadata = function(o) {
