@@ -5,8 +5,7 @@ import json
 import pandas as pd
 #pd.options.display.mpl_style = 'default'
 
-client = SmapClient('http://128.32.211.229:8079')
-#client = SmapClient('http://ciee.cal-sdb.org:8079')
+client = SmapClient('http://ciee.cal-sdb.org:8079')
 # timestamps
 end = int(time.time())
 #start = end - 60*60*24*30 # last month
@@ -263,6 +262,7 @@ def save_as_json():
     d = {}
     d['demand'] = demand_report()
     d['hvac'] = hvac_report()
+    d['hvac_demand'] = json.loads(resample_and_merge_cumulative().to_json())
     results, histograms = disaggregate()
     d['disaggregate'] = results
     d['disaggregate_histograms'] = histograms

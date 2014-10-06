@@ -35,5 +35,9 @@ def zonedata(key, zone):
 def histogram(zone):
     return jsonify({'data': data['disaggregate_histograms'][zone]})
 
+@app.route("/hvacdemand")
+def hvacdemand():
+    return jsonify(data['hvac_demand'])
+
 if __name__=='__main__':
     app.run(host="0.0.0.0",debug=True)
