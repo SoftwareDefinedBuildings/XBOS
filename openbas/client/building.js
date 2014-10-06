@@ -77,6 +77,10 @@ function place_marker(room){
         .css('left', img_pos.left + room.MarkerPosition.left + "px")
         .css('top', img_pos.top + room.MarkerPosition.top + "px");
     $('div#floorplan-' + room.FloorplanId).append(marker);
+
+    marker.click(function(){
+      Router.go('/building/view_room/' + room._id);
+    });
   }
 }
 
