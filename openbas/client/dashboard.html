@@ -165,6 +165,7 @@
     </div>
     
     <div class="panel panel-default">
+      {{#if sensors.count}}
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
@@ -183,6 +184,7 @@
         {{/each}}
         </tbody>
       </table>
+      {{/if}}
     </div>
   </div>
 </template>
@@ -194,7 +196,7 @@
         {{zone}}
       </h3>
     </a>
-    {{#if groups}}
+    {{#if groups.count}}
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>
@@ -219,7 +221,7 @@
     </div>
     {{/if}}
     
-    {{#if internals}}
+    {{#if internals.count}}
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>
@@ -240,7 +242,7 @@
     </div>
     {{/if}}
 
-    {{#if sensors}}
+    {{#if sensors.count}}
     <div class="panel panel-default">
       <table class="table table-bordered table-striped">
         <thead>
