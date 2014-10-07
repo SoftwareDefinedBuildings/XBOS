@@ -27,8 +27,8 @@ if (Meteor.isServer) {
                 console.log("No results found for",query);
                 return
               }
-              
-              /* 
+
+              /*
                * Need to find unique paths. Unfortunately, we have full timeseries paths. Need
                * to lop off the last '/'-delimited segment and then take the unique set
                */
@@ -73,10 +73,10 @@ if (Meteor.isServer) {
                 // insert into database
                 if (system == 'HVAC') {
                   HVAC.upsert({'path': path}, {
-                    'path': path, 
-                    'hvaczone': zonename, 
+                    'path': path,
+                    'hvaczone': zonename,
                     'lightingzone': '',
-                    'room': roomname, 
+                    'room': roomname,
                     'device': device,
                     'model': model,
                     'driver': driver,
@@ -85,12 +85,12 @@ if (Meteor.isServer) {
                   });
                 } else if (system == 'Lighting') {
                   Lighting.upsert({'path': path}, {
-                    'path': path, 
-                    'group': groupname, 
-                    'lightingzone': zonename, 
+                    'path': path,
+                    'group': groupname,
+                    'lightingzone': zonename,
                     'hvaczone': '',
-                    'room': roomname, 
-                    'role': role, 
+                    'room': roomname,
+                    'role': role,
                     'device': device,
                     'model': model,
                     'driver': driver,
@@ -99,10 +99,10 @@ if (Meteor.isServer) {
                   });
                 } else if (system == 'Monitoring') {
                   Monitoring.upsert({'path': path}, {
-                    'path': path, 
-                    'room': roomname, 
-                    'lightingzone': lightzonename, 
-                    'hvaczone': hvaczonename, 
+                    'path': path,
+                    'room': roomname,
+                    'lightingzone': lightzonename,
+                    'hvaczone': hvaczonename,
                     'device': device,
                     'model': model,
                     'driver': driver,
@@ -111,10 +111,10 @@ if (Meteor.isServer) {
                   });
                 } else if (system == 'GeneralControl') {
                   GeneralControl.upsert({'path': path}, {
-                    'path': path, 
-                    'room': roomname, 
-                    'lightingzone': lightzonename, 
-                    'hvaczone': hvaczonename, 
+                    'path': path,
+                    'room': roomname,
+                    'lightingzone': lightzonename,
+                    'hvaczone': hvaczonename,
                     'device': device,
                     'model': model,
                     'driver': driver,
@@ -124,9 +124,9 @@ if (Meteor.isServer) {
                 }
               });
             });
-          }); 
+          });
 
-        }, 
+        },
 
         savemetadata: function(objid, update) {
             /*
@@ -170,7 +170,7 @@ if (Meteor.isServer) {
               record = Unconfigured.findOne({'_id': objid});
               console.log("unconf record", record);
               path = objid;
-              
+
               var allpoints = Points.find({}).fetch();
               var mypoints = _.pluck(_.filter(allpoints, function(o) { return get_source_path(o.Path) == path; }), 'uuid');
               console.log(mypoints);
@@ -191,5 +191,5 @@ if (Meteor.isServer) {
             res = Meteor.call('updatetags', 'Path like "'+path+'/%"', tags);
             Meteor.call('querysystem');
         }
-    }); 
-} 
+    });
+}
