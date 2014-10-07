@@ -71,6 +71,21 @@ Dashboard.day_names = {'7': 'sun', '1': 'mon',
                        '6': 'sat'
 };
 
+UI.registerHelper('getSensorValue', function(obj) {
+    var res = _.find(this.timeseries, function(val) {
+        return val.Metadata.Sensor == obj;
+    });
+    var unit = res.Properties.UnitofMeasure;
+    var p = Points.find({'uuid': res.uuid}).fetch()[0];
+    var value = p.value;
+    if (unit == 'C') {
+      value = value * 1.8 + 32;
+    }
+    value = Number((value).toFixed(1));
+    return value;
+});
+
+
 UI.registerHelper('getValue', function(obj) {
   if (this.timeseries[obj] != undefined){
     var unit = this.timeseries[obj].Properties.UnitofMeasure;
@@ -254,7 +269,7 @@ Template.point.rendered = function(arg) {
 Template.point_display.rendered = function(){
   var myuuid = this.data.uuid;
   var restrict = "uuid='" + this.data.uuid + "'";
-  var q = "select data in (now - 4h, now) where " + restrict;
+  var q = "select data in (now -4h, now) where " + restrict;
   Meteor.call("query", q, function(err, res){
     if (res[0] != undefined){
       var mydata = jsonify(res[0].Readings);

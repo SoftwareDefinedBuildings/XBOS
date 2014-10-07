@@ -178,8 +178,8 @@
         {{#each sensors}}
           <tr>
             <td>{{room}}</td>
-            <td><div class="sparkline-container" id="sparkline-temperature-container-{{ _id }}"></div>{{getValue 'temperature'}}</td>
-            <td><div class="sparkline-container" id="sparkline-humidity-container-{{ _id }}"></div>{{getValue 'humidity'}}</td>
+            <td><div class="sparkline-container" id="sparkline-temperature-container-{{ _id }}"></div>{{getSensorValue 'Temperature'}}</td>
+            <td><div class="sparkline-container" id="sparkline-humidity-container-{{ _id }}"></div>{{getSensorValue 'Humidity'}}</td>
           </tr>
         {{/each}}
         </tbody>
@@ -254,8 +254,8 @@
         <tbody>
           {{#each sensors}}
           <tr>
-            <td>{{room}} </td>
-            <td>{{getValue 'illumination'}} </td>
+            <td>{{room}}</td>
+            <td>{{getSensorValue 'Illumination'}} </td>
           </tr>
           {{/each}}
         </tbody>
