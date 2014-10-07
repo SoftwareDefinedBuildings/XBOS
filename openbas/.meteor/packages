@@ -8,7 +8,6 @@ insecure
 underscore
 accounts-base
 accounts-password
-accounts-ui-bootstrap-3
 http
 jquery
 kidovate:bootstrap-slider
@@ -24,4 +23,5 @@ mizzao:jquery-ui
 mizzao:bootstrap-3
 cfs:standard-packages
 cfs:filesystem
+accounts-ui-bootstrap-3
 
