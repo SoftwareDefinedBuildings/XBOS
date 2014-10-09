@@ -94,6 +94,10 @@ UI.registerHelper('getValue', function(obj) {
     if (unit == 'C') {
       value = value * 1.8 + 32;
     }
+    if (unit == 'On/Off') {
+      value = value == 1 ? 'On' : 'Off'
+      return value;
+    }
     return Number((value).toFixed(1));
   } 
 });
