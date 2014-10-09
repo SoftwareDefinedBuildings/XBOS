@@ -350,7 +350,7 @@ if (Meteor.isClient) {
       _.each(static_keys, function(key, idx) {
         metadata.push({'path': path, 'key': key.toProperCase(), 'val': static_vals[key], 'static': true});
       });
-
+      metadata.push({'path': path, 'key': '_id', 'val': this._id, 'static': true});
       return metadata;
   };
 
