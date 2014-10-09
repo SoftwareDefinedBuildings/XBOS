@@ -60,6 +60,7 @@
           <th>Start</th>
           <th>Heat Setpoint</th>
           <th>Cool Setpoint</th>
+          <th>Light State</th>
         </tr>
       </thead>
       <tbody>
@@ -72,6 +73,9 @@
           <td>{{value}}</td>
           {{/if}}
           {{#if isNamed 'temp_cool'}}
+          <td>{{value}}</td>
+          {{/if}}
+          {{#if isNamed 'on'}}
           <td>{{value}}</td>
           {{/if}}
         {{/each}}
