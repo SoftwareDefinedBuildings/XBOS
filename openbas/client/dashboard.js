@@ -267,18 +267,6 @@ Template.point.rendered = function(arg) {
   }
 };
 
-Template.point_display.rendered = function(){
-  var myuuid = this.data.uuid;
-  var restrict = "uuid='" + this.data.uuid + "'";
-  var q = "select data in (now -4h, now) where " + restrict;
-  Meteor.call("query", q, function(err, res){
-    if (res[0] != undefined){
-      var mydata = jsonify(res[0].Readings);
-      sparkline("#sparkline-" + myuuid, mydata, 300, 50, "last 4 hours");
-    }
-  });
-};
-
 Template.hvac_zone_widget.rendered = function(){
   var restrict0 = 'Path="' + this.data.path;
   var restrict = restrict0 + '/temp_cool" or '

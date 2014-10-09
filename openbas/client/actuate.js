@@ -100,26 +100,6 @@ Template.point_display.point = function(uuid) {
   return p;
 };
 
-Template.point_display.rendered = function() {
- var uuid = this.data.uuid;
- Meteor.call('createPermalink', 
- {
-    "streams":
-    [
-        {
-            "stream": uuid,
-            "color": "#000000"
-        },
-    ],
-    "autoupdate": true,
-    "window_type": "now",
-    "window_width": 86400000000000,
-    "tz": "UTC",
-  }, function(err, res) {
-    updatePermalink(uuid, res);
-  });
-};
-
 Template.point_display.ploturl = function() {
   return '/plot?'+getPermalink(this.uuid);
 };
@@ -128,6 +108,37 @@ Template.point_display.name = function() {
   var p = Points.find({'_id': this._id}).fetch()[0];
   var pathcomponents = p.Path.split("/");
   return pathcomponents[pathcomponents.length - 1].replace('_',' ').toProperCase();
+};
+
+Template.point_display.rendered = function(){
+  var myuuid = this.data.uuid;
+  Meteor.call('createPermalink', 
+  {
+     "streams":
+     [
+         {
+             "stream": myuuid,
+             "color": "#000000"
+         },
+     ],
+     "autoupdate": true,
+     "window_type": "now",
+     "window_width": 86400000000000,
+     "tz": "UTC",
+   }, function(err, res) {
+      if (err) {
+         console.log('permalink error',err)
+      }
+     updatePermalink(myuuid, res);
+  });
+  var restrict = "uuid='" + this.data.uuid + "'";
+  var q = "select data in (now -4h, now) where " + restrict;
+  Meteor.call("query", q, function(err, res){
+    if (res[0] != undefined){
+      var mydata = jsonify(res[0].Readings);
+      sparkline("#sparkline-" + myuuid, mydata, 300, 50, "last 4 hours");
+    }
+  });
 };
 
 /* Actuator Continuous */
