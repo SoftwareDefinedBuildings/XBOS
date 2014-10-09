@@ -302,11 +302,11 @@
 <template name="genericsensor">
       {{#each points}}
         <div class="well">
+        <h4>Room: <b>{{Metadata.Room}}</b></h4>
         <p>Device: <b>{{Metadata.Device}}</b></p>
         <p>Model: <b>{{Metadata.Model}}</b></p>
         <p>Name: <b>{{Metadata.Name}}</b></p>
-        <p>Room: <b>{{Metadata.Room}}</b></p>
-        <p>Path: <b>{{Path}}</b></p>
+        <p>UUID: <b>{{uuid}}</b></p>
         <p>Value: <b>{{get_value Path}}</b></p>
         </div>
       {{/each}}

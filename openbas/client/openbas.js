@@ -19,6 +19,10 @@ Template.points.helpers({
   }
 });
 
+Template.navbar.building_name = function() {
+   return Meteor.settings.public.building_name;
+};
+
 Template.navbar.helpers({
   activeIf: function (template) {
     var currentRoute = Router.current();
