@@ -280,17 +280,36 @@
 <template name="zone_detail">
   <div class="zone-detail-container">
     {{#if is_hvac type}}
-      <h2 class="dashboard-column-heading" style="margin-bottom: 20px;">HVAC Zone: {{points.[0].hvaczone}}</h2>
-      {{#each points}}
+      <h2 class="dashboard-column-heading" style="margin-bottom: 20px;">HVAC Zone: {{points.points.[0].hvaczone}}</h2>
+      {{#each points.points}}
         {{> thermostat}}
       {{/each}}
+      {{#each points.hvac_sensors}}
+        {{> genericsensor}}
+      {{/each}}
     {{else}}{{#if is_lighting type}}
-      <h2 class="dashboard-column-heading" style="margin-bottom: 20px;">Lighting Zone: {{points.[0].lightingzone}}</h2>
-      {{#each points}}
+      <h2 class="dashboard-column-heading" style="margin-bottom: 20px;">Lighting Zone: {{points.points.[0].lightingzone}}</h2>
+      {{#each points.points}}
         {{> lightinggroup}}
+      {{/each}}
+      {{#each points.lighting_sensors}}
+        {{> genericsensor}}
       {{/each}}
     {{/if}}{{/if}}
   </div>
+</template>
+
+<template name="genericsensor">
+      {{#each points}}
+        <div class="well">
+        <p>Device: <b>{{Metadata.Device}}</b></p>
+        <p>Model: <b>{{Metadata.Model}}</b></p>
+        <p>Name: <b>{{Metadata.Name}}</b></p>
+        <p>Room: <b>{{Metadata.Room}}</b></p>
+        <p>Path: <b>{{Path}}</b></p>
+        <p>Value: <b>{{get_value Path}}</b></p>
+        </div>
+      {{/each}}
 </template>
 
 <template name="thermostat">

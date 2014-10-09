@@ -192,9 +192,36 @@ Template.schedule_widget.schedule = function(){
 Template.schedule_widget.rendered = Dashboard.render_schedules;
 
 Template.zone_detail.points = function() {
+  var ret = {};
   console.log(this);
-  return this.points;
+  ret['points'] = this.points;
+  ret['hvac_sensors'] = Monitoring.find({'hvaczone': this.points[0].hvaczone}).fetch();
+  ret['lighting_sensors'] = Monitoring.find({'lightingzone': this.points[0].lightingzone}).fetch();
+  return ret;
 };
+
+Template.genericsensor.points = function() {
+    var ret = [];
+    for (var key in this.timeseries) {
+        if (this.timeseries.hasOwnProperty(key)) {
+          ret.push(this.timeseries[key]);
+        }
+    }
+    console.log(ret);
+    return ret;
+};
+
+Template.genericsensor.mymetadata = function() {
+  console.log(common_metadata(this));
+  return common_metadata(this);
+};
+
+Template.genericsensor.helpers({
+    get_value: function(path) {
+        return Points.find({'Path': path}).fetch()[0].value;
+    }
+});
+
 
 Template.thermostat.mymetadata = function() {
   console.log(common_metadata(this));
