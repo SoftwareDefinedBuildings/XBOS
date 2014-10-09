@@ -280,10 +280,12 @@
 <template name="zone_detail">
   <div class="zone-detail-container">
     {{#if is_hvac type}}
+      <h2 class="dashboard-column-heading" style="margin-bottom: 20px;">HVAC Zone: {{points.[0].hvaczone}}</h2>
       {{#each points}}
         {{> thermostat}}
       {{/each}}
     {{else}}{{#if is_lighting type}}
+      <h2 class="dashboard-column-heading" style="margin-bottom: 20px;">Lighting Zone: {{points.[0].lightingzone}}</h2>
       {{#each points}}
         {{> lightinggroup}}
       {{/each}}
@@ -292,9 +294,13 @@
 </template>
 
 <template name="thermostat">
-  <h2 class="dashboard-column-heading" style="margin-bottom: 20px;">Zone: {{hvaczone}}</h2>
+  <h3 class="dashboard-column-heading" style="margin-bottom: 20px;">Room: {{room}}</h3>
   <div class='panel panel-default'>
-    <div class="panel-heading">{{path}}</div>
+    <div class="panel-heading">
+        Name: <b>{{mymetadata.Metadata.Name}}</b> <br/>
+        Device: <b>{{mymetadata.Metadata.Device}}</b> <br/>
+        Model: <b>{{mymetadata.Metadata.Model}}</b> <br/>
+    </div>
     <table class="table table-bordered table-striped hvac-zone-table" style="font-size: 1.2em;">
       <thead>
         <tr>
@@ -367,8 +373,11 @@
 </template>
 
 <template name="lightinggroup">
-  <h2 class="dashboard-column-heading">{{lightingzone}}</h2>
-  <h3 class="dashboard-column-heading">{{path}}</h3>
+  <div class="panel-heading">
+      Name: <b>{{mymetadata.Metadata.Name}}</b> <br/>
+      Device: <b>{{mymetadata.Metadata.Device}}</b> <br/>
+      Model: <b>{{mymetadata.Metadata.Model}}</b> <br/>
+  </div>
   <div class='table-responsive'>
     <table class="table table-bordered table-striped">
       <thead>

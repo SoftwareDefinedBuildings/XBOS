@@ -192,7 +192,13 @@ Template.schedule_widget.schedule = function(){
 Template.schedule_widget.rendered = Dashboard.render_schedules;
 
 Template.zone_detail.points = function() {
+  console.log(this);
   return this.points;
+};
+
+Template.thermostat.mymetadata = function() {
+  console.log(common_metadata(this));
+  return common_metadata(this);
 };
 
 Template.zone_detail.helpers({
@@ -219,6 +225,11 @@ Template.thermostat.helpers({
     return ''
   }
 });
+
+Template.lightinggroup.mymetadata = function() {
+  console.log(common_metadata(this));
+  return common_metadata(this);
+};
 
 Template.lightinggroup.helpers({
   has: function(val) {
