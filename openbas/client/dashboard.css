@@ -94,6 +94,7 @@ div.HVAC-zone-summary {
 .zone-detail-container {
   margin: 0 auto;
   width: 70%;
+  max-width: 800px;
 }
 
 .demand-widget {
