@@ -143,7 +143,8 @@ Template.light_zone_widget.internals = function() {
 };
 
 Template.light_zone_widget.sensors = function() {
-  return Monitoring.find({'lightingzone': this[0].lightingzone});
+  var possible = Monitoring.find({'lightingzone': this[0].lightingzone}).fetch();
+  return possible;
 };
 
 Template.hvac_zone_widget.sensors = function() {
