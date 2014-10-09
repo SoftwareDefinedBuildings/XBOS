@@ -194,7 +194,7 @@
                   .domain(d3.extent(data))
                   .range([0, width]);
               var histdata = d3.layout.histogram()
-                      .bins(x.ticks(10))(data);
+                      .bins(x.ticks(40))(data);
 
               var y = d3.scale.linear()
                   .domain([0, d3.max(histdata, function(d) { return d.y; })])
