@@ -159,6 +159,21 @@
     </a>
     <div class="HVAC-zone-summary" id="HVAC-zone-summary-{{ _id }}"></div>
 
+      <table class="table" style="text-align: center; margin-bottom: 0px;">
+        <tbody>
+          <tr>
+            <th style="text-align: center;">Temperature</th>
+            <th style="text-align: center; color: red">Heat</th>
+            <th style="text-align: center; color: blue">Cool</th>
+          </tr>
+          <tr>
+            <td>{{getValue 'temp'}}</td>
+            <td style="color: red">{{getValue 'temp_heat'}}</td>
+            <td style="color: blue">{{getValue 'temp_cool'}}</td>
+          </tr>
+        </tbody>
+      </table>
+
     <div class="HVAC-state-container" id="HVAC-state-container-{{ _id }}">
       {{#if isOff}}
       {{else}}{{#if isHeating}}
