@@ -1,9 +1,10 @@
 { 
-  "archiverUrl": "http://54.183.175.246/backend",
+  "archiverUrl": "http://localhost:8079",
   "roomsfile": "testrooms.json",
   "apikey": "lVzBMDpnkXApJmpjUDSvm4ceGfpbrLLSd9cq",
   "public": {
-    "archiverUrl": "http://54.183.175.246/backend",
-    "site": "0273d18f-1c03-11e4-a490-6003089ed1d0"
+    "archiverUrl":  "http://localhost:8079",
+    "site": "0273d18f-1c03-11e4-a490-6003089ed1d0",
+    "building_name": "CIEE"
   }
 }
