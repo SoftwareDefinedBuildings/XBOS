@@ -103,7 +103,7 @@
 
 <template name="actuator_display">
   {{#with point uuid}}
-    <td><a href="{{ploturl}}">{{name}}</a></td>
+    <td><a href="{{ploturl}}">{{device}}</a></td>
     <td>{{value}}</td>
     {{#if isDiscrete}}
       <td>{{> actuator_discrete}}</td>

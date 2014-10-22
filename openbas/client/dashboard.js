@@ -291,6 +291,12 @@ Template.room_detail.helpers({
   }
 });
 
+Template.actuator_display.device = function(){
+  var split_path = this.Path.split('/');
+  var L = split_path.length;
+  return split_path[L - 2];
+}
+
 Template.point.rendered = function(arg) {
   var p = Points.find({'uuid': this.data.uuid}).fetch()[0];
   if (p.ActuatorUUID) {
