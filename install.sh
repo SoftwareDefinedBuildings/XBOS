@@ -102,7 +102,7 @@ tar xzf openbas.tgz
 
 cat <<EOF > openbas.conf
 [program:openbas]
-command = mrt --settings settings.json
+command = meteor --settings settings.json
 user = $SUDO_USER
 directory = /home/$SUDO_USER/openbas
 priority = 2
