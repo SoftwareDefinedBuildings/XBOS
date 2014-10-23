@@ -1,3 +1,25 @@
+Template.add_room.rendered = function() {
+  var rooms = Rooms.find({}).fetch();
+  var hvac_zones = _.pluck(rooms, 'HVACZone');
+  var descriptions = _.pluck(rooms, 'Description');
+  var lighting_zones = _.pluck(rooms, 'LightingZones');
+
+  $('#room-description').autocomplete({
+    source: _.uniq(descriptions),
+    minLength: 0,
+  });
+
+  $('#hvac-zone').autocomplete({
+    source: _.uniq(hvac_zones),
+    minLength: 0,
+  });
+
+  $('#lighting-zone').autocomplete({
+    source: _.uniq(lighting_zones),
+    minLength: 0,
+  });
+};
+
 Template.add_room.events({
   'click #save-room': function(){ 
     var marker = $(".floorplan-marker");
