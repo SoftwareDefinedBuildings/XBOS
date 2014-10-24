@@ -294,7 +294,12 @@ Template.room_detail.helpers({
 Template.actuator_display.device = function(){
   var split_path = this.Path.split('/');
   var L = split_path.length;
-  return split_path[L - 2];
+  var path_end = split_path[L - 1];
+  if (path_end == 'on'){
+    return split_path[L - 2];
+  } else {
+    return path_end;
+  }
 }
 
 Template.point.rendered = function(arg) {
