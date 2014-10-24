@@ -213,40 +213,33 @@ Template.actuator_discrete.value = function() {
 Template.actuator_binary.rendered = function() {
   var p = Points.find({'uuid': this.data.uuid}, {'reactive': false}).fetch();
   if (p[0].value === 0) {
-    $('#'+this.data.ActuatorUUID).removeClass("pressed");
+    $('#'+this.data.ActuatorUUID+"-on").removeClass("pressed");
+    $('#'+this.data.ActuatorUUID+"-off").addClass("pressed");
   } else {
-    $('#'+this.data.ActuatorUUID).addClass("pressed");
+    $('#'+this.data.ActuatorUUID+"-off").removeClass("pressed");
+    $('#'+this.data.ActuatorUUID+"-on").addClass("pressed");
   }
-};
-
-Template.actuator_binary.value = function() {
-  var p = Points.find({'_id': this._id}, {'reactive': false}).fetch();
-  if (p[0].value === 0) {
-    $('#'+this.ActuatorUUID).removeClass("pressed");
-  } else {
-    $('#'+this.ActuatorUUID).addClass("pressed");
-  }
-  return p[0].value;
 };
 
 Template.actuator_binary.events({
-  'click': function () {
-    if (this.value === 1) {
-      $('#'+this.ActuatorUUID).removeClass("pressed");
+  'click': function (e) {
+    var target = $(e.target);
+    if (!target.hasClass('pressed')) {
+      if (target.hasClass('on-button')) { // on button pressed
+        var val = 1;
+        $('#'+this.ActuatorUUID+"-off").removeClass("pressed");
+        $('#'+this.ActuatorUUID+"-on").addClass("pressed");
+      } else {
+        var val = 0;
+        $('#'+this.ActuatorUUID+"-on").removeClass("pressed");
+        $('#'+this.ActuatorUUID+"-off").addClass("pressed");
+      }
       var act = getActuators(this.ActuatorUUID);
-      Meteor.call("actuate", this.ServerPort, act.Path, "0", function(err, res) {
+      Meteor.call("actuate", this.ServerPort, act.Path, val, function(err, res) {
         if (err) {
           console.log("ERROR", err);
         }
       });
-    } else {
-      var act = getActuators(this.ActuatorUUID);
-      Meteor.call("actuate", this.ServerPort, act.Path, "1", function(err, res) {
-        if (err) {
-          console.log("ERROR", err);
-        }
-      });
-      $('#'+this.ActuatorUUID).addClass("pressed");
     }
   }
 });

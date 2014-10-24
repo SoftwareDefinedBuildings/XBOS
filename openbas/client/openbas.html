@@ -136,7 +136,8 @@
 </template>
 
 <template name="actuator_binary">
-  <div id="{{ActuatorUUID}}" class="button button-3d-caution button-small" data-value="{{value}}">Toggle</div><br>
+  <div id="{{ActuatorUUID}}-on" class="button button-3d-caution button-small on-button" style="float:left;">On</div>
+  <div id="{{ActuatorUUID}}-off" class="button button-3d-caution button-small off-button" style="float:left;">Off</div>
 </template>
 
 <template name="loading">
