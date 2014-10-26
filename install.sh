@@ -154,15 +154,41 @@ mv discovery.conf /etc/supervisor/conf.d/discovery.conf
 
 cat <<EOF > scheduler.ini
 [/]
-uuid = 6d39e9ba-28b3-11e4-a7d9-e4ce8f4229ee
+uuid = 6d39e9ba-28b3-11e4-a7d9-e4ce8f4229ee 
+
+[report 1]
+ReportDeliveryLocation = http://localhost:8079/add/lVzBMDpnkXApJmpjUDSvm4ceGfpbrLLSd9cq
 
 [server]
 port = 8080
 
 [/scheduler]
 type = smap.services.scheduler.Scheduler
-Rate = 1
-MongoUrl = http://localhost:3001
+pollrate = 1
+publishrate = 1
+source = mongodb://localhost:3001/meteor
+Metadata/Building = Soda Hall
+Metadata/Site = 0273d18f-1c03-11e4-a490-6003089ed1d0
+
+[/scheduler/temp_heat]
+Metadata/Description = Master Heating setpoint
+Metadata/System = HVAC
+Metadata/Type = Setpoint
+
+[/scheduler/temp_cool]
+Metadata/Description = Master Cooling setpoint
+Metadata/System = HVAC
+Metadata/Type = Setpoint
+
+[/scheduler/hvac_state]
+Metadata/Description = Master HVAC State control
+Metadata/System = HVAC
+Metadata/Type = Command
+
+[/scheduler/on]
+Metadata/Description = Master Lighting control
+Metadata/System = Lighting
+Metadata/Type = Command
 EOF
 
 mv scheduler.ini /etc/smap/.
