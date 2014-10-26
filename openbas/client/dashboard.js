@@ -119,7 +119,7 @@ Template.general_control_widget.GeneralControlAll = function() {
 };
 
 Template.hvacbuildingcolumn.HVACAll = function() {
-  return HVAC.find({});
+  return HVAC.find({'hvaczone': {'$ne': null}});
 };
 
 Template.lightingbuildingcolumn.LightingAll = function() {
