@@ -99,6 +99,7 @@
       </thead>
       <tbody>
       {{#each GeneralControlAll}}
+        {{#if timeseries.on.Metadata.Name}}
         <tr>
           <td>
             <a href="/room/{{room}}">{{room}}</a>
@@ -106,6 +107,7 @@
           <td>{{timeseries.on.Metadata.Name}}</td>
           <td>{{getValue 'on'}}</td>
         </tr>
+        {{/if}}
       {{/each}}
       </tbody>
     </table>
