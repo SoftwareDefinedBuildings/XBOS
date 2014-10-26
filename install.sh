@@ -211,6 +211,40 @@ EOF
 
 mv scheduler.conf /etc/supervisor/conf.d/scheduler.conf
 
+cat <<EOF > writeback.ini
+[/]
+uuid = f8b523d6-5a53-11e4-b74e-0cc47a0f7eea
+
+[server]
+port = 7979
+
+[/writeback]
+type = smap.services.writeback.WriteBack
+archiver = http://localhost:8079
+smap_dir = /tmp
+rate = 60
+EOF
+
+mv writeback.ini /etc/smap/.
+
+cat <<EOF > writeback.conf
+[program:writeback]
+command = twistd --pidfile=writeback.pid -n smap /etc/smap/writeback.ini
+directory = /var/smap
+environment=PYTHONPATH="/home/$SUDO_USER/smap"
+priority = 2
+autorestart = true
+user = $SUDO_USER
+stdout_logfile = /var/log/writeback.stdout.log
+stderr_logfile = /var/log/writeback.stderr.log
+stdout_logfile_maxbytes = 50MB
+stdout_logfile_backups = 5
+stderr_logfile_maxbytes = 50MB
+stderr_logfile_backups = 5
+EOF
+
+mv writeback.conf /etc/supervisor/conf.d/writeback.confg
+
 supervisorctl update
 
 npm install -g spin
