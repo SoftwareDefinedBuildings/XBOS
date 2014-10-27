@@ -114,45 +114,6 @@
   </div>
 </template>
 
-<template name="room_detail">
-  <div class="panel panel-default" style="margin: 0 auto; width: 60%;">
-    <div class="panel-heading">General controllers: {{room.RoomNumber}}</div>
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-          <th>Device</th>
-          <th>State</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each points}}
-          <tr id="{{uuid 'on'}}">
-            {{> point timeseries.on}}
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
-  </div>
-  <br>
-  <div class="panel panel-default" style="width: 50%; margin: 0 auto;"> 
-    <div class="panel-heading">{{room.RoomNumber}}</div>
-    <table class="table table-bordered">
-      <tbody>
-        <tr>
-          <td>HVAC Zone</td>
-          <td><a href="{{pathFor 'zone_detail' zonetype='hvac' zone=room.HVACZone }}">{{room.HVACZone}}</a></td>
-        </tr>
-        <tr>
-          <td>Lighting Zone</td>
-          <td><a href="{{pathFor 'zone_detail' zonetype='lighting' zone=room.LightingZone }}">{{room.LightingZone}}</a></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</template>
-
 <template name="hvacbuildingcolumn">
   <h2 class="dashboard-column-heading">HVAC</h2>
 

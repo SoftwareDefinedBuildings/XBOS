@@ -69,8 +69,10 @@ Router.map(function() {
     this.route('room_detail', {
       path: '/room/:room',
       data: function(){
-        return {'room': this.params.room, 'points': GeneralControl.find({'room': this.params.room}) };
-      }
+        return {
+          'room': Rooms.findOne({'RoomNumber': this.params.room}),
+          'points': GeneralControl.find({'room': this.params.room}) };
+        }
     });
 
     this.route('pointDetail', {
