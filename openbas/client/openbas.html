@@ -148,7 +148,7 @@
 </template>
 
 <template name="room_detail">
-  <h3 class="dashboard-column-heading">{{room.RoomNumber}}</h3>
+  <h2 class="dashboard-column-heading centertext">{{room.RoomNumber}}</h2>
   {{#if points.count }}
   <div class="panel panel-default" style="margin: 0 auto; width: 60%;">
     <div class="panel-heading">General controllers</div>
@@ -170,8 +170,8 @@
     </table>
   </div>
   {{/if}}
+  <br>
   <div class="panel panel-default" style="width: 50%; margin: 0 auto;"> 
-    <div class="panel-heading">{{room.RoomNumber}}</div>
     <table class="table table-bordered">
       <tbody>
         <tr>
