@@ -164,23 +164,3 @@
     </div>
   </div>
 </template>
-
-<template name="view_room">
-  
-  <div class="panel panel-default" style="width: 50%; margin: 0 auto;"> 
-    <div class="panel-heading">{{RoomNumber}}</div>
-    <table class="table table-bordered">
-      <tbody>
-        <tr>
-          <td>HVAC Zone</td>
-          <td><a href="{{pathFor 'zone_detail' zonetype='hvac' zone=HVACZone }}">{{HVACZone}}</a></td>
-        </tr>
-        <tr>
-          <td>Lighting Zone</td>
-          <td><a href="{{pathFor 'zone_detail' zonetype='lighting' zone=LightingZone }}">{{LightingZone}}</a></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</template>

@@ -101,7 +101,7 @@ function place_marker(room){
     $('div#floorplan-' + room.FloorplanId).append(marker);
 
     marker.click(function(){
-      Router.go('/building/view_room/' + room._id);
+      Router.go('/room/' + room.RoomNumber);
     });
   }
 }
@@ -145,7 +145,7 @@ Template.floorplan.helpers({
     } else {
       return '/img/ajax-loader.gif';
     }
-  }, 
+  },
 });
 
 Template.edit_room.rendered = function() {
