@@ -23,14 +23,18 @@ Template.add_room.rendered = function() {
 Template.add_room.events({
   'click #save-room': function(){ 
     var marker = $(".floorplan-marker");
-    var image = marker.siblings('img');
-    var floorplan_id = image.attr('id');
-    var img_position_abs = image.position();
-    var marker_position_abs = marker.position();
-    var marker_position_rel = {
-      'top': marker_position_abs.top - img_position_abs.top,
-      'left': marker_position_abs.left - img_position_abs.left
-    };
+    if (marker.length){
+      var image = marker.siblings('img');
+      var floorplan_id = image.attr('id');
+      var img_position_abs = image.position();
+      var marker_position_abs = marker.position();
+      var marker_position_rel = {
+        'top': marker_position_abs.top - img_position_abs.top,
+        'left': marker_position_abs.left - img_position_abs.left
+      };
+    } else {
+      var marker_position_rel = null;
+    }
     var r = {
       'RoomNumber': $("#room-number").val(),
       'Description': $("#room-description").val(),
