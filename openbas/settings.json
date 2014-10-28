@@ -1,6 +1,7 @@
 { 
   "archiverUrl": "http://localhost:8079",
   "roomsfile": "testrooms.json",
+  "default_password": "password"
   "apikey": "lVzBMDpnkXApJmpjUDSvm4ceGfpbrLLSd9cq",
   "public": {
     "archiverUrl":  "http://localhost:8079",

@@ -67,10 +67,31 @@ if (Meteor.isServer) {
 
 Meteor.startup(function(){
   if (Meteor.isServer){
+
+    // add default admin user (default password in settings)
+    if (!Meteor.users.find().count()){
+      var user = {
+        username: 'admin',
+        password: Meteor.settings.default_password,
+      };
+      Accounts.createUser(user); 
+    }
+
+    Accounts.config({
+      forbidClientAccountCreation: true
+    });
+
+    Accounts.onLogin(function(){
+      Router.go('/'); 
+    });
+
     Meteor.settings.public.project_root = process.env.PWD;
+
   };
+
   FloorplansFS = new FS.Collection("floorplans_fs", {
     stores: [new FS.Store.FileSystem("images", {path: Meteor.settings.public.project_root + "/public/floorplans"})]
   });
+
   Site.upsert({'_id':'Site'},{'_id': 'Site', 'Site': Meteor.settings.public.site});
 });

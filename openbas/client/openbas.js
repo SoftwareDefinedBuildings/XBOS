@@ -1,3 +1,7 @@
+Accounts.ui.config({
+  passwordSignupFields: 'USERNAME_ONLY'
+});
+
 OpenBAS = {};
 
 OpenBAS.PathNames = [
