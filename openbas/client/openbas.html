@@ -149,22 +149,26 @@
 
 <template name="room_detail">
   <h2 class="dashboard-column-heading centertext">{{room.RoomNumber}}</h2>
-  {{#if points.count }}
+  {{#if general_controllers.count }}
   <div class="panel panel-default" style="margin: 0 auto; width: 60%;">
     <div class="panel-heading">General controllers</div>
     <table class="table table-bordered table-striped">
       <thead>
         <tr>
+          <th>Name</th>
           <th>Device</th>
           <th>State</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
-        {{#each points}}
+        {{#each general_controllers}}
+          {{# if timeseries.on.Metadata.Name}}
           <tr id="{{uuid 'on'}}">
+            <td>{{ timeseries.on.Metadata.Name}} </td>
             {{> point timeseries.on}}
           </tr>
+          {{/if}}
         {{/each}}
       </tbody>
     </table>

@@ -80,7 +80,7 @@ Router.map(function() {
       data: function(){
         return {
           'room': Rooms.findOne({'RoomNumber': this.params.room}),
-          'points': GeneralControl.find({'room': this.params.room}) };
+          'general_controllers': GeneralControl.find({'room': this.params.room}) };
         }
     });
 
