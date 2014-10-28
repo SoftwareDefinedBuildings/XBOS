@@ -50,6 +50,25 @@
     {{> upload_floorplan }}
 
   </div>
+
+  <div class="modal fade" id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Delete Parmanently</h4>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirm">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </template>
 
 <template name='edit_room'>
@@ -129,7 +148,13 @@
 
 <template name='floorplan'>
   <div id="floorplan-{{_id}}" class="panel panel-default"> 
-    <div class="panel-heading">{{description}}</div>
+    <div class="panel-heading">{{description}}
+      <div style="float: right;">
+        <button data-floorplan="{{_id}}" type="button" class="floorplan-delete btn btn-link" style="padding-top: 0px;">
+          <span data-floorplan="{{_id}}" class="glyphicon glyphicon-trash"></span>
+        </button>
+      </div>
+    </div>
     <img id="{{_id}}" src="{{getImgPath}}" class="floorplan img-responsive" alt="Responsive image">
   </div>
 </template>
@@ -166,3 +191,4 @@
     </div>
   </div>
 </template>
+

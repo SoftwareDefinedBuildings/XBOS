@@ -86,10 +86,21 @@ Template.building.events({
     FloorplansFS.insert(file, function (err, fileObj) {
       Floorplans.insert({"description": description, "file_id": fileObj._id});
     });
+    Router.go('/building');
   },
   'hover .floorplan-marker': function(event){
     var room_id = $(event.target).data('room');
     var room = Rooms.find({_id: room_id}).fetch();
+  },
+  'click .floorplan-delete': function(event){
+    var floorplan_id = $(event.target).data('floorplan');
+    var modal = $('.modal')
+    modal.modal('show');
+    $('.modal #confirm').click(function(){
+      Floorplans.remove({_id: floorplan_id});
+      $('#floorplan-'+floorplan_id).fadeOut('slow');
+      modal.modal('hide');
+    });
   }
 });
 
