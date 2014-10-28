@@ -117,6 +117,7 @@ if (Meteor.isClient) {
     sources.push.apply(sources, Lighting.find().fetch())
     sources.push.apply(sources, HVAC.find().fetch())
     sources.push.apply(sources, Monitoring.find().fetch())
+    sources.push.apply(sources, GeneralControl.find().fetch())
     return sources;
   };
 
@@ -317,6 +318,10 @@ if (Meteor.isClient) {
         metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
       }
       if (type == 'Monitoring') {
+        metadata.push({'path': path, 'key': 'HVACZone', 'val': common['HVACZone'] || '', 'static': false});
+        metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
+      }
+      if (type == 'GeneralControl') {
         metadata.push({'path': path, 'key': 'HVACZone', 'val': common['HVACZone'] || '', 'static': false});
         metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
       }

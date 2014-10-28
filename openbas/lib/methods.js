@@ -147,6 +147,10 @@ find_by_id = function(_id) {
     if (record) {
         return [record, 'Monitoring'];
     }
+    record = GeneralControl.findOne(predicate);
+    if (record) {
+        return [record, 'GeneralControl'];
+    }
     record = Unconfigured.findOne(predicate);
     return [record, "Unconfigured"];
 };
@@ -165,6 +169,10 @@ find_by_path = function(path) {
     record = Monitoring.findOne(predicate);
     if (record) {
         return [record, 'Monitoring'];
+    }
+    record = GeneralControl.findOne(predicate);
+    if (record) {
+        return [record, 'GeneralControl'];
     }
     return [null, null]
 };
