@@ -114,9 +114,10 @@ if (Meteor.isClient) {
      * their driver path instead of the individual timeseries
      */
     var sources = []
-    sources.push.apply(sources, Lighting.find().fetch())
-    sources.push.apply(sources, HVAC.find().fetch())
-    sources.push.apply(sources, Monitoring.find().fetch())
+    sources.push.apply(sources, Lighting.find({"driver": {"$ne": null}}).fetch())
+    sources.push.apply(sources, HVAC.find({"driver": {"$ne": null}}).fetch())
+    sources.push.apply(sources, Monitoring.find({"driver": {"$ne": null}}).fetch())
+    sources.push.apply(sources, GeneralControl.find({"driver": {"$ne": null}}).fetch())
     return sources;
   };
 
@@ -315,8 +316,15 @@ if (Meteor.isClient) {
       }
       if (type == 'Lighting') {
         metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
+        if (!(common.Group)) {
+          metadata.push({'path': path, 'key': 'Group', 'val': common['Group'] || '', 'static': false});
+        }
       }
       if (type == 'Monitoring') {
+        metadata.push({'path': path, 'key': 'HVACZone', 'val': common['HVACZone'] || '', 'static': false});
+        metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
+      }
+      if (type == 'GeneralControl') {
         metadata.push({'path': path, 'key': 'HVACZone', 'val': common['HVACZone'] || '', 'static': false});
         metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
       }
