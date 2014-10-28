@@ -316,6 +316,9 @@ if (Meteor.isClient) {
       }
       if (type == 'Lighting') {
         metadata.push({'path': path, 'key': 'LightingZone', 'val': common['LightingZone'] || '', 'static': false});
+        if (!(common.Group)) {
+          metadata.push({'path': path, 'key': 'Group', 'val': common['Group'] || '', 'static': false});
+        }
       }
       if (type == 'Monitoring') {
         metadata.push({'path': path, 'key': 'HVACZone', 'val': common['HVACZone'] || '', 'static': false});
