@@ -114,10 +114,10 @@ if (Meteor.isClient) {
      * their driver path instead of the individual timeseries
      */
     var sources = []
-    sources.push.apply(sources, Lighting.find().fetch())
-    sources.push.apply(sources, HVAC.find().fetch())
-    sources.push.apply(sources, Monitoring.find().fetch())
-    sources.push.apply(sources, GeneralControl.find().fetch())
+    sources.push.apply(sources, Lighting.find({"driver": {"$ne": null}}).fetch())
+    sources.push.apply(sources, HVAC.find({"driver": {"$ne": null}}).fetch())
+    sources.push.apply(sources, Monitoring.find({"driver": {"$ne": null}}).fetch())
+    sources.push.apply(sources, GeneralControl.find({"driver": {"$ne": null}}).fetch())
     return sources;
   };
 
