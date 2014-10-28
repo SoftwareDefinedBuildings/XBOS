@@ -73,9 +73,7 @@
 <template name="point_row">
   <tr class="point" data-uuid="{{uuid}}">
     <td class="Path">
-      <a href="{{ pathFor 'pointDetail'}}">
-        {{Path}}
-      </a>
+      <a href="{{ploturl}}">{{Path}}</a>
     </td>
     <td class="trend" id="trend-{{uuid}}"></td>
     <td class="value">{{value_fmt}}</td>

@@ -34,6 +34,19 @@ Template.actuators.actuatorsAll = function() {
   return Points.find({"ActuatorUUID": {"$exists": true}}, {"reactive": !Session.get('loading')});
 };
 
+Template.point_row.rendered = function() {
+  var uuid = this.data.uuid;
+  Meteor.call('createPermalink', {
+    "streams": [ {"stream": uuid, "color": "#000000" } ],
+     "autoupdate": true,
+     "window_type": "now",
+     "window_width": 86400000000000,
+     "tz": "UTC",
+   }, function(err, res) {
+     updatePermalink(uuid, res);
+  });
+};
+
 Template.actuator_display.rendered = function() {
   var uuid = this.data.ActuatorUUID;
   Meteor.call('tags', uuid, function(err, res) {
@@ -88,6 +101,10 @@ Template.actuator_display.name = function() {
   var p = Points.find({'_id': this._id}).fetch()[0];
   var pathcomponents = p.Path.split("/");
   return pathcomponents[pathcomponents.length - 1].replace('_',' ').toProperCase();
+};
+
+Template.point_row.ploturl = function() {
+  return '/plot?'+getPermalink(this.uuid);
 };
 
 Template.actuator_display.ploturl = function() {
