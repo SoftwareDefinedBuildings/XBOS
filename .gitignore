@@ -1,2 +1,3 @@
 *.pyc
-monitor/report/report.json
+
+openbas_reactjs/build/.module-cache
