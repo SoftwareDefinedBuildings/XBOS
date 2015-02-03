@@ -151,3 +151,30 @@ gateway, and the relationships and groupings between timeseries is less
 intuitive or more subtle. What is needed is a device UUID that simplifies this
 grouping such that it may be specified by the driver source instead of being
 gleaned in postprocessing (which may lead to mistakes).
+
+## Two-Way Data Flow
+
+One of the consequences of the original sMAP architectural formulation in which
+the archiver was an optional component instead of a central hub is the fact
+that there is no well-defined way to push data back to the sMAP sources. sMAP
+sources support local actuation, that is, a POST request sent to a special
+timeseries endpoint on the driver instance. In OpenBAS, we often have the case
+in which a user clicks a button or drags a slider and wants to enact something
+on one of the running drivers. OpenBAS v1 made changes to the sMAP driver such
+that the actuator descriptions exposed the port they were running on, and then
+the client-side JavaScript made POST requests to URLs that were constructed
+from the actuator description and the assumption that all drivers were running
+on the host machine.
+
+This assumption and the accompanying mechanism for actuation was hacky, but
+worked for the single-machine philosophy of OpenBAS v1. Moving forward, we
+would like to enable the possibility of having sMAP drivers running on external
+devices, invalidating the assumption that all drivers are running on the same
+host machine. Additionally, having clients blindly POST to internal ports means
+that those internal ports must be public, which should be unnecessary and makes
+the whole system less secure. If we position OpenBAS in a home- or
+building-area network, then the devices in that home should not be exposed past
+the NAT box.
+
+There is already an external connection from the local drivers to the
+(potentially) external archiver. Could this be two-way?
