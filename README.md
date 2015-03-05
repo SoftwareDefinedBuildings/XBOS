@@ -178,3 +178,34 @@ the NAT box.
 
 There is already an external connection from the local drivers to the
 (potentially) external archiver. Could this be two-way?
+
+## Architectural Proposal
+
+Each deployment will either have or connect to a Giles archiver running with
+MongoDB as a metadata store and Quasar as a timeseries database (making sure to
+drastically reduce the cache size on Quasar). The deployment will be
+identifiable by each of the sMAP sources having the same `Metadata/Site` UUID,
+which is how it is currently done.
+
+The OpenBAS server process will serve the requisite HTML/CSS/JS required for
+the various sites. We're are no longer making the assumption that OpenBAS
+consists solely of the web application -- the server process should facilitate
+deploying and running other applications on top of the OpenBAS API. The server
+will open a WebSockets connection to Giles and will use that connection as the
+mechanism for executing queries. The server process will probably be written
+in NodeJS, but this is not necessary.
+
+The client-facing application will be written using the ReactJS view framework,
+using WebSockets to the server process as the transport for the constant data
+flow. This means that the number of websockets connections against Giles will
+only scale with the number of deployments against it, not the number of clients
+visiting the site (not that Giles needs help with this). Placing logic on the
+server also means that we can have actuations/metadata commands be sent from
+the client to the server rather than the archiver directly. The server can now
+know the API key instead of each of the clients. Having a server process will
+also give us a place to store application-specific data.
+
+### Helpful Blog Posts
+
+* http://blog.mgechev.com/2014/09/03/webrtc-peer-to-peer-chat-with-react/
+* http://codelinks.net/reactjs-and-d3-build-real-time-components/
