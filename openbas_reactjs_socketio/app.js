@@ -46,7 +46,7 @@ io.on('connection', function (socket) {
             // when we receive a message from the server, emit the result
             // back to each of the clients
             wsconns[msg].on('message', function(data, flags) {
-                socket.emit(msg, JSON.parse(data));
+                io.emit(msg, JSON.parse(data));
             });
         }
     });
