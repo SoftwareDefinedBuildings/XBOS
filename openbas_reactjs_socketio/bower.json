@@ -1,0 +1,11 @@
+{
+    "name": "openbas",
+    "version": "0.0.1",
+    "dependencies": {
+        "jquery": "~2.0.3",
+        "underscore": "*",
+        "bootstrap": "~3.0.1",
+        "react":"~0.12.2",
+        "react-bootstrap":"*"
+    }
+}
