@@ -139,3 +139,10 @@ that piece of information.
 
 The problem is that sMAP doesn't provide a good enough abstraction for writing
 data to an actuator as well as it does for reading sources.
+
+The best solution we have right now that doesn't involve changing the sMAP
+fundamentals is through sMAP's republish mechanism. By default, each actuator
+should subscribe to a query that is specifically for itself, e.g.
+`Actuator/uuid = "1eacb08b-954a-5f25-a634-500cc3320c4b"`. The actuator can subscribe
+to other sources over that, of course, but this provides a way for individual
+actuations to be done.

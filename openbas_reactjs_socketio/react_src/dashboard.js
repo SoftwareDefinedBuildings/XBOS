@@ -1,5 +1,3 @@
-var republishURL = "http://localhost:8078/republish";
-var queryURL = "http://localhost:8079/api/query"
 var Dashboard = React.createClass({
     getInitialState: function() {
         return {hvacZones: []};
