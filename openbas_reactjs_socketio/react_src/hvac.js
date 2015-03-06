@@ -96,10 +96,10 @@ var Thermostat = React.createClass({
             <div className={classes}>
                     <b>Thermostat</b>
                     <p>Temperature: {this.state.temp}</p>
-                    <p>Heat Setpoint: {this.state.temp_heat_act}</p>
+                    <p>Heat Setpoint: {this.state.temp_heat}</p>
                     <p>Cool Setpoint: {this.state.temp_cool}</p>
-                    <ContinuousActuator />
-                    <BinaryActuator onLabel="On" offLabel="Off"/>
+                    <ContinuousActuator uuid={this.props.device.temp_heat.Actuator.uuid} />
+                    <BinaryActuator onLabel="On" offLabel="Off" uuid={this.props.device.override.Actuator.uuid}/>
             </div>
         );
     }

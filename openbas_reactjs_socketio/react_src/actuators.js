@@ -41,24 +41,19 @@ var BinaryActuator = React.createClass({
     handleClick: function(e) {
         this.setState({loading: true});
         var isOnReq = e.target.getAttribute('data-buttontype') == 'on';
-        var postURL = isOnReq ? this.props.onUrl : this.props.offUrl;
-        var postData = isOnReq ? this.props.onData : this.props.offData;
-        $.ajax({
-            url: postURL,
-            dataType: 'json',
-            type: 'POST',
-            data: postData,
-            success: function(data){
-                this.setState({loading: false, on: isOnReq});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.log(postURL, status, err.toString());
-            }.bind(this)
-        });
+
+        var req = {uuid: this.props.uuid, request: isOnReq ? 1 : 0};
+        this.socket.emit('actuate', req);
 
         setTimeout(function() {
         this.setState({loading: false});
         }.bind(this), 2000);
+    },
+    componentWillMount: function() {
+        this.socket = io.connect();
+    },
+    componentDidMount: function() {
+        console.log('props',this.props);
     },
     render: function() {
         var Button = ReactBootstrap.Button;
