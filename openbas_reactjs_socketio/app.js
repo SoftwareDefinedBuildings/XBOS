@@ -3,6 +3,9 @@ var express = require('express');
 var path = require('path');
 var WebSocket = require('ws');
 var _ = require('underscore');
+var config = require('./config');
+var moment = require('moment');
+var http = require('http');
 
 // server setup
 var app = express();
@@ -35,7 +38,7 @@ io.on('connection', function (socket) {
             console.log('new subscribe req', msg);
 
             // create a websocket for that subscription
-            wsconns[msg] = new WebSocket('ws://localhost:8078/republish');
+            wsconns[msg] = new WebSocket(config.wsArchiverUrl+'/republish');
 
             // on opening the websocket, send the query message
             wsconns[msg].on('open', function open() {
@@ -49,5 +52,36 @@ io.on('connection', function (socket) {
                 io.emit(msg, JSON.parse(data));
             });
         }
+    });
+
+    var smapActuateMsg = {
+        '/actuate': {
+            Metadata: {override: ''},
+            Readings: [],
+            uuid: config.uuid,
+        },
+    };
+    var smapPost = {
+        hostname: config.httpArchiverHost,
+        port: config.httpArchiverPort,
+        path: '/add/'+config.apikey,
+        method: 'POST'
+    };
+    socket.on('actuate', function(msg) {
+        
+        smapActuateMsg['/actuate'].Metadata.override = msg.uuid
+        smapActuateMsg['/actuate'].Readings[0] = [moment().valueOf(), msg.request];
+        console.log("Actuation requested for", smapActuateMsg);
+        var req = http.request(smapPost, function(res) {
+            console.log('STATUS',res.statusCode);
+            res.on('data', function(chunk) {
+                console.log('BODY',chunk);
+            });
+        });
+        req.on('error', function(e) {
+            console.error("Problem POSTing to archiver:", e.message);
+        });
+        req.write(JSON.stringify(smapActuateMsg));
+        req.end();
     });
 });
