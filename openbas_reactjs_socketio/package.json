@@ -9,6 +9,7 @@
         "express": "*",
         "socket.io": "*",
         "ws": "*",
-        "underscore":"*"
+        "underscore":"*",
+        "moment":"*"
     }
 }

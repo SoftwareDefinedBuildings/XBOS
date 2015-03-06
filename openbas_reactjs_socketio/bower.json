@@ -6,6 +6,7 @@
         "underscore": "*",
         "bootstrap": "~3.0.1",
         "react":"~0.12.2",
-        "react-bootstrap":"*"
+        "react-bootstrap":"*",
+        "moment": "*"
     }
 }
