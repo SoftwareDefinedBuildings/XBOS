@@ -1,3 +1,4 @@
 *.pyc
 
-openbas_reactjs/build/.module-cache
+node_modules/
+public/bower_components/

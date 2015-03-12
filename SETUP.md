@@ -141,18 +141,27 @@ data to an actuator as well as it does for reading sources.
 The best solution we have right now that doesn't involve changing the sMAP
 fundamentals is through sMAP's republish mechanism. By default, each actuator
 should subscribe to a query that is specifically for itself, e.g.
-`Actuator/override = "1eacb08b-954a-5f25-a634-500cc3320c4b"`. The actuator can
+`Metadata/override = "1eacb08b-954a-5f25-a634-500cc3320c4b"`. The actuator can
 subscribe to other sources over that, of course, but this provides a way for
-individual actuations to be done. The problem with using this approach is that
-this sMAP object containing the actuation command has to be POSTed to
-somewhere. If this is POSTed to the actuator stream itself, then we will get a
-loop of republishes: post to actuator stream, actuator changes, actuator posts
-to archiver, archiver forwards the post back to the actuator because it is
-subscribed. We must either delete the metadata string after we POST to the
-actuator stream, or we must do the post to some external driver.
+individual actuations to be done.
+
+The problem with using this approach is that this sMAP object containing the
+actuation command has to be POSTed to somewhere. If this is POSTed to the
+actuator stream itself, then we will get a loop of republishes: post to
+actuator stream, actuator changes, actuator posts to archiver, archiver
+forwards the post back to the actuator because it is subscribed. We must
+either delete the metadata string after we POST to the actuator stream, or we
+must do the post to some external driver.
 
 The fix for *that* problem is to have the clients POST their actuation requests
 to the app server, which then acts as an "override" sMAP driver and publishes
 the actuation requests, correctly wrapped up with the metadata
-"Actuator/override", to the archiver, which then republishes to the relevant
+"Metadata/override", to the archiver, which then republishes to the relevant
 actuators.
+
+Because of client fan-out, it makes sense to have the client relay their
+actuation requests to the application server, which then interacts directly
+with Giles. This can be accomplished in two ways: 1) the app server acts as a
+single sMAP driver that changes its metadata depending on which point is being
+actuated, or 2) the app server creates a number of streams equal to the number
+of actuators, and simply switches which stream to publish on.
