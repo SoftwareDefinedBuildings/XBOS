@@ -193,10 +193,11 @@ consists solely of the web application -- the server process should facilitate
 deploying and running other applications on top of the OpenBAS API. The server
 will open a WebSockets connection to Giles and will use that connection as the
 mechanism for executing queries. The server process will probably be written
-in NodeJS, but this is not necessary.
+in NodeJS, but this is not necessary. Server process could also use regular HTTP
+requests as well.
 
 The client-facing application will be written using the ReactJS view framework,
-using WebSockets to the server process as the transport for the constant data
+using socket.io to the server process as the transport for the constant data
 flow. This means that the number of websockets connections against Giles will
 only scale with the number of deployments against it, not the number of clients
 visiting the site (not that Giles needs help with this). Placing logic on the
@@ -209,3 +210,4 @@ also give us a place to store application-specific data.
 
 * http://blog.mgechev.com/2014/09/03/webrtc-peer-to-peer-chat-with-react/
 * http://codelinks.net/reactjs-and-d3-build-real-time-components/
+* https://github.com/javaguirre/twitter-streaming-api-example
