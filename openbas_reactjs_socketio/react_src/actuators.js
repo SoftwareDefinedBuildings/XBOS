@@ -1,30 +1,34 @@
 var ContinuousActuator = React.createClass({
     getInitialState: function() {
-        return({loading: false});
+        return({loading: false,
+                value: this.props.initialValue});
     },
     handleSubmit: function(event) {
         event.preventDefault();
-        this.setState({loading: true});
         var value = parseFloat(this.refs.value.getDOMNode().value.trim());
+        this.setState({loading: true});
+        console.log("new value", value);
         if (!isNaN(value)) {
-            console.log("new value", value);
             var req = {uuid: this.props.uuid, request: value};
             console.log(req);
             this.socket.emit('actuate', req);
         }
         setTimeout(function() {
-            this.setState({loading: false});
+            this.setState({loading: false, value: value});
             this.refs.value.getDOMNode().value = '';
         }.bind(this), 2000);
     },
     componentWillMount: function() {
         this.socket = io.connect();
     },
+    componentDidMount: function() {
+        console.log("continuous actuator", this.props);
+    },
     render: function() {
         return(
             <div className="continuousActuator">
                 <form onSubmit={this.handleSubmit} >
-                  <input type="text" ref="value" />
+                  <input type="text" ref="value" maxLength="4" size="4" />
                   { !this.state.loading ?  <input type="submit" value="Override" /> : <label>Loading...</label> }
                 </form>
             </div>

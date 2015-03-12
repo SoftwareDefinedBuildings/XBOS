@@ -49,8 +49,9 @@ var ThermostatList = React.createClass({
     },
     render: function() {
         var thermostats = _.map(this.state.thermostats, function(tstat_timeseries) {
+            var view = get_device_view(tstat_timeseries);
             return (
-                <Thermostat device={get_device_view(tstat_timeseries)}/>
+                <Thermostat key={view._Metadata.DeviceID} device={view}/>
             );
         });
         return (
@@ -64,20 +65,20 @@ var ThermostatList = React.createClass({
 var Thermostat = React.createClass({
     getInitialState: function() {
         return({temp: 'n/a',
-                temp_heat_act: 'n/a',
+                temp_heat: 'n/a',
                 temp_cool: 'n/a'});
     },
     updateFromRepublish: function(data) {
-        timeseries_name = get_timeseries(data.Path);
-        toset = {};
+        var timeseries_name = get_timeseries(data.Path);
+        var toset = {};
         toset[timeseries_name] = get_latest_reading(data.Readings);
         this.setState(toset);
     },
     componentWillMount: function() {
-        socket = io.connect();
-        var self = this;
-        query = 'Metadata/HVACZone = "'+this.props.device._Metadata.HVACZone+'";';
+        var socket = io.connect();
+        var query = 'Metadata/HVACZone = "'+this.props.device._Metadata.HVACZone+'";';
         socket.emit('new subscribe', query);
+        var self = this;
         socket.on(query, function(data) {
             self.updateFromRepublish(data);
         });
@@ -96,10 +97,17 @@ var Thermostat = React.createClass({
             <div className={classes}>
                     <b>Thermostat</b>
                     <p>Temperature: {this.state.temp}</p>
-                    <p>Heat Setpoint: {this.state.temp_heat}</p>
-                    <p>Cool Setpoint: {this.state.temp_cool}</p>
-                    <ContinuousActuator uuid={this.props.device.temp_heat.Actuator.uuid} />
-                    <BinaryActuator onLabel="On" offLabel="Off" uuid={this.props.device.override.Actuator.uuid}/>
+                    <p>Heat Setpoint: {this.state.temp_heat} 
+                        <ContinuousActuator initialValue={this.state.temp_heat} 
+                                            uuid={this.props.device.temp_heat.Actuator.uuid} />
+                    </p>
+                    <p>Cool Setpoint: {this.state.temp_cool} 
+                        <ContinuousActuator initialValue={this.state.temp_cool}
+                                            uuid={this.props.device.temp_cool.Actuator.uuid} />
+                    </p>
+                    <p>Override: {this.state.override} 
+                        <BinaryActuator onLabel="On" offLabel="Off" uuid={this.props.device.override.Actuator.uuid}/>
+                    </p>
             </div>
         );
     }
