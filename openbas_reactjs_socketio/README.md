@@ -143,6 +143,13 @@ data to an actuator as well as it does for reading sources.
 The best solution we have right now that doesn't involve changing the sMAP
 fundamentals is through sMAP's republish mechanism. By default, each actuator
 should subscribe to a query that is specifically for itself, e.g.
-`Actuator/uuid = "1eacb08b-954a-5f25-a634-500cc3320c4b"`. The actuator can subscribe
+`Metadata/override = "1eacb08b-954a-5f25-a634-500cc3320c4b"`. The actuator can subscribe
 to other sources over that, of course, but this provides a way for individual
 actuations to be done.
+
+Because of client fan-out, it makes sense to have the client relay their
+actuation requests to the application server, which then interacts directly
+with Giles. This can be accomplished in two ways: 1) the app server acts as a
+single sMAP driver that changes its metadata depending on which point is being
+actuated, or 2) the app server creates a number of streams equal to the number
+of actuators, and simply switches which stream to publish on.
