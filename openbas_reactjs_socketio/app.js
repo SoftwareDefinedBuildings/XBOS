@@ -51,6 +51,10 @@ io.on('connection', function (socket) {
             wsconns[msg].on('message', function(data, flags) {
                 io.emit(msg, JSON.parse(data));
             });
+
+            wsconns[msg].on('close', function() {
+                console.log('disconnected!');
+            });
         }
     });
 
