@@ -1,3 +1,4 @@
+var queryURL = 'http://localhost:8079/api/query';
 var Dashboard = React.createClass({
     getInitialState: function() {
         return {hvacZones: []};
