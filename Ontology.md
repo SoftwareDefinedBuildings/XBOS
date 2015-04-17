@@ -105,18 +105,25 @@ This is a UUID that is shared for all timeseries for a given physical device.
 This is in place to avoid doing string slicing/manipulation on the application
 side to figure out which timeseries belong to the same physical device.
 
+#### `Metadata/Device`
+
+Broad class of device. This should probably be more descriptive
+* `Thermostat`
+* `Light`
+* `Sensor`
+
 ## Timeseries-level Metadata
 
-#### `Metadata/Type`
+#### `Metadata/Point/Type`
 
 These should be defined for each timeseries within the driver:
 
-* `SP`: setpoint -- does not actually change anything, but serves to direct the device
+* `Setpoint`: does not actually change anything, but serves to direct the device. Changes a setting that causes the device to change its behavior
 * `Command`: changes some aspect of the device, e.g. 'on' to 'off'
 * `Reading`: reads an aspect or state of the device, e.g. "what is my light's brightness level?"
 * `Sensor`: reports an aspect of the physical world
 
-#### `Metadata/Sensor`
+#### `Metadata/Point/Sensor`
 
 For a sensor, we define what the sensor measures. This is to avoid dependence on any specific timeseries endpoint:
 
@@ -125,3 +132,67 @@ For a sensor, we define what the sensor measures. This is to avoid dependence on
 * `Temperature`: temperature. Units should be obtained from `Properties/UnitofMeasure`
 * `Illumination`: illumination
 * `CO2`: carbon-dioxide
+
+#### `Metadata/Point/Target`
+
+For a timeseries, we broadly define its target (what it is concerned with). This, combined with the upper two tags, should
+provide an unambiguous description of a point within the context of a device
+
+* `Heating`: concerned with heating
+* `Cooling`: concerned with cooling
+* `Temperature`
+* `Illumination`: illumination/lighting
+* `Airflow`
+* `CO2`
+* `Humidity`
+* `Occupancy`
+* `Power`: concerned with power usage
+* `Active`: on/off
+
+
+### Examples
+
+A heating setpoint on a thermostat would have the following tags
+
+```json
+{
+'Metadata': 
+{
+    'Point': 
+    {
+        'Type': 'Setpoint',
+        'Sensor': 'Temperature',
+        'Target': 'Heating'
+    }
+}
+```
+
+The temperature setting on a thermostat would then be
+
+```json
+{
+'Metadata': 
+{
+    'Point': 
+    {
+        'Type': 'Sensor',
+        'Sensor': 'Temperature',
+        'Target': 'Temperature'
+    }
+}
+```
+
+A light switch might look like 
+
+```json
+{
+'Metadata': 
+{
+    'Point': 
+    {
+        'Type': 'Command',
+        'Sensor': 'Illumination',
+        'Target': 'Active'
+    }
+}
+```
