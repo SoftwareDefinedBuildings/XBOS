@@ -76,7 +76,7 @@ var Thermostat = React.createClass({
     },
     componentWillMount: function() {
         var socket = io.connect();
-        var query = 'Metadata/HVACZone = "'+this.props.device._Metadata.HVACZone+'";';
+        var query = 'Metadata/DeviceID = "'+this.props.device._Metadata.DeviceID+'";';
         socket.emit('new subscribe', query);
         var self = this;
         socket.on(query, function(data) {

@@ -54,7 +54,6 @@ var BinaryActuator = React.createClass({
                 loading: false});
     },
     handleClick: function(e) {
-        event.preventDefault();
         this.setState({loading: true});
         var targetState = e.target.getAttribute('data-buttontype') == 'on' ? 1 : 0;
         console.log(targetState);
