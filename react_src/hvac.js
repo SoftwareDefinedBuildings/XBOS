@@ -38,7 +38,7 @@ var ThermostatList = React.createClass({
             data: "select * where Metadata/HVACZone='"+this.props.zoneName+"' and Metadata/Device = 'Thermostat';",
             success: function(data) {
                 this.setState({thermostats: _.groupBy(data, function(md) {
-                        return md.DeviceID;
+                        return md.Metadata.DeviceID;
                     }
                 )});
             }.bind(this),

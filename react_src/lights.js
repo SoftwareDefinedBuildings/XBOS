@@ -26,6 +26,8 @@ var LightingZone = React.createClass({
     }
 });
 
+//TODO: need lighting group list not lighting controller list
+
 var LightingControllerList = React.createClass({
     getInitialState: function() {
         return {controllers: []};
