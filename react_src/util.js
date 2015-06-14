@@ -120,4 +120,8 @@ var LOOKUP = {
     "Cooling Setpoint": "Metadata/Point/Type = 'Setpoint' and Metadata/Point/Setpoint = 'Cooling'",
     "Temperature": "Metadata/Point/Type = 'Sensor' and Metadata/Point/Sensor = 'Temperature'",
     "Humidity": "Metadata/Point/Type = 'Sensor' and Metadata/Point/Sensor = 'Humidity'",
+    "Brightness": "Metadata/Point/Type = 'Command' and Metadata/Point/Command = 'Brightness'",
+    "Hue": "Metadata/Point/Type = 'Command' and Metadata/Point/Command = 'Hue'",
+    "Illumination": "Metadata/Point/Type = 'Sensor' and Metadata/Point/Sensor = 'Illumination'",
+    "On": "Metadata/Point/Type = 'Command' and Metadata/Point/Command = 'On'",
 };

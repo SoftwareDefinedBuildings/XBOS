@@ -28,7 +28,7 @@ var HVACZone = React.createClass({
 
 var HVACZoneRoomList = React.createClass({
     getInitialState: function() {
-        return {rooms: [], thermostats: []};
+        return {rooms: []};
     },
     componentDidMount: function() {
         // find all distinct rooms

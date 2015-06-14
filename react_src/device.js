@@ -27,7 +27,7 @@ var Device = React.createClass({
         run_query("select uuid where "+this.props.queryBase+" and "+LOOKUP[displaytag],
                   function(data) { // success
                     var uuids = self.state.uuids;
-                    if (data.length > 0) {
+                    if (data != undefined && data.length > 0) {
                         uuids[data[0].uuid] = displaytag;
                         self.setState({"uuids": uuids});
                     }

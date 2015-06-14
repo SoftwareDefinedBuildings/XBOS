@@ -20,7 +20,7 @@ var LightingZone = React.createClass({
         return (
             <div className="lightingZone">
                 <h3>Zone name: {this.props.name}</h3>
-                <LightingControllerList zoneName={this.props.name} />
+                <LightingZoneRoomList zoneName={this.props.name} />
             </div>
         );
     }
@@ -28,42 +28,82 @@ var LightingZone = React.createClass({
 
 //TODO: need lighting group list not lighting controller list
 
-var LightingControllerList = React.createClass({
+var LightingZoneRoomList = React.createClass({
     getInitialState: function() {
-        return {controllers: []};
+        return {rooms: []};
     },
     componentDidMount: function() {
-        $.ajax({
-            url: queryURL,
-            datatype: 'json',
-            type: 'POST',
-            data: "select * where Metadata/LightingZone='"+this.props.zoneName+"' and Metadata/Device = 'Lighting Controller';",
-            success: function(data) {
-                this.setState({controllers: _.groupBy(data, function(md) {
-                        return md.Metadata.DeviceID;
-                    }
-                )});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(queryURL, status, err.toString());
-            }.bind(this)
-        });
+        var self = this;
+        run_query("select distinct Metadata/Location/Room where Metadata/LightingZone='"+this.props.zoneName+"';",
+                  function(data) { //success
+                    self.setState({rooms: data});
+                  },
+                  function(xhr, status, err) { // error
+                    console.error(queryURL, status, err.toString());
+                  }
+        );
     },
     render: function() {
-        console.log(this.state.controllers);
-        var controllers = _.map(this.state.controllers, function(light_timeseries) {
-            var view = get_device_view(light_timeseries);
+        var self = this;
+        var rooms = _.map(this.state.rooms, function(roomName) {
+            var queryBase = "Metadata/LightingZone='"+self.props.zoneName+"' and Metadata/Location/Room = '"+roomName+"';";
             return (
-                <LightingController key={view._Metadata.DeviceID} device={view} />
-            );
+                <LightingZoneRoom key={roomName}
+                                  roomName={roomName}
+                                  zoneName={self.props.zoneName}
+                                  queryBase={queryBase}
+                />
+            )
         });
         return (
-            <div className="lightingControllerList">
-                {controllers}
+            <div className="LightingZoneRoomList">
+                {rooms}
             </div>
         );
     }
+});
 
+var LightingZoneRoom = React.createClass({
+    getInitialState: function() {
+        return({devices: []});
+    },
+    componentDidMount: function() {
+        // map the semantic meanings to UUIDs
+        var self = this;
+        run_query("select distinct Metadata/DeviceID where "+self.props.queryBase,
+                  function(data) { //success
+                    self.setState({devices: data})
+                  },
+                  function(xhr, status, err) { // error
+                    console.error(queryURL, status, err.toString());
+                  }
+        );
+    },
+    render: function() {
+        var cx = React.addons.classSet;
+        var classes = cx({
+            'well': true,
+            'dark': true,
+            'HVACZoneRoom': true
+        });
+        var self = this;
+        var devices = _.map(this.state.devices, function(deviceID) {
+            var display = ["Brightness","On","Hue","Illumination"];
+            var queryBase = "Metadata/DeviceID = '"+deviceID+"'";
+            return (
+                <Device key={deviceID} 
+                        deviceID={deviceID}
+                        queryBase={queryBase}
+                        display={display}/>
+            )
+        });
+        return (
+            <div className={classes}>
+                  <b>Room: {self.props.roomName}</b>
+                  {devices}
+            </div>
+        );
+    }
 });
 
 var LightingController = React.createClass({
