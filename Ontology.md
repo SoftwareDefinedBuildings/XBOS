@@ -23,7 +23,7 @@ Metadata/Site = 0273d18f-1c03-11e4-a490-6003089ed1d0
 This is the human-readable name for this configuration file. No specific semantic meaning, but this
 is a handy way to refer to the sources contained in this file when you query the archiver.
 
-#### `Metadata/Building`
+#### `Metadata/Location/Building`
 
 The name of the building where this is installed. This should be unique to the installation, just as
 `Metadata/Site` below.
@@ -66,7 +66,7 @@ This indicates what this source does within the context of its system. Examples 
 * `Building HVAC`
 * `Monitoring`
 
-#### `Metadata/Floor`
+#### `Metadata/Location/Floor`
 
 Which floor the collection is on. This is simply a number. No `4th` or `first floor`. This may also be
 device-level metadata.
@@ -123,7 +123,7 @@ These should be defined for each timeseries within the driver:
 * `Reading`: reads an aspect or state of the device, e.g. "what is my light's brightness level?"
 * `Sensor`: reports an aspect of the physical world
 
-#### `Metadata/Point/Sensor`
+#### `Metadata/Point/{Setpoint, Command, Reading, Sensor}`
 
 For a sensor, we define what the sensor measures. This is to avoid dependence on any specific timeseries endpoint:
 
@@ -134,6 +134,8 @@ For a sensor, we define what the sensor measures. This is to avoid dependence on
 * `CO2`: carbon-dioxide
 
 #### `Metadata/Point/Target`
+
+Probably remove this?
 
 For a timeseries, we broadly define its target (what it is concerned with). This, combined with the upper two tags, should
 provide an unambiguous description of a point within the context of a device
@@ -161,8 +163,7 @@ A heating setpoint on a thermostat would have the following tags
     'Point': 
     {
         'Type': 'Setpoint',
-        'Sensor': 'Temperature',
-        'Target': 'Heating'
+        'Setpoint': 'Heating'
     }
 }
 ```
@@ -177,7 +178,6 @@ The temperature setting on a thermostat would then be
     {
         'Type': 'Sensor',
         'Sensor': 'Temperature',
-        'Target': 'Temperature'
     }
 }
 ```
@@ -191,8 +191,9 @@ A light switch might look like
     'Point': 
     {
         'Type': 'Command',
-        'Sensor': 'Illumination',
-        'Target': 'Active'
+        'Command': 'Illumination',
     }
 }
 ```
+
+and we would discover dimmable vs binary by lookinag at the linked actuator
