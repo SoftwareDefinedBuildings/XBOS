@@ -53,6 +53,11 @@ var Device = React.createClass({
             <div className={classes}>
                 <b>Name: {this.state.name}</b>
                 <p>DeviceID: {this.props.deviceID}</p>
+                <p>
+                    <ReactBootstrap.ModalTrigger modal={<MetadataModal deviceID={this.props.deviceID}/>}>
+                        <ReactBootstrap.Button bsStyle='primary' bsSize='small'>Show Metadata</ReactBootstrap.Button>
+                    </ReactBootstrap.ModalTrigger>
+                </p>
                 {timeseries}
             </div>
         );
@@ -86,7 +91,7 @@ var Timeseries = React.createClass({
                   });
     },
     render: function() {
-        var act = (<p></p>);
+        var act = (<span />);
         if (this.state.Actuator != undefined) {
             act = (<Actuator ActuatorUUID={this.state.Actuator.uuid}/>);
         }
@@ -104,4 +109,37 @@ var Timeseries = React.createClass({
             </div>
         )
     }
+});
+
+var MetadataModal = React.createClass({
+   getInitialState() {
+    return {};
+   },
+   componentWillMount(data) {
+    var self = this;
+    run_query("select * where Metadata/DeviceID = '"+this.props.deviceID+"'",
+             function(data) {
+                self.setState(get_device_view(data)._Metadata);
+             },
+             function(xhr, status, err) { // error
+               console.error("error", displaytag, LOOKUP[displaytag]);
+               console.error(queryURL, status, err.toString());
+             });
+   },
+   render() {
+    var mdrender = _.map(this.state, function(value, key) {
+        return (<p key={key}><b>{key}</b>: {value}</p>)
+    });
+    var modaltitle = 'Metadata for DeviceID ' + this.props.deviceID;
+    return (
+      <ReactBootstrap.Modal {...this.props} title={modaltitle} animation={false}>
+        <div className='modal-body'>
+            {mdrender}
+        </div>
+        <div className='modal-footer'>
+          <ReactBootstrap.Button onClick={this.props.onRequestHide}>Close</ReactBootstrap.Button>
+        </div>
+      </ReactBootstrap.Modal>
+    );
+  } 
 });
