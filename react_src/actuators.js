@@ -1,3 +1,38 @@
+// given a UUID, figures out what kind of actuator to render and renders it
+// uses props ActuatorUUID
+var Actuator = React.createClass({
+    getInitialState: function() {
+        return({type: ""});
+    },
+    componentWillMount: function() {
+        var self = this;
+        run_query("select Actuator/Model where uuid = '"+this.props.ActuatorUUID+"'",
+                  function(data) {
+                    self.setState({type: data[0].Actuator.Model});
+                  },
+                  function(xhr, status, err) { // error
+                    console.error(queryURL, status, err.toString());
+                  });
+    },
+    render: function() {
+        var act = (<p></p>);
+        switch (this.state.type) {
+        case "continuous":
+        case "continuousInteger":
+            act = (
+                <ContinuousActuator uuid={this.props.ActuatorUUID} />
+            );
+            break;
+        case "binary":
+            act = (
+                <BinaryActuator onLabel="On" offLabel="Off" uuid={this.props.ActuatorUUID} />
+            );
+        }
+        return act;
+    }
+});
+
+
 var ContinuousActuator = React.createClass({
     getInitialState: function() {
         return({loading: false});

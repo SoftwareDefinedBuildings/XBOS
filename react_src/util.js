@@ -102,3 +102,22 @@ var intersect_json = function(o){
       });
   return r
 };
+
+// convenience method for running AJAX POST
+var run_query = function(q, succ, err) {
+    $.ajax({
+        url: queryURL,
+        datatype: 'json',
+        type: 'POST',
+        data: q,
+        success: succ.bind(this),
+        error: err.bind(this)
+    });
+};
+
+var LOOKUP = {
+    "Heating Setpoint": "Metadata/Point/Type = 'Setpoint' and Metadata/Point/Setpoint = 'Heating'",
+    "Cooling Setpoint": "Metadata/Point/Type = 'Setpoint' and Metadata/Point/Setpoint = 'Cooling'",
+    "Temperature": "Metadata/Point/Type = 'Sensor' and Metadata/Point/Sensor = 'Temperature'",
+    "Humidity": "Metadata/Point/Type = 'Sensor' and Metadata/Point/Sensor = 'Humidity'",
+};

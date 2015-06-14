@@ -20,94 +20,86 @@ var HVACZone = React.createClass({
         return (
             <div className="hvacZone">
                 <h3>Zone Name: {this.props.name}</h3>
-                <ThermostatList zoneName={this.props.name} />
+                <HVACZoneRoomList zoneName={this.props.name} />
             </div>
         );
     }
 });
 
-var ThermostatList = React.createClass({
+var HVACZoneRoomList = React.createClass({
     getInitialState: function() {
-        return {thermostats: []};
+        return {rooms: [], thermostats: []};
     },
     componentDidMount: function() {
-        $.ajax({
-            url: queryURL,
-            datatype: 'json',
-            type: 'POST',
-            data: "select * where Metadata/HVACZone='"+this.props.zoneName+"' and Metadata/Device = 'Thermostat';",
-            success: function(data) {
-                this.setState({thermostats: _.groupBy(data, function(md) {
-                        return md.Metadata.DeviceID;
-                    }
-                )});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(queryURL, status, err.toString());
-            }.bind(this)
-        });
+        // find all distinct rooms
+        var self = this;
+        run_query("select distinct Metadata/Location/Room where Metadata/HVACZone='"+this.props.zoneName+"';",
+                  function(data) { //success
+                    self.setState({rooms: data});
+                  },
+                  function(xhr, status, err) { // error
+                    console.error(queryURL, status, err.toString());
+                  }
+        );
     },
     render: function() {
-        var thermostats = _.map(this.state.thermostats, function(tstat_timeseries) {
-            var view = get_device_view(tstat_timeseries);
+        var self = this;
+        var rooms = _.map(this.state.rooms, function(roomName) {
+            var querybase = "Metadata/HVACZone='"+self.props.zoneName+"' and Metadata/Location/Room = '"+roomName+"';";
             return (
-                <Thermostat key={view._Metadata.DeviceID} device={view}/>
-            );
+                <HVACZoneRoom key={roomName} 
+                              roomName={roomName} 
+                              zoneName={self.props.zoneName}
+                              queryBase={querybase}
+                              />
+            )
         });
         return (
-            <div className="thermostatList">
-                {thermostats}
+            <div className="HVACZoneRoomList">
+                {rooms}
             </div>
         );
     }
 });
 
-var Thermostat = React.createClass({
+var HVACZoneRoom = React.createClass({
     getInitialState: function() {
-        return({temp: 'n/a',
-                temp_heat: 'n/a',
-                temp_cool: 'n/a'});
-    },
-    updateFromRepublish: function(data) {
-        var timeseries_name = get_timeseries(data.Path);
-        var toset = {};
-        toset[timeseries_name] = get_latest_reading(data.Readings);
-        this.setState(toset);
-    },
-    componentWillMount: function() {
-        var socket = io.connect();
-        var query = 'Metadata/DeviceID = "'+this.props.device._Metadata.DeviceID+'";';
-        socket.emit('new subscribe', query);
-        var self = this;
-        socket.on(query, function(data) {
-            self.updateFromRepublish(data);
-        });
+        return({devices: []});
     },
     componentDidMount: function() {
-        console.log("Thermostat mounted: ", this.props.device);
+        // map the semantic meanings to UUIDs
+        var self = this;
+        run_query("select distinct Metadata/DeviceID where "+self.props.queryBase,
+                  function(data) { //success
+                    self.setState({devices: data})
+                  },
+                  function(xhr, status, err) { // error
+                    console.error(queryURL, status, err.toString());
+                  }
+        );
     },
     render: function() {
         var cx = React.addons.classSet;
         var classes = cx({
             'well': true,
             'dark': true,
-            'thermostat': true
+            'HVACZoneRoom': true
+        });
+        var self = this;
+        var devices = _.map(this.state.devices, function(deviceID) {
+            var display = ["Heating Setpoint", "Cooling Setpoint", "Temperature", "Humdity"];
+            var queryBase = "Metadata/DeviceID = '"+deviceID+"'";
+            return (
+                <Device key={deviceID} 
+                        deviceID={deviceID}
+                        queryBase={queryBase}
+                        display={display}/>
+            )
         });
         return (
             <div className={classes}>
-                    <b>Thermostat</b>
-                    <p>Temperature: {this.state.temp}</p>
-                    <p>Heat Setpoint: {this.state.temp_heat} 
-                        <ContinuousActuator initialValue={this.state.temp_heat} 
-                                            uuid={this.props.device.temp_heat.Actuator.uuid} />
-                    </p>
-                    <p>Cool Setpoint: {this.state.temp_cool} 
-                        <ContinuousActuator initialValue={this.state.temp_cool}
-                                            uuid={this.props.device.temp_cool.Actuator.uuid} />
-                    </p>
-                    <p>Override: {this.state.override} 
-                        <BinaryActuator onLabel="On" offLabel="Off" uuid={this.props.device.override.Actuator.uuid}/>
-                    </p>
+                  <b>Room: {self.props.roomName}</b>
+                  {devices}
             </div>
         );
     }

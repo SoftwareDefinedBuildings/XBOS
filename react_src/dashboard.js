@@ -1,4 +1,5 @@
 var queryURL = 'http://localhost:8079/api/query';
+
 var Dashboard = React.createClass({
     getInitialState: function() {
         return {hvacZones: [], lightingZones: []};
@@ -17,19 +18,20 @@ var Dashboard = React.createClass({
                 console.error(queryURL, status, err.toString());
             }.bind(this)
         });
-        // retrieve all Lighting Zones
-        $.ajax({
-            url: queryURL,
-            dataType: 'json',
-            type: 'POST',
-            data: "select distinct Metadata/LightingZone;",
-            success: function(data) {
-                this.setState({lightingZones: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(queryURL, status, err.toString());
-            }.bind(this)
-        });
+
+        //// retrieve all Lighting Zones
+        //$.ajax({
+        //    url: queryURL,
+        //    dataType: 'json',
+        //    type: 'POST',
+        //    data: "select distinct Metadata/LightingZone;",
+        //    success: function(data) {
+        //        this.setState({lightingZones: data});
+        //    }.bind(this),
+        //    error: function(xhr, status, err) {
+        //        console.error(queryURL, status, err.toString());
+        //    }.bind(this)
+        //});
     },
     render: function() {
         return (
