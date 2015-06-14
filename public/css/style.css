@@ -17,8 +17,14 @@ body {
 }
 
 
-.box {
+.tsbox {
     border-radius: 25px;
     border: 2px solid #8AC007;
+    padding: 20px; 
+}
+
+.devbox {
+    border-radius: 25px;
+    border: 2px solid #0066FF;
     padding: 20px; 
 }

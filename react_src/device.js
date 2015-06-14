@@ -1,6 +1,6 @@
 var Device = React.createClass({
     getInitialState: function() {
-        return({uuids: {}});
+        return({uuids: {}, name: ""});
     },
 
     // when we mount, fetch the UUID for each display tag we are given
@@ -11,6 +11,15 @@ var Device = React.createClass({
             self.getUUID(displaytag);
         });
         self.setState(state);
+        run_query("select Metadata/Name where "+this.props.queryBase,
+                  function(data) {
+                    self.setState({name: data[0]});
+                  },
+                  function(xhr, status, err) { // error
+                    console.error("error", displaytag, LOOKUP[displaytag]);
+                    console.error(queryURL, status, err.toString());
+                  }
+        );
     },
     // this runs a query to retrieve the UUID for a given displaytag
     getUUID: function(displaytag) {
@@ -18,8 +27,10 @@ var Device = React.createClass({
         run_query("select uuid where "+this.props.queryBase+" and "+LOOKUP[displaytag],
                   function(data) { // success
                     var uuids = self.state.uuids;
-                    uuids[data[0].uuid] = displaytag;
-                    self.setState({"uuids": uuids});
+                    if (data.length > 0) {
+                        uuids[data[0].uuid] = displaytag;
+                        self.setState({"uuids": uuids});
+                    }
                   },
                   function(xhr, status, err) { // error
                     console.error("error", displaytag, LOOKUP[displaytag]);
@@ -33,8 +44,14 @@ var Device = React.createClass({
                 <Timeseries key={uuid} name={name} uuid={uuid} queryBase={queryBase}/>
             )
         });
+        var cx = React.addons.classSet;
+        var classes = cx({
+            'devbox': true,
+            'device': true
+        });
         return (
-            <div className="device">
+            <div className={classes}>
+                <b>Name: {this.state.name}</b>
                 <p>DeviceID: {this.props.deviceID}</p>
                 {timeseries}
             </div>
@@ -75,7 +92,7 @@ var Timeseries = React.createClass({
         }
         var cx = React.addons.classSet;
         var classes = cx({
-            'box': true,
+            'tsbox': true,
             'timeseries': true
         });
         return (
