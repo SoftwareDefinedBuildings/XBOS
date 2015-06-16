@@ -4,11 +4,16 @@
 var SubscribeQueryBase = {
     componentWillMount: function() {
         console.log("Starting subscription for", this.props.queryBase);
-        var socket = io.connect();
-        socket.emit('new subscribe', this.props.queryBase);
+        this.socket = io.connect();
+        this.socket.emit('new subscribe', this.props.queryBase);
         var self = this;
-        socket.on(this.props.queryBase, function(data) {
-            self.updateFromRepublish(data);
+        this.socket.on(this.props.queryBase, function(data) {
+            if (self.isMounted()) {
+                self.updateFromRepublish(data);
+            }
         });
     },
+    componentWillUnmount() {
+        this.socket.disconnect();
+    }
 };
