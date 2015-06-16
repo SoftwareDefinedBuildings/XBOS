@@ -13,7 +13,4 @@ var SubscribeQueryBase = {
             }
         });
     },
-    componentWillUnmount() {
-        this.socket.disconnect();
-    }
 };

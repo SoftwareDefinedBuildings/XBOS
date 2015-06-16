@@ -1,8 +1,8 @@
-var queryURL = 'http://localhost:8079/api/query';
+var queryURL = 'http://pantry.cs.berkeley.edu:8079/api/query';
 
 var Dashboard = React.createClass({
     getInitialState: function() {
-        return {hvacZones: [], lightingZones: []};
+        return {page: "dashboard", hvacZones: [], lightingZones: []};
     },
     componentDidMount: function() {
         // retrieve all HVAC zones
@@ -33,10 +33,15 @@ var Dashboard = React.createClass({
             }.bind(this)
         });
     },
+    handleSelect(selectedKey) {
+        console.log('selected ' + selectedKey);
+        this.setState({page: selectedKey});
+    },
     render: function() {
-        return (
-            <div className="dashboard">
-                <h1>OpenBAS</h1>
+        var contents = (<p>Loading...</p>);
+        switch (this.state.page) {
+        case "dashboard":
+            contents = (
                 <div className="row">
                     <div className='col-md-6'>
                         <HVACZoneList hvacZones={this.state.hvacZones} />
@@ -45,6 +50,25 @@ var Dashboard = React.createClass({
                         <LightingZoneList lightingZones={this.state.lightingZones} />
                     </div>
                 </div>
+            );
+            break;
+        case "schedule":
+            contents = (
+                <Schedule />
+            );
+            break;
+        }
+
+        return (
+            <div className="dashboard">
+            <h1>OpenBAS</h1>
+            <div className="row">
+                <ReactBootstrap.Nav bsStyle='tabs' activeKey={this.state.page} onSelect={this.handleSelect}>
+                    <ReactBootstrap.NavItem eventKey={"dashboard"}>Dashboard</ReactBootstrap.NavItem>
+                    <ReactBootstrap.NavItem eventKey={"schedule"}>Schedule</ReactBootstrap.NavItem>
+                </ReactBootstrap.Nav>
+            </div>
+            {contents}
             </div>
         );
     }
