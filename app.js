@@ -6,6 +6,27 @@ var _ = require('underscore');
 var config = require('./config');
 var moment = require('moment');
 var http = require('http');
+var MongoClient = require('mongodb').MongoClient;
+
+// connect to mongodb
+var sched = {};
+MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
+    if (!err) {
+        console.log("Connected to mongodb", config.mongo);
+        db.createCollection('schedules', function(err, coll) {
+            console.log("'schedules' collection created");
+
+            // import schedule from a file
+            // TODO: in future, probably want to read schedule from mongodb. Importing a schedule into mongo from a file should be a tool
+            sched = require(config.schedule_file);
+            coll.update({name: sched.name}, sched, {upsert: true}, {w:1}, function(err, result) {
+                console.log("inserted schedule");
+            });
+        });
+
+    }
+});
+
 
 // server setup
 var app = express();
@@ -14,6 +35,30 @@ app.use(express.static('public'))
 app.use(express.static('node_modules'))
 app.get('/', function(req, res) {
     res.render('index', {title: 'OpenBAS'});
+});
+
+// returns a list of schedule names
+app.get('/schedules/list', function(req, res) {
+    MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
+        db.collection('schedules', function(err, coll) {
+            coll.find({}, {name: 1, _id: 0}).toArray(function(err, results) {
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify(results));
+            });
+        });
+    });
+});
+
+app.get('/schedule/:name', function(req, res) {
+    console.log("fetching schedule", req.params.name);
+    MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
+        db.collection('schedules', function(err, coll) {
+            coll.findOne({name: req.params.name}, {_id: 0}, function(err, results) {
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify(results));
+            });
+        });
+    });
 });
 
 var server = app.listen(8000);
@@ -72,7 +117,7 @@ io.on('connection', function (socket) {
         method: 'POST'
     };
     socket.on('actuate', function(msg) {
-        
+
         smapActuateMsg['/actuate'].Metadata.override = msg.uuid
         smapActuateMsg['/actuate'].Readings[0] = [moment().valueOf(), msg.request];
         console.log("Actuation requested for", smapActuateMsg);

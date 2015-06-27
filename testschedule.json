@@ -1,0 +1,58 @@
+{
+    "name": "weekday",
+    "description": "Basic weekday schedule 9-5",
+    "point descriptions": {
+        "Heating Setpoint": "Temperature heating setpoint for bistatic thermostat",
+        "Cooling Setpoint": "Temperature cooling setpoint for bistatic thermostat"
+    },
+    "periods": [
+        {
+            "name": "morning",
+            "start": "7:30",
+            "points": [
+                {
+                    "name": "Heating Setpoint",
+                    "value": 72,
+                    "units": "F"
+                },
+                {
+                    "name": "Cooling Setpoint",
+                    "value": 83,
+                    "units": "F"
+                }
+            ]
+        },
+        {
+            "name": "afternoon",
+            "start": "12:00",
+            "points": [
+                {
+                    "name": "Heating Setpoint",
+                    "value": 70,
+                    "units": "F"
+                },
+                {
+                    "name": "Cooling Setpoint",
+                    "value": 80,
+                    "units": "F"
+                }
+            ]
+        },
+        {
+            "name": "evening",
+            "start": "18:30",
+            "points": [
+                {
+                    "name": "Heating Setpoint",
+                    "value": 50,
+                    "units": "F"
+                },
+                {
+                    "name": "Cooling Setpoint",
+                    "value": 90,
+                    "units": "F"
+                }
+            ]
+        }
+    ]
+}
