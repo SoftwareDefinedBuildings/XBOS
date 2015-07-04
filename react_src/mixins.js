@@ -14,3 +14,18 @@ var SubscribeQueryBase = {
         });
     },
 };
+
+var Row = ReactBootstrap.Row;
+var Col = ReactBootstrap.Col;
+var Accordion = ReactBootstrap.Accordion;
+var ListGroupItem = ReactBootstrap.ListGroupItem;
+var ListGroup = ReactBootstrap.ListGroup;
+var Panel = ReactBootstrap.Panel;
+var Input = ReactBootstrap.Input;
+var Label = ReactBootstrap.Label;
+
+var Button = ReactBootstrap.Button;
+var ButtonGroup = ReactBootstrap.ButtonGroup;
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+
+var Glyphicon = ReactBootstrap.Glyphicon;

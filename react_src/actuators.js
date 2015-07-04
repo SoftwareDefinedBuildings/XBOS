@@ -102,8 +102,6 @@ var BinaryActuator = React.createClass({
         this.socket = io.connect();
     },
     render: function() {
-        var Button = ReactBootstrap.Button;
-        var ButtonToolbar = ReactBootstrap.ButtonToolbar;
         var onActive = this.state.on;
         var offActive = !this.state.on;
         return(
