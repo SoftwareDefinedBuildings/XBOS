@@ -151,7 +151,9 @@ var ScheduleEditor = React.createClass({
                         <br />
                         <b>Periods</b>
                         <ul>
-                        {periods}
+                        <ListGroup>
+                            {periods}
+                        </ListGroup>
                         </ul>
                     </form>
                 </Panel>
@@ -160,31 +162,61 @@ var ScheduleEditor = React.createClass({
     }
 });
 
+var SchedulePeriod = React.createClass({
+    render: function() {
+        console.log("rendering period", this.props);
+        var points = _.map(this.props.points, function(point) {
+            return (
+                <SchedulePoint {...point} names={_.pluck(this.props.points, 'name')}/>
+            );
+        }, this);
+        var header = (
+            <Row>
+                <Col xs={2}>
+                    <Input type='text' maxlength="10" size="10" addonBefore='Name' placeholder='Period name' defaultValue={this.props.name} />
+                </Col>
+                <Col xs={2}>
+                    <Input type='text' maxlength="4" size="4" addonBefore='Start' placeholder='Period start' defaultValue={this.props.start} />
+                </Col>
+            </Row>
+        );
+        return (
+            <ListGroupItem>
+                <div className="schedulePeriod">
+                <Panel header={header} bsStyle='warning'>
+                    {points}
+                </Panel>
+                </div>
+            </ListGroupItem>
+        );
+    }
+});
+
 var SchedulePoint = React.createClass({
     render: function() {
         console.log("render point", this.props);
+        var options = _.map(this.props.names, function(name) {
+            return (
+                <option value={name} selected={name==this.props.name ? true : false}>{name}</option>
+            );
+        }, this);
         return (
             <div className="schedulePoint">
-                <b>Name: {this.props.name}</b>
-                <p>{this.props.value} {this.props.units}</p>
+                <Row>
+                    <Col xs={4}>
+                        <Input type='select' addonBefore='Point Name'>
+                            {options}
+                        </Input>
+                    </Col>
+                    <Col xs={4}>
+                        <Input type='text' addonBefore='Value' placeholder='Point value' defaultValue={this.props.value} />
+                    </Col>
+                    <Col xs={2}>
+                        <Input type='text' defaultValue={this.props.units} />
+                    </Col>
+                </Row>
             </div>
         );
     }
 });
 
-var SchedulePeriod = React.createClass({
-    render: function() {
-        var points = _.each(this.props.points, function(point) {
-            return (
-                <SchedulePoint {...point} />
-            );
-        });
-        return (
-            <div className="schedulePeriod">
-                <b>Name: {this.props.name}</b>
-                <p>Start: {this.props.start}</p>
-                {points}
-            </div>
-        );
-    }
-});
