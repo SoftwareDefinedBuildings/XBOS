@@ -165,16 +165,16 @@ var SchedulePeriod = React.createClass({
         console.log("rendering period", this.props);
         var points = _.map(this.props.points, function(point) {
             return (
-                <SchedulePoint {...point} names={_.pluck(this.props.points, 'name')}/>
+                <SchedulePoint {...point} key={point.name} names={_.pluck(this.props.points, 'name')}/>
             );
         }, this);
         var header = (
             <Row>
                 <Col xs={2}>
-                    <Input type='text' maxlength="10" size="10" addonBefore='Name' placeholder='Period name' defaultValue={this.props.name} />
+                    <Input type='text' maxLength="10" size="10" addonBefore='Name' placeholder='Period name' defaultValue={this.props.name} />
                 </Col>
                 <Col xs={2}>
-                    <Input type='text' maxlength="4" size="4" addonBefore='Start' placeholder='Period start' defaultValue={this.props.start} />
+                    <Input type='text' maxLength="4" size="4" addonBefore='Start' placeholder='Period start' defaultValue={this.props.start} />
                 </Col>
             </Row>
         );
@@ -193,14 +193,14 @@ var SchedulePoint = React.createClass({
         console.log("render point", this.props);
         var options = _.map(this.props.names, function(name) {
             return (
-                <option value={name} selected={name==this.props.name ? true : false}>{name}</option>
+                <option key={name} value={name}>{name}</option>
             );
         }, this);
         return (
             <div className="schedulePoint">
                 <Row>
                     <Col xs={4}>
-                        <Input type='select' addonBefore='Point Name'>
+                        <Input type='select' addonBefore='Point Name' defaultValue={this.props.name}>
                             {options}
                         </Input>
                     </Col>

@@ -59,7 +59,7 @@ var ContinuousActuator = React.createClass({
         return(
             <div className="continuousActuator">
                 <form onSubmit={this.handleSubmit} >
-                  <input type="text" maxlength="3" size="3" ref="value" />
+                  <input type="text" maxLength="3" size="3" ref="value" />
                   { !this.state.loading ?  <input type="submit" value="Override" /> : <label>Loading...</label> }
                 </form>
             </div>
