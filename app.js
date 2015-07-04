@@ -56,7 +56,7 @@ app.get('/schedule/list', function(req, res) {
     });
 });
 
-app.get('/schedule/:name', function(req, res) {
+app.get('/schedule/:name/get', function(req, res) {
     console.log("fetching schedule", req.params.name);
     MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
         db.collection('schedules', function(err, coll) {

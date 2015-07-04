@@ -79,7 +79,7 @@ var ScheduleEditor = React.createClass({
     },
     componentWillMount: function() {
         $.ajax({
-            url: '/schedule/'+this.props.name.name,
+            url: '/schedule/'+this.props.name.name+'/get',
             dataType: 'json',
             type: 'GET',
             success: function(data) {
