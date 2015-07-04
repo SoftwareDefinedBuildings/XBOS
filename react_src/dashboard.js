@@ -54,7 +54,7 @@ var Dashboard = React.createClass({
             break;
         case "schedule":
             contents = (
-                <Schedule />
+                <ScheduleList />
             );
             break;
         }
