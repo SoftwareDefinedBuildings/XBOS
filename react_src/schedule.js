@@ -151,9 +151,7 @@ var ScheduleEditor = React.createClass({
                         <br />
                         <b>Periods</b>
                         <ul>
-                        <ListGroup>
-                            {periods}
-                        </ListGroup>
+                        {periods}
                         </ul>
                     </form>
                 </Panel>
@@ -181,13 +179,11 @@ var SchedulePeriod = React.createClass({
             </Row>
         );
         return (
-            <ListGroupItem>
-                <div className="schedulePeriod">
-                <Panel header={header} bsStyle='warning'>
-                    {points}
-                </Panel>
-                </div>
-            </ListGroupItem>
+            <div className="schedulePeriod">
+            <Panel header={header} bsStyle='warning'>
+                {points}
+            </Panel>
+            </div>
         );
     }
 });
