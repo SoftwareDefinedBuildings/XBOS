@@ -33,12 +33,19 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'))
 app.use(express.static('node_modules'))
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 app.get('/', function(req, res) {
     res.render('index', {title: 'OpenBAS'});
 });
 
 // returns a list of schedule names
-app.get('/schedules/list', function(req, res) {
+app.get('/schedule/list', function(req, res) {
     MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
         db.collection('schedules', function(err, coll) {
             coll.find({}, {name: 1, _id: 0}).toArray(function(err, results) {
