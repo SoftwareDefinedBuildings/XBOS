@@ -91,12 +91,9 @@ var ScheduleEditor = React.createClass({
             }.bind(this)
         });
     },
-    handleChange: function(e) {
-        e.preventDefault(false);
-    },
-    removePointDescription: function(name) {
+    removePointDescription: function(key, pd) {
         var pdescs = this.state['point descriptions'];
-        delete pdescs[name];
+        delete pdescs[key];
         this.setState({"point descriptions": pdescs});
     },
     addPointDescription: function() {
@@ -104,9 +101,17 @@ var ScheduleEditor = React.createClass({
         pdescs[''] = '';
         this.setState({"point descriptions": pdescs});
     },
-    savePointDescription: function(name,desc,e) {
+    savePointDescription: function(key, pd) {
+        console.log("saving", pd);
+        var pdescs = this.state['point descriptions'];
+        delete pdescs[key];
+        pdescs[pd.name] = pd.description;
+        console.log(pdescs);
+        this.setState(pdescs);
     },
-    saveSchedule: function () {
+    saveSchedule: function (e) {
+        console.log("form submitted!");
+        e.preventDefault(false);
         console.log("save schedule", this.state);
         //$.ajax({
         //    url: '/schedule/'+this.props.name.name+'/save',
@@ -125,20 +130,12 @@ var ScheduleEditor = React.createClass({
     },
     render: function() {
         var pointdescriptions = _.map(this.state["point descriptions"], function(desc, name) {
-            var boundClickRemove = this.removePointDescription.bind(this, name);
-            var boundClickSave = this.savePointDescription.bind(this, name, desc);
+            var boundClickRemove = this.removePointDescription;
+            var boundClickSave = this.savePointDescription;
             return (
                 <div key={name}>
                     <Row>
-                    <Col xs={4}>
-                        <Input ref={name} onChange={boundClickSave} name='pointname' type='text' addonBefore='Name' placeholder='Point name' defaultValue={name} />
-                    </Col>
-                    <Col xs={7}>
-                        <Input ref={desc} onChange={boundClickSave} name='pointdescription' type='text' addonBefore='Description' placeholder='Point description' defaultValue={desc} />
-                    </Col>
-                    <Col xs={1}>
-                        <Button onClick={boundClickRemove}><Glyphicon glyph='minus'/></Button>
-                    </Col>
+                    <SchedulePointDescription name={name} description={desc} onSave={boundClickSave} onRemove={boundClickRemove} />
                     </Row>
                 </div>
             );
@@ -152,7 +149,7 @@ var ScheduleEditor = React.createClass({
         return (
             <div className="scheduleEditor">
                 <Panel header="Edit Schedule" bsStyle='info'>
-                    <form onSubmit={this.handleChange}>
+                    <form>
                         <fieldset>
                             <Input name='name' type='text' label='Name' value={this.state.name}/>
                             <Input name='description' rows="2" cols="50" type='textarea' label='Description' value={this.state.description} />
@@ -181,6 +178,56 @@ var ScheduleEditor = React.createClass({
                     </form>
                 </Panel>
             </div>
+        );
+    }
+});
+
+var SchedulePointDescription = React.createClass({
+    getInitialState: function() {
+        return {name: this.props.name, description: this.props.description};
+    },
+    saveName: function(e) {
+        var state = this.state;
+        state.name = e.target.value;
+        this.setState(state);
+    },
+    saveDescription: function(e) {
+        var state = this.state;
+        state.description = e.target.value;
+        this.setState(state);
+    },
+    savePD: function() {
+        this.props.onSave(this.props.name, this.state);
+    },
+    removePD: function() {
+        this.props.onRemove(this.props.name, this.state);
+    },
+    render: function() {
+        var cx = React.addons.classSet;
+        var classes = cx({
+            'className': 'schedulePointDescription',
+            'key': this.props.name,
+            'ref': this.props.name
+        });
+        var saveButton = <span></span>
+        if (this.props.name == '') {
+            saveButton = <Button onClick={this.savePD}><Glyphicon glyph='ok-circle'/></Button>;
+        }
+        return (
+        <div className={classes}>
+            <Col xs={3}>
+                <Input onChange={this.saveName} name='pointname' type='text' addonBefore='Name' placeholder='Point name' defaultValue={this.state.name} />
+            </Col>
+            <Col xs={7}>
+                <Input onChange={this.saveDescription} name='pointdescription' type='text' addonBefore='Description' placeholder='Point description' defaultValue={this.state.description} />
+            </Col>
+            <Col xs={1}>
+                {saveButton}
+            </Col>
+            <Col xs={1}>
+                <Button onClick={this.removePD}><Glyphicon glyph='minus'/></Button>
+            </Col>
+        </div>
         );
     }
 });
