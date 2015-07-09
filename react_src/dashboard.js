@@ -1,4 +1,4 @@
-var queryURL = 'http://pantry.cs.berkeley.edu:8079/api/query';
+var queryURL = 'http://localhost:8079/api/query';
 
 var Dashboard = React.createClass({
     getInitialState: function() {

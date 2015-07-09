@@ -91,9 +91,8 @@ var ScheduleEditor = React.createClass({
             }.bind(this)
         });
     },
-    handleChange: function(event) {
-        console.log("got event", event);
-        this.props.onChange(this.props.name, "value");
+    handleChange: function(e) {
+        e.preventDefault(false);
     },
     removePointDescription: function(name) {
         var pdescs = this.state['point descriptions'];
@@ -105,20 +104,40 @@ var ScheduleEditor = React.createClass({
         pdescs[''] = '';
         this.setState({"point descriptions": pdescs});
     },
+    savePointDescription: function(name,desc,e) {
+    },
+    saveSchedule: function () {
+        console.log("save schedule", this.state);
+        //$.ajax({
+        //    url: '/schedule/'+this.props.name.name+'/save',
+        //    dataType: 'json',
+        //    type: 'POST',
+        //    data: this.state,
+        //    success: function(data) {
+        //        console.log("saved schedule", this.state);
+        //    }.bind(this),
+        //    error: function(xhr, status, err) {
+        //        console.error(status, err.toString());
+        //    }.bind(this)
+        //});
+    },
+    deleteSchedule: function () {
+    },
     render: function() {
         var pointdescriptions = _.map(this.state["point descriptions"], function(desc, name) {
-            var boundClick = this.removePointDescription.bind(this, name);
+            var boundClickRemove = this.removePointDescription.bind(this, name);
+            var boundClickSave = this.savePointDescription.bind(this, name, desc);
             return (
                 <div key={name}>
                     <Row>
                     <Col xs={4}>
-                        <Input type='text' addonBefore='Name' placeholder='Point name' defaultValue={name} />
+                        <Input ref={name} onChange={boundClickSave} name='pointname' type='text' addonBefore='Name' placeholder='Point name' defaultValue={name} />
                     </Col>
                     <Col xs={7}>
-                        <Input type='text' addonBefore='Description' placeholder='Point description' defaultValue={desc} />
+                        <Input ref={desc} onChange={boundClickSave} name='pointdescription' type='text' addonBefore='Description' placeholder='Point description' defaultValue={desc} />
                     </Col>
                     <Col xs={1}>
-                        <Button onClick={boundClick}><Glyphicon glyph='minus'/></Button>
+                        <Button onClick={boundClickRemove}><Glyphicon glyph='minus'/></Button>
                     </Col>
                     </Row>
                 </div>
@@ -134,25 +153,31 @@ var ScheduleEditor = React.createClass({
             <div className="scheduleEditor">
                 <Panel header="Edit Schedule" bsStyle='info'>
                     <form onSubmit={this.handleChange}>
-                        <Input type='text' label='Name' value={this.state.name}/>
-                        <Input rows="2" cols="50" type='textarea' label='Description' value={this.state.description} />
-                        <Panel header="Point Descriptions" eventKey="1">
-                            {pointdescriptions}
-                            <Row>
-                                <Col xs={4}>
-                                    <p>Add new point description</p>
-                                </Col>
-                                <Col xs={8}>
-                                    <Button onClick={this.addPointDescription}><Glyphicon glyph='plus'/></Button>
-                                </Col>
-                            </Row>
-                        </Panel>
+                        <fieldset>
+                            <Input name='name' type='text' label='Name' value={this.state.name}/>
+                            <Input name='description' rows="2" cols="50" type='textarea' label='Description' value={this.state.description} />
+                            <Panel header="Point Descriptions" eventKey="1">
+                                {pointdescriptions}
+                                <Row>
+                                    <Col xs={4}>
+                                        <p>Add new point description</p>
+                                    </Col>
+                                    <Col xs={8}>
+                                        <Button onClick={this.addPointDescription}><Glyphicon glyph='plus'/></Button>
+                                    </Col>
+                                </Row>
+                            </Panel>
 
-                        <br />
-                        <b>Periods</b>
-                        <ul>
-                        {periods}
-                        </ul>
+                            <br />
+                            <b>Periods</b>
+                            <ul>
+                            {periods}
+                            </ul>
+                            <ButtonToolbar>
+                                <Button type="submit" onClick={this.saveSchedule} bsStyle='success'>Save</Button>
+                                <Button onClick={this.deleteSchedule} bsStyle='danger'>Delete</Button>
+                            </ButtonToolbar>
+                        </fieldset>
                     </form>
                 </Panel>
             </div>

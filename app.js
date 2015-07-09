@@ -75,6 +75,22 @@ app.get('/schedule/:name/get', function(req, res) {
     });
 });
 
+app.post('/schedule/:name/save', function(req, res) {
+    console.log("saving schedule", req.body);
+    MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
+        db.collection('schedules', function(err, coll) {
+            res.send("done");
+            //TODO: fix req.body to be the right format
+            //coll.update({name: req.body.name}, req.body, {upsert: true}, {w: 1}, function(err, result) {
+            //    console.error(err);
+            //    res.setHeader('Content-Type', 'application/json');
+            //    res.send(JSON.stringify(err));
+            //    console.log("saved schedule");
+            //});
+        });
+    });
+});
+
 var server = app.listen(8000);
 console.log('Server listening on port 8000');
 
