@@ -7,6 +7,8 @@ var config = require('./config');
 var moment = require('moment');
 var http = require('http');
 var MongoClient = require('mongodb').MongoClient;
+var bodyParser = require('body-parser');
+var multer = require('multer');
 
 // connect to mongodb
 var sched = {};
@@ -33,6 +35,11 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'))
 app.use(express.static('node_modules'))
+
+// from http://expressjs.com/api.html#req.body
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(multer()); // for parsing multipart/form-data
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");

@@ -11,6 +11,8 @@
         "ws": "*",
         "underscore":"*",
         "moment":"*",
-        "mongodb":"*"
+        "mongodb":"*",
+        "multer":"*",
+        "body-parser":"*"
     }
 }
