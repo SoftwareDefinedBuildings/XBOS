@@ -10,6 +10,10 @@ class Scheduler(SmapDriver):
     def setup(self, opts):
         self.schedule = self.load_schedule(opts.get('source'))
         self.is_master = opts.get('is_master').lower() == 'true'
+        self.save_location = opts.get('saveto')
+
+        if self.save_location is not None:
+            self.save()
 
         self.set_metadata('/', {
             'Schedule/Name': self.schedule['name'],
@@ -48,7 +52,7 @@ class Scheduler(SmapDriver):
         diffs = map(lambda x: x - targettime, self.epochs.keys())
         # find smallest difference less than 0 to find periods before
         diffsBefore = filter(lambda x: x < 0, diffs)
-        if not len(diffsBefore): 
+        if not len(diffsBefore):
             return None # nothing before
         return self.epochs.keys()[diffs.index(max(diffsBefore))]
 
@@ -60,10 +64,10 @@ class Scheduler(SmapDriver):
         diffs = map(lambda x: targettime - x, self.epochs.keys())
         # find smallest difference less than 0 to find periods before
         diffsBefore = filter(lambda x: x < 0, diffs)
-        if not len(diffsBefore): 
+        if not len(diffsBefore):
             return None # nothing before
         return self.epochs.keys()[diffs.index(max(diffsBefore))]
-        
+
 
     def push_epoch(self):
         """
@@ -135,23 +139,28 @@ class Scheduler(SmapDriver):
         """
         uri = urlparse.urlparse(source)
         scheme = uri.scheme.lower()
-        if scheme == 'mongodb':
-            pass
-            #from pymongo import MongoClient
-            #from pymongo.errors import ConnectionFailure as MongoConnectionFailure
-            #url, port = uri.netloc.split(':')
-            #db = uri.path[1:] # remove leading '/'
-            #MongoClient = MongoClient(url, int(port))
-            #MongoDatabase = getattr(MongoClient, db)
-            ##self.master_schedule = MongoDatabase.master_schedule.find_one()
-            #self.schedules = MongoDatabase.schedules
-        elif scheme == 'file':
+        if scheme == 'file':
             filename = uri.path[1:] # remove leading '/'
             sched = json.load(open(filename))
-            return sched 
+            return sched
         elif scheme == 'http':
             pass
             #import requests
             #sched = json.loads(requests.get(source).content)
             ##self.master_schedule = sched['master_schedule']
             #self.schedules = sched['schedules']
+
+    def save(self):
+        uri = urlparse.urlparse(self.save_location)
+        scheme = uri.scheme.lower()
+        if scheme == 'mongodb':
+            from pymongo import MongoClient
+            from pymongo.errors import ConnectionFailure as MongoConnectionFailure
+            url, port = uri.netloc.split(':')
+            db = uri.path[1:] # remove leading '/'
+            client = MongoClient(url, int(port))
+            db = client.xbos
+            schedules = db.schedules
+            found = schedules.find_one({'name': self.schedule['name']})
+            if found is None:
+                schedules.insert(self.schedule)
