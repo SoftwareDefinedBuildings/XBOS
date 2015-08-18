@@ -1,0 +1,56 @@
+{
+    "name": "holiday",
+    "description": "Basic weekday schedule 9-5",
+    "point descriptions": {
+        "Heating Setpoint": {
+            "desc": "Temperature heating setpoint for bistatic thermostat",
+            "units": "F"
+        },
+        "Cooling Setpoint": {
+            "desc": "Temperature cooling setpoint for bistatic thermostat",
+            "units": "F"
+         },
+        "Lighting": {
+            "desc": "Binary Lighting Setpoint",
+            "units": "On/Off"
+        }
+    },
+    "periods": [
+        {
+            "name": "morning",
+            "start": "7:30",
+            "points": [
+                {
+                    "name": "Heating Setpoint",
+                    "value": 50
+                },
+                {
+                    "name": "Cooling Setpoint",
+                    "value": 90
+                },
+                {
+                   "name": "Lighting",
+                   "value": 0
+                }
+            ]
+        },
+        {
+            "name": "evening",
+            "start": "18:30",
+            "points": [
+                {
+                    "name": "Heating Setpoint",
+                    "value": 50
+                },
+                {
+                    "name": "Cooling Setpoint",
+                    "value": 90
+                },
+                {
+                   "name": "Lighting",
+                   "value": 0
+                }
+            ]
+        }
+    ]
+}

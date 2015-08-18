@@ -2,8 +2,14 @@
     "name": "weekday",
     "description": "Basic weekday schedule 9-5",
     "point descriptions": {
-        "Heating Setpoint": "Temperature heating setpoint for bistatic thermostat",
-        "Cooling Setpoint": "Temperature cooling setpoint for bistatic thermostat"
+        "Heating Setpoint": {
+            "desc": "Temperature heating setpoint for bistatic thermostat",
+            "units": "F"
+        },
+        "Cooling Setpoint": {
+            "desc": "Temperature cooling setpoint for bistatic thermostat",
+            "units": "F"
+        }
     },
     "periods": [
         {
@@ -12,13 +18,11 @@
             "points": [
                 {
                     "name": "Heating Setpoint",
-                    "value": 72,
-                    "units": "F"
+                    "value": 72
                 },
                 {
                     "name": "Cooling Setpoint",
-                    "value": 83,
-                    "units": "F"
+                    "value": 83
                 }
             ]
         },
@@ -28,13 +32,25 @@
             "points": [
                 {
                     "name": "Heating Setpoint",
-                    "value": 70,
-                    "units": "F"
+                    "value": 70
                 },
                 {
                     "name": "Cooling Setpoint",
-                    "value": 80,
-                    "units": "F"
+                    "value": 80
+                }
+            ]
+        },
+        {
+            "name": "afternoon2",
+            "start": "13:13",
+            "points": [
+                {
+                    "name": "Heating Setpoint",
+                    "value": 71
+                },
+                {
+                    "name": "Cooling Setpoint",
+                    "value": 80
                 }
             ]
         },
@@ -44,13 +60,11 @@
             "points": [
                 {
                     "name": "Heating Setpoint",
-                    "value": 50,
-                    "units": "F"
+                    "value": 50
                 },
                 {
                     "name": "Cooling Setpoint",
-                    "value": 90,
-                    "units": "F"
+                    "value": 90
                 }
             ]
         }
