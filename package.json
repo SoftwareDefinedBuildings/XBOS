@@ -11,8 +11,9 @@
         "ws": "*",
         "underscore":"*",
         "moment":"*",
-        "mongodb":"*",
         "multer":"*",
-        "body-parser":"*"
+        "body-parser":"*",
+        "express-handlebars":"*",
+        "mongoskin": "*"
     }
 }
