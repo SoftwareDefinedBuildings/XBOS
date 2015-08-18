@@ -75,11 +75,12 @@ Metadata/Schedule/Target = schedule point name
 
 This is putting the path into the metadata, but this is ok bc we do not want to parse the path
 
-the value of the schedule path timeseries is obviously the scheduled value. Values are pushed ONCE at epoch change.
-The "latest value" can be done with `select data before now where...`.
+the value of the schedule path timeseries is obviously the scheduled value.
+Values are pushed ONCE at epoch change.  The "latest value" can be done with
+`select data before now where...`.
 
-Those subscribed to a schedule should pay attention to the Properties/UnitofMeasure and conduct an appropriate
-conversion.
+Those subscribed to a schedule should pay attention to the
+Properties/UnitofMeasure and conduct an appropriate conversion.
 
 Need a way for a point to be subscribed to multiple schedules.
 
