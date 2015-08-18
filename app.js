@@ -5,6 +5,7 @@ var WebSocket = require('ws');
 var _ = require('underscore');
 var config = require('./config');
 var moment = require('moment');
+var exphbs  = require('express-handlebars');
 var http = require('http');
 var MongoClient = require('mongodb').MongoClient;
 var bodyParser = require('body-parser');
@@ -31,15 +32,16 @@ MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+con
 
 
 // server setup
+// server setup
 var app = express();
-app.set('views', path.join(__dirname, 'views'));
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 app.use(express.static('public'))
 app.use(express.static('node_modules'))
-
-// from http://expressjs.com/api.html#req.body
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(multer()); // for parsing multipart/form-data
+app.use(bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
