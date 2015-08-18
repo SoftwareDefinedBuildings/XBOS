@@ -10,13 +10,7 @@ config.wsArchiverPort = 8078;
 config.wsArchiverUrl = 'ws://'+config.wsArchiverHost+":"+config.wsArchiverPort;
 
 // configuration for connection to MongoDB
-config.mongo = {};
-config.mongo.host = 'localhost';
-config.mongo.port = 27017;
-config.mongo.db = 'openbas';
-
-// configuration for schedule population
-config.schedule_file = './testschedule.json';
+config.mongohost = 'mongodb://localhost:27017/xbos';
 
 module.exports = config;
 
