@@ -33,42 +33,24 @@ var Dashboard = React.createClass({
             }.bind(this)
         });
     },
-    handleSelect(selectedKey) {
-        console.log('selected ' + selectedKey);
-        this.setState({page: selectedKey});
-    },
     render: function() {
-        var contents = (<p>Loading...</p>);
-        switch (this.state.page) {
-        case "dashboard":
-            contents = (
-                <div className="row">
-                    <div className='col-md-6'>
-                        <HVACZoneList hvacZones={this.state.hvacZones} />
-                    </div>
-                    <div className='col-md-6'>
-                        <LightingZoneList lightingZones={this.state.lightingZones} />
-                    </div>
-                </div>
-            );
-            break;
-        case "schedule":
-            contents = (
-                <ScheduleList />
-            );
-            break;
-        }
-
         return (
             <div className="dashboard">
-            <h1>OpenBAS</h1>
+            <h1>XBOS</h1>
             <div className="row">
-                <ReactBootstrap.Nav bsStyle='tabs' activeKey={this.state.page} onSelect={this.handleSelect}>
-                    <ReactBootstrap.NavItem eventKey={"dashboard"}>Dashboard</ReactBootstrap.NavItem>
-                    <ReactBootstrap.NavItem eventKey={"schedule"}>Schedule</ReactBootstrap.NavItem>
+                <ReactBootstrap.Nav bsStyle='tabs' activeKey={this.state.page} >
+                    <ReactBootstrap.NavItem eventKey={"dashboard"} href="/">Dashboard</ReactBootstrap.NavItem>
+                    <ReactBootstrap.NavItem eventKey={"schedule"} href="/schedule">Schedule</ReactBootstrap.NavItem>
                 </ReactBootstrap.Nav>
             </div>
-            {contents}
+            <div className="row">
+                <div className='col-md-6'>
+                    <HVACZoneList hvacZones={this.state.hvacZones} />
+                </div>
+                <div className='col-md-6'>
+                    <LightingZoneList lightingZones={this.state.lightingZones} />
+                </div>
+            </div>
             </div>
         );
     }

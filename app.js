@@ -11,27 +11,6 @@ var MongoClient = require('mongodb').MongoClient;
 var bodyParser = require('body-parser');
 var multer = require('multer');
 
-// connect to mongodb
-var sched = {};
-MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
-    if (!err) {
-        console.log("Connected to mongodb", config.mongo);
-        db.createCollection('schedules', function(err, coll) {
-            console.log("'schedules' collection created");
-
-            // import schedule from a file
-            // TODO: in future, probably want to read schedule from mongodb. Importing a schedule into mongo from a file should be a tool
-            sched = require(config.schedule_file);
-            coll.update({name: sched.name}, sched, {upsert: true}, {w:1}, function(err, result) {
-                console.log("inserted schedule");
-            });
-        });
-
-    }
-});
-
-
-// server setup
 // server setup
 var app = express();
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -50,47 +29,15 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', function(req, res) {
-    res.render('index', {title: 'OpenBAS'});
+    res.render('index', {layout: false});
 });
 
-// returns a list of schedule names
-app.get('/schedule/list', function(req, res) {
-    MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
-        db.collection('schedules', function(err, coll) {
-            coll.find({}, {name: 1, _id: 0}).toArray(function(err, results) {
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify(results));
-            });
-        });
-    });
+app.get('/dashboard', function(req, res) {
+    res.render('index', {layout: false});
 });
 
-app.get('/schedule/:name/get', function(req, res) {
-    console.log("fetching schedule", req.params.name);
-    MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
-        db.collection('schedules', function(err, coll) {
-            coll.findOne({name: req.params.name}, {_id: 0}, function(err, results) {
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify(results));
-            });
-        });
-    });
-});
-
-app.post('/schedule/:name/save', function(req, res) {
-    console.log("saving schedule", req.body);
-    MongoClient.connect("mongodb://"+config.mongo.host+":"+config.mongo.port+"/"+config.mongo.db, function(err, db) {
-        db.collection('schedules', function(err, coll) {
-            res.send("done");
-            //TODO: fix req.body to be the right format
-            //coll.update({name: req.body.name}, req.body, {upsert: true}, {w: 1}, function(err, result) {
-            //    console.error(err);
-            //    res.setHeader('Content-Type', 'application/json');
-            //    res.send(JSON.stringify(err));
-            //    console.log("saved schedule");
-            //});
-        });
-    });
+app.get('/schedule', function(req, res) {
+    res.render('schedule', {layout: false});
 });
 
 var server = app.listen(8000);
