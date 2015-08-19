@@ -56,6 +56,7 @@ var ScheduleView = React.createClass({
             <div className="scheduleView">
                 <Panel header={"Schedule:" + this.props.name} bsStyle="info">
                     <PointDescriptionView descriptions={this.state.point_descs} />
+                    <EpochListView epochs={this.state.periods} />
                 </Panel>
             </div>
         )
@@ -91,6 +92,51 @@ var PointDescriptionView = React.createClass({
         );
     }
 
+});
+
+var EpochListView = React.createClass({
+    render: function () {
+        var epochs = _.map(this.props.epochs, function(epoch) {
+            return (<EpochView key={epoch.name} {...epoch} />);
+        });
+        return (
+            <div className="epochListView">
+                <ListGroup>
+                {epochs}
+                </ListGroup>
+            </div>
+        )
+    }
+});
+
+var EpochView = React.createClass({
+    render: function() {
+        var points = _.map(this.props.points, function(point) {
+            return (
+                <tr key={point.name}>
+                    <td>{point.name}</td>
+                    <td>{point.value}</td>
+                </tr>
+            )
+        });
+        var cx = React.addons.classSet;
+        var classes = cx("epochView", "ListGroupItem");
+        return (
+            <div className={classes}>
+                <div className="col-md-4">
+                    <p>Name : {this.props.name}</p>
+                    <p>Start : {this.props.start}</p>
+                </div>
+                <div className="col-md-8">
+                    <Table bordered condensed>
+                        <tbody>
+                            {points}
+                        </tbody>
+                    </Table>
+                </div>
+            </div>
+        )
+    }
 });
 
 var ScheduleList = React.createClass({
