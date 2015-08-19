@@ -1,9 +1,12 @@
+// local imports
+var config = require('./config');
+var schedule = require('./schedule');
+
 // dependencies
 var express = require('express');
 var path = require('path');
 var WebSocket = require('ws');
 var _ = require('underscore');
-var config = require('./config');
 var moment = require('moment');
 var exphbs  = require('express-handlebars');
 var http = require('http');
@@ -38,6 +41,29 @@ app.get('/dashboard', function(req, res) {
 
 app.get('/schedule', function(req, res) {
     res.render('schedule', {layout: false});
+});
+
+app.get('/schedule/list', function(req, res) {
+    schedule.list(
+        function(result) {
+            res.json(result);
+        },
+        function(err) {
+            res.status(500).end(err.message);
+        }
+    )
+});
+
+app.get('/schedule/name/:name', function(req, res) {
+    console.log(req.params.name);
+    schedule.get(req.params.name,
+        function(result) {
+            res.json(result);
+        },
+        function(err) {
+            res.status(500).end(err.message);
+        }
+    )
 });
 
 var server = app.listen(8000);
