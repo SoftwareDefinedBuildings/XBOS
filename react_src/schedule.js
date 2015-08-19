@@ -3,7 +3,6 @@ var ScheduleDashboard = React.createClass({
         return {page: "schedule", viewSchedule: null}
     },
     renderSchedule: function(name) {
-        console.log("selected", name);
         this.setState({viewSchedule: name});
     },
     render: function() {
@@ -21,7 +20,7 @@ var ScheduleDashboard = React.createClass({
                         <ScheduleList renderSchedule={this.renderSchedule} />
                     </div>
                     <div className="col-md-8">
-                        {this.state.viewSchedule == null ? <span></span> : <ScheduleView name={this.state.viewSchedule} />}
+                        {this.state.viewSchedule == null ? <span></span> : <ScheduleView scheduleName={this.state.viewSchedule} />}
                     </div>
                 </div>
             </div>
@@ -31,14 +30,22 @@ var ScheduleDashboard = React.createClass({
 
 var ScheduleView = React.createClass({
     getInitialState: function() {
-        return {name: this.props.name,
+        return {name: this.props.scheduleName,
                 description: null,
                 point_descs: {},
                 periods: []}
     },
+    componentDidUpdate: function(prevProps) {
+        if (prevProps.scheduleName != this.props.scheduleName) {
+            this.fetchSchedule();
+        }
+    },
     componentWillMount: function() {
+        this.fetchSchedule();
+    },
+    fetchSchedule: function() {
         $.ajax({
-            url: '/schedule/name/'+this.props.name,
+            url: '/schedule/name/'+this.props.scheduleName,
             datatype: 'json',
             type: 'GET',
             success: function(schedule) {
@@ -54,7 +61,7 @@ var ScheduleView = React.createClass({
     render: function() {
         return (
             <div className="scheduleView">
-                <Panel header={"Schedule:" + this.props.name} bsStyle="info">
+                <Panel header={"Schedule:" + this.props.scheduleName} bsStyle="info">
                     <PointDescriptionView descriptions={this.state.point_descs} />
                     <EpochListView epochs={this.state.periods} />
                 </Panel>
@@ -143,7 +150,7 @@ var ScheduleList = React.createClass({
     getInitialState: function() {
         return {names: []}
     },
-    componentWillMount: function() {
+    componentDidMount: function() {
         $.ajax({
             url: '/schedule/list',
             datatype: 'json',

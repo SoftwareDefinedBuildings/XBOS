@@ -20,8 +20,10 @@ schedule.list = function(success, error) {
 
 schedule.get = function(name, success, error) {
     db.schedules.findOne({name: name}, function(err, found) {
-        if (err || !found) {
+        if (err) {
             error(err);
+        } else if (!found) {
+            error(new Error("No schedule found"));
         } else {
             delete found._id;
             success(found);
