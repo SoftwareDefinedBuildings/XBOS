@@ -125,3 +125,9 @@ var LOOKUP = {
     "Illumination": "Metadata/Point/Type = 'Sensor' and Metadata/Point/Sensor = 'Illumination'",
     "On": "Metadata/Point/Type = 'Command' and Metadata/Point/Command = 'On'",
 };
+
+// React Bootstrap shortcuts
+var ListGroup = ReactBootstrap.ListGroup;
+var ListGroupItem = ReactBootstrap.ListGroupItem;
+var Panel = ReactBootstrap.Panel;
+var Table = ReactBootstrap.Table;
