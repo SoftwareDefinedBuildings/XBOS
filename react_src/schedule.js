@@ -68,7 +68,7 @@ var ScheduleView = React.createClass({
         if (this.props.edit) {
             view = (
                 <Panel header={"Schedule:" + this.props.scheduleName} bsStyle="warning">
-                    <PointDescriptionEdit descriptions={this.state.point_descs} />
+                    <ScheduleEditor name={this.props.scheduleName} />
                 </Panel>
             );
         } else {
@@ -115,6 +115,110 @@ var PointDescriptionView = React.createClass({
                 </Table>
             </div>
         );
+    }
+});
+
+var ScheduleEditor = React.createClass({
+    getInitialState: function() {
+        return {description: null, point_descs: [], periods: []}
+    },
+    componentDidUpdate: function(prevProps) {
+        if (prevProps.name != this.props.name) {
+            this.fetchSchedule();
+        }
+    },
+    componentWillMount: function() {
+        this.fetchSchedule();
+    },
+    fetchSchedule: function() {
+        $.ajax({
+            url: '/schedule/name/'+this.props.name,
+            datatype: 'json',
+            type: 'GET',
+            success: function(schedule) {
+                var point_descs = _.map(schedule["point descriptions"], function(value, key) {
+                    return {name: key, desc: value.desc, units: value.units};
+                });
+                this.setState({description: schedule.description,
+                               point_descs: point_descs,
+                               periods: schedule.periods});
+            }.bind(this),
+            error: function(err) {
+                console.error(err);
+            }.bind(this)
+        });
+    },
+    handlePointDescChange: function(idx, field, evt) {
+        var point_descs = this.state.point_descs;
+        point_descs[idx][field] = evt.target.value;
+        this.setState({point_descs: point_descs});
+    },
+    addPointDescRow: function() {
+        var point_descs = this.state.point_descs;
+        point_descs[point_descs.length] = {name: "", desc: "", units: ""}
+        this.setState({point_descs: point_descs});
+    },
+    removePointDescRow: function(idx) {
+        var point_descs = this.state.point_descs;
+        point_descs.splice(idx, 1);
+        this.setState({point_descs: point_descs});
+    },
+    submitSchedule: function(e) {
+        e.preventDefault();
+        //TODO: transform state back
+        console.log(this.state);
+    },
+    render: function () {
+        var self = this;
+        var rows = _.map(this.state.point_descs, function(pd, idx) {
+            return (
+                <tr key={"row"+idx}>
+                    <td><Input onChange={self.handlePointDescChange.bind(null, idx, "name")} type="text" size="8" maxLength="50" defaultValue={pd.name} /></td>
+                    <td><Input onChange={self.handlePointDescChange.bind(null, idx, "units")} type="text" size="4" maxLength="10" defaultValue={pd.units} /></td>
+                    <td><Input onChange={self.handlePointDescChange.bind(null, idx, "desc")} type="text" defaultValue={pd.desc} /></td>
+                    <td><Button onClick={self.removePointDescRow.bind(null, idx)}><Glyphicon glyph="minus" /> Remove</Button></td>
+                </tr>
+            )
+        });
+        var epochs = _.map(this.state.periods, function(ep, idx) {
+            var points = _.map(ep.points, function(p, pidx) {
+                return <p key={p.name}>{p.name}</p>;
+            });
+            return (
+                <ListGroupItem key={ep.name}>
+                    <p>Name: <Input type="text" size="8" maxLength="50" defaultValue={ep.name} /></p>
+                    <p>Start: <Input type="text" size="4" maxLength="5" defaultValue={ep.start} /></p>
+                    {points}
+                </ListGroupItem>
+            )
+        });
+        return (
+            <div className="scheduleEditor">
+                <form onSubmit={this.submitSchedule}>
+                    <Table striped bordered condensed>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Units</th>
+                                <th>Description</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {rows}
+                            <tr> 
+                                <td colSpan="3"></td>
+                                <td><Button onClick={this.addPointDescRow}><Glyphicon glyph="plus" /> Add</Button></td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                    <ListGroup>
+                        {epochs}
+                    </ListGroup>
+                    <Button type='submit'>Submit</Button>
+                </form>
+            </div>
+        )
     }
 });
 

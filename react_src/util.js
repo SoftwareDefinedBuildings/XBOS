@@ -132,5 +132,6 @@ var ListGroupItem = ReactBootstrap.ListGroupItem;
 var Panel = ReactBootstrap.Panel;
 var Table = ReactBootstrap.Table;
 var Button = ReactBootstrap.Button;
+var Glyphicon = ReactBootstrap.Glyphicon;
 
 var Input = ReactBootstrap.Input;
