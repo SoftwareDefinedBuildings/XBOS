@@ -83,6 +83,17 @@ app.post('/schedule/save', function(req, res) {
     )
 });
 
+app.post('/schedule/delete', function(req, res) {
+    schedule.delete(req.body.name,
+        function() {
+            res.end();
+        },
+        function(err) {
+            res.status(500).end(err.message);
+        }
+    )
+});
+
 var server = app.listen(8000);
 console.log('Server listening on port 8000');
 

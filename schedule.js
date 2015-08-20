@@ -41,4 +41,14 @@ schedule.save = function(sched, success, error) {
     });
 }
 
+schedule.delete = function(name, success, error) {
+    db.schedules.remove({name: name}, function(err) {
+        if (err) {
+            error(err);
+        } else {
+            success();
+        }
+    });
+}
+
 module.exports = schedule;

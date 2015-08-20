@@ -3,8 +3,24 @@ var ScheduleDashboard = React.createClass({
         return {page: "schedule", viewSchedule: null, edit: false}
     },
     renderSchedule: function(name, edit) {
+        console.log("render", name, edit);
         this.setState({viewSchedule: name,
                        edit: edit});
+    },
+    deleteSchedule: function(name) {
+        $.ajax({
+            url: '/schedule/delete',
+            datatype: 'json',
+            type: 'POST',
+            data: {name: name},
+            success: function() {
+                console.log("delete", name);
+                this.setState({viewSchedule: null});
+            }.bind(this),
+            error: function(err) {
+                console.error(err);
+            }.bind(this)
+        });
     },
     render: function() {
         return (
@@ -18,7 +34,7 @@ var ScheduleDashboard = React.createClass({
                 </div>
                 <div className="row">
                     <div className="col-md-4">
-                        <ScheduleList renderSchedule={this.renderSchedule} />
+                        <ScheduleList renderSchedule={this.renderSchedule} deleteSchedule={this.deleteSchedule} />
                     </div>
                     <div className="col-md-8">
                         {this.state.viewSchedule == null ? <span></span> : <ScheduleView scheduleName={this.state.viewSchedule} edit={this.state.edit} />}
@@ -229,6 +245,7 @@ var ScheduleEditor = React.createClass({
             success: function() {
                 console.log("success!");
                 this.fetchSchedule();
+                location.reload();
             }.bind(this),
             error: function(err) {
                 console.error(err);
@@ -269,7 +286,7 @@ var ScheduleEditor = React.createClass({
             return (
                 <ListGroupItem key={"epoch"+idx}>
                     <p>Name: <Input onChange={self.editEpoch.bind(null, idx, "name")} type="text" size="8" maxLength="50" defaultValue={ep.name} /></p>
-                    <p>Start: <Input onChange={self.editEpoch.bind(null, idx, "value")} type="text" size="4" maxLength="5" defaultValue={ep.start} /></p>
+                    <p>Start: <Input onChange={self.editEpoch.bind(null, idx, "start")} type="text" size="4" maxLength="5" defaultValue={ep.start} /></p>
                     <Table bordered condensed>
                         <thead>
                             <tr>
@@ -383,6 +400,21 @@ var ScheduleList = React.createClass({
         var names = this.state.names;
         names[names.length] = "[untitled schedule]";
         this.setState({names: names});
+        this.props.renderSchedule(names[names.length-1], true);
+    },
+    deleteSchedule: function(name) {
+        this.props.deleteSchedule(name);
+        $.ajax({
+            url: '/schedule/list',
+            datatype: 'json',
+            type: 'GET',
+            success: function(schedules) {
+                this.setState({names: schedules});
+            }.bind(this),
+            error: function(err) {
+                console.error(err);
+            }.bind(this)
+        });
     },
     componentDidMount: function() {
         $.ajax({
@@ -406,11 +438,14 @@ var ScheduleList = React.createClass({
                         <div className="col-md-4">
                             {name}
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-2">
                             <Button bsStyle="info" onClick={self.props.renderSchedule.bind(null, name, false)} >View</Button>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-2">
                             <Button bsStyle="warning" onClick={self.props.renderSchedule.bind(null, name, true)} >Edit</Button>
+                        </div>
+                        <div className="col-md-2">
+                            <Button bsStyle="danger" onClick={self.deleteSchedule.bind(null, name)} >Delete</Button>
                         </div>
                     </div>
                 </ListGroupItem>
