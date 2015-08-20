@@ -53,7 +53,8 @@ class Scheduler(SmapDriver):
         # find smallest difference less than 0 to find periods before
         diffsBefore = filter(lambda x: x < 0, diffs)
         if not len(diffsBefore):
-            return None # nothing before
+            # nothing before, so take the max (from the previous day)
+            return self.epochs.keys()[diffs.index(max(diffs))]
         return self.epochs.keys()[diffs.index(max(diffsBefore))]
 
     def find_epoch_after_time(self, targettime):
@@ -63,10 +64,11 @@ class Scheduler(SmapDriver):
         """
         diffs = map(lambda x: targettime - x, self.epochs.keys())
         # find smallest difference less than 0 to find periods before
-        diffsBefore = filter(lambda x: x < 0, diffs)
-        if not len(diffsBefore):
-            return None # nothing before
-        return self.epochs.keys()[diffs.index(max(diffsBefore))]
+        diffsAfter = filter(lambda x: x < 0, diffs)
+        if not len(diffsAfter):
+            # nothing after, so take the min (for the next day)
+            return self.epochs.keys()[diffs.index(min(diffs))]
+        return self.epochs.keys()[diffs.index(max(diffsAfter))]
 
 
     def push_epoch(self):
@@ -94,8 +96,9 @@ class Scheduler(SmapDriver):
         curTime = Scheduler._current_time_as_seconds()
         self.nextEpoch = self.find_epoch_after_time(self.nextEpoch)
         print self.nextEpoch, curTime
-        print 'call later in', self.nextEpoch - curTime, 'seconds'
-        reactor.callLater(self.nextEpoch - curTime, self.push_epoch)
+        wait = Scheduler._get_time_til_epoch(self.nextEpoch)
+        print 'call later in', wait, 'seconds'
+        reactor.callLater(wait, self.push_epoch)
 
 
     @staticmethod
@@ -122,6 +125,15 @@ class Scheduler(SmapDriver):
             return 0 # can't parse
         hour, minute, second = int(hour), int(minute), int(second)
         return 1 * second + 60 * minute + 3600 * hour
+
+    @staticmethod
+    def _get_time_til_epoch(epoch):
+        curTime = Scheduler._current_time_as_seconds()
+        diff = epoch - curTime
+        if diff > 0:
+            return diff
+        else:
+            return 24 * 3600 - curTime + epoch
 
     @staticmethod
     def _current_time_as_seconds():
