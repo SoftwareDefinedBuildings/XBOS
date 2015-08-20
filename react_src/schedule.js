@@ -148,7 +148,8 @@ var ScheduleEditor = React.createClass({
             }.bind(this)
         });
     },
-    handlePointDescChange: function(idx, field, evt) {
+
+    editPointDescRow: function(idx, field, evt) {
         var point_descs = this.state.point_descs;
         point_descs[idx][field] = evt.target.value;
         this.setState({point_descs: point_descs});
@@ -163,6 +164,45 @@ var ScheduleEditor = React.createClass({
         point_descs.splice(idx, 1);
         this.setState({point_descs: point_descs});
     },
+
+    editEpoch: function(idx, field, evt) {
+        evt.preventDefault();
+        var epochs = this.state.periods;
+        epochs[idx][field] = evt.target.value;
+        this.setState({periods: epochs});
+    },
+    addEpoch: function() {
+        var epochs = this.state.periods;
+        epochs[epochs.length] = {name: "", value: "", points: []};
+        this.setState({periods: epochs});
+    },
+    removeEpoch: function(idx) {
+        var epochs = this.state.periods;
+        epochs.splice(idx, 1);
+        this.setState({periods: epochs});
+    },
+
+    editEpochPoint: function(epoch_idx, point_idx, field, evt) {
+        var epochs = this.state.periods;
+        var epoch = epochs[epoch_idx];
+        epoch.points[point_idx][field] = evt.target.value;
+        epochs[epoch_idx] = epoch;
+        this.setState({periods: epochs});
+    },
+    addEpochPoint: function(epoch_idx) {
+        var epochs = this.state.periods;
+        var epoch = epochs[epoch_idx];
+        epoch.points[epoch.points.length] = {name: "", value: ""}
+        epochs[epoch_idx] = epoch;
+        this.setState({periods: epochs});
+    },
+    removeEpochPoint: function(epoch_idx, point_idx) {
+        var epochs = this.state.periods;
+        var epoch = epochs[epoch_idx];
+        epoch.points.splice(point_idx, 1);
+        epochs[epoch_idx] = epoch;
+        this.setState({periods: epochs});
+    },
     submitSchedule: function(e) {
         e.preventDefault();
         //TODO: transform state back
@@ -170,28 +210,60 @@ var ScheduleEditor = React.createClass({
     },
     render: function () {
         var self = this;
-        var rows = _.map(this.state.point_descs, function(pd, idx) {
+
+        // setup the rows for the point descriptions
+        var pointDescRows = _.map(this.state.point_descs, function(pd, idx) {
             return (
                 <tr key={"row"+idx}>
-                    <td><Input onChange={self.handlePointDescChange.bind(null, idx, "name")} type="text" size="8" maxLength="50" defaultValue={pd.name} /></td>
-                    <td><Input onChange={self.handlePointDescChange.bind(null, idx, "units")} type="text" size="4" maxLength="10" defaultValue={pd.units} /></td>
-                    <td><Input onChange={self.handlePointDescChange.bind(null, idx, "desc")} type="text" defaultValue={pd.desc} /></td>
+                    <td><Input onChange={self.editPointDescRow.bind(null, idx, "name")} type="text" size="8" maxLength="50" defaultValue={pd.name} /></td>
+                    <td><Input onChange={self.editPointDescRow.bind(null, idx, "units")} type="text" size="4" maxLength="10" defaultValue={pd.units} /></td>
+                    <td><Input onChange={self.editPointDescRow.bind(null, idx, "desc")} type="text" defaultValue={pd.desc} /></td>
                     <td><Button onClick={self.removePointDescRow.bind(null, idx)}><Glyphicon glyph="minus" /> Remove</Button></td>
                 </tr>
             )
         });
+
+        var pointDescriptionOptions = _.map(this.state.point_descs, function(desc) {
+            return (<option key={"option"+desc.name} value={desc.name}>{desc.name}</option>);
+        });
+
+        // set up the epochs
         var epochs = _.map(this.state.periods, function(ep, idx) {
+            // these are the actuation points for each epoch
             var points = _.map(ep.points, function(p, pidx) {
-                return <p key={p.name}>{p.name}</p>;
+                return (
+                    <tr key={"epoch"+idx+"point"+pidx}>
+                        <td><Input type='select' onChange={self.editEpochPoint.bind(null, idx, pidx, "name")} defaultValue={p.name}>{pointDescriptionOptions}</Input></td>
+                        <td><Input onChange={self.editEpochPoint.bind(null, idx, pidx, "value")} type="text" size="8" maxLength="50" defaultValue={p.value} /></td>
+                        <td><Button onClick={self.removeEpochPoint.bind(null, idx, pidx)}><Glyphicon glyph="minus" /></Button></td>
+                    </tr>
+                )
             });
             return (
-                <ListGroupItem key={ep.name}>
-                    <p>Name: <Input type="text" size="8" maxLength="50" defaultValue={ep.name} /></p>
-                    <p>Start: <Input type="text" size="4" maxLength="5" defaultValue={ep.start} /></p>
-                    {points}
+                <ListGroupItem key={"epoch"+idx}>
+                    <p>Name: <Input onChange={self.editEpoch.bind(null, idx, "name")} type="text" size="8" maxLength="50" defaultValue={ep.name} /></p>
+                    <p>Start: <Input onChange={self.editEpoch.bind(null, idx, "value")} type="text" size="4" maxLength="5" defaultValue={ep.start} /></p>
+                    <Table bordered condensed>
+                        <thead>
+                            <tr>
+                                <td>Point Name</td>
+                                <td>Value</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {points}
+                            <tr>
+                                <td><Button onClick={self.addEpochPoint.bind(null, idx)}><Glyphicon glyph="plus" /></Button></td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                    <Button onClick={self.removeEpoch.bind(null, idx)}><Glyphicon glyph="minus" />  Remove</Button>
                 </ListGroupItem>
             )
         });
+
+        // now here's the actual layout
         return (
             <div className="scheduleEditor">
                 <form onSubmit={this.submitSchedule}>
@@ -205,8 +277,8 @@ var ScheduleEditor = React.createClass({
                             </tr>
                         </thead>
                         <tbody>
-                            {rows}
-                            <tr> 
+                            {pointDescRows}
+                            <tr>
                                 <td colSpan="3"></td>
                                 <td><Button onClick={this.addPointDescRow}><Glyphicon glyph="plus" /> Add</Button></td>
                             </tr>
@@ -215,7 +287,8 @@ var ScheduleEditor = React.createClass({
                     <ListGroup>
                         {epochs}
                     </ListGroup>
-                    <Button type='submit'>Submit</Button>
+                    <Button onClick={self.addEpoch}><Glyphicon glyph="plus" />  Add Epoch</Button>
+                    <Button type='submit' bsStyle="primary">Submit</Button>
                 </form>
             </div>
         )
