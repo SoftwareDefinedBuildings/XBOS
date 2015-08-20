@@ -31,4 +31,14 @@ schedule.get = function(name, success, error) {
     });
 }
 
+schedule.save = function(sched, success, error) {
+    db.schedules.update({name: sched.name}, sched, {upsert: true}, function(err, good) {
+        if (err) {
+            error(err);
+        } else {
+            success(good);
+        }
+    });
+}
+
 module.exports = schedule;

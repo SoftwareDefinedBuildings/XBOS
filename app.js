@@ -70,6 +70,19 @@ app.get('/schedule/name/:name', function(req, res) {
     )
 });
 
+app.post('/schedule/save', function(req, res) {
+    var sched = req.body;
+    console.log(sched);
+    schedule.save(sched,
+        function() {
+            res.end();
+        },
+        function(err) {
+            res.status(500).end(err.message);
+        }
+    )
+});
+
 var server = app.listen(8000);
 console.log('Server listening on port 8000');
 

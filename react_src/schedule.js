@@ -37,7 +37,7 @@ var ScheduleView = React.createClass({
                 periods: []}
     },
     componentDidUpdate: function(prevProps) {
-        if (prevProps.scheduleName != this.props.scheduleName) {
+        if ((prevProps.scheduleName != this.props.scheduleName) || (prevProps.edit != this.props.edit)) {
             this.fetchSchedule();
         }
     },
@@ -139,7 +139,8 @@ var ScheduleEditor = React.createClass({
                 var point_descs = _.map(schedule["point descriptions"], function(value, key) {
                     return {name: key, desc: value.desc, units: value.units};
                 });
-                this.setState({description: schedule.description,
+                this.setState({name: schedule.name,
+                               description: schedule.description,
                                point_descs: point_descs,
                                periods: schedule.periods});
             }.bind(this),
@@ -205,8 +206,30 @@ var ScheduleEditor = React.createClass({
     },
     submitSchedule: function(e) {
         e.preventDefault();
-        //TODO: transform state back
-        console.log(this.state);
+        var point_descs = {};
+        _.each(this.state.point_descs, function(pd) {
+            point_descs[pd.name] = {desc: pd.desc, units: pd.units}
+        });
+        var schedule = {
+            name: this.state.name,
+            description: this.state.description,
+            periods: this.state.periods
+        };
+        schedule["point descriptions"] = point_descs;
+        console.log(schedule);
+        $.ajax({
+            url: '/schedule/save',
+            datatype: 'json',
+            type: 'POST',
+            data: schedule,
+            success: function() {
+                console.log("success!");
+                this.fetchSchedule();
+            }.bind(this),
+            error: function(err) {
+                console.error(err);
+            }.bind(this)
+        });
     },
     render: function () {
         var self = this;
