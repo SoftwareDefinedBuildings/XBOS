@@ -1,9 +1,10 @@
 var ScheduleDashboard = React.createClass({
     getInitialState: function() {
-        return {page: "schedule", viewSchedule: null}
+        return {page: "schedule", viewSchedule: null, edit: false}
     },
-    renderSchedule: function(name) {
-        this.setState({viewSchedule: name});
+    renderSchedule: function(name, edit) {
+        this.setState({viewSchedule: name,
+                       edit: edit});
     },
     render: function() {
         return (
@@ -20,7 +21,7 @@ var ScheduleDashboard = React.createClass({
                         <ScheduleList renderSchedule={this.renderSchedule} />
                     </div>
                     <div className="col-md-8">
-                        {this.state.viewSchedule == null ? <span></span> : <ScheduleView scheduleName={this.state.viewSchedule} />}
+                        {this.state.viewSchedule == null ? <span></span> : <ScheduleView scheduleName={this.state.viewSchedule} edit={this.state.edit} />}
                     </div>
                 </div>
             </div>
@@ -58,13 +59,30 @@ var ScheduleView = React.createClass({
             }.bind(this)
         });
     },
+    submitSchedule: function(e) {
+        e.preventDefault();
+        console.log(this.refs);
+    },
     render: function() {
-        return (
-            <div className="scheduleView">
+        var view = (<span></span>);
+        if (this.props.edit) {
+            view = (
+                <Panel header={"Schedule:" + this.props.scheduleName} bsStyle="warning">
+                    <PointDescriptionEdit descriptions={this.state.point_descs} />
+                </Panel>
+            );
+        } else {
+            view = (
                 <Panel header={"Schedule:" + this.props.scheduleName} bsStyle="info">
                     <PointDescriptionView descriptions={this.state.point_descs} />
                     <EpochListView epochs={this.state.periods} />
                 </Panel>
+            );
+        }
+
+        return (
+            <div className="scheduleView">
+                {view}
             </div>
         )
     }
@@ -98,7 +116,44 @@ var PointDescriptionView = React.createClass({
             </div>
         );
     }
+});
 
+//TODO: add validation on input row. Every row must have a value
+var PointDescriptionEdit = React.createClass({
+    submitSchedule: function(e) {
+        e.preventDefault();
+        console.log(this.refs);
+    },
+    render: function() {
+        var rows = _.map(this.props.descriptions, function(value, name) {
+            return (
+                <tr key={"row"+name}>
+                    <td><Input ref="point_desc_name" type="text" size="8" maxLength="50" defaultValue={name} /></td>
+                    <td><Input ref="point_desc_units" type="text" size="4" maxLength="10" defaultValue={value.units} /></td>
+                    <td><Input ref="point_desc_desc" type="text" defaultValue={value.desc} /></td>
+                </tr>
+            )
+        });
+        return (
+            <div className="pointDescriptionEdit">
+                <form onSubmit={this.submitSchedule}>
+                    <Table striped bordered condensed>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Units</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {rows}
+                        </tbody>
+                    </Table>
+                    <Button type='submit'>Submit</Button>
+                </form>
+            </div>
+        );
+    }
 });
 
 var EpochListView = React.createClass({
@@ -167,8 +222,18 @@ var ScheduleList = React.createClass({
         var self = this;
         var names = _.map(this.state.names, function(name) {
             return (
-                <ListGroupItem href="#" key={name} onClick={self.props.renderSchedule.bind(null, name)}>
-                    {name}
+                <ListGroupItem href="#" key={name} >
+                    <div className="row">
+                        <div className="col-md-4">
+                            {name}
+                        </div>
+                        <div className="col-md-4">
+                            <Button bsStyle="info" onClick={self.props.renderSchedule.bind(null, name, false)} >View</Button>
+                        </div>
+                        <div className="col-md-4">
+                            <Button bsStyle="warning" onClick={self.props.renderSchedule.bind(null, name, true)} >Edit</Button>
+                        </div>
+                    </div>
                 </ListGroupItem>
             )
         });

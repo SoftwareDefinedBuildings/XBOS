@@ -43,6 +43,10 @@ app.get('/schedule', function(req, res) {
     res.render('schedule', {layout: false});
 });
 
+app.get('/schedule_edit', function(req, res) {
+    res.render('schedule_edit', {layout: false});
+});
+
 app.get('/schedule/list', function(req, res) {
     schedule.list(
         function(result) {

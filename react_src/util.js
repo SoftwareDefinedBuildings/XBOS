@@ -131,3 +131,6 @@ var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 var Panel = ReactBootstrap.Panel;
 var Table = ReactBootstrap.Table;
+var Button = ReactBootstrap.Button;
+
+var Input = ReactBootstrap.Input;
