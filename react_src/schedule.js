@@ -59,21 +59,18 @@ var ScheduleView = React.createClass({
             }.bind(this)
         });
     },
-    submitSchedule: function(e) {
-        e.preventDefault();
-        console.log(this.refs);
-    },
     render: function() {
         var view = (<span></span>);
         if (this.props.edit) {
             view = (
-                <Panel header={"Schedule:" + this.props.scheduleName} bsStyle="warning">
+                <Panel header={"EDIT Schedule:" + this.props.scheduleName} bsStyle="warning">
                     <ScheduleEditor name={this.props.scheduleName} />
                 </Panel>
             );
         } else {
             view = (
                 <Panel header={"Schedule:" + this.props.scheduleName} bsStyle="info">
+                    <p>{this.state.description}</p>
                     <PointDescriptionView descriptions={this.state.point_descs} />
                     <EpochListView epochs={this.state.periods} />
                 </Panel>
@@ -120,7 +117,7 @@ var PointDescriptionView = React.createClass({
 
 var ScheduleEditor = React.createClass({
     getInitialState: function() {
-        return {description: null, point_descs: [], periods: []}
+        return {name: null, description: null, point_descs: [], periods: []}
     },
     componentDidUpdate: function(prevProps) {
         if (prevProps.name != this.props.name) {
@@ -143,11 +140,18 @@ var ScheduleEditor = React.createClass({
                                description: schedule.description,
                                point_descs: point_descs,
                                periods: schedule.periods});
+                this.forceUpdate();
             }.bind(this),
             error: function(err) {
                 console.error(err);
             }.bind(this)
         });
+    },
+
+    editHeader: function(field, evt) {
+        var s = this.state
+        s[field] = evt.target.value;
+        this.setState({s});
     },
 
     editPointDescRow: function(idx, field, evt) {
@@ -286,9 +290,17 @@ var ScheduleEditor = React.createClass({
             )
         });
 
+        var headerEdit = (
+            <div>
+                <Input type="text" onChange={this.editHeader.bind(null, "name")} value={this.state.name} />
+                <Input type="text" onChange={this.editHeader.bind(null, "description")} value={this.state.description} />
+            </div>
+        );
+
         // now here's the actual layout
         return (
             <div className="scheduleEditor">
+                {headerEdit}
                 <form onSubmit={this.submitSchedule}>
                     <Table striped bordered condensed>
                         <thead>
@@ -315,44 +327,6 @@ var ScheduleEditor = React.createClass({
                 </form>
             </div>
         )
-    }
-});
-
-//TODO: add validation on input row. Every row must have a value
-var PointDescriptionEdit = React.createClass({
-    submitSchedule: function(e) {
-        e.preventDefault();
-        console.log(this.refs);
-    },
-    render: function() {
-        var rows = _.map(this.props.descriptions, function(value, name) {
-            return (
-                <tr key={"row"+name}>
-                    <td><Input ref="point_desc_name" type="text" size="8" maxLength="50" defaultValue={name} /></td>
-                    <td><Input ref="point_desc_units" type="text" size="4" maxLength="10" defaultValue={value.units} /></td>
-                    <td><Input ref="point_desc_desc" type="text" defaultValue={value.desc} /></td>
-                </tr>
-            )
-        });
-        return (
-            <div className="pointDescriptionEdit">
-                <form onSubmit={this.submitSchedule}>
-                    <Table striped bordered condensed>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Units</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rows}
-                        </tbody>
-                    </Table>
-                    <Button type='submit'>Submit</Button>
-                </form>
-            </div>
-        );
     }
 });
 
@@ -405,6 +379,11 @@ var ScheduleList = React.createClass({
     getInitialState: function() {
         return {names: []}
     },
+    newSchedule: function() {
+        var names = this.state.names;
+        names[names.length] = "[untitled schedule]";
+        this.setState({names: names});
+    },
     componentDidMount: function() {
         $.ajax({
             url: '/schedule/list',
@@ -442,6 +421,9 @@ var ScheduleList = React.createClass({
                 <Panel header="Schedules">
                     <ListGroup>
                         {names}
+                        <ListGroupItem>
+                            <Button bsStyle="success" onClick={this.newSchedule}><Glyphicon glyph="plus" /> New Schedule</Button>
+                        </ListGroupItem>
                     </ListGroup>
                 </Panel>
             </div>
