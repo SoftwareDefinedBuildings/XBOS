@@ -194,7 +194,10 @@ var ScheduleEditor = React.createClass({
     },
     addEpoch: function() {
         var epochs = this.state.periods;
-        epochs[epochs.length] = {name: "", value: "", points: []};
+        if (epochs == null) {
+            epochs = [];
+        }
+        epochs[epochs.length] = {name: "", start: "", points: []};
         this.setState({periods: epochs});
     },
     removeEpoch: function(idx) {
@@ -206,6 +209,7 @@ var ScheduleEditor = React.createClass({
     editEpochPoint: function(epoch_idx, point_idx, field, evt) {
         var epochs = this.state.periods;
         var epoch = epochs[epoch_idx];
+        console.log(field, evt.target.value);
         epoch.points[point_idx][field] = evt.target.value;
         epochs[epoch_idx] = epoch;
         this.setState({periods: epochs});
@@ -213,7 +217,11 @@ var ScheduleEditor = React.createClass({
     addEpochPoint: function(epoch_idx) {
         var epochs = this.state.periods;
         var epoch = epochs[epoch_idx];
-        epoch.points[epoch.points.length] = {name: "", value: ""}
+        if (epoch.points == null) {
+            epoch.points = [];
+        }
+        var pds = this.state.point_descs;
+        epoch.points[epoch.points.length] = {name: pds[pds.length-1].name, value: ""}
         epochs[epoch_idx] = epoch;
         this.setState({periods: epochs});
     },
