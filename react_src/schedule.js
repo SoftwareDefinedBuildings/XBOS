@@ -28,7 +28,7 @@ var ScheduleDashboard = React.createClass({
                 <h1>XBOS</h1>
                 <div className="row">
                     <ReactBootstrap.Nav bsStyle='tabs' activeKey={this.state.page} >
-                        <ReactBootstrap.NavItem eventKey={"dashboard"} href="/">Dashboard</ReactBootstrap.NavItem>
+                        <ReactBootstrap.NavItem eventKey={"dashboard"} href="/dashboard">Dashboard</ReactBootstrap.NavItem>
                         <ReactBootstrap.NavItem eventKey={"schedule"} href="/schedule">Schedule</ReactBootstrap.NavItem>
                     </ReactBootstrap.Nav>
                 </div>
