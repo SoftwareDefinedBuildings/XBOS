@@ -132,14 +132,14 @@ var MetadataModal = React.createClass({
     });
     var modaltitle = 'Metadata for DeviceID ' + this.props.deviceID;
     return (
-      <ReactBootstrap.Modal {...this.props} title={modaltitle} animation={false}>
+      <Modal {...this.props} title={modaltitle} animation={false}>
         <div className='modal-body'>
             {mdrender}
         </div>
         <div className='modal-footer'>
-          <ReactBootstrap.Button onClick={this.props.onRequestHide}>Close</ReactBootstrap.Button>
+          <Button onClick={this.props.onRequestHide}>Close</ReactBootstrap.Button>
         </div>
-      </ReactBootstrap.Modal>
+      </Modal>
     );
   } 
 });
