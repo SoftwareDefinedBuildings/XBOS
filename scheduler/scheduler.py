@@ -90,13 +90,14 @@ class Scheduler(SmapDriver):
             }
         Then, it schedules the next epoch to be pushed
         """
+        print 'pushing', self.nextEpoch, self.epochs[self.nextEpoch]
         for point in self.epochs[self.nextEpoch]['points']:
             timeseries_point = Scheduler._fix_point_name(point['name']).encode('utf-8')
             self.add(timeseries_point, float(point['value']))
-        curTime = Scheduler._current_time_as_seconds()
         self.nextEpoch = self.find_epoch_after_time(self.nextEpoch)
-        print self.nextEpoch, curTime
+        print 'next epoch is',self.nextEpoch
         wait = Scheduler._get_time_til_epoch(self.nextEpoch)
+        print self.nextEpoch
         print 'call later in', wait, 'seconds'
         reactor.callLater(wait, self.push_epoch)
 
@@ -130,6 +131,9 @@ class Scheduler(SmapDriver):
     def _get_time_til_epoch(epoch):
         curTime = Scheduler._current_time_as_seconds()
         diff = epoch - curTime
+        print 'diff',diff
+        print 'cur', curTime
+        print 'epoch', epoch
         if diff > 0:
             return diff
         else:
