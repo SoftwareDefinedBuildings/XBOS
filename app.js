@@ -4,6 +4,7 @@ var schedule = require('./schedule');
 
 // dependencies
 var express = require('express');
+var request = require('request');
 var path = require('path');
 var WebSocket = require('ws');
 var _ = require('underscore');
@@ -92,6 +93,21 @@ app.post('/schedule/delete', function(req, res) {
             res.status(500).end(err.message);
         }
     )
+});
+
+app.post('/query', function(req, res) {
+    var mypost = {
+        url: config.httpArchiverUrl+'/api/query',
+        body: req.body.query,
+        method: 'POST'
+    };
+    request(mypost, function(err, resp, body) {
+        if (!err&& resp.statusCode == 200) {
+            res.json(JSON.parse(body));
+        } else {
+            res.status(500).end(resp.body);
+        }
+    });
 });
 
 var server = app.listen(8000);

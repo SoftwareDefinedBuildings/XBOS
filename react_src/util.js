@@ -115,6 +115,17 @@ var run_query = function(q, succ, err) {
     });
 };
 
+var run_query2 = function(q, succ, err) {
+    $.ajax({
+        url: '/query',
+        datatype: 'json',
+        type: 'POST',
+        data: {query: q},
+        success: succ.bind(this),
+        error: err.bind(this)
+    });
+};
+
 var LOOKUP = {
     "Heating Setpoint": "Metadata/Point/Type = 'Setpoint' and Metadata/Point/Setpoint = 'Heating'",
     "Cooling Setpoint": "Metadata/Point/Type = 'Setpoint' and Metadata/Point/Setpoint = 'Cooling'",

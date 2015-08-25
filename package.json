@@ -13,6 +13,7 @@
         "moment":"*",
         "multer":"*",
         "body-parser":"*",
+        "request":"*",
         "express-handlebars":"*",
         "wrappy":"*",
         "bson":"~0.2",
