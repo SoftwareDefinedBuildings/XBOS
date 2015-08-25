@@ -1,10 +1,11 @@
-var queryURL = 'http://localhost:8079/api/query';
+var queryURL = 'http://pantry.cs.berkeley.edu:8079/api/query';
 
 var Dashboard = React.createClass({
     getInitialState: function() {
-        return {page: "dashboard", hvacZones: [], lightingZones: []};
+        return {page: "dashboard", hvacZones: [], lightingZones: [], powerMeters: []};
     },
     componentDidMount: function() {
+        var self = this;
         // retrieve all HVAC zones
         $.ajax({
             url: queryURL,
@@ -32,6 +33,16 @@ var Dashboard = React.createClass({
                 console.error(queryURL, status, err.toString());
             }.bind(this)
         });
+
+        // retrieve full building power to render
+        run_query2("select distinct Metadata/PowerMeter;",
+            function(data) {
+                self.setState({powerMeters: data});
+            },
+            function(err) {
+                console.error("NOPE!", err);
+            }
+        )
     },
     render: function() {
         return (
@@ -44,10 +55,14 @@ var Dashboard = React.createClass({
                 </ReactBootstrap.Nav>
             </div>
             <div className="row">
-                <div className='col-md-6'>
+                <div className='col-md-4'>
+                    <h2>Building Info</h2>
+                    <PowerMeterList powerMeters={this.state.powerMeters} />
+                </div>
+                <div className='col-md-4'>
                     <HVACZoneList hvacZones={this.state.hvacZones} />
                 </div>
-                <div className='col-md-6'>
+                <div className='col-md-4'>
                     <LightingZoneList lightingZones={this.state.lightingZones} />
                 </div>
             </div>

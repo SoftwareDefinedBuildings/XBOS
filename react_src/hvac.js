@@ -87,7 +87,7 @@ var HVACZoneRoom = React.createClass({
         });
         var self = this;
         var devices = _.map(this.state.devices, function(deviceID) {
-            var display = ["Heating Setpoint", "Cooling Setpoint", "Temperature", "Humdity"];
+            var display = ["Heating Setpoint", "Cooling Setpoint", "Temperature", "Humidity"];
             var queryBase = "Metadata/DeviceID = '"+deviceID+"'";
             return (
                 <Device key={deviceID} 
