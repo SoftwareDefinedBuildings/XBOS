@@ -137,7 +137,7 @@ var MetadataModal = React.createClass({
             {mdrender}
         </div>
         <div className='modal-footer'>
-          <Button onClick={this.props.onRequestHide}>Close</ReactBootstrap.Button>
+          <Button onClick={this.props.onRequestHide}>Close</Button>
         </div>
       </Modal>
     );
