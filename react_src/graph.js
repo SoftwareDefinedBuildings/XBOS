@@ -1,11 +1,10 @@
 // functions for plotting data
 
-var updateGraph = function(name, data) {
-    //TODO: fix time
+var updateGraph = function(name, units, data) {
     var chart;
     nv.addGraph(function() {
         chart = nv.models.lineChart()
-                  .margin({left: 50, right: 50})
+                  .margin({left: 60, right: 50})
                   .height(400)
                   .useInteractiveGuideline(true)
                   .showYAxis(true)
@@ -18,7 +17,7 @@ var updateGraph = function(name, data) {
              ;
 
         chart.yAxis
-             .axisLabel('Unit')
+             .axisLabel(units)
              .tickFormat(d3.format('0.2f'))
              ;
 
