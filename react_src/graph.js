@@ -123,7 +123,8 @@ var Plot = React.createClass({
                     });
                     var myData =  {
                             values: points,
-                            key: stream.name
+                            key: stream.name,
+                            color: stream.color
                             };
                     streamdata[stream.uuid] = myData;
                     self.setState({data: streamdata});

@@ -120,7 +120,7 @@ var HVACZoneRoom = React.createClass({
         return (
             <div className={classes}>
                   <b>Room: {self.props.roomName}</b>
-                  <Plot name={self.props.roomName} length={360} streams={this.state.plotStreams} />
+                  <Plot name={self.props.roomName} length={3600} streams={this.state.plotStreams} />
                   {devices}
             </div>
         );
