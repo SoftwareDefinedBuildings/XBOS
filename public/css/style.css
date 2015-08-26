@@ -35,3 +35,8 @@ body {
     padding: 10px; 
     margin: 5px;
 }
+
+svg {
+    display: block;
+    margin: 0 auto;
+}

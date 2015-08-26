@@ -37,7 +37,6 @@ var PowerMeter = React.createClass({
                 self.setState({units: data[0].Properties.UnitofMeasure});
                 run_query2("select data in (now -4h, now) as ms where " + self.props.queryBase,
                     function(data) {
-                        console.log("got data", data);
                         self.setState({data: data});
                         var readings = data[0].Readings;
                         updateGraph(self.props.name, self.state.units, readings);

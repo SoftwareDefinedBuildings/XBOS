@@ -64,7 +64,7 @@ var HVACZoneRoomList = React.createClass({
 
 var HVACZoneRoom = React.createClass({
     getInitialState: function() {
-        return({devices: []});
+        return({devices: [], plotStreams: []});
     },
     componentDidMount: function() {
         // map the semantic meanings to UUIDs
@@ -77,6 +77,27 @@ var HVACZoneRoom = React.createClass({
                     console.error(queryURL, status, err.toString());
                   }
         );
+
+        // get the UUIDs for our plot points: heating/cooling setpoint and temperature
+        var plotStreams = [
+            {point: "Heating Setpoint", color: "#ff0000"},
+            {point: "Cooling Setpoint", color: "#0000ff"},
+            {point: "Temperature", color: "#000000"}
+        ];
+        _.each(plotStreams, function(stream, idx) {
+            run_query2("select uuid where " + LOOKUP[stream.point] + " and " + self.props.queryBase,
+                function(data) {
+                    stream.uuid = data[0].uuid;
+                    stream.name = stream.point
+                    var oldps = self.state.plotStreams;
+                    oldps[oldps.length] = stream;
+                    self.setState({plotStreams: oldps});
+                },
+                function(err) {
+                    console.error("problem fetching uuid for plot", err);
+                }
+            )
+        });
     },
     render: function() {
         var cx = React.addons.classSet;
@@ -99,6 +120,7 @@ var HVACZoneRoom = React.createClass({
         return (
             <div className={classes}>
                   <b>Room: {self.props.roomName}</b>
+                  <Plot name={self.props.roomName} length={360} streams={this.state.plotStreams} />
                   {devices}
             </div>
         );

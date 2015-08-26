@@ -3,7 +3,7 @@
 // for each data point returned
 var SubscribeQueryBase = {
     componentWillMount: function() {
-        console.log("Starting subscription for", this.props.queryBase);
+        //console.log("Starting subscription for", this.props.queryBase);
         this.socket = io.connect();
         this.socket.emit('new subscribe', this.props.queryBase);
         var self = this;
