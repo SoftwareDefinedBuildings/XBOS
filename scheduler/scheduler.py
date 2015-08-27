@@ -67,7 +67,7 @@ class Scheduler(SmapDriver):
         diffsAfter = filter(lambda x: x < 0, diffs)
         if not len(diffsAfter):
             # nothing after, so take the min (for the next day)
-            return self.epochs.keys()[diffs.index(min(diffs))]
+            return self.epochs.keys()[diffs.index(max(diffs))]
         return self.epochs.keys()[diffs.index(max(diffsAfter))]
 
 
