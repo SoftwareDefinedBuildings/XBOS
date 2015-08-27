@@ -110,8 +110,8 @@ app.post('/query', function(req, res) {
     });
 });
 
-var server = app.listen(8000);
-console.log('Server listening on port 8000');
+var server = app.listen(config.port, config.host);
+console.log('Server listening on port '+config.port);
 
 // keep track of mapping from subscriptions to the queries for those subscriptions
 var wsconns = {};
