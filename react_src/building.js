@@ -27,14 +27,15 @@ var PowerMeter = React.createClass({
         });
     },
     getInitialState: function() {
-        return {data: [], units: "n/a", lastValue: null, lastTime: null}
+        return {data: [], units: "n/a", lastValue: null, lastTime: null, plotLink: "#", uuid: null}
     },
     componentWillMount: function() {
-        //TODO: get units
         var self = this;
-        run_query2("select Properties/UnitofMeasure where " + self.props.queryBase,
+        run_query2("select uuid, Properties/UnitofMeasure where " + self.props.queryBase,
             function(data) {
                 self.setState({units: data[0].Properties.UnitofMeasure});
+                self.setState({uuid: data[0].uuid});
+                self.updatePlotLink();
                 run_query2("select data in (now -4h, now) as ms where " + self.props.queryBase,
                     function(data) {
                         self.setState({data: data});
@@ -52,14 +53,27 @@ var PowerMeter = React.createClass({
             }
         )
     },
+    updatePlotLink: function() {
+        var self = this;
+        get_permalink([self.state.uuid], 
+            function(url) {
+                console.log(url);
+                self.setState({plotLink: url});
+            },
+            function(xhr) {
+                console.error(xhr);
+            }
+        )
+    },
     render: function() {
         return (
             <div className="powerMeter">
                 <p>Power Meter: {this.props.name} </p>
                 <p>Current Value: {this.state.lastValue} {this.state.units} at {moment(this.state.lastTime).format("D MMM hh:mm:ss A")} </p>
-                <div id={"plot"+this.props.name}>
+                <div id={"plot"+this.props.name} style={{height: "400px"}}>
                     <svg></svg>
                 </div>
+                <Button href={this.state.plotLink} bsStyle="info">Plot</Button>
             </div>
         );
     }
