@@ -157,5 +157,9 @@ var Table = ReactBootstrap.Table;
 var Button = ReactBootstrap.Button;
 var Glyphicon = ReactBootstrap.Glyphicon;
 var Modal = ReactBootstrap.Modal;
+var ModalTrigger = ReactBootstrap.ModalTrigger;
+
+var Row = ReactBootstrap.Row;
+var Col = ReactBootstrap.Col;
 
 var Input = ReactBootstrap.Input;

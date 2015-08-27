@@ -51,13 +51,17 @@ var Device = React.createClass({
         });
         return (
             <div className={classes}>
-                <b>Name: {this.state.name}</b>
+                <Row>
+                    <Col xs={6}>
+                    <b>Name: {this.state.name}</b>
+                    </Col>
+                    <Col xs={6}>
+                        <ModalTrigger modal={<MetadataModal deviceID={this.props.deviceID}/>}>
+                            <Button bsStyle='primary' bsSize='small'>Show Metadata</Button>
+                        </ModalTrigger>
+                    </Col>
+                </Row>
                 <p>DeviceID: {this.props.deviceID}</p>
-                <p>
-                    <ReactBootstrap.ModalTrigger modal={<MetadataModal deviceID={this.props.deviceID}/>}>
-                        <ReactBootstrap.Button bsStyle='primary' bsSize='small'>Show Metadata</ReactBootstrap.Button>
-                    </ReactBootstrap.ModalTrigger>
-                </p>
                 {timeseries}
             </div>
         );
@@ -110,11 +114,23 @@ var Timeseries = React.createClass({
         });
         return (
             <div className={classes}>
-                <b>TIMESERIES</b>
-                <p>ts uuid: {this.props.uuid} </p>
-                <p>{this.props.name}: {this.state.value}</p>
-                <Button href={this.state.plotlink}>Plot</Button>
-                {act}
+                <Row>
+                    <Col xs={4}>
+                    <p>{this.props.name}: <b>{this.state.value}</b></p>
+                    </Col>
+                    <Col xs={8}>
+                        <p>{this.props.uuid} </p>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={2}>
+                    <Button href={this.state.plotlink}>Plot</Button>
+                    </Col>
+                    <Col xs={6}>
+                    {act}
+                    </Col>
+                    <Col xs={4}></Col>
+                </Row>
             </div>
         )
     }
