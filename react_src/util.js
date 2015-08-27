@@ -31,6 +31,11 @@ var get_latest_timestamp = function(reading) {
     return reading[reading.length-1][0];
 }
 
+
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
 // In sMAP, devices are represented as an array of timeseries that all
 // share the same Metadata/DeviceID. This is a convenience method that
 // re-presents this array of timeseries as an object

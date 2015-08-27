@@ -114,7 +114,7 @@ var Timeseries = React.createClass({
             <div className={classes}>
                 <Row>
                     <Col xs={4}>
-                    <p>{this.props.name}: <b>{this.state.value}</b></p>
+                    <p>{this.props.name}: <b>{isNumber(this.state.value) ? this.state.value.toFixed(2) : this.state.value }</b></p>
                     </Col>
                     <Col xs={8}>
                         <p>{this.props.uuid} </p>
