@@ -122,7 +122,7 @@ var Timeseries = React.createClass({
                 </Row>
                 <Row>
                     <Col xs={2}>
-                    <Button href={this.state.plotlink}>Plot</Button>
+                    <Button href={this.state.plotlink} bsStyle="info">Plot</Button>
                     </Col>
                     <Col xs={6}>
                     {act}

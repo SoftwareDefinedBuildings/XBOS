@@ -62,6 +62,8 @@ var HVACZoneRoomList = React.createClass({
     }
 });
 
+//TODO: if the room we are in does not have either a heating or cooling setpoint, then we render all of the sensors together
+//      and label them by their name? or what
 var HVACZoneRoom = React.createClass({
     getInitialState: function() {
         return({devices: [], plotStreams: [], plotLink: "#"});
@@ -134,7 +136,7 @@ var HVACZoneRoom = React.createClass({
             <div className={classes}>
                   <b>Room: {self.props.roomName}</b>
                   <Plot name={self.props.roomName} length={3600} streams={this.state.plotStreams} />
-                  <Button href={this.state.plotLink}>Plot</Button>
+                  <Button href={this.state.plotLink} bsStyle="info">Plot</Button>
                   {devices}
             </div>
         );
