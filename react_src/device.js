@@ -56,9 +56,7 @@ var Device = React.createClass({
                     <b>Name: {this.state.name}</b>
                     </Col>
                     <Col xs={6}>
-                        <ModalTrigger modal={<MetadataModal deviceID={this.props.deviceID}/>}>
-                            <Button bsStyle='primary' bsSize='small'>Show Metadata</Button>
-                        </ModalTrigger>
+                        <MetadataModal deviceID={this.props.deviceID} />
                     </Col>
                 </Row>
                 <p>DeviceID: {this.props.deviceID}</p>
@@ -138,7 +136,13 @@ var Timeseries = React.createClass({
 
 var MetadataModal = React.createClass({
    getInitialState() {
-    return {};
+    return {show: false};
+   },
+   open() {
+    this.setState({show: true});
+   },
+   close() {
+    this.setState({show: false});
    },
    componentWillMount(data) {
     var self = this;
@@ -157,14 +161,20 @@ var MetadataModal = React.createClass({
     });
     var modaltitle = 'Metadata for DeviceID ' + this.props.deviceID;
     return (
-      <Modal {...this.props} title={modaltitle} animation={false}>
-        <div className='modal-body'>
-            {mdrender}
-        </div>
-        <div className='modal-footer'>
-          <Button onClick={this.props.onRequestHide}>Close</Button>
-        </div>
-      </Modal>
+      <div className="metadataModal">
+        <Button bsStyle='primary' bsSize='small' onClick={this.open}>Show Metadata</Button>
+        <Modal {...this.props} show={this.state.show} onHide={this.close} animation={false}>
+          <Modal.Header closeButton>
+              <Modal.Title>{modaltitle}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+              {mdrender}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     );
   } 
 });
