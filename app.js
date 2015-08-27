@@ -71,6 +71,14 @@ app.get('/schedule/name/:name', function(req, res) {
     )
 });
 
+app.get('/deckard', function(req, res) {
+    res.redirect(config.deckard);
+});
+
+app.get('/plotter', function(req, res) {
+    res.redirect(config.plotter);
+});
+
 app.post('/schedule/save', function(req, res) {
     var sched = req.body;
     console.log(sched);

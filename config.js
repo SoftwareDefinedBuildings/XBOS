@@ -1,6 +1,6 @@
 var config = {};
 
-config.port = 8000;
+config.port = 7000;
 config.host = '0.0.0.0';
 
 config.deckard = 'http://localhost:8000';
