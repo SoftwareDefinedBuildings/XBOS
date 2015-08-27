@@ -77,7 +77,7 @@ var Timeseries = React.createClass({
         });
     },
     getInitialState: function() {
-        return({value: "n/a"});
+        return({value: "n/a", plotlink: "#"});
     },
     componentDidMount: function() {
         var self = this;
@@ -89,6 +89,14 @@ var Timeseries = React.createClass({
                     console.error("error", displaytag, LOOKUP[displaytag]);
                     console.error(queryURL, status, err.toString());
                   });
+        get_permalink([this.props.uuid], 
+        function(url) {
+            self.setState({plotlink: url});
+        },
+        function(xhr) {
+            console.error(xhr);
+        }
+        );
     },
     render: function() {
         var act = (<span />);
@@ -105,6 +113,7 @@ var Timeseries = React.createClass({
                 <b>TIMESERIES</b>
                 <p>ts uuid: {this.props.uuid} </p>
                 <p>{this.props.name}: {this.state.value}</p>
+                <Button href={this.state.plotlink}>Plot</Button>
                 {act}
             </div>
         )

@@ -40,6 +40,30 @@ app.get('/dashboard', function(req, res) {
     res.render('index', {layout: false});
 });
 
+app.get('/deckard', function(req, res) {
+    res.redirect(config.deckard);
+});
+
+app.get('/plotter', function(req, res) {
+    res.redirect(config.plotter);
+});
+
+app.post('/permalink', function(req, res) {
+    var streams = _.map(req.body.uuid, function(uuid) {
+        return {"stream": uuid}
+    });
+    var spec = {
+        "window_type": "now",
+        "window_width": 8.64e13, // 1 day
+        "streams": streams
+    }
+    var tosend = {"permalink_data": JSON.stringify(spec)};
+    request.post({url: config.plotter+"/s3ui_permalink", json: tosend}, function(err, remoteResponse, remoteBody) {
+        if (err) { return res.status(500).end(err.message, remoteBody, remoteResponse); }
+        res.end(config.plotter+"/?"+remoteBody);
+    });
+});
+
 app.get('/schedule', function(req, res) {
     res.render('schedule', {layout: false});
 });
@@ -69,14 +93,6 @@ app.get('/schedule/name/:name', function(req, res) {
             res.status(500).end(err.message);
         }
     )
-});
-
-app.get('/deckard', function(req, res) {
-    res.redirect(config.deckard);
-});
-
-app.get('/plotter', function(req, res) {
-    res.redirect(config.plotter);
 });
 
 app.post('/schedule/save', function(req, res) {

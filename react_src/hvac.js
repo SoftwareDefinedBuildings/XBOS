@@ -64,7 +64,7 @@ var HVACZoneRoomList = React.createClass({
 
 var HVACZoneRoom = React.createClass({
     getInitialState: function() {
-        return({devices: [], plotStreams: []});
+        return({devices: [], plotStreams: [], plotLink: "#"});
     },
     componentDidMount: function() {
         // map the semantic meanings to UUIDs
@@ -92,12 +92,25 @@ var HVACZoneRoom = React.createClass({
                     var oldps = self.state.plotStreams;
                     oldps[oldps.length] = stream;
                     self.setState({plotStreams: oldps});
+                    self.updatePlotLink();
                 },
                 function(err) {
                     console.error("problem fetching uuid for plot", err);
                 }
             )
         });
+    },
+    updatePlotLink: function() {
+        var self = this;
+        get_permalink(_.pluck(self.state.plotStreams, "uuid"), 
+            function(url) {
+                console.log(url);
+                self.setState({plotLink: url});
+            },
+            function(xhr) {
+                console.error(xhr);
+            }
+        )
     },
     render: function() {
         var cx = React.addons.classSet;
@@ -121,6 +134,7 @@ var HVACZoneRoom = React.createClass({
             <div className={classes}>
                   <b>Room: {self.props.roomName}</b>
                   <Plot name={self.props.roomName} length={3600} streams={this.state.plotStreams} />
+                  <Button href={this.state.plotLink}>Plot</Button>
                   {devices}
             </div>
         );

@@ -126,6 +126,18 @@ var run_query2 = function(q, succ, err) {
     });
 };
 
+// get plotter permalink
+function get_permalink(uuid, succ, err) {
+    $.ajax({
+        url: '/permalink',
+        datatype: 'json',
+        type: 'POST',
+        data: {uuid: uuid},
+        success: succ.bind(this),
+        error: err.bind(this)
+    });
+}
+
 var LOOKUP = {
     "Heating Setpoint": "Metadata/Point/Type = 'Setpoint' and Metadata/Point/Setpoint = 'Heating'",
     "Cooling Setpoint": "Metadata/Point/Type = 'Setpoint' and Metadata/Point/Setpoint = 'Cooling'",
