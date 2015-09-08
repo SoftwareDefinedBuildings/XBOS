@@ -21,11 +21,9 @@ var users = require('./users');
 passport.use(new LocalStrategy(
       function(username, password, done) {
         users.findByName(username, function(err, user) {
-          console.log(err, user);
           if (err) { return done(err); }
           if (!user) { return done(null, false, { message: 'Incorrect username.' }); }
           if (!users.validPassword(user, password)) { return done(null, false, { message: 'Incorrect password.' }); }
-          console.log("okay!");
           return done(null, user);
         });
       }
@@ -147,7 +145,6 @@ app.get('/schedule/name/:name', function(req, res) {
         res.redirect('/login');
         return;
     }
-    console.log(req.params.name);
     schedule.get(req.params.name,
         function(result) {
             res.json(result);

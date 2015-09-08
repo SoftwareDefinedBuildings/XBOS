@@ -30,6 +30,9 @@ var ScheduleDashboard = React.createClass({
                     <ReactBootstrap.Nav bsStyle='tabs' activeKey={this.state.page} >
                         <ReactBootstrap.NavItem eventKey={"dashboard"} href="/dashboard">Dashboard</ReactBootstrap.NavItem>
                         <ReactBootstrap.NavItem eventKey={"schedule"} href="/schedule">Schedule</ReactBootstrap.NavItem>
+                        <ReactBootstrap.NavItem eventKey={"status"} href="/deckard"><Glyphicon glyph="chevron-right" /> Status</ReactBootstrap.NavItem>
+                        <ReactBootstrap.NavItem eventKey={"plotter"} href="/plotter"><Glyphicon glyph="chevron-right" /> Plotter</ReactBootstrap.NavItem>
+                        <ReactBootstrap.NavItem eventKey={"logout"} href="/logout">Logout</ReactBootstrap.NavItem>
                     </ReactBootstrap.Nav>
                 </div>
                 <div className="row">
