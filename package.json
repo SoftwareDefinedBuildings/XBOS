@@ -18,6 +18,9 @@
         "wrappy":"*",
         "bson":"~0.2",
         "brace-expansion":"*",
+        "passport-local":"*",
+        "passport":"*",
+        "cookie-parser":"*",
         "mongoskin": "*"
     }
 }
