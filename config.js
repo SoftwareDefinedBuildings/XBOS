@@ -3,8 +3,9 @@ var config = {};
 config.port = 7000;
 config.host = '0.0.0.0';
 
-config.deckard = 'http://localhost:8000';
-config.plotter = 'http://localhost:3000';
+config.session_secret = 'replace me';
+// bcrypt.genSaltSync()
+config.salt = '$2a$10$2bYSu/psRge8425Vif28he';
 
 config.apikey = "ADM5fw0z1HdbMCDZ6JSQAveuZyKDc_GicOsKBqzznpySgiUrmLENUGcqF69PXhXFgXOQ_GS98TUt0O-8SHXgKg==";
 config.uuid = "15fbd44c-c3c4-11e4-95aa-0cc47a0f7eea";

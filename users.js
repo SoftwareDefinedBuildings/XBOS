@@ -10,7 +10,7 @@ var db = mongo.db(config.mongohost);
 db.bind('users'); // bind to collection
 
 // bcrypt.genSaltSync()
-var salt = '$2a$10$2bYSu/psRge8425Vif28he';
+var salt = config.salt;
 
 users.findByName = function(name, cb) {
     db.users.findOne({name: name}, function(err, found) {

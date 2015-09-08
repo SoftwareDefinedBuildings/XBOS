@@ -53,7 +53,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 app.use(require('cookie-parser')());
-app.use(require('express-session')({ secret: 'replace me', resave: false, saveUninitialized: false }));
+app.use(require('express-session')({ secret: config.session_secret, resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
