@@ -36,9 +36,9 @@ users.findById = function(id, cb) {
     })
 }
 
-users.createUser = function(name, password, cb) {
+users.createUser = function(name, password, isAdmin, cb) {
     var hash = bcrypt.hashSync(password, salt);
-    var user = {name: name, password: hash};
+    var user = {name: name, password: hash, admin: isAdmin};
     db.users.findOne({name: name}, function(err, found) {
         if (found) {
             cb(new Error("User already exists with name "+name));

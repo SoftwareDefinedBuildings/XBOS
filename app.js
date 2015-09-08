@@ -88,6 +88,10 @@ app.get('/plotter', function(req, res) {
 });
 
 app.post('/permalink', function(req, res) {
+    if (!req.isAuthenticated()) {
+        res.redirect('/login');
+        return;
+    }
     var streams = _.map(req.body.uuid, function(uuid) {
         return {"stream": uuid}
     });
@@ -104,18 +108,30 @@ app.post('/permalink', function(req, res) {
 });
 
 app.get('/schedule', function(req, res) {
+    if (!req.isAuthenticated()) {
+        res.redirect('/login');
+        return;
+    }
     res.render('schedule', {layout: false});
 });
 
 app.get('/schedule_edit', function(req, res) {
-    if (req.isAuthenticated()) {
-        res.render('schedule_edit', {layout: false});
-    } else {
+    if (!req.isAuthenticated()) {
         res.redirect('/login');
+        return;
     }
+    if (!req.user.admin) {
+        res.redirect('/schedule');
+        return;
+    }
+    res.render('schedule_edit', {layout: false});
 });
 
 app.get('/schedule/list', function(req, res) {
+    if (!req.isAuthenticated()) {
+        res.redirect('/login');
+        return;
+    }
     schedule.list(
         function(result) {
             res.json(result);
@@ -127,6 +143,10 @@ app.get('/schedule/list', function(req, res) {
 });
 
 app.get('/schedule/name/:name', function(req, res) {
+    if (!req.isAuthenticated()) {
+        res.redirect('/login');
+        return;
+    }
     console.log(req.params.name);
     schedule.get(req.params.name,
         function(result) {
@@ -141,6 +161,11 @@ app.get('/schedule/name/:name', function(req, res) {
 app.post('/schedule/save', function(req, res) {
     if (!req.isAuthenticated()) {
         res.redirect('/login');
+        return;
+    }
+    if (!req.user.admin) {
+        res.end();
+        return;
     }
     var sched = req.body;
     console.log(sched);
@@ -157,6 +182,11 @@ app.post('/schedule/save', function(req, res) {
 app.post('/schedule/delete', function(req, res) {
     if (!req.isAuthenticated()) {
         res.redirect('/login');
+        return;
+    }
+    if (!req.user.admin) {
+        res.redirect('/schedule');
+        return;
     }
     schedule.delete(req.body.name,
         function() {
