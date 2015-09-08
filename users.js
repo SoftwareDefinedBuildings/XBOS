@@ -25,7 +25,7 @@ users.findByName = function(name, cb) {
 }
 
 users.findById = function(id, cb) {
-    db.users.findOne({_id: id}, function(err, found) {
+    db.users.findOne({_id: mongo.helper.toObjectID(id)}, function(err, found) {
         if (err) {
             cb(err);
         } else if (!found) {

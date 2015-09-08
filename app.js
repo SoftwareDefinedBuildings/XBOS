@@ -14,6 +14,33 @@ var http = require('http');
 var MongoClient = require('mongodb').MongoClient;
 var bodyParser = require('body-parser');
 var multer = require('multer');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var users = require('./users');
+
+passport.use(new LocalStrategy(
+      function(username, password, done) {
+        users.findByName(username, function(err, user) {
+          console.log(err, user);
+          if (err) { return done(err); }
+          if (!user) { return done(null, false, { message: 'Incorrect username.' }); }
+          if (!users.validPassword(user, password)) { return done(null, false, { message: 'Incorrect password.' }); }
+          console.log("okay!");
+          return done(null, user);
+        });
+      }
+));
+
+passport.serializeUser(function(user, cb) {
+  cb(null, user._id);
+});
+
+passport.deserializeUser(function(_id, cb) {
+  users.findById(_id, function (err, user) {
+    if (err) { return cb(err); }
+    cb(null, user);
+  });
+});
 
 // server setup
 var app = express();
@@ -25,6 +52,10 @@ app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
+app.use(require('cookie-parser')());
+app.use(require('express-session')({ secret: 'replace me', resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -33,11 +64,19 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', function(req, res) {
-    res.render('index', {layout: false});
+    if (req.isAuthenticated()) {
+        res.render('index', {layout: false});
+    } else {
+        res.redirect('/login');
+    }
 });
 
 app.get('/dashboard', function(req, res) {
-    res.render('index', {layout: false});
+    if (req.isAuthenticated()) {
+        res.render('index', {layout: false});
+    } else {
+        res.redirect('/login');
+    }
 });
 
 app.get('/deckard', function(req, res) {
@@ -69,7 +108,11 @@ app.get('/schedule', function(req, res) {
 });
 
 app.get('/schedule_edit', function(req, res) {
-    res.render('schedule_edit', {layout: false});
+    if (req.isAuthenticated()) {
+        res.render('schedule_edit', {layout: false});
+    } else {
+        res.redirect('/login');
+    }
 });
 
 app.get('/schedule/list', function(req, res) {
@@ -96,6 +139,9 @@ app.get('/schedule/name/:name', function(req, res) {
 });
 
 app.post('/schedule/save', function(req, res) {
+    if (!req.isAuthenticated()) {
+        res.redirect('/login');
+    }
     var sched = req.body;
     console.log(sched);
     schedule.save(sched,
@@ -109,6 +155,9 @@ app.post('/schedule/save', function(req, res) {
 });
 
 app.post('/schedule/delete', function(req, res) {
+    if (!req.isAuthenticated()) {
+        res.redirect('/login');
+    }
     schedule.delete(req.body.name,
         function() {
             res.end();
@@ -132,6 +181,23 @@ app.post('/query', function(req, res) {
             res.status(500).end(resp.body);
         }
     });
+});
+
+
+// login stuff
+app.get('/login', function(req, res) {
+    res.render('login', {layout: false});
+});
+
+app.get('/logout', function(req, res) {
+    req.logout();
+    res.redirect('/login');
+});
+
+app.post('/login', 
+    passport.authenticate('local', { failureRedirect: '/login' }),
+    function(req, res) {
+        res.redirect('/');
 });
 
 var server = app.listen(config.port, config.host);
