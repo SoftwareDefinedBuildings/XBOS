@@ -19,6 +19,7 @@
         "bson":"~0.2",
         "brace-expansion":"*",
         "passport-local":"*",
+        "express-session":"*",
         "passport":"*",
         "cookie-parser":"*",
         "mongoskin": "*"
