@@ -1,27 +1,30 @@
 {
-    "name": "openbas",
-    "version": "0.0.1",
-    "private": true,
-    "scripts": {
-        "start": "node app.js"
-    },
-    "dependencies": {
-        "express": "*",
-        "socket.io": "*",
-        "ws": "*",
-        "underscore":"*",
-        "moment":"*",
-        "multer":"*",
-        "body-parser":"*",
-        "request":"*",
-        "express-handlebars":"*",
-        "wrappy":"*",
-        "bson":"~0.2",
-        "brace-expansion":"*",
-        "passport-local":"*",
-        "express-session":"*",
-        "passport":"*",
-        "cookie-parser":"*",
-        "mongoskin": "*"
-    }
+  "name": "xbos",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "bcrypt": "^0.8.5",
+    "body-parser": "*",
+    "brace-expansion": "*",
+    "bson": "~0.2",
+    "cookie-parser": "*",
+    "express": "*",
+    "express-handlebars": "*",
+    "express-session": "*",
+    "kerberos": "0.0.18",
+    "moment": "*",
+    "mongodb": "^2.0.55",
+    "mongoskin": "*",
+    "multer": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "request": "*",
+    "socket.io": "*",
+    "underscore": "*",
+    "wrappy": "*",
+    "ws": "*"
+  }
 }
