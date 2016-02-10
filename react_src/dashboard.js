@@ -11,7 +11,7 @@ var Dashboard = React.createClass({
             url: queryURL,
             dataType: 'json',
             type: 'POST',
-            data: "select distinct Metadata/HVACZone;",
+            data: "select distinct Metadata/HVAC/Zone;",
             success: function(data) {
                 this.setState({hvacZones: data});
             }.bind(this),
@@ -25,7 +25,7 @@ var Dashboard = React.createClass({
             url: queryURL,
             dataType: 'json',
             type: 'POST',
-            data: "select distinct Metadata/LightingZone;",
+            data: "select distinct Metadata/Lighting/Zone;",
             success: function(data) {
                 this.setState({lightingZones: data});
             }.bind(this),

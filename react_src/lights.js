@@ -34,7 +34,7 @@ var LightingZoneRoomList = React.createClass({
     },
     componentDidMount: function() {
         var self = this;
-        run_query("select distinct Metadata/Location/Room where Metadata/LightingZone='"+this.props.zoneName+"';",
+        run_query("select distinct Metadata/Location/Room where Metadata/Lighting/Zone='"+this.props.zoneName+"';",
                   function(data) { //success
                     self.setState({rooms: data});
                   },
@@ -46,7 +46,7 @@ var LightingZoneRoomList = React.createClass({
     render: function() {
         var self = this;
         var rooms = _.map(this.state.rooms, function(roomName) {
-            var queryBase = "Metadata/LightingZone='"+self.props.zoneName+"' and Metadata/Location/Room = '"+roomName+"';";
+            var queryBase = "Metadata/Lighting/Zone='"+self.props.zoneName+"' and Metadata/Location/Room = '"+roomName+"';";
             return (
                 <LightingZoneRoom key={roomName}
                                   roomName={roomName}

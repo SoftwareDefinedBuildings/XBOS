@@ -33,7 +33,7 @@ var HVACZoneRoomList = React.createClass({
     componentDidMount: function() {
         // find all distinct rooms
         var self = this;
-        run_query("select distinct Metadata/Location/Room where Metadata/HVACZone='"+this.props.zoneName+"';",
+        run_query("select distinct Metadata/Location/Room where Metadata/HVAC/Zone='"+this.props.zoneName+"';",
                   function(data) { //success
                     self.setState({rooms: data});
                   },
@@ -45,7 +45,7 @@ var HVACZoneRoomList = React.createClass({
     render: function() {
         var self = this;
         var rooms = _.map(this.state.rooms, function(roomName) {
-            var querybase = "Metadata/HVACZone='"+self.props.zoneName+"' and Metadata/Location/Room = '"+roomName+"';";
+            var querybase = "Metadata/HVAC/Zone='"+self.props.zoneName+"' and Metadata/Location/Room = '"+roomName+"';";
             return (
                 <HVACZoneRoom key={roomName} 
                               roomName={roomName} 
