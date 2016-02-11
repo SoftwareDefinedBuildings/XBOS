@@ -74,7 +74,6 @@ var Timeseries = React.createClass({
     mixins: [SubscribeQueryBase],
     updateFromRepublish: function(data) {
         //_.map(obj, function(data) {
-        console.log("timeseries got",data)
         this.setState({value: get_latest_reading(data.Readings)});
         //});
     },

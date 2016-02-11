@@ -271,7 +271,7 @@ io.on('connection', function (socket) {
 
     var smapActuateMsg = {
         '/actuate': {
-            Metadata: {override: ''},
+            Actuator: {override: ''},
             Readings: [],
             uuid: config.uuid,
         },
@@ -284,7 +284,7 @@ io.on('connection', function (socket) {
     };
     socket.on('actuate', function(msg) {
 
-        smapActuateMsg['/actuate'].Metadata.override = msg.uuid
+        smapActuateMsg['/actuate'].Actuator.override = msg.uuid
         smapActuateMsg['/actuate'].Readings[0] = [moment().valueOf(), msg.request];
         console.log("Actuation requested for", smapActuateMsg);
         var req = http.request(smapPost, function(res) {

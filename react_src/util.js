@@ -17,7 +17,7 @@ var get_timeseries = function(path) {
 // [[1425582802,75],[1425582803,75]]. This fetches the most recent reading
 // and returns it
 var get_latest_reading = function(reading) {
-    if (reading.length == 0) {
+    if (reading == null || reading.length == 0) {
         return "n/a";
     }
     return reading[reading.length-1][1];
