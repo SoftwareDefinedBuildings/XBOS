@@ -72,11 +72,11 @@ var Device = React.createClass({
  */
 var Timeseries = React.createClass({
     mixins: [SubscribeQueryBase],
-    updateFromRepublish: function(obj) {
-        var self = this;
-        _.map(obj, function(data) {
-            self.setState({value: get_latest_reading(data.Readings)});
-        });
+    updateFromRepublish: function(data) {
+        //_.map(obj, function(data) {
+        console.log("timeseries got",data)
+        this.setState({value: get_latest_reading(data.Readings)});
+        //});
     },
     getInitialState: function() {
         return({value: "n/a", plotlink: "#"});

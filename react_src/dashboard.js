@@ -2,7 +2,7 @@ var queryURL = 'http://pantry.cs.berkeley.edu:8079/api/query';
 
 var Dashboard = React.createClass({
     getInitialState: function() {
-        return {page: "dashboard", hvacZones: [], lightingZones: [], powerMeters: []};
+        return {page: "dashboard", hvacZones: [], lightingZones: [], powerMeters: [], sensorRooms: []};
     },
     componentDidMount: function() {
         var self = this;
@@ -43,6 +43,15 @@ var Dashboard = React.createClass({
                 console.error("NOPE!", err);
             }
         )
+
+        run_query2("select distinct Metadata/Location/Room where Metadata/Point/Type = 'Sensor';",
+            function(data) {
+                self.setState({sensorRooms: data});
+            },
+            function(err) {
+                console.error("NOPE!", err);
+            }
+        )
     },
     render: function() {
         return (
@@ -61,6 +70,7 @@ var Dashboard = React.createClass({
                 <div className='col-md-4'>
                     <h2>Building Info</h2>
                     <PowerMeterList powerMeters={this.state.powerMeters} />
+                    <SensorRoomList roomList={this.state.sensorRooms} />
                 </div>
                 <div className='col-md-4'>
                     <HVACZoneList hvacZones={this.state.hvacZones} />

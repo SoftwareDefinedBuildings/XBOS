@@ -18,7 +18,7 @@ var get_timeseries = function(path) {
 // and returns it
 var get_latest_reading = function(reading) {
     if (reading.length == 0) {
-        return null;
+        return "n/a";
     }
     return reading[reading.length-1][1];
 }
@@ -151,6 +151,7 @@ var LOOKUP = {
     "Brightness": "Metadata/Point/Type = 'Command' and Metadata/Point/Command = 'Brightness'",
     "Hue": "Metadata/Point/Type = 'Command' and Metadata/Point/Command = 'Hue'",
     "Illumination": "Metadata/Point/Type = 'Sensor' and Metadata/Point/Sensor = 'Illumination'",
+    "Occupancy": "Metadata/Point/Type = 'Sensor' and Metadata/Point/Sensor = 'Occupancy'",
     "On": "Metadata/Point/Type = 'Command' and Metadata/Point/Command = 'On'",
 };
 

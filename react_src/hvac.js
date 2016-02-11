@@ -89,6 +89,7 @@ var HVACZoneRoom = React.createClass({
         _.each(plotStreams, function(stream, idx) {
             run_query2("select uuid where " + LOOKUP[stream.point] + " and " + self.props.queryBase,
                 function(data) {
+                    if (data.length == 0) { return; }
                     stream.uuid = data[0].uuid;
                     stream.name = stream.point
                     var oldps = self.state.plotStreams;
