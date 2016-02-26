@@ -18,8 +18,6 @@ body {
 
 
 .tsbox {
-    border-radius: 25px;
-    border: 2px solid #888888;
     padding: 10px; 
 }
 
@@ -39,4 +37,10 @@ body {
 svg {
     display: block;
     margin: 0 auto;
+}
+
+hr {
+    height: 2px;
+    color: #333;
+    background-color: #333;
 }

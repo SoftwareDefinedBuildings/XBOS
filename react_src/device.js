@@ -13,7 +13,9 @@ var Device = React.createClass({
         self.setState(state);
         run_query("select Metadata/Name where "+this.props.queryBase,
                   function(data) {
-                    self.setState({name: data[0]});
+                    if (data.length == 0) { return; }
+                    if (data[0].Metadata == null) { return; }
+                    self.setState({name: data[0].Metadata.Name});
                   },
                   function(xhr, status, err) { // error
                     console.error("error", displaytag, LOOKUP[displaytag]);
@@ -24,6 +26,7 @@ var Device = React.createClass({
     // this runs a query to retrieve the UUID for a given displaytag
     getUUID: function(displaytag) {
         var self = this;
+        //console.log("device lookup", "select uuid where "+this.props.queryBase+" and "+LOOKUP[displaytag]);
         run_query("select uuid where "+this.props.queryBase+" and "+LOOKUP[displaytag],
                   function(data) { // success
                     var uuids = self.state.uuids;
@@ -44,16 +47,12 @@ var Device = React.createClass({
                 <Timeseries key={uuid} name={name} uuid={uuid} queryBase={queryBase}/>
             )
         });
-        var cx = React.addons.classSet;
-        var classes = cx({
-            'devbox': true,
-            'device': true
-        });
+        var classes = classNames('devbox', 'device');
         return (
             <div className={classes}>
                 <Row>
                     <Col xs={6}>
-                    <b>Name: {this.state.name}</b>
+                    {this.state.name == "" ? null : <b>Name: {this.state.name}</b>}
                     </Col>
                     <Col xs={6}>
                         <MetadataModal deviceID={this.props.deviceID} />
@@ -74,11 +73,23 @@ var Timeseries = React.createClass({
     mixins: [SubscribeQueryBase],
     updateFromRepublish: function(data) {
         //_.map(obj, function(data) {
-        this.setState({value: get_latest_reading(data.Readings)});
-        //});
+        if (data.length == 0) { return }
+        var latesttime = moment(get_latest_timestamp(data.Readings));
+        this.setState({value: get_latest_reading(data.Readings),
+                       time: latesttime.format("D MMM, h:mm:ss a")
+        });
+        this.checkOldTimestamp(latesttime);
     },
     getInitialState: function() {
-        return({value: "n/a", plotlink: "#"});
+        return({value: "n/a", plotlink: "#", time: "n/a", warning: null});
+    },
+    checkOldTimestamp: function(ts) {
+        var diff = moment().diff(ts, "minutes");
+        if (diff > 10) {
+            this.setState({warning: "Data point is "+diff+" minutes old! Check UUID "+this.props.uuid});
+        } else {
+            this.setState({warning: null});
+        }
     },
     componentDidMount: function() {
         var self = this;
@@ -91,43 +102,62 @@ var Timeseries = React.createClass({
                     console.error(queryURL, status, err.toString());
                   });
         get_permalink([this.props.uuid], 
-        function(url) {
-            self.setState({plotlink: url});
-        },
-        function(xhr) {
-            console.error(xhr);
-        }
+            function(url) {
+                self.setState({plotlink: url});
+            },
+            function(xhr) {
+                console.error(xhr);
+            }
         );
+
+        // get latest data point to determine health
+        run_query("select data before now as ns where uuid = '"+this.props.uuid+"'",
+                    function(data) { //success
+                        if (data.length == 0) {return}
+                        // update value of latest data point
+                        var latestval = get_latest_reading(data[0].Readings);
+                        var latesttime = moment(get_latest_timestamp(data[0].Readings));
+                        self.setState({value: latestval, time: latesttime.format("D MMM, h:mm:ss a")});
+
+                        self.checkOldTimestamp(latesttime);
+                    },
+                    function(xhr, status, err) { // error
+                    });
     },
     render: function() {
         var act = (<span />);
         if (this.state.Actuator != undefined) {
-            act = (<Actuator ActuatorUUID={this.state.Actuator.uuid}/>);
+            act = (<Row>
+                    <Col xs={6}>
+                        <Actuator ActuatorUUID={this.state.Actuator.uuid}/>
+                    </Col>
+                   </Row>);
         }
-        var cx = React.addons.classSet;
-        var classes = cx({
-            'tsbox': true,
-            'timeseries': true
-        });
+        var warning = null;
+        if (this.state.warning != null) {
+            var warning = (
+                <Row>
+                    <div className={classNames("alert", "alert-danger")}>
+                        <p>{this.state.warning}</p>
+                    </div>
+                </Row>);
+        }
+        var classes = classNames('tsbox', 'timeseries');
         return (
             <div className={classes}>
                 <Row>
-                    <Col xs={4}>
-                    <p>{this.props.name}: <b>{isNumber(this.state.value) ? this.state.value.toFixed(2) : this.state.value }</b></p>
+                    <Col xs={5}>
+                        <p>{this.props.name}: <b>{isNumber(this.state.value) ? this.state.value.toFixed(2) : this.state.value }</b></p>
                     </Col>
-                    <Col xs={8}>
-                        <p>{this.props.uuid} </p>
+                    <Col xs={5}>
+                        <p>{this.state.time}</p> 
                     </Col>
-                </Row>
-                <Row>
                     <Col xs={2}>
-                    <Button href={this.state.plotlink} bsStyle="info">Plot</Button>
+                        <Button href={this.state.plotlink} bsStyle="info">Plot</Button>
                     </Col>
-                    <Col xs={6}>
-                    {act}
-                    </Col>
-                    <Col xs={4}></Col>
                 </Row>
+                {warning}
+                {act}
             </div>
         )
     }

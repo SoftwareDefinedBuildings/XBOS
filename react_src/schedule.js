@@ -320,8 +320,8 @@ var ScheduleEditor = React.createClass({
 
         var headerEdit = (
             <div>
-                <Input type="text" onChange={this.editHeader.bind(null, "name")} value={this.state.name} />
-                <Input type="text" onChange={this.editHeader.bind(null, "description")} value={this.state.description} />
+                <p>Schedule Name: <Input type="text" onChange={this.editHeader.bind(null, "name")} value={this.state.name} /></p>
+                <p>Schedule Description: <Input type="text" onChange={this.editHeader.bind(null, "description")} value={this.state.description} /></p>
             </div>
         );
 
@@ -329,6 +329,8 @@ var ScheduleEditor = React.createClass({
         return (
             <div className="scheduleEditor">
                 {headerEdit}
+                <hr />
+                <p><b>Point Descriptions</b></p>
                 <form onSubmit={this.submitSchedule}>
                     <Table striped bordered condensed>
                         <thead>
@@ -342,16 +344,17 @@ var ScheduleEditor = React.createClass({
                         <tbody>
                             {pointDescRows}
                             <tr>
-                                <td colSpan="3"></td>
                                 <td><Button onClick={this.addPointDescRow}><Glyphicon glyph="plus" /> Add</Button></td>
                             </tr>
                         </tbody>
                     </Table>
+                    <hr />
+                    <p><b>Epochs</b></p>
                     <ListGroup>
                         {epochs}
                     </ListGroup>
-                    <Button onClick={self.addEpoch}><Glyphicon glyph="plus" />  Add Epoch</Button>
-                    <Button type='submit' bsStyle="primary">Submit</Button>
+                    <p> <Button onClick={self.addEpoch}><Glyphicon glyph="plus" />  Add Epoch</Button> </p>
+                    <p> <Button type='submit' bsStyle="primary">Submit</Button> </p>
                 </form>
             </div>
         )

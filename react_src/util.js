@@ -28,7 +28,14 @@ var get_latest_timestamp = function(reading) {
     if (reading.length == 0) {
         return null;
     }
-    return reading[reading.length-1][0];
+    // returned in nanoseconds
+    return reading[reading.length-1][0] / 1e6;
+}
+
+// takes numerical (ms) timestamp and returns string
+var display_timestamp = function(timestamp) {
+    var ts = moment(timestamp);
+    return ts.format("D MMM, h:mm:ss a")
 }
 
 

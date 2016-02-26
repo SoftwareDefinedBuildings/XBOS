@@ -4,6 +4,7 @@
     "dependencies": {
         "jquery": "~2.0.3",
         "underscore": "*",
+        "classnames": "*",
         "bootstrap": "~3.0.1",
         "react":"~0.13.3",
         "nvd3": "*",

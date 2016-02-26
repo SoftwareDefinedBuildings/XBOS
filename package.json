@@ -10,6 +10,7 @@
     "body-parser": "*",
     "brace-expansion": "*",
     "bson": "~0.2",
+    "classnames": "^2.2.3",
     "cookie-parser": "*",
     "express": "*",
     "express-handlebars": "*",

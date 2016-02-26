@@ -1,16 +1,18 @@
 {
     "name": "weekday",
     "description": "Basic weekday schedule 9-5",
-    "point descriptions": {
-        "Heating Setpoint": {
+    "point descriptions": [
+        {
+            "name": "Cooling Setpoint",
             "desc": "Temperature heating setpoint for bistatic thermostat",
             "units": "F"
         },
-        "Cooling Setpoint": {
+        {
+            "name": "Cooling Setpoint",
             "desc": "Temperature cooling setpoint for bistatic thermostat",
             "units": "F"
         }
-    },
+    ],
     "periods": [
         {
             "name": "morning",

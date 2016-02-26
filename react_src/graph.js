@@ -116,6 +116,7 @@ var Plot = React.createClass({
             if (stream.uuid == null) { return; }
             run_query2("select data in (now -"+self.props.length+"s, now) as ms where uuid = '"+stream.uuid+"';",
                 function(data) {
+                    if (data.length == 0) { return; }
                     var streamdata = self.state.data;
                     var readings = data[0].Readings;
                     var points = _.map(readings, function(point) {
