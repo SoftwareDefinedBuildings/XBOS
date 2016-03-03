@@ -1,22 +1,12 @@
 // given a UUID, figures out what kind of actuator to render and renders it
 // uses props ActuatorUUID
 var Actuator = React.createClass({
-    getInitialState: function() {
-        return({type: ""});
-    },
     componentWillMount: function() {
-        var self = this;
-        run_query("select Actuator/Model where uuid = '"+this.props.ActuatorUUID+"'",
-                  function(data) {
-                    self.setState({type: data[0].Actuator.Model});
-                  },
-                  function(xhr, status, err) { // error
-                    console.error(queryURL, status, err.toString());
-                  });
+        console.log("got actuator with model", this.props);
     },
     render: function() {
         var act = (<p></p>);
-        switch (this.state.type) {
+        switch (this.props.model) {
         case "continuous":
         case "continuousInteger":
             act = (

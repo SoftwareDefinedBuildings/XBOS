@@ -449,8 +449,8 @@ var ScheduleList = React.createClass({
             return (
                 <ListGroupItem href="#" key={name} >
                     <div className="row">
-                        <div className="col-md-4">
-                            {name}
+                        <div className="col-md-3">
+                            <p>{name}</p>
                         </div>
                         <div className="col-md-2">
                             <Button bsStyle="info" onClick={self.props.renderSchedule.bind(null, name, false)} >View</Button>

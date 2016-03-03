@@ -101,7 +101,7 @@ var Timeseries = React.createClass({
                     console.error("error", displaytag, LOOKUP[displaytag]);
                     console.error(queryURL, status, err.toString());
                   });
-        get_permalink([this.props.uuid], 
+        get_permalink([this.props.uuid],
             function(url) {
                 self.setState({plotlink: url});
             },
@@ -129,7 +129,7 @@ var Timeseries = React.createClass({
         if (this.state.Actuator != undefined) {
             act = (<Row>
                     <Col xs={6}>
-                        <Actuator ActuatorUUID={this.state.Actuator.uuid}/>
+                        <Actuator ActuatorUUID={this.state.Actuator.uuid} model={this.state.Actuator.Model}/>
                     </Col>
                    </Row>);
         }
@@ -150,7 +150,7 @@ var Timeseries = React.createClass({
                         <p>{this.props.name}: <b>{isNumber(this.state.value) ? this.state.value.toFixed(2) : this.state.value }</b></p>
                     </Col>
                     <Col xs={5}>
-                        <p>{this.state.time}</p> 
+                        <p>{this.state.time}</p>
                     </Col>
                     <Col xs={2}>
                         <Button href={this.state.plotlink} bsStyle="info">Plot</Button>
@@ -205,5 +205,5 @@ var MetadataModal = React.createClass({
         </Modal>
       </div>
     );
-  } 
+  }
 });

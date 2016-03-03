@@ -25,7 +25,7 @@ var get_latest_reading = function(reading) {
 
 // Like get_latest_reading, but returns the timestamp
 var get_latest_timestamp = function(reading) {
-    if (reading.length == 0) {
+    if (reading == null || reading.length == 0) {
         return null;
     }
     // returned in nanoseconds
