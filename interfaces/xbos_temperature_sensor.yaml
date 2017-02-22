@@ -1,0 +1,9 @@
+Temperature Sensor:
+    description: XBOS temperature sensor
+    ponum: 2.1.2.0
+    properties:
+        temperature:
+            type: double
+            description: Current temperature reading
+            required: true
+            units: Fahrenheit

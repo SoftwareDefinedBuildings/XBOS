@@ -1,0 +1,13 @@
+title: XBOS Interfaces
+description: A list of standard interface definitions for XBOS
+version: 0.0.1
+definitions:
+    - $ref: ./xbos_thermostat.yaml
+    - $ref: ./xbos_light.yaml
+    - $ref: ./xbos_plug.yaml
+    - $ref: ./xbos_temperature_sensor.yaml
+tags:
+    - name: units
+      description: The engineering units for the related field
+    - name: ponum
+      description: The dotted form of the BOSSWAVE payload object number denoting the format and serialization format of the published BOSSWAVE message

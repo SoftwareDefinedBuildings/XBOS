@@ -1,0 +1,8 @@
+Plug:
+    description: Standard XBOS plug interface
+    ponum: 2.1.1.2
+    properties:
+        state:
+            type: boolean
+            description: Whether or not the plug is enabled
+            required: true

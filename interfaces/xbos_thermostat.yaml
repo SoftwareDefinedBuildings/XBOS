@@ -1,0 +1,65 @@
+Thermostat:
+    ponum: 2.1.1.0
+    description: Standard XBOS thermostat interface
+    properties:
+        temperature:
+            type: double
+            description: Current temperature reading at the thermostat
+            required: true
+            units: Fahrenheit
+        relative_humidity:
+            type: double
+            description: Current relative humidity reading at the thermostat
+            required: false
+            units: Percent
+        heating_setpoint:
+            type: double
+            description: Current heating setpoint
+            required: true
+            units: Fahrenheit
+        cooling_setpoint:
+            type: double
+            description: Current cooling setpoint
+            required: true
+            units: Fahrenheit
+        override:
+            type: boolean
+            description: Override state of the thermostat. If the thermostat is in override mode, it will not follow its programmed schedule.
+            required: true
+        fan:
+            type: integer
+            description: Fan state of the thermostat
+            required: false
+            enum:
+                - value: 0
+                  description: Fan is off
+                - value: 1
+                  description: Fan is on
+                - value: 2
+                  description: Fan is in auto mode
+        mode:
+            type: integer
+            description: The current operating policy of the thermostat
+            required: true
+            enum:
+                - value: 0
+                  description: The thermostat is off (will not heat or cool)
+                - value: 1
+                  description: The thermostat will only heat
+                - value: 2
+                  description: The thermostat will only cool
+                - value: 3
+                  description: The thermostat will switch between heating/cooling (auto mode)
+        state:
+            type: integer
+            description: The current state of the thermostat
+            required: true
+            enum:
+                - value: 0
+                  description: The thermostat is off (will not call for heat/cool)
+                - value: 1
+                  description: The thermostat is calling for heat
+                - value: 2
+                  description: The thermostat is calling for cool
+                - value: 3
+                  description: The thermostat is in auto mode (not currently calling for heat/cool, but can)
