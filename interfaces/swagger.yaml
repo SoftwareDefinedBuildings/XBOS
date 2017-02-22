@@ -11,3 +11,5 @@ tags:
       description: The engineering units for the related field
     - name: ponum
       description: The dotted form of the BOSSWAVE payload object number denoting the format and serialization format of the published BOSSWAVE message
+    - name: interface
+      description: The name of the BOSSWAVE interface name, e.g. "i.interface"

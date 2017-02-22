@@ -1,6 +1,7 @@
 Light:
     description: Standard XBOS lighting interface
     ponum: 2.1.1.1
+    interface: i.xbos.light
     properties:
         state:
             type: boolean

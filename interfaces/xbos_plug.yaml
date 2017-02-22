@@ -1,6 +1,7 @@
 Plug:
     description: Standard XBOS plug interface
     ponum: 2.1.1.2
+    interface: i.xbos.plug
     properties:
         state:
             type: boolean
