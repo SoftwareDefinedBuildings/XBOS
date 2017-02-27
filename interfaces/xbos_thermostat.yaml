@@ -2,6 +2,26 @@ Thermostat:
     ponum: 2.1.1.0
     description: Standard XBOS thermostat interface
     interface: i.xbos.thermostat
+    signals:
+        - info:
+            - temperature
+            - relative_humidity
+            - heating_setpoint
+            - cooling_setpoint
+            - override
+            - fan
+            - mode
+            - state
+    slots:
+        - setpoints:
+            - heating_setpoint
+            - cooling_setpoint
+        - state:
+            - heating_setpoint
+            - cooling_setpoint
+            - override
+            - state
+            - fan
     properties:
         temperature:
             type: double

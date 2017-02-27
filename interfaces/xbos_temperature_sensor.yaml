@@ -2,6 +2,9 @@ Temperature Sensor:
     description: XBOS temperature sensor
     ponum: 2.1.2.0
     interface: i.xbos.temperature_sensor
+    signals:
+        - info:
+            - temperature
     properties:
         temperature:
             type: double

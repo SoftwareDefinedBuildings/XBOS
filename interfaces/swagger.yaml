@@ -13,3 +13,7 @@ tags:
       description: The dotted form of the BOSSWAVE payload object number denoting the format and serialization format of the published BOSSWAVE message
     - name: interface
       description: The name of the BOSSWAVE interface name, e.g. "i.interface"
+    - name: signals
+      description: Signals are for outputs of a driver (e.g. reporting state). The signal tag specifies a hierarchical breakdown of the signal names and the properties of the interface incorporated in messages on that signal
+    - name: slots
+      description: Slots are for inputs to a driver (e.g. actuations). The slot tag specifies a hierarchical breakdown of the slot names and the properties of the interface incorporated in messages on that signal
