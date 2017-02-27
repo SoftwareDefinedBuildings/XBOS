@@ -48,16 +48,9 @@ Thermostat:
             description: Override state of the thermostat. If the thermostat is in override mode, it will not follow its programmed schedule.
             required: true
         fan:
-            type: integer
+            type: boolean
             description: Fan state of the thermostat
             required: false
-            enum:
-                - value: 0
-                  description: Fan is off
-                - value: 1
-                  description: Fan is on
-                - value: 2
-                  description: Fan is in auto mode
         mode:
             type: integer
             description: The current operating policy of the thermostat
