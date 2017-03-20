@@ -12,6 +12,7 @@ Thermostat:
             - fan
             - mode
             - state
+            - time
     slots:
         - setpoints:
             - heating_setpoint
@@ -20,7 +21,7 @@ Thermostat:
             - heating_setpoint
             - cooling_setpoint
             - override
-            - state
+            - mode
             - fan
     properties:
         temperature:
@@ -77,3 +78,7 @@ Thermostat:
                   description: The thermostat is calling for cool
                 - value: 3
                   description: The thermostat is in auto mode (not currently calling for heat/cool, but can)
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false

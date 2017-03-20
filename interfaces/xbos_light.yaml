@@ -6,6 +6,7 @@ Light:
         - info:
             - state
             - brightness
+            - time
     slots:
         - state:
             - state
@@ -20,4 +21,8 @@ Light:
             maximum: 100
             minimum: 0
             description: Current brightness of the light; 100 is maximum brightness
+            required: false
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
             required: false

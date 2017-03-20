@@ -5,6 +5,7 @@ Plug:
     signals:
         - info:
             - state
+            - time
     slots:
         - state:
             - state
@@ -13,3 +14,7 @@ Plug:
             type: boolean
             description: Whether or not the plug is enabled
             required: true
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false

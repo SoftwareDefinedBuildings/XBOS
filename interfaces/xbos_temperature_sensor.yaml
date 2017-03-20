@@ -5,9 +5,14 @@ Temperature Sensor:
     signals:
         - info:
             - temperature
+            - time
     properties:
         temperature:
             type: double
             description: Current temperature reading
             required: true
             units: Fahrenheit
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
