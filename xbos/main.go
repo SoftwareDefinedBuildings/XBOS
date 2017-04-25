@@ -105,6 +105,17 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:  "find",
+			Usage: "Find XBOS services",
+			Flags: []cli.Flag{
+				cli.StringSliceFlag{
+					Name:  "namespaces, ns",
+					Usage: "List of namespaces to scan for the given service. Defaults to your registered namespaces",
+				},
+			},
+			Action: findService,
+		},
 	}
 	app.Run(os.Args)
 }
