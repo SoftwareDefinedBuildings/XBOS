@@ -82,3 +82,19 @@ func (db *xbosdb) resolveAlias(aliasorkey string) (alias, vk string) {
 	}
 	return aliasorkey, bw2bind.ToBase64(data)
 }
+
+func (db *xbosdb) getNamespaces() []string {
+	var namespaces []string
+	err := local.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(namespaceBucket)
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			namespaces = append(namespaces, string(v))
+		}
+		return nil
+	})
+	if err != nil {
+		log.Fatal(errors.Wrap(err, "Could not get namespaces"))
+	}
+	return namespaces
+}
