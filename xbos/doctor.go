@@ -35,7 +35,7 @@ func init() {
 	bw2bind.SilenceLog()
 }
 
-func doctor(c *cli.Context) error {
+func actionDoctor(c *cli.Context) error {
 	// CHECK 1: check internet access by dialing some dns servers
 	// check IPv4 connectivity by attempting to open a TCP connection
 	// with the ucberkeley designated router
@@ -51,9 +51,9 @@ func doctor(c *cli.Context) error {
 		red("✖ Could not connect to 52.9.178.236:4514 (%s)\n", err)
 		network_ok = false
 	}
-	defer conn.Close()
 	if network_ok {
 		green("✔ Network connectivity looks ok!\n")
+		defer conn.Close()
 	} else {
 		red("✖ Network connectivity needs attention. Make sure you have an internet connection\n")
 	}
@@ -178,14 +178,14 @@ func doctor(c *cli.Context) error {
 	   }
 	*/
 	if int64(bcip.CurrentBlock) < bcip.HighestBlock-1 { // fudge factor of 1 block
-		red("✖ Chain is not caught up. At block %d but current is %d. If you have peers, this should go away", bcip.CurrentBlock, bcip.HighestBlock)
+		red("✖ Chain is not caught up. At block %d but current is %d. If you have peers, this should go away\n", bcip.CurrentBlock, bcip.HighestBlock)
 	} else {
 		green("✔ Caught up on the blockchain\n")
 	}
 
 	// check chain has peers
 	if bcip.Peers == 0 {
-		red("✖ You do not have peers! Check if you have an internet connection")
+		red("✖ You do not have peers! Check if you have an internet connection\n")
 	} else {
 		green("✔ Have %d peers\n", bcip.Peers)
 	}
@@ -193,17 +193,17 @@ func doctor(c *cli.Context) error {
 	// check bankroll has money
 	val := checkEnvDefined("BW2_DEFAULT_BANKROLL")
 	if val == nil {
-		red("✖ Cannot check bankroll balance because $BW2_DEFAULT_BANKROLL is not defined")
+		red("✖ Cannot check bankroll balance because $BW2_DEFAULT_BANKROLL is not defined\n")
 		return nil
 	}
 	_, err = client.SetEntityFile(*val)
 	if err != nil {
-		red("✖ Can't use $BW2_DEFAULT_BANKROLL (%s)", err)
+		red("✖ Can't use $BW2_DEFAULT_BANKROLL (%s)\n", err)
 		return nil
 	}
 	accounts, err := client.EntityBalances()
 	if err != nil {
-		red("✖ Cannot fetch bankroll balances (%s)", err)
+		red("✖ Cannot fetch bankroll balances (%s)\n", err)
 		return nil
 	}
 	has_some_money := false
