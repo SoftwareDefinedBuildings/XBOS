@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/boltdb/bolt"
 	"github.com/immesys/bw2bind"
 	"github.com/pkg/errors"
@@ -58,13 +60,25 @@ func getDB(dbloc string) *xbosdb {
 	return &xbosdb{db: db, client: client}
 }
 
-func (db *xbosdb) resolveAlias(alias string) (vk string) {
-	data, zero, err := db.client.ResolveLongAlias(alias)
+func (db *xbosdb) resolveAlias(aliasorkey string) (alias, vk string) {
+	data, zero, err := db.client.ResolveLongAlias(aliasorkey)
 	if err != nil {
-		log.Fatal(errors.Wrapf(err, "Could not resolve long alias (%s)", alias))
+		//if we cannot resolve long alias, try unresolving
+		if strings.HasPrefix(err.Error(), "[513]") {
+			bb, err := bw2bind.FromBase64(aliasorkey)
+			if err != nil {
+				log.Fatal(errors.Wrapf(err, "Could not convert %s to base64", aliasorkey))
+			}
+			actualalias, err := db.client.UnresolveAlias(bb)
+			if err != nil {
+				log.Fatal(errors.Wrapf(err, "Could not unresolve alias %s", aliasorkey))
+			}
+			return actualalias, aliasorkey
+		}
+		log.Fatal(errors.Wrapf(err, "Could not resolve long alias (%s)", aliasorkey))
 	}
 	if zero {
-		return alias
+		return aliasorkey, aliasorkey
 	}
-	return bw2bind.ToBase64(data)
+	return aliasorkey, bw2bind.ToBase64(data)
 }
