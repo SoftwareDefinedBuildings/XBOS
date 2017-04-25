@@ -6,12 +6,15 @@ import (
 	"path"
 
 	"github.com/op/go-logging"
+	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 )
 
 // logger
 var log *logging.Logger
 var userHome string
+var xbosdir string
+var dbloc string
 var local *xbosdb
 
 func init() {
@@ -28,10 +31,19 @@ func init() {
 	}
 	userHome = curuser.HomeDir
 
-	dbloc := path.Join(userHome, ".xbos.db")
-	if val, ok := os.LookupEnv("XBOS_LOCAL_DB"); ok {
-		dbloc = val
+	xbosdir = path.Join(userHome, ".xbos")
+	if val, ok := os.LookupEnv("XBOS_LOCAL_DIR"); ok {
+		xbosdir = val
 	}
+	if !fileExists(xbosdir) {
+		log.Warningf("XBOS directory does not exist at expected location %s. Creating...", xbosdir)
+		err := os.MkdirAll(xbosdir, 0755)
+		if err != nil {
+			log.Fatal(errors.Wrapf(err, "Could not create local XBOS dir at %s", xbosdir))
+		}
+	}
+
+	dbloc = path.Join(xbosdir, "DB")
 	if !fileExists(dbloc) {
 		log.Warningf("XBOS db does not exist at expected location %s. Please run 'xbos init' to create", dbloc)
 	} else {
@@ -53,10 +65,10 @@ func main() {
 			Action: actionInitDB,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:   "db",
+					Name:   "local",
 					Usage:  "Location for local XBOS state",
-					Value:  path.Join(userHome, ".xbos.db"),
-					EnvVar: "XBOS_LOCAL_DB",
+					Value:  path.Join(userHome, ".xbos"),
+					EnvVar: "XBOS_LOCAL_DIR",
 				},
 			},
 		},
@@ -84,6 +96,12 @@ func main() {
 					Name:   "list",
 					Usage:  "List namespaces",
 					Action: actionListNamespace,
+				},
+				{
+					Name:    "inspect",
+					Aliases: []string{"i"},
+					Usage:   "Inspect permissions on namespace",
+					Action:  actionInspectNamespce,
 				},
 			},
 		},

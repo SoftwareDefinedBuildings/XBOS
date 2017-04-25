@@ -45,3 +45,9 @@ func diskUsage() float64 {
 	// mb left
 	return float64(stat.Bavail*uint64(stat.Bsize)) / 1024.0 / 1024.0
 }
+
+func checkLocal() {
+	if local == nil || local.db == nil {
+		log.Fatalf("XBOS db does not exist at expected location %s. Please run 'xbos init' to create", dbloc)
+	}
+}

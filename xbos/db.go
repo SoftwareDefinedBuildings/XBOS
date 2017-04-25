@@ -1,6 +1,7 @@
 package main
 
 import (
+	"path"
 	"strings"
 
 	"github.com/boltdb/bolt"
@@ -17,10 +18,11 @@ var (
 type xbosdb struct {
 	db     *bolt.DB
 	client *bw2bind.BW2Client
+	vk     string
 }
 
 func actionInitDB(c *cli.Context) error {
-	return initDB(c.String("db"))
+	return initDB(path.Join(c.String("local"), "DB"))
 }
 
 func initDB(dbloc string) error {
@@ -56,8 +58,8 @@ func getDB(dbloc string) *xbosdb {
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "Could not connect to $BW2_AGENT"))
 	}
-	client.SetEntityFromEnvironOrExit()
-	return &xbosdb{db: db, client: client}
+	vk := client.SetEntityFromEnvironOrExit()
+	return &xbosdb{db: db, client: client, vk: vk}
 }
 
 func (db *xbosdb) resolveAlias(aliasorkey string) (alias, vk string) {
