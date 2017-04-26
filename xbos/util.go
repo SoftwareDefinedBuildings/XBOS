@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"syscall"
@@ -50,4 +51,21 @@ func checkLocal() {
 	if local == nil || local.db == nil {
 		log.Fatalf("XBOS db does not exist at expected location %s. Please run 'xbos init' to create", dbloc)
 	}
+}
+
+func copyFile(src, dst string) error {
+	file, err := os.Open(src)
+	if err != nil {
+		return errors.Wrapf(err, "Trying to open %s", src)
+	}
+	defer file.Close()
+	newcopy, err := os.Open(dst)
+	if err != nil {
+		return errors.Wrapf(err, "Trying to copy to location %s", dst)
+	}
+	defer newcopy.Close()
+	if _, err := io.Copy(newcopy, file); err != nil {
+		return errors.Wrapf(err, "Trying to copy to location %s", dst)
+	}
+	return nil
 }

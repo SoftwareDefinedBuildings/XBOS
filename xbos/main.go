@@ -116,6 +116,19 @@ func main() {
 			},
 			Action: findService,
 		},
+		{
+			Name:   "bootstrap",
+			Usage:  "Get a new user started with BOSSWAVE",
+			Action: actionBootstrap,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:   "local",
+					Usage:  "Location for local XBOS state",
+					Value:  path.Join(userHome, ".xbos"),
+					EnvVar: "XBOS_LOCAL_DIR",
+				},
+			},
+		},
 	}
 	app.Run(os.Args)
 }
