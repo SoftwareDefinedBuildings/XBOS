@@ -129,6 +129,32 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:  "install",
+			Usage: "Installs/updates BOSSWAVE software for the user",
+			Subcommands: []cli.Command{
+				{
+					Name:   "agent",
+					Usage:  "Installs BOSSWAVE agent",
+					Action: actionInstallAgent,
+				},
+				{
+					Name:   "ragent",
+					Usage:  "Installs BOSSWAVE remote agent",
+					Action: actionInstallRagent,
+				},
+				{
+					Name:   "spawnctl",
+					Usage:  "Installs spawnpoint cli tool",
+					Action: actionInstallSpawnctl,
+				},
+				{
+					Name:   "pundat",
+					Usage:  "Installs pundat cli tool",
+					Action: actionInstallPundat,
+				},
+			},
+		},
 	}
 	app.Run(os.Args)
 }
