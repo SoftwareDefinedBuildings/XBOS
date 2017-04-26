@@ -22,15 +22,36 @@ import (
 // - ask which namespaces and services they want access to
 
 func actionBootstrap(c *cli.Context) error {
+	var err error
 	if err := initDB(path.Join(c.String("local"), "DB")); err != nil {
 		return err
 	}
 
+	// make entity
 	if err := bootstrapEntity("BW2_DEFAULT_ENTITY"); err != nil {
 		log.Fatal(err)
 	}
+	local.vk = local.client.SetEntityFromEnvironOrExit()
+	// make bankroll
 	if err := bootstrapEntity("BW2_DEFAULT_BANKROLL"); err != nil {
 		log.Fatal(err)
+	}
+	// check if bankroll has $$$
+	val := os.Getenv("BW2_DEFAULT_BANKROLL")
+	local.vk, err = local.client.SetEntityFile(val)
+	if err != nil {
+		log.Fatal(err)
+	}
+	accounts, err := local.client.EntityBalances()
+	if err != nil {
+		log.Fatal(err)
+	}
+	balance := weiToCurrency(accounts[0].Int)
+	if balance > 100 {
+		green("You have %d Ξ -- enough to continue\n", balance)
+	} else {
+		red("You do not have enough Ξ! Have a friend run the below command to transfer you some Ether/gas/money, then rerun 'xbos bootstrap'\n")
+		fmt.Printf("bw2 xfer -t %s --ether %d\n", accounts[0].Addr, 200-balance)
 	}
 
 	return nil
@@ -58,6 +79,9 @@ func bootstrapEntity(varname string) error {
 			green("Add the following lines to your .bashrc:\n")
 			fmt.Printf("export %s=%s\n", varname, newfilepath)
 			fmt.Println()
+			if err := os.Setenv(varname, newfilepath); err != nil {
+				log.Fatal(err)
+			}
 		}
 		// else, its already in the right spot!
 	} else {
@@ -95,6 +119,9 @@ func bootstrapEntity(varname string) error {
 			green("Add the following lines to your .bashrc:\n")
 			fmt.Printf("export %s=%s\n", varname, newentity)
 			fmt.Println()
+			if err := os.Setenv(varname, newentity); err != nil {
+				log.Fatal(err)
+			}
 			break
 		}
 	}
