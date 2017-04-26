@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 
 	"github.com/pkg/errors"
@@ -21,44 +22,81 @@ import (
 // - ask which namespaces and services they want access to
 
 func actionBootstrap(c *cli.Context) error {
-	if err := actionInitDB(c); err != nil {
+	if err := initDB(path.Join(c.String("local"), "DB")); err != nil {
 		return err
 	}
-	var current_default_entity string
-	// check if we have a BW2_DEFAULT_ENTITY already
-	if val, ok := os.LookupEnv("BW2_DEFAULT_ENTITY"); ok {
-		current_default_entity = val
-		if path.Dir(current_default_entity) != xbosdir {
+
+	if err := bootstrapEntity("BW2_DEFAULT_ENTITY"); err != nil {
+		log.Fatal(err)
+	}
+	if err := bootstrapEntity("BW2_DEFAULT_BANKROLL"); err != nil {
+		log.Fatal(err)
+	}
+
+	return nil
+}
+
+func bootstrapEntity(varname string) error {
+	var current_entity string
+	// check if we have a [varname] already
+	var makenew string
+	var oldval string
+	var ok bool
+	if oldval, ok = os.LookupEnv(varname); ok {
+		makenew = readInput(fmt.Sprintf("Already have entry for $%s. Want to make a new one? [y/N]: ", varname))
+	}
+
+	if (makenew == "N" || makenew == "n" || makenew == "") && ok {
+		current_entity = oldval
+		if path.Dir(current_entity) != xbosdir {
 			// copy it there!
-			newfilepath := path.Join(xbosdir, path.Base(current_default_entity))
-			err := copyFile(current_default_entity, newfilepath)
+			newfilepath := path.Join(xbosdir, path.Base(current_entity))
+			err := copyFile(current_entity, newfilepath)
 			if err != nil {
-				log.Fatal(errors.Wrapf(err, "Trying to copy %s to location %s", current_default_entity, newfilepath))
+				log.Fatal(errors.Wrapf(err, "Trying to copy %s to location %s", current_entity, newfilepath))
 			}
+			green("Add the following lines to your .bashrc:\n")
+			fmt.Printf("export %s=%s\n", varname, newfilepath)
+			fmt.Println()
 		}
 		// else, its already in the right spot!
 	} else {
-		// this means that we don't have BW2_DEFAULT_ENTITY set
+		// this means that we don't have [varname] set
 		// ask the user if they already have one they want to use
 		var externalEntity string
 		for {
-			fmt.Println("Specify the full, absolute path for an entity you'd like to be $BW2_DEFAULT_ENTITY.")
+			fmt.Printf("Specify the full, absolute path for an entity you'd like to be %s.\n", varname)
 			fmt.Println("Leave this blank if you want me to create an entity for you")
-			fmt.Print(": ")
-			fmt.Scan(&externalEntity)
+			externalEntity = readInput(": ")
 			if externalEntity != "" && !fileExists(externalEntity) {
-				fmt.Printf("%s doesn't exist. Try another file", externalEntity)
+				fmt.Printf("%s doesn't exist. Try another file\n", externalEntity)
+				continue
 			}
+			var newentity string
+			if externalEntity == "" { //create new entity!
+				entitydest := path.Join(xbosdir, "default.ent")
+				name := readInput("Your name: ")
+				email := readInput("Your email: ")
+				out, err := exec.Command("bw2", "mke", "-n", "-o", entitydest, "-e", "10y", "-c", fmt.Sprintf("'%s'", email), "-m", fmt.Sprintf("'%s'", name)).CombinedOutput()
+				if err != nil {
+					fmt.Println(string(out))
+					log.Fatal(errors.Wrap(err, "Could not create new entity"))
+				}
+				newentity = entitydest
+			} else {
+				newfilepath := path.Join(xbosdir, path.Base(externalEntity))
+				err := copyFile(externalEntity, newfilepath)
+				if err != nil {
+					log.Fatal(errors.Wrapf(err, "Trying to copy %s to location %s", current_entity, newfilepath))
+				}
+				newentity = newfilepath
+			}
+
+			green("Add the following lines to your .bashrc:\n")
+			fmt.Printf("export %s=%s\n", varname, newentity)
+			fmt.Println()
 			break
 		}
-		if externalEntity == "" { //create new entity!
-		} else {
-		}
-
-		//
 	}
-
-	//createEntity := "bw2 mke
-
 	return nil
 }

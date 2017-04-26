@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -54,18 +55,43 @@ func checkLocal() {
 }
 
 func copyFile(src, dst string) error {
+	yellow("Copying %s to %s\n", src, dst)
 	file, err := os.Open(src)
 	if err != nil {
-		return errors.Wrapf(err, "Trying to open %s", src)
+		return err
 	}
 	defer file.Close()
-	newcopy, err := os.Open(dst)
+	newcopy, err := os.Create(dst)
 	if err != nil {
-		return errors.Wrapf(err, "Trying to copy to location %s", dst)
+		return err
 	}
 	defer newcopy.Close()
 	if _, err := io.Copy(newcopy, file); err != nil {
-		return errors.Wrapf(err, "Trying to copy to location %s", dst)
+		return err
 	}
 	return nil
+}
+
+func deleteFileWithConfirm(file string) (deleted bool) {
+	for {
+		fmt.Printf("File %s already exists. Delete and make a new one? [y/N]: ", file)
+		del := readInput("")
+		if del == "Y" || del == "y" {
+			if err := os.Remove(file); err != nil {
+				log.Fatal(errors.Wrapf(err, "Could not delete file %s", file))
+			}
+			return true
+		} else if del == "N" || del == "n" || del == "" {
+			return false
+		}
+	}
+}
+
+func readInput(prompt string) string {
+	fmt.Print(prompt)
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		return scanner.Text()
+	}
+	return ""
 }

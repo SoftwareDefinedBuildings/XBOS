@@ -1,8 +1,10 @@
 package main
 
 import (
+	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/boltdb/bolt"
 	"github.com/immesys/bw2bind"
@@ -26,17 +28,23 @@ func actionInitDB(c *cli.Context) error {
 }
 
 func initDB(dbloc string) error {
-	db, err := bolt.Open(dbloc, 0600, nil)
-	if err != nil {
-		log.Fatal(errors.Wrapf(err, "Could not open XBOS db at %s", dbloc))
+
+	var db *bolt.DB
+	var err error
+	if fileExists(dbloc) && !deleteFileWithConfirm(dbloc) {
+		db = local.db
+	} else {
+		db, err = bolt.Open(dbloc, 0744, &bolt.Options{Timeout: 10 * time.Second})
+		if err != nil {
+			log.Fatal(errors.Wrapf(err, "Could not open XBOS db at %s", dbloc))
+		}
 	}
-	defer db.Close()
 
 	// create buckets
 	err = db.Update(func(tx *bolt.Tx) error {
 		buckets := [][]byte{namespaceBucket, keyBucket}
 		for _, bucket := range buckets {
-			_, err := tx.CreateBucket(bucket)
+			_, err := tx.CreateBucketIfNotExists(bucket)
 			if err != nil {
 				return errors.Wrapf(err, "Could not create bucket %s", bucket)
 			}
@@ -46,19 +54,26 @@ func initDB(dbloc string) error {
 	if err != nil {
 		log.Fatal(errors.Wrapf(err, "Could not create XBOS db at %s", dbloc))
 	}
+	//defer db.Close()
 	return nil
 }
 
 func getDB(dbloc string) *xbosdb {
-	db, err := bolt.Open(dbloc, 0600, nil)
+	db, err := bolt.Open(dbloc, 0744, &bolt.Options{Timeout: 10 * time.Second})
 	if err != nil {
 		log.Fatal(errors.Wrapf(err, "Could not open XBOS db at %s", dbloc))
 	}
 	client, err := bw2bind.Connect("")
 	if err != nil {
-		log.Fatal(errors.Wrap(err, "Could not connect to $BW2_AGENT"))
+		log.Error(errors.Wrap(err, "Could not connect to $BW2_AGENT"))
 	}
-	vk := client.SetEntityFromEnvironOrExit()
+	var vk string
+	if val, ok := os.LookupEnv("BW2_DEFAULT_ENTITY"); ok {
+		vk, err = client.SetEntityFile(val)
+		if err != nil {
+			log.Error(errors.Wrap(err, "Could not set default entity"))
+		}
+	}
 	return &xbosdb{db: db, client: client, vk: vk}
 }
 
@@ -99,4 +114,10 @@ func (db *xbosdb) getNamespaces() []string {
 		log.Fatal(errors.Wrap(err, "Could not get namespaces"))
 	}
 	return namespaces
+}
+
+func (db *xbosdb) Close() {
+	if db != nil && db.db != nil {
+		db.db.Close()
+	}
 }
