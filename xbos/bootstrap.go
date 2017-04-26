@@ -53,8 +53,7 @@ func actionBootstrap(c *cli.Context) error {
 	} else {
 		red("You do not have enough Ξ! Have a friend run the below command to transfer you some Ether/gas/money, then rerun 'xbos bootstrap'\n")
 		fmt.Printf("bw2 xfer -t %s --ether %d\n", accounts[0].Addr, 200-balance)
-		c := readInput("Continue? [N/y]: ")
-		if c == "N" || c == "n" || c == "" {
+		if continueN("Continue? ") {
 			return nil
 		}
 	}
@@ -78,8 +77,7 @@ func actionBootstrap(c *cli.Context) error {
 		return nil
 	}
 
-	makeAlias := readInput("Would you like to make an alias? This will make life easier: [Y/n]")
-	if makeAlias == "Y" || makeAlias == "y" || makeAlias == "" {
+	if continueY("Would you like to make an alias? This will make life easier") {
 		var myalias string
 		for {
 			myalias = readInput("What alphanumeric string would you like to be your alias (typically this is a shortened form of your name)\n: ")
