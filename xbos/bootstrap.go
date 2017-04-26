@@ -48,11 +48,26 @@ func actionBootstrap(c *cli.Context) error {
 		log.Fatal(err)
 	}
 	balance := weiToCurrency(accounts[0].Int)
-	if balance > 100 {
+	if balance >= 200 {
 		green("You have %d Ξ -- enough to continue\n", balance)
 	} else {
 		red("You do not have enough Ξ! Have a friend run the below command to transfer you some Ether/gas/money, then rerun 'xbos bootstrap'\n")
 		fmt.Printf("bw2 xfer -t %s --ether %d\n", accounts[0].Addr, 200-balance)
+		c := readInput("Continue? [N/y]: ")
+		if c == "N" || c == "n" || c == "" {
+			return nil
+		}
+	}
+
+	// publish entities
+	fmt.Println("Publishing $BW2_DEFAULT_ENTITY and $BW2_DEFAULT_BANKROLL")
+	pubEntity := exec.Command("bw2", "i", fmt.Sprintf("$BW2_DEFAULT_ENTITY"), "-p")
+	if err := pubEntity.Start(); err != nil {
+		log.Fatal(errors.Wrap(err, "Could not publish entity"))
+	}
+	pubBankroll := exec.Command("bw2", "i", fmt.Sprintf("$BW2_DEFAULT_BANKROLL"), "-p")
+	if err := pubBankroll.Start(); err != nil {
+		log.Fatal(errors.Wrap(err, "Could not publish bankroll"))
 	}
 
 	// check if we have an alias already
@@ -75,9 +90,10 @@ func actionBootstrap(c *cli.Context) error {
 			}
 			break
 		}
+		fmt.Println("Creating. Will exit when finished")
 		out, err := exec.Command("bw2", "mkalias", "--long", myalias, "--b64", local.vk).CombinedOutput()
+		fmt.Println(string(out))
 		if err != nil {
-			fmt.Println(string(out))
 			log.Fatal(errors.Wrap(err, "Could not create new entity"))
 		}
 	}
@@ -92,7 +108,7 @@ func bootstrapEntity(varname string) error {
 	var oldval string
 	var ok bool
 	if oldval, ok = os.LookupEnv(varname); ok {
-		makenew = readInput(fmt.Sprintf("Already have entry for $%s. Want to make a new one? [y/N]: ", varname))
+		makenew = readInput(fmt.Sprintf("Already have entry for $%s (%s). Want to make a new one? [y/N]: ", varname, oldval))
 	}
 
 	if (makenew == "N" || makenew == "n" || makenew == "") && ok {
@@ -129,7 +145,7 @@ func bootstrapEntity(varname string) error {
 				entitydest := path.Join(xbosdir, "default.ent")
 				name := readInput("Your name: ")
 				email := readInput("Your email: ")
-				out, err := exec.Command("bw2", "mke", "-n", "-o", entitydest, "-e", "10y", "-c", fmt.Sprintf("'%s'", email), "-m", fmt.Sprintf("'%s'", name)).CombinedOutput()
+				out, err := exec.Command("bw2", "mke", "-n", "-o", entitydest, "-e", "10y", "-c", fmt.Sprintf("%s", email), "-m", fmt.Sprintf("%s", name)).CombinedOutput()
 				if err != nil {
 					fmt.Println(string(out))
 					log.Fatal(errors.Wrap(err, "Could not create new entity"))
