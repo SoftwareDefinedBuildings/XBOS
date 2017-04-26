@@ -155,6 +155,11 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:   "docs",
+			Usage:  "Points to documentation for a piece of software",
+			Action: actionDocs,
+		},
 	}
 	app.Run(os.Args)
 }

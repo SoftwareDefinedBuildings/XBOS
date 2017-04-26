@@ -33,14 +33,13 @@ var checkArchiver = serviceDefinition{
 
 var services = map[string]serviceDefinition{
 	"spawnpoint": checkSpawnpoint,
-	"archiver":   checkArchiver,
 	"pundat":     checkArchiver,
 }
 
 func findService(c *cli.Context) error {
 	checkLocal()
 	if c.NArg() == 0 {
-		log.Fatal("Need to specify service argument. One of: pundat, archiver, spawnpoint")
+		log.Fatal("Need to specify service argument. One of: pundat, spawnpoint")
 	}
 	namespaces := c.StringSlice("namespaces")
 	if len(namespaces) == 0 {
