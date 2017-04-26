@@ -83,7 +83,9 @@ func (db *xbosdb) resolveAlias(aliasorkey string) (alias, vk string) {
 		//if we cannot resolve long alias, try unresolving
 		if strings.HasPrefix(err.Error(), "[513]") {
 			bb, err := bw2bind.FromBase64(aliasorkey)
-			if err != nil {
+			if err != nil && strings.Contains(err.Error(), "Invalid length") {
+				return "", ""
+			} else if err != nil {
 				log.Fatal(errors.Wrapf(err, "Could not convert %s to base64", aliasorkey))
 			}
 			actualalias, err := db.client.UnresolveAlias(bb)

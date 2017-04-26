@@ -154,15 +154,18 @@ func actionDoctor(c *cli.Context) error {
 		red("✖ Environment vars need attention. Make sure you have $BW2_DEFAULT_ENTITY, $BW2_AGENT, and $BW2_DEFAULT_BANKROLL all set and that $BW2_DEFAULT_ENTITY and $BW2_DEFAULT_BANKROLL point to valid BW2 entities\n")
 	}
 
+	var bw_ok = true
 	// check chain is up to date
 	client, err := bw2bind.Connect("")
 	if err != nil {
 		red("✖ Could not connect to local agent (%s)", err)
+		bw_ok = false
 		return err
 	}
 	bcip, err := client.GetBCInteractionParams()
 	if err != nil {
 		red("✖ Could not get current blockchain state (%s)", err)
+		bw_ok = false
 		return err
 	}
 	/*
@@ -179,6 +182,7 @@ func actionDoctor(c *cli.Context) error {
 	*/
 	if int64(bcip.CurrentBlock) < bcip.HighestBlock-1 { // fudge factor of 1 block
 		red("✖ Chain is not caught up. At block %d but current is %d. If you have peers, this should go away\n", bcip.CurrentBlock, bcip.HighestBlock)
+		bw_ok = false
 	} else {
 		green("✔ Caught up on the blockchain\n")
 	}
@@ -186,6 +190,7 @@ func actionDoctor(c *cli.Context) error {
 	// check chain has peers
 	if bcip.Peers == 0 {
 		red("✖ You do not have peers! Check if you have an internet connection\n")
+		bw_ok = false
 	} else {
 		green("✔ Have %d peers\n", bcip.Peers)
 	}
@@ -194,16 +199,19 @@ func actionDoctor(c *cli.Context) error {
 	val := checkEnvDefined("BW2_DEFAULT_BANKROLL")
 	if val == nil {
 		red("✖ Cannot check bankroll balance because $BW2_DEFAULT_BANKROLL is not defined\n")
+		bw_ok = false
 		return nil
 	}
 	_, err = client.SetEntityFile(*val)
 	if err != nil {
 		red("✖ Can't use $BW2_DEFAULT_BANKROLL (%s)\n", err)
+		bw_ok = false
 		return nil
 	}
 	accounts, err := client.EntityBalances()
 	if err != nil {
 		red("✖ Cannot fetch bankroll balances (%s)\n", err)
+		bw_ok = false
 		return nil
 	}
 	has_some_money := false
@@ -223,14 +231,22 @@ func actionDoctor(c *cli.Context) error {
 		yellow("✅ $BW2_DEFAULT_BANKROLL has %d Ether in at least one account, but is running low\n", max_balance)
 	} else {
 		red("✖ $BW2_DEFAULT_BANKROLL has no funds\n")
+		bw_ok = false
 	}
 
 	// check disk space
 	disk := diskUsage()
 	if disk < 10000 {
 		red("✖ Only have %f MB left on disk\n", disk)
+		bw_ok = false
 	} else {
 		green("✔ Have %f MB left on disk. Should be good\n", disk)
+	}
+
+	if bw_ok {
+		green("✔ BOSSWAVE state looks ok!\n")
+	} else {
+		red("✖ BOSSWAVE state needs attention\n")
 	}
 
 	// TODO: check software up to date

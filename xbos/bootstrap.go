@@ -31,11 +31,12 @@ func actionBootstrap(c *cli.Context) error {
 	if err := bootstrapEntity("BW2_DEFAULT_ENTITY"); err != nil {
 		log.Fatal(err)
 	}
-	local.vk = local.client.SetEntityFromEnvironOrExit()
+
 	// make bankroll
 	if err := bootstrapEntity("BW2_DEFAULT_BANKROLL"); err != nil {
 		log.Fatal(err)
 	}
+
 	// check if bankroll has $$$
 	val := os.Getenv("BW2_DEFAULT_BANKROLL")
 	local.vk, err = local.client.SetEntityFile(val)
@@ -52,6 +53,33 @@ func actionBootstrap(c *cli.Context) error {
 	} else {
 		red("You do not have enough Ξ! Have a friend run the below command to transfer you some Ether/gas/money, then rerun 'xbos bootstrap'\n")
 		fmt.Printf("bw2 xfer -t %s --ether %d\n", accounts[0].Addr, 200-balance)
+	}
+
+	// check if we have an alias already
+	local.vk = local.client.SetEntityFromEnvironOrExit()
+	alias, key := local.resolveAlias(local.vk)
+	if alias != "" {
+		yellow("Already have alias %s for $BW2_DEFAULT_ENTITY (%s).\n", alias, key)
+		return nil
+	}
+
+	makeAlias := readInput("Would you like to make an alias? This will make life easier: [Y/n]")
+	if makeAlias == "Y" || makeAlias == "y" || makeAlias == "" {
+		var myalias string
+		for {
+			myalias = readInput("What alphanumeric string would you like to be your alias (typically this is a shortened form of your name)\n: ")
+			alias, key = local.resolveAlias(myalias)
+			if key != "" {
+				red("Alias %s already taken by %s\n", alias, key)
+				continue
+			}
+			break
+		}
+		out, err := exec.Command("bw2", "mkalias", "--long", myalias, "--b64", local.vk).CombinedOutput()
+		if err != nil {
+			fmt.Println(string(out))
+			log.Fatal(errors.Wrap(err, "Could not create new entity"))
+		}
 	}
 
 	return nil
