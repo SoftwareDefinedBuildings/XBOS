@@ -158,13 +158,13 @@ func actionDoctor(c *cli.Context) error {
 	// check chain is up to date
 	client, err := bw2bind.Connect("")
 	if err != nil {
-		red("✖ Could not connect to local agent (%s)", err)
+		red("✖ Could not connect to local agent (%s)\n", err)
 		bw_ok = false
 		return err
 	}
 	bcip, err := client.GetBCInteractionParams()
 	if err != nil {
-		red("✖ Could not get current blockchain state (%s)", err)
+		red("✖ Could not get current blockchain state (%s)\n", err)
 		bw_ok = false
 		return err
 	}

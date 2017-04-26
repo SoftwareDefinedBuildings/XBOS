@@ -65,7 +65,8 @@ func getDB(dbloc string) *xbosdb {
 	}
 	client, err := bw2bind.Connect("")
 	if err != nil {
-		log.Error(errors.Wrap(err, "Could not connect to $BW2_AGENT"))
+		red("Could not connect to $BW2_AGENT. Is BOSSWAVE running? Try running xbos doctor\n")
+		return nil
 	}
 	var vk string
 	if val, ok := os.LookupEnv("BW2_DEFAULT_ENTITY"); ok {

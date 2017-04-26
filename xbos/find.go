@@ -47,6 +47,10 @@ func findService(c *cli.Context) error {
 		namespaces = local.getNamespaces()
 	}
 
+	if len(namespaces) == 0 {
+		yellow("No namespaces configured. Try specifying some or adding defaults via `xbos ns add`\n")
+	}
+
 	for _, ns := range namespaces {
 		alias, vk := local.resolveAlias(ns)
 		svc := services[c.Args().Get(0)]

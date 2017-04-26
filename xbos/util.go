@@ -95,3 +95,15 @@ func readInput(prompt string) string {
 	}
 	return ""
 }
+
+func continueY(prompt string) bool {
+	prompt += " [Y/n]: "
+	ans := readInput(prompt)
+	return ans == "Y" || ans == "y" || ans == ""
+}
+
+func continueN(prompt string) bool {
+	prompt += " [y/N]: "
+	ans := readInput(prompt)
+	return ans == "N" || ans == "n" || ans == ""
+}
