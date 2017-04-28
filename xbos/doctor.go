@@ -82,9 +82,6 @@ func actionDoctor(c *cli.Context) error {
 	fmt.Println()
 
 	// CHECK 3: check env vars: default entity, bw2 agent, default bankroll, default contact
-	// TODO: suggest default values for these
-	// TODO: maybe have a help doc on each item?
-	// TODO: check that the entities are live and well
 	cyan("▶ Checking bosswave state...\n")
 	envvars_ok := true
 	envvars := []struct {
