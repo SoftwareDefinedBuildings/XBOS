@@ -55,7 +55,7 @@ func init() {
 func main() {
 	app := cli.NewApp()
 	app.Name = "xbos"
-	app.Version = "0.0.3"
+	app.Version = "0.0.4"
 	app.Usage = "XBOS command line tool"
 
 	app.Commands = []cli.Command{
