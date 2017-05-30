@@ -6,6 +6,10 @@ Plug:
         - info:
             - state
             - time
+            - voltage
+            - current
+            - power
+            - cumulative
     slots:
         - state:
             - state
@@ -17,4 +21,20 @@ Plug:
         time:
             type: integer
             description: nanoseconds since the Unix epoch
+            required: false
+        voltage:
+            type: float
+            description: voltage at the plug (Volts)
+            required: false
+        current:
+            type: float
+            description: current through the plug (Amperes)
+            required: false
+        power:
+            type: float
+            description: true power through the plug (Kilo Watts)
+            required: false
+        cumulative:
+            type: float
+            description: an aggregation from some epoch of true power (Kilo Watt Hours)
             required: false
