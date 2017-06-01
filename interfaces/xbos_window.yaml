@@ -1,0 +1,19 @@
+Window:
+    description: Standard XBOS operable window interface
+    ponum: 2.1.1.5
+    interface: i.xbos.window
+    signals:
+        - info:
+            - state
+            - time
+    slots: []
+    properties:
+        state:
+            type: boolean
+            description: Whether or not the window is open
+            required: true
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
+            units: ns
