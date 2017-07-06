@@ -1,0 +1,18 @@
+Meter:
+    ponum: 2.1.1.4
+    description: Standard XBOS electric meter interface
+    interface: i.xbos.meter
+    signals:
+        -info:
+            - current_demand
+            - time
+    properties:
+        current_demand:
+            type: double
+            description: Current measured demand
+            required: true
+            units: KW
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
