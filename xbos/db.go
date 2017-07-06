@@ -54,7 +54,7 @@ func initDB(dbloc string) error {
 	if err != nil {
 		log.Fatal(errors.Wrapf(err, "Could not create XBOS db at %s", dbloc))
 	}
-	//defer db.Close()
+	defer db.Close()
 	return nil
 }
 

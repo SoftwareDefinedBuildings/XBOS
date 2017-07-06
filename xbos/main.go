@@ -49,7 +49,6 @@ func init() {
 	} else {
 		local = getDB(dbloc)
 	}
-
 }
 
 func main() {

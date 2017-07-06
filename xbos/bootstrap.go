@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
@@ -23,19 +24,26 @@ import (
 
 func actionBootstrap(c *cli.Context) error {
 	var err error
-	if err := initDB(path.Join(c.String("local"), "DB")); err != nil {
+
+	actionInstallAgent(c)
+
+	fmt.Println("Sleep to allow the agent to start")
+	time.Sleep(10 * time.Second)
+
+	var dbpath = path.Join(c.String("local"), "DB")
+	if err := initDB(dbpath); err != nil {
 		return err
 	}
+	local = getDB(dbpath)
 
 	// make entity
 	if err := bootstrapEntity("BW2_DEFAULT_ENTITY"); err != nil {
 		log.Fatal(err)
 	}
 
-	// make bankroll
-	if err := bootstrapEntity("BW2_DEFAULT_BANKROLL"); err != nil {
-		log.Fatal(err)
-	}
+	// set BW2_DEFAULT_BANKROLL to be BW2_DEFAULT_ENTITY
+	de := os.Getenv("BW2_DEFAULT_ENTITY")
+	os.Setenv("BW2_DEFAULT_BANKROLL", de)
 
 	// check if bankroll has $$$
 	val := os.Getenv("BW2_DEFAULT_BANKROLL")

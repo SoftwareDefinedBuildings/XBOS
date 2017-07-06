@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 
 	"github.com/urfave/cli"
 )
@@ -64,6 +65,7 @@ func actionInstallSpawnctl(c *cli.Context) error {
 	return nil
 }
 func actionInstallPundat(c *cli.Context) error {
+	actionInstallBosswavePrereqs()
 	if continueY("Installing Archiver CLI tool Continue?") {
 		yellow("Running! This may take a few minutes\n")
 		output, err := exec.Command("go", "get", "-u", "github.com/gtfierro/pundat").CombinedOutput()
@@ -85,5 +87,41 @@ func actionInstallPundat(c *cli.Context) error {
 }
 func actionInstallRagent(c *cli.Context) error {
 	yellow("Support for installing ragent is not supported yet\n")
+	return nil
+}
+
+func actionInstallBosswavePrereqs() error {
+	// install gcc
+	green(runtime.GOOS)
+	if runtime.GOOS == "linux" {
+		output, err := exec.Command("apt-get", "update", "-y").CombinedOutput()
+		if err != nil {
+			red("Could not update apt-get (%v)\n", err)
+			return nil
+		}
+		fmt.Print(string(output))
+		output, err = exec.Command("apt-get", "install", "-y", "build-essential", "libssl-dev").CombinedOutput()
+		if err != nil {
+			red("Could not update apt-get install build-essential(%v)\n", err)
+			return nil
+		}
+		fmt.Print(string(output))
+	}
+
+	// install golang
+	if runtime.GOOS == "linux" {
+		output, err := exec.Command("wget", "https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz").CombinedOutput()
+		if err != nil {
+			red("Could not download go tar file (%v)\n", err)
+			return nil
+		}
+		fmt.Print(string(output))
+		output, err = exec.Command("tar", "-C", "/usr/local", "-xzf", "go1.8.3.linux-amd64.tar.gz").CombinedOutput()
+		if err != nil {
+			red("Could not install go (%v)\n", err)
+			return nil
+		}
+		fmt.Print(string(output))
+	}
 	return nil
 }
