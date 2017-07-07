@@ -1,6 +1,8 @@
 from bw2python.client import Client as BW2Client
 import os
 
+__all__ = ['devices','services']
+
 def get_client(agent=None,entity=None):
     # set defaults
     if agent is None:
@@ -19,5 +21,3 @@ def get_client(agent=None,entity=None):
     c.overrideAutoChainTo(True)
 
     return c
-    
-
