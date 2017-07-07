@@ -28,7 +28,7 @@ state = {
 tstat.write(state)
 
 # or individually
-t
+tstat.set_heating_setpoint(72)
 ```
 
 Interacting with an archiver
@@ -55,6 +55,85 @@ data = dc.window_uuids(uuids[0], start, end, '1h')
 dfs = make_dataframe(data)
 print dfs[uuids[0]].describe()
 ```
+
+Interacting with HodDB
+
+```python
+from xbos.services.hod import HodClientHTTP
+
+hc = HodClientHTTP("http://ciee.cal-sdb.org")
+
+q = """
+SELECT ?x ?uri WHERE {
+    ?x rdf:type/rdfs:subClassOf* brick:Temperature_Sensor .
+    ?x bf:uri ?uri .
+};
+"""
+print hc.do_query(q)
+#[{u'?uri': u'ciee/sensors/s.hamilton/00126d0700000060/i.temperature/signal/operative',
+#    u'?x': u'hamilton_0060_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000005e/i.temperature/signal/operative',
+#    u'?x': u'hamilton_005e_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000005d/i.temperature/signal/operative',
+#    u'?x': u'hamilton_005d_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000005c/i.temperature/signal/operative',
+#    u'?x': u'hamilton_005c_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000005b/i.temperature/signal/operative',
+#    u'?x': u'hamilton_005b_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000005a/i.temperature/signal/operative',
+#    u'?x': u'hamilton_005a_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000002e/i.temperature/signal/operative',
+#    u'?x': u'hamilton_002e_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000002c/i.temperature/signal/operative',
+#    u'?x': u'hamilton_002c_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000002b/i.temperature/signal/operative',
+#    u'?x': u'hamilton_002b_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d070000002a/i.temperature/signal/operative',
+#    u'?x': u'hamilton_002a_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d0700000029/i.temperature/signal/operative',
+#    u'?x': u'hamilton_0029_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d0700000028/i.temperature/signal/operative',
+#    u'?x': u'hamilton_0028_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d0700000027/i.temperature/signal/operative',
+#    u'?x': u'hamilton_0027_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d0700000025/i.temperature/signal/operative',
+#    u'?x': u'hamilton_0025_air_temp'},
+#{u'?uri': u'ciee/sensors/s.hamilton/00126d0700000022/i.temperature/signal/operative',
+#    u'?x': u'hamilton_0022_air_temp'}]
+```
+
+Putting it all together
+
+```python
+from xbos import get_client
+from xbos.services.pundat import DataClient, timestamp, make_dataframe
+from xbos.services.hod import HodClientHTTP
+from xbos.devices.thermostat import Thermostat
+
+# get a bosswave client
+c = get_client() # defaults to $BW2_AGENT, $BW2_DEFAULT_ENTITY
+# get a HodDB client
+hc = HodClientHTTP("http://ciee.cal-sdb.org")
+
+# query for CIEE thermostats
+q = """
+SELECT ?tstat ?uri WHERE {
+    ?tstat rdf:type brick:Thermostat .
+    ?tstat bf:uri ?uri .
+};
+"""
+ciee_tstats = hc.do_query(q)
+
+# instantiate some classes
+tstats = {}
+for info in ciee_tstats:
+    tstats[info['?tstat']] = Thermostat(c, info['?uri'])
+
+# print some settings
+for name, tstat in tstats.items():
+    print name, 'has heat/cool', tstat.heating_setpoint, tstat.cooling_setpoint
+```
+
 
 ## Layout:
 - `xbos`:
