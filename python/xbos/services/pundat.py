@@ -251,7 +251,7 @@ def make_dataframe(result):
     for uuid, data in result.items():
         df = pd.DataFrame(data)
         df.columns = ['time','min','mean','max','count']
-        df['time'] = pd.to_datetime(df['time'],'ns')
+        df['time'] = pd.to_datetime(df['time'],unit='ns')
         df = df.set_index(df.pop('time'))
         ret[uuid] = df
     return ret
