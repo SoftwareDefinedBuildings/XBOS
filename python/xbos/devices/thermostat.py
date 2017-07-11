@@ -1,6 +1,7 @@
 import msgpack
 from bw2python.bwtypes import PayloadObject
 import time
+from xbos.util import read_self_timeout
 
 class Thermostat(object):
     def __init__(self, client=None, uri=None):
@@ -32,58 +33,40 @@ class Thermostat(object):
         self.client.subscribe("{0}/signal/info".format(uri), _handle)
 
     @property
-    def heating_setpoint(self):
-        while self._state.get('heating_setpoint') is None:
-            time.sleep(1)
-        return self._state.get('heating_setpoint')
+    def heating_setpoint(self, timeout=30):
+        return read_self_timeout(self, 'heating_setpoint',timeout)
 
     @property
-    def cooling_setpoint(self):
-        while self._state.get('cooling_setpoint') is None:
-            time.sleep(1)
-        return self._state.get('cooling_setpoint')
+    def cooling_setpoint(self, timeout=30):
+        return read_self_timeout(self, 'cooling_setpoint',timeout)
 
     @property
-    def temperature(self):
-        while self._state.get('temperature') is None:
-            time.sleep(1)
-        return self._state.get('temperature')
+    def temperature(self, timeout=30):
+        return read_self_timeout(self, 'temperature',timeout)
 
     @property
-    def relative_humidity(self):
-        while self._state.get('relative_humidity') is None:
-            time.sleep(1)
-        return self._state.get('relative_humidity')
+    def relative_humidity(self, timeout=30):
+        return read_self_timeout(self, 'relative_humidity',timeout)
 
     @property
-    def override(self):
-        while self._state.get('override') is None:
-            time.sleep(1)
-        return self._state.get('override')
+    def override(self, timeout=30):
+        return read_self_timeout(self, 'override',timeout)
 
     @property
-    def fan(self):
-        while self._state.get('fan') is None:
-            time.sleep(1)
-        return self._state.get('fan')
+    def fan(self, timeout=30):
+        return read_self_timeout(self, 'fan',timeout)
 
     @property
-    def mode(self):
-        while self._state.get('mode') is None:
-            time.sleep(1)
-        return self._state.get('mode')
+    def mode(self, timeout=30):
+        return read_self_timeout(self, 'mode',timeout)
 
     @property
-    def state(self):
-        while self._state.get('state') is None:
-            time.sleep(1)
-        return self._state.get('state')
+    def state(self, timeout=30):
+        return read_self_timeout(self, 'state',timeout)
 
     @property
-    def time(self):
-        while self._state.get('time') is None:
-            time.sleep(1)
-        return self._state.get('time')
+    def time(self, timeout=30):
+        return read_self_timeout(self, 'time',timeout)
 
     def write(self, state):
         po = PayloadObject((2,1,1,0),None,msgpack.packb(state))

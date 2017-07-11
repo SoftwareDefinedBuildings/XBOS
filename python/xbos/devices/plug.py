@@ -1,6 +1,7 @@
 import msgpack
 from bw2python.bwtypes import PayloadObject
 import time
+from xbos.util import read_self_timeout
 
 class Plug(object):
     def __init__(self, client=None, uri=None):
@@ -31,39 +32,27 @@ class Plug(object):
 
     @property
     def state(self):
-        while self._state.get('state') is None:
-            time.sleep(1)
-        return self._state.get('state')
+        return read_self_timeout(self, 'state',timeout)
 
     @property
     def time(self):
-        while self._state.get('time') is None:
-            time.sleep(1)
-        return self._state.get('time')
+        return read_self_timeout(self, 'time',timeout)
 
     @property
     def voltage(self):
-        while self._state.get('voltage') is None:
-            time.sleep(1)
-        return self._state.get('voltage')
+        return read_self_timeout(self, 'voltage',timeout)
 
     @property
     def current(self):
-        while self._state.get('current') is None:
-            time.sleep(1)
-        return self._state.get('current')
+        return read_self_timeout(self, 'current',timeout)
 
     @property
     def power(self):
-        while self._state.get('power') is None:
-            time.sleep(1)
-        return self._state.get('power')
+        return read_self_timeout(self, 'power',timeout)
 
     @property
     def cumulative(self):
-        while self._state.get('cumulative') is None:
-            time.sleep(1)
-        return self._state.get('cumulative')
+        return read_self_timeout(self, 'cumulative',timeout)
 
     def write(self, state):
         po = PayloadObject((2,1,1,2),None,msgpack.packb(state))

@@ -1,6 +1,7 @@
 import msgpack
 from bw2python.bwtypes import PayloadObject
 import time
+from xbos.util import read_self_timeout
 
 class Light(object):
     def __init__(self, client=None, uri=None):
@@ -27,22 +28,16 @@ class Light(object):
         self.client.subscribe("{0}/signal/info".format(uri), _handle)
 
     @property
-    def state(self):
-        while self._state.get('state') is None:
-            time.sleep(1)
-        return self._state.get('state')
+    def state(self, timeout=30):
+        return read_self_timeout(self, 'state',timeout)
 
     @property
-    def time(self):
-        while self._state.get('time') is None:
-            time.sleep(1)
-        return self._state.get('time')
+    def time(self, timeout=30):
+        return read_self_timeout(self, 'time',timeout)
 
     @property
-    def brightness(self):
-        while self._state.get('brightness') is None:
-            time.sleep(1)
-        return self._state.get('brightness')
+    def brightness(self, timeout=30):
+        return read_self_timeout(self, 'brightness',timeout)
 
     def write(self, state):
         po = PayloadObject((2,1,1,1),None,msgpack.packb(state))

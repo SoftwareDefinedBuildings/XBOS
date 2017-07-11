@@ -1,7 +1,7 @@
 from bw2python.client import Client as BW2Client
 import os
 
-__all__ = ['devices','services']
+__all__ = ['devices','services','util']
 
 def get_client(agent=None,entity=None):
     # set defaults
