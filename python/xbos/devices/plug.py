@@ -27,6 +27,17 @@ class Plug(object):
                     data = msgpack.unpackb(po.content)
                     for k,v in data.items():
                         self._state[k] = v
+
+        # check liveness
+        liveness_uri = "{0}/!meta/lastalive".format(uri)
+        res = self.client.query(liveness_uri)
+        if len(res) == 0:
+            raise Exception("No liveness message found at {0}. Is this URI correct?".format(liveness_uri))
+        alive = msgpack.unpackb(res[0].payload_objects[0].content)
+        ts = alive['ts'] / 1e9
+        if time.time() - ts > 30:
+            raise Exception("{0} more than 30sec old. Is this URI current?".format(liveness_uri))
+        print "Got Plug at {0} last alive {1}".format(uri, alive['val'])
                     
         self.client.subscribe("{0}/signal/info".format(uri), _handle)
 
