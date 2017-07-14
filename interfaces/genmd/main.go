@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"text/template"
 
 	"gopkg.in/yaml.v2"
@@ -93,7 +94,7 @@ func main() {
     // subscribe
     type signal struct {
         {{ range $name := index .Signals "info" }}
-            {{ with $type := index $.Properties $name "type" }}{{ $name }} {{ call $.gettype $type }}{{ end }}{{ end }}
+            {{ with $type := index $.Properties $name "type" }}{{ call $.title $name }} {{ call $.gettype $type }}{{ end }} {{ call $.gettag $name }} {{ end }}
     }
     c, err := client.Subscribe(&bw2.SubscribeParams{
         URI: base_uri+"/signal/info",
@@ -105,8 +106,12 @@ func main() {
     for msg := range c {
         var current_state signal
         po := msg.GetOnePODF("{{ .Ponum }}/32")
-        po.(bw2.MsgPackPayloadObject).ValueInto(&current_state)
-        fmt.Println(current_state)
+        err := po.(bw2.MsgPackPayloadObject).ValueInto(&current_state)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(current_state)
+		}
     }
 }
     `
@@ -121,6 +126,8 @@ func main() {
 		"Slots":       i.Slots,
 		"Properties":  i.Properties,
 		"gettype":     gettype,
+		"title":       strings.Title,
+		"gettag":      gettag,
 	}
 	if err := t.Execute(os.Stdout, input); err != nil {
 		log.Fatal(err)
@@ -152,6 +159,10 @@ func gettype(typ string) string {
 		return "float64"
 	}
 	return typ
+}
+
+func gettag(name string) string {
+	return fmt.Sprintf("`msgpack:\"%s\"`", name)
 }
 
 func main() {
