@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"go/format"
 	"io/ioutil"
 	"log"
 	"os"
@@ -72,7 +74,42 @@ func (i Interface) Markdown(name string) []byte {
 		"{{ range $name, $list := .Slots }}- `{{ $name }}`:\n" +
 		"    {{ range $item := $list }}- `{{ $item }}`\n" +
 		"    {{ end }}\n" +
-		"{{ end }}\n"
+		"{{ end }}\n\n" +
+		"### Interfacing in Go\n\n"
+
+	go_template := `package main
+import (
+    bw2 "gopkg.in/immesys/bw2bind.v5"
+    "fmt"
+)
+
+func main() {
+    client := bw2.ConnectOrExit("")
+    client.OverrideAutoChainTo(true)
+    client.SetEntityFromEnvironOrExit()
+
+    base_uri := "{{.Name}} uri goes here ending in {{.Interface}}"
+
+    // subscribe
+    type signal struct {
+        {{ range $name := index .Signals "info" }}
+            {{ with $type := index $.Properties $name "type" }}{{ $name }} {{ call $.gettype $type }}{{ end }}{{ end }}
+    }
+    c, err := client.Subscribe(&bw2.SubscribeParams{
+        URI: base_uri+"/signal/info",
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    for msg := range c {
+        var current_state signal
+        po := msg.GetOnePODF("{{ .Ponum }}/32")
+        po.(bw2.MsgPackPayloadObject).ValueInto(&current_state)
+        fmt.Println(current_state)
+    }
+}
+    `
 
 	t := template.Must(template.New("page").Parse(page_template))
 	input := map[string]interface{}{
@@ -83,11 +120,38 @@ func (i Interface) Markdown(name string) []byte {
 		"Signals":     i.Signals,
 		"Slots":       i.Slots,
 		"Properties":  i.Properties,
+		"gettype":     gettype,
 	}
 	if err := t.Execute(os.Stdout, input); err != nil {
 		log.Fatal(err)
 	}
+	gobuf := bytes.NewBuffer(nil)
+	t2 := template.Must(template.New("go").Parse(go_template))
+	if err := t2.Execute(gobuf, input); err != nil {
+		log.Fatal(err)
+	}
+	output, err := format.Source(gobuf.Bytes())
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("```go")
+	fmt.Print(string(output))
+	fmt.Println("```")
 	return nil
+}
+
+func gettype(typ string) string {
+	switch typ {
+	case "string":
+		return "string"
+	case "boolean":
+		return "bool"
+	case "integer":
+		return "int64"
+	case "double":
+		return "float64"
+	}
+	return typ
 }
 
 func main() {
