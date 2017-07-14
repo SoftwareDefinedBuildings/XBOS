@@ -3,7 +3,7 @@ Temperature Sensor:
     ponum: 2.1.2.0
     interface: i.xbos.temperature_sensor
     signals:
-        - info:
+        info:
             - temperature
             - time
     properties:
@@ -16,3 +16,4 @@ Temperature Sensor:
             type: integer
             description: nanoseconds since the Unix epoch
             required: false
+            units: ns

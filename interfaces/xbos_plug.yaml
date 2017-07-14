@@ -3,7 +3,7 @@ Plug:
     ponum: 2.1.1.2
     interface: i.xbos.plug
     signals:
-        - info:
+        info:
             - state
             - time
             - voltage
@@ -11,13 +11,14 @@ Plug:
             - power
             - cumulative
     slots:
-        - state:
+        state:
             - state
     properties:
         state:
             type: boolean
             description: Whether or not the plug is enabled
             required: true
+            units: on/off
         time:
             type: integer
             description: nanoseconds since the Unix epoch

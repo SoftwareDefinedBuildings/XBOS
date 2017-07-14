@@ -3,7 +3,7 @@ Meter:
     description: Standard XBOS electric meter interface
     interface: i.xbos.meter
     signals:
-        -info:
+        info:
             - current_demand
             - time
     properties:
@@ -16,3 +16,4 @@ Meter:
             type: integer
             description: nanoseconds since the Unix epoch
             required: false
+            units: ns

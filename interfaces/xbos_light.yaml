@@ -3,12 +3,12 @@ Light:
     ponum: 2.1.1.1
     interface: i.xbos.light
     signals:
-        - info:
+        info:
             - state
             - brightness
             - time
     slots:
-        - state:
+        state:
             - state
             - brightness
     properties:
@@ -16,13 +16,16 @@ Light:
             type: boolean
             description: Whether or not the light is on
             required: true
+            units: on/off
         brightness:
             type: integer
             maximum: 100
             minimum: 0
             description: Current brightness of the light; 100 is maximum brightness
             required: false
+            units: percentage
         time:
             type: integer
             description: nanoseconds since the Unix epoch
             required: false
+            units: ns

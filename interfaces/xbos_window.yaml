@@ -3,15 +3,16 @@ Window:
     ponum: 2.1.1.5
     interface: i.xbos.window
     signals:
-        - info:
+        info:
             - state
             - time
-    slots: []
+    slots:
     properties:
         state:
             type: boolean
             description: Whether or not the window is open
             required: true
+            units: on/off
         time:
             type: integer
             description: nanoseconds since the Unix epoch

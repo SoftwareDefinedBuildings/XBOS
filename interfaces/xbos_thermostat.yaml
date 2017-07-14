@@ -3,7 +3,7 @@ Thermostat:
     description: Standard XBOS thermostat interface
     interface: i.xbos.thermostat
     signals:
-        - info:
+        info:
             - temperature
             - relative_humidity
             - heating_setpoint
@@ -14,10 +14,10 @@ Thermostat:
             - state
             - time
     slots:
-        - setpoints:
+        setpoints:
             - heating_setpoint
             - cooling_setpoint
-        - state:
+        state:
             - heating_setpoint
             - cooling_setpoint
             - override
@@ -48,14 +48,17 @@ Thermostat:
             type: boolean
             description: Override state of the thermostat. If the thermostat is in override mode, it will not follow its programmed schedule.
             required: true
+            units: on/off
         fan:
             type: boolean
             description: Fan state of the thermostat
             required: false
+            units: on/off
         mode:
             type: integer
             description: The current operating policy of the thermostat
             required: true
+            units: mode
             enum:
                 - value: 0
                   description: The thermostat is off (will not heat or cool)
@@ -69,6 +72,7 @@ Thermostat:
             type: integer
             description: The current state of the thermostat
             required: true
+            units: state
             enum:
                 - value: 0
                   description: The thermostat is off (will not call for heat/cool)
@@ -82,3 +86,4 @@ Thermostat:
             type: integer
             description: nanoseconds since the Unix epoch
             required: false
+            units: ns
