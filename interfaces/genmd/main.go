@@ -18,34 +18,34 @@ import (
 // Example
 //
 //
-//	   Light:
-//		   description: Standard XBOS lighting interface
-//		   ponum: 2.1.1.1
-//		   interface: i.xbos.light
-//		   signals:
-//			   - info:
-//				   - state
-//				   - brightness
-//				   - time
-//		   slots:
-//			   - state:
-//				   - state
-//				   - brightness
-//		   properties:
-//			   state:
-//				   type: boolean
-//				   description: Whether or not the light is on
-//				   required: true
-//			   brightness:
-//				   type: integer
-//				   maximum: 100
-//				   minimum: 0
-//				   description: Current brightness of the light; 100 is maximum brightness
-//				   required: false
-//			   time:
-//				   type: integer
-//				   description: nanoseconds since the Unix epoch
-//				   required: false
+//     Light:
+//         description: Standard XBOS lighting interface
+//         ponum: 2.1.1.1
+//         interface: i.xbos.light
+//         signals:
+//             - info:
+//                 - state
+//                 - brightness
+//                 - time
+//         slots:
+//             - state:
+//                 - state
+//                 - brightness
+//         properties:
+//             state:
+//                 type: boolean
+//                 description: Whether or not the light is on
+//                 required: true
+//             brightness:
+//                 type: integer
+//                 maximum: 100
+//                 minimum: 0
+//                 description: Current brightness of the light; 100 is maximum brightness
+//                 required: false
+//             time:
+//                 type: integer
+//                 description: nanoseconds since the Unix epoch
+//                 required: false
 
 type Interface struct {
 	Description string
@@ -68,53 +68,53 @@ func (i Interface) Markdown(name string) []byte {
 		"{{ end }}\n\n" +
 		"### Signals\n" +
 		"{{ range $name, $list := .Signals }}- `{{ $name }}`:\n" +
-		"	 {{ range $item := $list }}- `{{ $item }}`\n" +
-		"	 {{ end }}\n" +
+		"    {{ range $item := $list }}- `{{ $item }}`\n" +
+		"    {{ end }}\n" +
 		"{{ end }}\n\n" +
 		"### Slots\n" +
 		"{{ range $name, $list := .Slots }}- `{{ $name }}`:\n" +
-		"	 {{ range $item := $list }}- `{{ $item }}`\n" +
-		"	 {{ end }}\n" +
+		"    {{ range $item := $list }}- `{{ $item }}`\n" +
+		"    {{ end }}\n" +
 		"{{ end }}\n\n" +
 		"### Interfacing in Go\n\n"
 
 	go_template := `package main
 import (
-	bw2 "gopkg.in/immesys/bw2bind.v5"
-	"fmt"
+    bw2 "gopkg.in/immesys/bw2bind.v5"
+    "fmt"
 )
 
 func main() {
-	client := bw2.ConnectOrExit("")
-	client.OverrideAutoChainTo(true)
-	client.SetEntityFromEnvironOrExit()
+    client := bw2.ConnectOrExit("")
+    client.OverrideAutoChainTo(true)
+    client.SetEntityFromEnvironOrExit()
 
-	base_uri := "{{.Name}} uri goes here ending in {{.Interface}}"
+    base_uri := "{{.Name}} uri goes here ending in {{.Interface}}"
 
-	// subscribe
-	type signal struct {
-		{{ range $name := index .Signals "info" }}
-			{{ with $type := index $.Properties $name "type" }}{{ call $.title $name }} {{ call $.gettype $type }}{{ end }} {{ call $.gettag $name }} {{ end }}
-	}
-	c, err := client.Subscribe(&bw2.SubscribeParams{
-		URI: base_uri+"/signal/info",
-	})
-	if err != nil {
-		panic(err)
-	}
+    // subscribe
+    type signal struct {
+        {{ range $name := index .Signals "info" }}
+            {{ with $type := index $.Properties $name "type" }}{{ call $.title $name }} {{ call $.gettype $type }}{{ end }} {{ call $.gettag $name }} {{ end }}
+    }
+    c, err := client.Subscribe(&bw2.SubscribeParams{
+        URI: base_uri+"/signal/info",
+    })
+    if err != nil {
+        panic(err)
+    }
 
-	for msg := range c {
-		var current_state signal
-		po := msg.GetOnePODF("{{ .Ponum }}/32")
-		err := po.(bw2.MsgPackPayloadObject).ValueInto(&current_state)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println(current_state)
-		}
-	}
+    for msg := range c {
+        var current_state signal
+        po := msg.GetOnePODF("{{ .Ponum }}/32")
+        err := po.(bw2.MsgPackPayloadObject).ValueInto(&current_state)
+        if err != nil {
+            fmt.Println(err)
+        } else {
+            fmt.Println(current_state)
+        }
+    }
 }
-	`
+    `
 
 	python_template := `
 import time
