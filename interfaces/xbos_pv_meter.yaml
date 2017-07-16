@@ -1,0 +1,32 @@
+PV Meter:
+    ponum: 2.1.1.6
+    description: Standard XBOS photovoltaic interface
+    interface: i.xbos.pv_meter
+    signals:
+        info:
+            - current_power
+            - total_energy_lifetime
+            - total_energy_today
+            - time
+    properties:
+        current_power:
+            type: double
+            description: Current power generated
+            required: true
+            units: W
+        total_energy_lifetime:
+            type: double
+            description: Energy produced over Enphase lifetime
+            required: false
+            units: Wh
+        total_energy_today:
+            type: double
+            description: Energy produced today
+            required: false
+            units: Wh
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
+            units: ns
+
