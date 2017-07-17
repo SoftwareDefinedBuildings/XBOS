@@ -27,6 +27,6 @@ PV Meter:
         time:
             type: integer
             description: nanoseconds since the Unix epoch
-            required: false
+            required: true
             units: ns
 
