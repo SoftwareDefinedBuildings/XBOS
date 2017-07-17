@@ -4,16 +4,28 @@ Meter:
     interface: i.xbos.meter
     signals:
         info:
-            - current_demand
+            - power
+            - voltage
+            - apparent_power
             - time
     properties:
-        current_demand:
+        power:
             type: double
-            description: Current measured demand
+            description: Current measured power
             required: true
-            units: KW
+            units: kW
+        voltage:
+            type: double
+            description: Current voltage reading
+            required: false
+            units: V
+        apparent_power:
+            type: double
+            description: Current apparent power reading
+            required: false
+            units: kVA
         time:
             type: integer
             description: nanoseconds since the Unix epoch
-            required: false
+            required: true
             units: ns

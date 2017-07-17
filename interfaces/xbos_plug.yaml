@@ -25,22 +25,22 @@ Plug:
             required: false
             units: ns
         voltage:
-            type: float
+            type: double
             description: voltage at the plug (Volts)
             required: false
             units: V
         current:
-            type: float
+            type: double
             description: current through the plug (Amperes)
             required: false
             units: A
         power:
-            type: float
+            type: double
             description: true power through the plug (Kilo Watts)
             required: false
             units: W
         cumulative:
-            type: float
+            type: double
             description: an aggregation from some epoch of true power (Kilo Watt Hours)
             required: false
             units: kWh
