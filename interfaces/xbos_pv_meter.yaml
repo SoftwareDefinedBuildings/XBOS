@@ -29,4 +29,3 @@ PV Meter:
             description: nanoseconds since the Unix epoch
             required: true
             units: ns
-

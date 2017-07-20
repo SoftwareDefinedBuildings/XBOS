@@ -8,6 +8,7 @@ EVSE:
             - current
             - voltage
             - charging_time_left
+            - time
     slots:
         state:
             - current_limit
@@ -38,3 +39,8 @@ EVSE:
             description: Charge state of the EVSE
             required: true
             units: on/off
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: true
+            units: ns
