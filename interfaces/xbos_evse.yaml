@@ -1,0 +1,40 @@
+EVSE:
+    ponum: 2.1.1.7
+    description: Standard XBOS electric vehicle supply equipment (charging station)
+    interface: i.xbos.evse
+    signals:
+        info:
+            - current_limit
+            - current
+            - voltage
+            - charging_time_left
+    slots:
+        state:
+            - current_limit
+            - state
+    properties:
+        current_limit:
+            type: double
+            description: Maximum allowed current for charging
+            required: true
+            units: A
+        current:
+            type: double
+            description: Active charge current
+            required: true
+            units: A
+        voltage:
+            type: double
+            description: Active charge voltage
+            required: true
+            units: V
+        charging_time_left:
+            type: integer
+            description: Seconds left until car is fully charged
+            required: false
+            units: s
+        state:
+            type: boolean
+            description: Charge state of the EVSE
+            required: true
+            units: on/off
