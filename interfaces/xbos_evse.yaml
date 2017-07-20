@@ -6,6 +6,7 @@ EVSE:
         info:
             - current_limit
             - current
+            - state
             - voltage
             - charging_time_left
             - time
