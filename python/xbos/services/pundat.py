@@ -250,7 +250,10 @@ def make_dataframe(result):
             result = result['timeseries']
     for uuid, data in result.items():
         df = pd.DataFrame(data)
-        df.columns = ['time','min','mean','max','count']
+        if len(df.columns) == 5: # statistical data
+            df.columns = ['time','min','mean','max','count']
+        else:
+            df.columns = ['time','value']
         df['time'] = pd.to_datetime(df['time'],unit='ns')
         df = df.set_index(df.pop('time'))
         ret[uuid] = df
