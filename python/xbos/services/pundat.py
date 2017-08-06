@@ -8,6 +8,7 @@ from datetime import timedelta, datetime
 from bw2python import ponames
 from bw2python.bwtypes import PayloadObject
 from bw2python.client import Client
+from xbos.util import pretty_print_timedelta
 
 DEFAULT_TIMEOUT=30
 
@@ -51,7 +52,7 @@ class DataClient(object):
                 now = time.time()*1e9 # nanoseconds
                 # convert to microseconds and get the timedelta
                 diff = timedelta(microseconds = (now - last_seen_timestamp)/1e3)
-                print "Saw [{0}] archiver {1}".format(archiver, pretty_print_timedelta(diff))
+                print "Saw [{0}] archiver {1}".format(archiver, util.pretty_print_timedelta(diff))
                 if diff.total_seconds() < 20:
                     self.archivers.append(archiver)
 
@@ -306,14 +307,3 @@ def getTimeseries(nonce, msg):
                     ts_data[res["uuid"]] = zip(res["times"], res["min"], res["mean"], res["max"], res["count"])
                 return ts_data
             return data
-
-def pretty_print_timedelta(td):
-    res = ""
-    if td.days:
-        res += "{0} hours ".format(td.days)
-    if td.seconds:
-        res += "{0} seconds ".format(td.seconds)
-    if td.microseconds:
-        res += "{0} ms ".format(td.microseconds / 1000.)
-    return res+"ago"
-
