@@ -55,7 +55,7 @@ class HodClient(object):
             if diff.total_seconds() > 20:
                 raise Exception("HodDB at {0} is too old".format(self.url))
 
-    def query(self, query, timeout=DEFAULT_TIMEOUT, values_only=True):
+    def do_query(self, query, timeout=DEFAULT_TIMEOUT, values_only=True):
         nonce = str(random.randint(0, 2**32))
         ev = threading.Event()
         response = {}
@@ -78,7 +78,7 @@ class HodClient(object):
 
                     for k,v in data.items():
                         response[k] = v
-                    if values_only:
+                    if values_only and response["Count"] > 0:
                         response["Rows"] = [{k: v["Value"] for k,v in r.items()} for r in response["Rows"]]
                     got_response = True
             if got_response:

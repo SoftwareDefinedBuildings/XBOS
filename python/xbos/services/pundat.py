@@ -52,7 +52,7 @@ class DataClient(object):
                 now = time.time()*1e9 # nanoseconds
                 # convert to microseconds and get the timedelta
                 diff = timedelta(microseconds = (now - last_seen_timestamp)/1e3)
-                print "Saw [{0}] archiver {1}".format(archiver, util.pretty_print_timedelta(diff))
+                print "Saw [{0}] archiver {1}".format(archiver, pretty_print_timedelta(diff))
                 if diff.total_seconds() < 20:
                     self.archivers.append(archiver)
 
