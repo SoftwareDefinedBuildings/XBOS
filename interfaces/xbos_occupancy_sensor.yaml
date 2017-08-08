@@ -1,0 +1,19 @@
+Occupancy Sensor:
+    description: XBOS occupancy sensor
+    ponum: 2.1.2.1
+    interface: i.xbos.occupancy_sensor
+    signals:
+        info:
+            - occupancy
+            - time
+    properties:
+        occupancy:
+            type: boolean
+            description: Current occupancy state
+            required: true
+            units: on/off
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
+            units: ns
