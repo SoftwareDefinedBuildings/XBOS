@@ -70,7 +70,7 @@ func (d *dash) GetZones() (rows []*ui.Row, bufs []ui.Bufferer) {
 			state.Height = 3
 			state.Text = ""
 			state.BorderLabel = "Thermostat State"
-			state.Handle("/timer/10s", func(e ui.Event) {
+			state.Handle("/timer/1s", func(e ui.Event) {
 				statesub := tstat_states[zone]
 				if vals := statesub.getValues(); len(vals) > 0 {
 					recent := vals[len(vals)-1]
