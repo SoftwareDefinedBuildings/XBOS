@@ -64,7 +64,7 @@ def get_building_meters():
     if res["Count"] == 0:
         print "No device meters found"
         return meters
-    dev_meters = set([x["?uuid"] for x in res["Rows"]])
+    dev_meters = set([x["?uuid"] for x in res["Rows"])
     for row in res["Rows"]:
         meters[row["?device"]] = row["?uuid"]
 
