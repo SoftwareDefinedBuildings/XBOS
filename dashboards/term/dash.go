@@ -8,6 +8,7 @@ import (
 	hod "github.com/gtfierro/hod/clients/go"
 	archiver "github.com/gtfierro/pundat/client"
 	ui "github.com/gtfierro/termui"
+	"github.com/urfave/cli"
 	bw2 "gopkg.in/immesys/bw2bind.v5"
 )
 
@@ -19,15 +20,23 @@ type dash struct {
 	zones map[string]*ui.Row
 }
 
-func newDash() *dash {
+func newDash(c *cli.Context) *dash {
 	d := &dash{
 		zones: make(map[string]*ui.Row),
 	}
-	d.client = bw2.ConnectOrExit("")
+	if c.String("agent") == "" {
+		d.client = bw2.ConnectOrExit("127.0.0.1:28589")
+	} else {
+		d.client = bw2.ConnectOrExit(c.String("agent"))
+	}
 	d.client.OverrideAutoChainTo(true)
-	vk = d.client.SetEntityFromEnvironOrExit()
+	if c.String("entity") == "" {
+		vk = d.client.SetEntityFileOrExit("ciee_readonly.ent")
+	} else {
+		vk = d.client.SetEntityFileOrExit(c.String("entity"))
+	}
 
-	hc, err := hod.NewBW2Client(d.client, "ciee/hod")
+	hc, err := hod.NewBW2Client(d.client, c.String("hod"))
 	if err != nil {
 		panic(err)
 	}
@@ -293,6 +302,7 @@ func (d *dash) getRoomTemperatures(zonetemps map[string]*subscription) map[strin
 			size:    1,
 		})
 		if err != nil {
+			panic(uri)
 			panic(err)
 		}
 		go func() {

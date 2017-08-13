@@ -104,8 +104,7 @@ func (d *dash) newSubscription(params subscriptionParams) (*subscription, error)
 			// extract the possible value
 			value := ob.Eval(sub.valueExpr, thing)
 			if value == nil {
-				log.Printf("Could  not extract value from %+v", thing)
-				panic("no")
+				//log.Printf("Could  not extract value from %+v", thing)
 				continue
 			}
 			f64s, err := getFloat64(value)
