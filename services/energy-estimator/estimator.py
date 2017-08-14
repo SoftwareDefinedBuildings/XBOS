@@ -50,11 +50,10 @@ def get_building_meters():
     if res["Count"] == 0:
         print "No building meters found"
     meters = {} 
-    for row in res["Rows"]:
-        meters["building"] = row["?uuid"]
+    all_meters = set([x["?uuid"] for x in res["Rows"]])
 
     # get device meters and bosswave URIs
-    query = """SELECT ?meter ?uuid WHERE {
+    query = """SELECT ?device ?meter ?uuid WHERE {
         ?meter rdf:type/rdfs:subClassOf* brick:Electric_Meter .
         ?meter bf:uuid ?uuid .
         ?meter bf:isPointOf ?device .
@@ -65,8 +64,11 @@ def get_building_meters():
     if res["Count"] == 0:
         print "No device meters found"
         return meters
+    dev_meters = set([x["?uuid"] for x in res["Rows"])
     for row in res["Rows"]:
         meters[row["?device"]] = row["?uuid"]
+
+    meters["building"] = list(all_meters - dev_meters)[0]
     return meters
 
 def get_tstats():
@@ -74,7 +76,7 @@ def get_tstats():
     query = """SELECT ?tstat ?zone ?uuid WHERE {
         ?tstat rdf:type/rdfs:subClassOf* brick:Thermostat .
         ?zone rdf:type brick:HVAC_Zone .
-        ?p rdf:type brick:Thermostat_Status .
+        ?p rdf:type brick:Mode_Status .
 
         ?tstat bf:hasPoint ?p .
         ?tstat bf:controls/bf:feeds ?zone .
@@ -116,7 +118,7 @@ def estimate_power_usage(d, meter_df):
 
 def run():
     meter_uuids = get_building_meters()
-    meter_dfs = make_dataframe(dataclient.data_uuids(meter_uuids.values(), "now", "now -1h"))
+    meter_dfs = make_dataframe(dataclient.data_uuids(meter_uuids['building'], "now", "now -1h"))
     for v in meter_dfs.values():
         print v.describe()
 
