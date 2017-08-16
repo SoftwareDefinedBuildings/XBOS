@@ -25,6 +25,11 @@ i_xbos_thermostat_points = {
     'mode': BRICK.Thermostat_Mode_Command,
 }
 
+
+i_xbos_light_points = {
+    'brightness': BRICK.Lighting_System_Luminance_Command,
+    'state': BRICK.Lighting_State,
+}
 class Generator:
     def __init__(self, bricknamespace, archiverclient):
         self.ns = bricknamespace
@@ -43,6 +48,25 @@ class Generator:
             if doc['name'] in i_xbos_thermostat_points.keys():
                 pointname = self.ns[node.split('#')[-1]+"_"+doc['name']]
                 triples.append((pointname, RDF.type, i_xbos_thermostat_points[doc['name']]))
+                triples.append((node, BF.hasPoint, pointname))
+                triples.append((pointname, BF.uuid, Literal(doc['uuid'])))
+        print triples
+        return triples
+
+    def add_xbos_light(self, node, uri, controls=None):
+        rest_of_uri = '/'.join(uri.split("/")[1:])
+        namespace = uri.split("/")[0]
+        md = self.archiver.query("select name, uuid where namespace = '{0}' and originaluri like '{1}'".format(namespace, rest_of_uri)).get('metadata')
+        print md
+        triples = []
+        triples.append((node, RDF.type, BRICK.Lighting_System))
+        triples.append((node, BF.uri, Literal(uri)))
+        if controls is not None:
+            triples.append((node, BF.controls, controls))
+        for doc in md:
+            if doc['name'] in i_xbos_light_points.keys():
+                pointname = self.ns[node.split('#')[-1]+"_"+doc['name']]
+                triples.append((pointname, RDF.type, i_xbos_light_points[doc['name']]))
                 triples.append((node, BF.hasPoint, pointname))
                 triples.append((pointname, BF.uuid, Literal(doc['uuid'])))
         print triples
