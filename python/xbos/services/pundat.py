@@ -55,6 +55,8 @@ class DataClient(object):
                 print "Saw [{0}] archiver {1}".format(archiver, pretty_print_timedelta(diff))
                 if diff.total_seconds() < 20:
                     self.archivers.append(archiver)
+        if len(self.archivers) == 0:
+            self.archivers = archivers
 
     def query(self, query, archiver="", timeout=DEFAULT_TIMEOUT):
         """
@@ -259,6 +261,37 @@ def make_dataframe(result):
         df = df.set_index(df.pop('time'))
         ret[uuid] = df
     return ret
+
+def merge_dfs(dfs, resample=None, do_mean=False, do_sum=False, do_min=False, do_max=False):
+    """
+    dfs is a dictionary of key => dataframe
+    This method resamples each of the dataframes if a period is provided
+    (http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases)
+    """
+    if len(dfs) == 0:
+        raise Exception("No dataframes provided")
+    df = dfs.values()[0]
+    name = dfs.keys()[0]
+    df.columns = map(lambda x: name+"_"+x if not x.startswith(name) else x, df.columns)
+    if resample is not None:
+        df = df.resample(resample)
+        if do_mean: df = df.mean()
+        elif do_sum: df = df.sum()
+        elif do_min: df = df.min()
+        elif do_max: df = df.max()
+        else: df = df.mean()
+    if len(dfs) > 1:
+        for name, newdf in dfs.items()[1:]:
+            if resample is not None:
+                newdf = newdf.resample(resample)
+                if do_mean: newdf = newdf.mean()
+                elif do_sum: newdf = newdf.sum()
+                elif do_min: newdf = newdf.min()
+                elif do_max: newdf = newdf.max()
+                else: newdf = newdf.mean()
+            newdf.columns = map(lambda x: name+"_"+x if not x.startswith(name) else x, newdf.columns)
+            df = df.merge(newdf, left_index=True, right_index=True, how='outer')
+    return df
 
 def timestamp(thing, nanoseconds=False):
     if nanoseconds:

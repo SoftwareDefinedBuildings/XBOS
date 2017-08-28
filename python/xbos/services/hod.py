@@ -30,7 +30,7 @@ class HodClientHTTP(object):
         return rows
 
 class HodClient(object):
-    def __init__(self, url, client=None):
+    def __init__(self, url, client=None, timeout=20):
         if client is None:
             client = Client()
             client.vk = client.setEntityFromEnviron()
@@ -52,7 +52,7 @@ class HodClient(object):
             # convert to microseconds and get the timedelta
             diff = timedelta(microseconds = (now - last_seen_timestamp)/1e3)
             print "Saw [{0}] HodDB {1}".format(self.url, pretty_print_timedelta(diff))
-            if diff.total_seconds() > 20:
+            if diff.total_seconds() > timeout:
                 raise Exception("HodDB at {0} is too old".format(self.url))
 
     def do_query(self, query, timeout=DEFAULT_TIMEOUT, values_only=True):
