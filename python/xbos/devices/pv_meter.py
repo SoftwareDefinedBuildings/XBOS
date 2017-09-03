@@ -6,18 +6,19 @@ from bw2python.bwtypes import PayloadObject
 from bw2python.client import Client
 from xbos.util import read_self_timeout
 
-class Light(object):
+class PV_Meter(object):
     def __init__(self, client=None, uri=None):
         self.client = client
         self._uri = uri.rstrip('/')
         self._state = {
-         "brightness": None,
-         "state": None,
+         "current_power": None,
          "time": None,
+         "total_energy_lifetime": None,
+         "total_energy_today": None,
         }
         def _handle(msg):
             for po in msg.payload_objects:
-                if po.type_dotted == (2,1,1,1):
+                if po.type_dotted == (2,1,1,6):
                     data = msgpack.unpackb(po.content)
                     for k,v in data.items():
                         self._state[k] = v
@@ -30,26 +31,24 @@ class Light(object):
         ts = alive['ts'] / 1e9
         if time.time() - ts > 30:
             raise Exception("{0} more than 30sec old. Is this URI current?".format(liveness_uri))
-        print "Got Light at {0} last alive {1}".format(uri, alive['val'])
+        print "Got PV_Meter at {0} last alive {1}".format(uri, alive['val'])
 
         self.client.subscribe("{0}/signal/info".format(uri), _handle)
 
     @property
-    def brightness(self, timeout=30):
-        return read_self_timeout(self, 'brightness', timeout)
+    def current_power(self, timeout=30):
+        return read_self_timeout(self, 'current_power', timeout)
 
     @property
-    def state(self, timeout=30):
-        return read_self_timeout(self, 'state', timeout)
+    def total_energy_lifetime(self, timeout=30):
+        return read_self_timeout(self, 'total_energy_lifetime', timeout)
+
+    @property
+    def total_energy_today(self, timeout=30):
+        return read_self_timeout(self, 'total_energy_today', timeout)
 
 
     def write(self, state):
-        po = PayloadObject((2,1,1,1), None, msgpack.packb(state))
+        po = PayloadObject((2,1,1,6), None, msgpack.packb(state))
         self.client.publish('{0}/slot/state'.format(self._uri),payload_objects=(po,))
-
-    def set_state(self, value):
-        self.write({'state': value})
-
-    def set_brightness(self, value):
-        self.write({'brightness': value})
 

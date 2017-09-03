@@ -1,25 +1,22 @@
-import msgpack
-from bw2python.bwtypes import PayloadObject
+
 import time
+import msgpack
+
+from bw2python.bwtypes import PayloadObject
+from bw2python.client import Client
 from xbos.util import read_self_timeout
 
 class Plug(object):
     def __init__(self, client=None, uri=None):
-        """
-        Instantiates an XBOS plug
-
-        [client]: a BW2 Client instance
-        [uri]: the base uri (ending in i.xbos.plug) 
-        """
         self.client = client
-        self._uri = uri.rstrip('/') # strip trailing slash
+        self._uri = uri.rstrip('/')
         self._state = {
-            'state': None,
-            'time': None,
-            'voltage': None,
-            'current': None,
-            'power': None,
-            'cumulative': None,
+         "cumulative": None,
+         "current": None,
+         "power": None,
+         "state": None,
+         "time": None,
+         "voltage": None,
         }
         def _handle(msg):
             for po in msg.payload_objects:
@@ -27,7 +24,6 @@ class Plug(object):
                     data = msgpack.unpackb(po.content)
                     for k,v in data.items():
                         self._state[k] = v
-
         # check liveness
         liveness_uri = "{0}/!meta/lastalive".format(uri)
         res = self.client.query(liveness_uri)
@@ -38,36 +34,34 @@ class Plug(object):
         if time.time() - ts > 30:
             raise Exception("{0} more than 30sec old. Is this URI current?".format(liveness_uri))
         print "Got Plug at {0} last alive {1}".format(uri, alive['val'])
-                    
+
         self.client.subscribe("{0}/signal/info".format(uri), _handle)
 
     @property
-    def state(self):
-        return read_self_timeout(self, 'state',timeout)
+    def cumulative(self, timeout=30):
+        return read_self_timeout(self, 'cumulative', timeout)
 
     @property
-    def time(self):
-        return read_self_timeout(self, 'time',timeout)
+    def current(self, timeout=30):
+        return read_self_timeout(self, 'current', timeout)
 
     @property
-    def voltage(self):
-        return read_self_timeout(self, 'voltage',timeout)
+    def power(self, timeout=30):
+        return read_self_timeout(self, 'power', timeout)
 
     @property
-    def current(self):
-        return read_self_timeout(self, 'current',timeout)
+    def state(self, timeout=30):
+        return read_self_timeout(self, 'state', timeout)
 
     @property
-    def power(self):
-        return read_self_timeout(self, 'power',timeout)
+    def voltage(self, timeout=30):
+        return read_self_timeout(self, 'voltage', timeout)
 
-    @property
-    def cumulative(self):
-        return read_self_timeout(self, 'cumulative',timeout)
 
     def write(self, state):
-        po = PayloadObject((2,1,1,2),None,msgpack.packb(state))
+        po = PayloadObject((2,1,1,2), None, msgpack.packb(state))
         self.client.publish('{0}/slot/state'.format(self._uri),payload_objects=(po,))
 
     def set_state(self, value):
         self.write({'state': value})
+
