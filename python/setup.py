@@ -12,7 +12,8 @@ setup(name='xbos',
         'delorean==0.6.0',
         'msgpack-python==0.4.2',
         'bw2python>=0.6',
-        'requests>=2.12.2'
+        'requests>=2.12.2',
+        'python-dateutil>=2.4.2'
       ],
       zip_safe=False)
 
