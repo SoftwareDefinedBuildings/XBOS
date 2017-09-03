@@ -165,7 +165,7 @@ class {{.Name}}(object):
 
 	//t := template.Must(template.New("page").Parse(page_template))
 	input := map[string]interface{}{
-		"Name":        name,
+		"Name":        strings.Replace(name, " ", "_", -1),
 		"Interface":   i.Interface,
 		"Description": i.Description,
 		"Ponum":       i.Ponum,
