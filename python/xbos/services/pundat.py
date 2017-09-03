@@ -8,7 +8,7 @@ from datetime import timedelta, datetime
 from bw2python import ponames
 from bw2python.bwtypes import PayloadObject
 from bw2python.client import Client
-from xbos.util import pretty_print_timedelta
+from xbos.util import pretty_print_timedelta, TimeoutException
 
 DEFAULT_TIMEOUT=30
 
@@ -106,6 +106,8 @@ class DataClient(object):
         self.c.publish("{0}/s.giles/_/i.archiver/slot/query".format(archiver), payload_objects=(po,))
 
         ev.wait(timeout)
+        if len(response) == 0: # no results
+            raise TimeoutException("Query of {0} timed out".format(query))
         return response
 
     def uuids(self, where, archiver="", timeout=DEFAULT_TIMEOUT):

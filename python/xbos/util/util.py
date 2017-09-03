@@ -1,11 +1,14 @@
 import time
 
+class TimeoutException(Exception):
+    pass
+
 def read_self_timeout(self, key, timeout=30):
         start = time.time()
         while self._state.get(key) is None:
             time.sleep(1)
             if time.time() - start > timeout:
-                break
+                raise TimeoutException("Read of {0} timed out".format(key))
         return self._state.get(key)
 
 def pretty_print_timedelta(td):

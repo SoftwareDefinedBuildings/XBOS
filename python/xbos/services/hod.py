@@ -9,7 +9,7 @@ from datetime import timedelta, datetime
 from bw2python import ponames
 from bw2python.bwtypes import PayloadObject
 from bw2python.client import Client
-from xbos.util import pretty_print_timedelta
+from xbos.util import pretty_print_timedelta, TimeoutException
 
 DEFAULT_TIMEOUT=30
 
@@ -53,7 +53,7 @@ class HodClient(object):
             diff = timedelta(microseconds = (now - last_seen_timestamp)/1e3)
             print "Saw [{0}] HodDB {1}".format(self.url, pretty_print_timedelta(diff))
             if diff.total_seconds() > timeout:
-                raise Exception("HodDB at {0} is too old".format(self.url))
+                raise TimeoutException("HodDB at {0} is too old".format(self.url))
 
     def do_query(self, query, timeout=DEFAULT_TIMEOUT, values_only=True):
         nonce = str(random.randint(0, 2**32))
@@ -88,5 +88,7 @@ class HodClient(object):
         po = PayloadObject((2,0,10,1), None, q_struct)
         self.c.publish("{0}/s.hod/_/i.hod/slot/query".format(self.url), payload_objects=(po,))
         ev.wait(timeout)
+        if len(response) == 0: # no results
+            raise TimeoutException("Query of {0} timed out".format(query))
 
         return response
