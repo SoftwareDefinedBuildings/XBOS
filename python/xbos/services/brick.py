@@ -11,8 +11,8 @@ from rdflib import Graph, Namespace, URIRef, Literal
 RDF = Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
 RDFS = Namespace('http://www.w3.org/2000/01/rdf-schema#')
 BRICK = Namespace('https://brickschema.org/schema/1.0.1/Brick#')
-BRICKFRAME = Namespace('https://brickschema.org/schema/1.0.1/BrickFrame#')
-BF = BRICKFRAME
+OWL = Namespace('http://www.w3.org/2002/07/owl#')
+BF = Namespace('https://brickschema.org/schema/1.0.1/BrickFrame#')
 
 i_xbos_thermostat_points = {
     'temperature': BRICK.Temperature_Sensor,
@@ -30,6 +30,12 @@ i_xbos_light_points = {
     'brightness': BRICK.Lighting_System_Luminance_Command,
     'state': BRICK.Lighting_State,
 }
+
+i_xbos_plug_points = {
+    'state': BRICK.On_Off_Command,
+    'power': BRICK.Electric_Meter,
+}
+
 class Generator:
     def __init__(self, bricknamespace, archiverclient):
         self.ns = bricknamespace
@@ -67,6 +73,24 @@ class Generator:
             if doc['name'] in i_xbos_light_points.keys():
                 pointname = self.ns[node.split('#')[-1]+"_"+doc['name']]
                 triples.append((pointname, RDF.type, i_xbos_light_points[doc['name']]))
+                triples.append((node, BF.hasPoint, pointname))
+                triples.append((pointname, BF.uuid, Literal(doc['uuid'])))
+        print triples
+        return triples
+
+    def add_xbos_plug(self, node, uri):
+        rest_of_uri = '/'.join(uri.split("/")[1:])
+        namespace = uri.split("/")[0]
+        md = self.archiver.query("select name, uuid where namespace = '{0}' and originaluri like '{1}'".format(namespace, rest_of_uri)).get('metadata')
+        triples = []
+        triples.append((BRICK.PlugStrip, RDFS.subClassOf, BRICK.Equipment))
+        triples.append((BRICK.PlugStrip, RDF.type, OWL.Class))
+        triples.append((node, RDF.type, BRICK.PlugStrip))
+        triples.append((node, BF.uri, Literal(uri)))
+        for doc in md:
+            if doc['name'] in i_xbos_plug_points.keys():
+                pointname = self.ns[node.split('#')[-1]+"_"+doc['name']]
+                triples.append((pointname, RDF.type, i_xbos_plug_points[doc['name']]))
                 triples.append((node, BF.hasPoint, pointname))
                 triples.append((pointname, BF.uuid, Literal(doc['uuid'])))
         print triples
