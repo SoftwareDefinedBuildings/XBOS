@@ -48,6 +48,12 @@ class Generator:
         triples = []
         triples.append((node, RDF.type, BRICK.Thermostat))
         triples.append((node, BF.uri, Literal(uri)))
+
+        triples.append((BRICK.Thermostat_Status, RDFS.subClassOf, BRICK.Status))
+        triples.append((BRICK.Thermostat_Status, RDF.type, OWL.Class))
+        triples.append((BRICK.Thermostat_Mode_Command, RDFS.subClassOf, BRICK.Command))
+        triples.append((BRICK.Thermostat_Mode_Command, RDF.type, OWL.Class))
+
         if controls is not None:
             triples.append((node, BF.controls, controls))
         for doc in md:
