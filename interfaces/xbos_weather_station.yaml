@@ -1,0 +1,32 @@
+Weather Station:
+    description: XBOS weather station
+    ponum: 2.1.1.8
+    interface: i.xbos.weather_station
+    signals:
+        info:
+            - temperature
+            - relative_humidity
+            - wind_speed
+            - time
+    properties:
+        temperature:
+            type: double
+            description: Current temperature reading
+            required: true
+            units: Fahrenheit
+        relative_humidity:
+            type: double
+            description: Current relative humidity
+            required: false
+            units: percent
+        wind_speed:
+            type: double
+            description: Current wind speed in miles per hour
+            required: false
+            units: mph
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
+            units: ns
+
