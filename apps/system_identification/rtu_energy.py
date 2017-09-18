@@ -25,7 +25,9 @@ HEAT = 1
 COOL = 2
 AUTO = 3
 
+# store zone name to thermostat
 zone2tstat = {}
+# store zone name to meter for the RTU for that zone
 zone2meter = {}
 # query for the the thermostat APIs. Once we have the BOSSWAVE URI, we can instantiate
 # a Thermostat object in order to control it.
@@ -47,11 +49,13 @@ for row in hod.do_query(query)["Rows"]:
     zone2meter[zone] = row["?meter_uri"]
 
 
-# iterate through each zone. We want to "disable" the other thermostats
-# on each iteration so they don't affect our measurements, so we set the
-# other thermostat modes to OFF.
 
 def get_thermostat_meter_data(zone):
+    """
+    This method subscribes to the output of the meter for the given zone.
+    It returns a handler to call when you want to stop subscribing data, which
+    returns a list of the data readins over that time period
+    """
     meter_uri = zone2meter.get(zone, "None")
     data = []
     def cb(msg):
@@ -67,6 +71,10 @@ def get_thermostat_meter_data(zone):
     return stop
 
 def call_heat(tstat):
+    """
+    Adjusts the temperature setpoints in order to call for heating. Returns
+    a handler to call when you want to reset the thermostat
+    """
     current_hsp, current_csp = tstat.heating_setpoint, tstat.cooling_setpoint
     current_temp = tstat.temperature
     tstat.write({
@@ -83,35 +91,41 @@ def call_heat(tstat):
         })
     return restore
 
+# iterate through each zone. We want to "disable" the other thermostats
+# on each iteration so they don't affect our measurements, so we set the
+# other thermostat modes to OFF.
 for zone in zone2tstat.keys():
-    print zone
-    print 'running!'
+    print "Running tests for zone {}".format(zone)
     my_tstat = zone2tstat[zone]
     other_tstats = [tstat for otherzone, tstat in zone2tstat.items() if otherzone != zone]
-    print 'start meter sub'
-    getdata = get_thermostat_meter_data(zone)
 
-    # disable other tstats
-    print 'now running'
+    print "Disabling other thermostats"
     for tstat in other_tstats:
         tstat.set_mode(OFF)
+    time.sleep(10)
 
-    time.sleep(30)
-    print 'set thermostat heat'
+    print "Start subscribing to meter data"
+    getdata = get_thermostat_meter_data(zone)
+
+    time.sleep(10)
+
+    print "Thermostat calling for heat"
     restore = call_heat(my_tstat)
-    print 'wait 3 min'
+    print "Heat for 3 min"
     time.sleep(180)
-    print 'restoring (3 min)'
+    print "Disabling heat (wait another 3 min)"
     restore()
     time.sleep(180)
-    print 'get data'
+
+    print "Getting data from meter"
     data = getdata()
-    print data
+    print "Data: {}".format(data)
     d = pd.Series(data)
-    print 'on', d.diff().max()
-    print 'off', -d.diff().min()
-    print 'reset other tstats'
+    print 'Power diff for on {}'.format(d.diff().max())
+    print 'Power diff for off {}'.format(-d.diff().min())
+    print 'Resetting thermostats'
     for tstat in other_tstats:
         tstat.set_mode(AUTO)
+    print 'Wait for 5 min, then go to next zone'
     time.sleep(300)
 
