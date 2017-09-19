@@ -91,6 +91,65 @@ def call_heat(tstat):
         })
     return restore
 
+def call_cool(tstat):
+    """
+    Adjusts the temperature setpoints in order to call for cooling. Returns
+    a handler to call when you want to reset the thermostat
+    """
+    current_hsp, current_csp = tstat.heating_setpoint, tstat.cooling_setpoint
+    current_temp = tstat.temperature
+    tstat.write({
+        'heating_setpoint': current_temp-20,
+        'cooling_setpoint': current_temp-10,
+        'mode': COOL,
+    })
+
+    def restore():
+        tstat.write({
+            'heating_setpoint': current_hsp,
+            'cooling_setpoint': current_csp,
+            'mode': AUTO,
+        })
+    return restore
+
+def call_fan(tstat):
+    """
+    Toggles the fan
+    """
+    old_fan = tstat.fan
+
+    tstat.write({
+        'fan': not old_fan,
+    })
+
+    def restore():
+        tstat.write({
+            'fan': old_fan,
+        })
+    return restore
+
+
+def run_experiment(my_tstat, func, label):
+    print "Start subscribing to meter data"
+    getdata = get_thermostat_meter_data(zone)
+
+    time.sleep(10)
+    print "Thermostat calling for {}".format(label)
+    restore = func(my_tstat)
+    print "{} for 3 min".format(label)
+    time.sleep(180)
+    print "Restoring previous state (wait another 3 min)"
+    restore()
+    time.sleep(180)
+
+    print "Getting data from meter"
+    data = getdata()
+    print "Data: {}".format(data)
+    d = pd.Series(data)
+    print 'Power diff for on {}'.format(d.diff().max())
+    print 'Power diff for off {}'.format(-d.diff().min())
+
+
 # iterate through each zone. We want to "disable" the other thermostats
 # on each iteration so they don't affect our measurements, so we set the
 # other thermostat modes to OFF.
@@ -104,25 +163,22 @@ for zone in zone2tstat.keys():
         tstat.set_mode(OFF)
     time.sleep(10)
 
-    print "Start subscribing to meter data"
-    getdata = get_thermostat_meter_data(zone)
 
-    time.sleep(10)
+    print " ### HEATING"
+    run_experiment(my_tstat, call_heat, "heat")
+    print  'Wait for 5 min'
+    time.sleep(300)
 
-    print "Thermostat calling for heat"
-    restore = call_heat(my_tstat)
-    print "Heat for 3 min"
-    time.sleep(180)
-    print "Disabling heat (wait another 3 min)"
-    restore()
-    time.sleep(180)
+    print " ### COOLING"
+    run_experiment(my_tstat, call_cool, "cool")
+    print 'Wait for 5 min'
+    time.sleep(300)
 
-    print "Getting data from meter"
-    data = getdata()
-    print "Data: {}".format(data)
-    d = pd.Series(data)
-    print 'Power diff for on {}'.format(d.diff().max())
-    print 'Power diff for off {}'.format(-d.diff().min())
+    print " ### FAN"
+    run_experiment(my_tstat, call_fan, "fan")
+    print 'Wait for 5 min'
+    time.sleep(300)
+
     print 'Resetting thermostats'
     for tstat in other_tstats:
         tstat.set_mode(AUTO)
