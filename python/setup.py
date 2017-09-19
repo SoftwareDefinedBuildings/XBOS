@@ -11,7 +11,7 @@ setup(name='xbos',
       install_requires=[
         'delorean==0.6.0',
         'msgpack-python==0.4.2',
-        'bw2python>=0.6',
+        'bw2python>=0.6.1',
         'requests>=2.12.2',
         'python-dateutil>=2.4.2',
         'pandas>=0.20.1'
