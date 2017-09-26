@@ -46,6 +46,19 @@ EOF
 
     ! confirmY "Are you setting up a namespace? [Y/n]"
     doingNS=$?
+    if [ $doingNS -ne 0 ]; then
+        confirmN "Do you have a namespace entity already? [y/N]"
+        if [ $? -eq 0 ]; then
+            read -p "Path to entity file: " nspath
+            echo "Copying to this directory"
+            cp $nspath namespace.ent
+        fi
+        confirmY "Do you want to set up an alias? [Y/n]"
+        setupAlias=$?
+        if [ $setupAlias -eq 0]; then
+            read -p "Namespace alias: " alias
+        fi
+    fi
 
     # setup $user, $sh_c and $curl like from bosswave
 	user="$(id -un 2>/dev/null || true)"
@@ -127,8 +140,7 @@ EOF
     bw2 inspect $BW2_DEFAULT_ENTITY > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "Could not find BW2_DEFAULT_ENTITY. Creating defaultentity.ent"
-        read -p "Description: " description
-        bw2 mke -o defaultentity.ent -e 100y -m $description -c $contact -n
+        bw2 mke -o defaultentity.ent -e 100y -m "Administrative key" -c $contact -n
         export BW2_DEFAULT_ENTITY="$(pwd)/defaultentity.ent"
     fi
 
@@ -153,25 +165,19 @@ EOF
     if [ $doingNS -eq 0 ]; then
         # setup namespace entity
         if [ ! -f "namespace.ent" ]; then
-            confirmN "Do you have a namespace entity already? [y/N]"
             if [ $? -ne 0 ]; then
                 echo "Creating a namespace entity"
                 bw2 mke -o namespace.ent -e 100y -m "Namespace entity" -c $contact
-            else
-                read -p "Path to entity file: " nspath
-                echo "Copying to this directory"
-                cp $nspath namespace.ent
             fi
         fi
 
         set -e
         nsvk=$(bw2 i namespace.ent | sed -n 's/.*Entity VK: \(.*\).*/\1/p')
-        alias=$(bw2 i namespace.ent | sed -n 's/.*Alias: \(.*\).*/\1/p')
+        #alias=$(bw2 i namespace.ent | sed -n 's/.*Alias: \(.*\).*/\1/p')
 
-        if [ -z "$alias" ] && [ ! -z "$nsvk" ] ; then 
-            # setup an alias
+        if [ $setupAlias -eq 0 ] && [ ! -z "$nsvk" ] ; then 
+        #    # setup an alias
             echo "Creating namespace alias"
-            read -p "Namespace alias: " alias
             bw2 mkalias --long "$alias" --b64 "$nsvk"
         else
             echo "Already have alias $alias"
