@@ -116,12 +116,13 @@ EOF
         if [ $seen_block -ne 0 ]; then
             diff=$(($seen_block - $current_block))
             pct=$(bc <<< "scale=2; 100*$current_block/$seen_block")
-            printf "\r$current_block/$seen_block ($pct%% done). Waited $waited seconds so far..."
+            human_waited=$(date -u -d @${waited} +"%T")
+            printf "\r$current_block/$seen_block ($pct%% done). Waited $human_waited so far..."
         else
             printf "\rWaiting for peers to send blocks..."
         fi
         sleep 1
-        waited=$(($waited + 10))
+        waited=$(($waited + 1))
     done
 
     if [ $doingNS -eq 0 ]; then
