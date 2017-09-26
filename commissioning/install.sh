@@ -150,7 +150,7 @@ EOF
     bw2 inspect $BW2_DEFAULT_BANKROLL 
     if [ -z "$BW2_DEFAULT_BANKROLL" ] || [ $? -ne 0 ]; then
         echo "Could not fine BW2_DEFAULT_BANKROLL. Setting it to defaultentity.ent"
-        export BW2_DEFAULT_ENTITY="$(pwd)/defaultentity.ent"
+        export BW2_DEFAULT_BANKROLL="$(pwd)/defaultentity.ent"
     fi
 
     # get the monEH
