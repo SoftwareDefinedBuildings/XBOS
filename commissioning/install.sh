@@ -127,7 +127,6 @@ EOF
 
     if [ $doingNS -eq 0 ]; then
         # configure BW2_AGENT
-        set -e
         echo "Rewriting BW2_AGENT to 172.17.0.1:28589 for docker"
         $sh_c "sed -i -e 's/ListenOn=127.0.0.1:28589/ListenOn=172.17.0.1:28589/' /etc/bw2/bw2.ini"
         export BW2_AGENT="172.17.0.1:28589"
@@ -135,22 +134,21 @@ EOF
         $sh_c systemctl daemon-reload -q --no-pager > /dev/null 2>&1
         $sh_c systemctl restart -q --no-pager bw2.service > /dev/null 2>&1
         sleep 10
-        set +e
     else
         export BW2_AGENT="127.0.0.1:28589"
     fi
 
     # configure BW2_DEFAULT_ENTITY
     echo $BW2_AGENT
-    bw2 inspect $BW2_DEFAULT_ENTITY > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
+    bw2 inspect $BW2_DEFAULT_ENTITY 
+    if [ -z "$BW2_DEFAULT_ENTITY" ] || [ $? -ne 0 ]; then
         echo "Could not find BW2_DEFAULT_ENTITY. Creating defaultentity.ent"
         bw2 mke -o defaultentity.ent -e 100y -m "Administrative key" -c $contact -n
         export BW2_DEFAULT_ENTITY="$(pwd)/defaultentity.ent"
     fi
 
-    bw2 inspect $BW2_DEFAULT_BANKROLL > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
+    bw2 inspect $BW2_DEFAULT_BANKROLL 
+    if [ -z "$BW2_DEFAULT_BANKROLL" ] || [ $? -ne 0 ]; then
         echo "Could not fine BW2_DEFAULT_BANKROLL. Setting it to defaultentity.ent"
         export BW2_DEFAULT_ENTITY="$(pwd)/defaultentity.ent"
     fi
@@ -158,7 +156,7 @@ EOF
     # get the monEH
     address=$(bw2 i $BW2_DEFAULT_BANKROLL | sed -n 's/.* 0 (\(0x.*\)) .*/\1/p')
     funds=$(bw2 i $BW2_DEFAULT_BANKROLL | sed -n 's/.* 0 (0x.*) \([0-9]*\).* .*/\1/p')
-    if [ "$funds" -lt 500 ] ; then
+    if [[ "$funds" -lt 500 ]] ; then
         echo "You only have $funds Ξ, but we recommend 500 Ξ. Ask someone to send $((500 - $funds)) Ξ to address $address. We'll wait"
 		confirmY "Do you have the funds? If you don't, we will try our best, but some commands may fail. Continue? [Y/n]"
         if [ $? -eq 0 ]; then exit ;fi
