@@ -136,11 +136,11 @@ def run_experiment(my_tstat, func, label):
     time.sleep(10)
     print "Thermostat calling for {}".format(label)
     restore = func(my_tstat)
-    print "{} for 3 min".format(label)
-    time.sleep(180)
-    print "Restoring previous state (wait another 3 min)"
+    print "{} for 10 min".format(label)
+    time.sleep(600)
+    print "Restoring previous state (wait another 10 min)"
     restore()
-    time.sleep(180)
+    time.sleep(600)
 
     print "Getting data from meter"
     data = getdata()
@@ -161,27 +161,27 @@ for zone in zone2tstat.keys():
     print "Disabling other thermostats"
     for tstat in other_tstats:
         tstat.set_mode(OFF)
-    time.sleep(10)
+    time.sleep(30)
 
 
     print " ### HEATING"
     run_experiment(my_tstat, call_heat, "heat")
-    print  'Wait for 5 min'
-    time.sleep(300)
+    print  'Wait for 10 min'
+    time.sleep(600)
 
     print " ### COOLING"
     run_experiment(my_tstat, call_cool, "cool")
-    print 'Wait for 5 min'
-    time.sleep(300)
+    print 'Wait for 10 min'
+    time.sleep(600)
 
     print " ### FAN"
     run_experiment(my_tstat, call_fan, "fan")
-    print 'Wait for 5 min'
-    time.sleep(300)
+    print 'Wait for 10 min'
+    time.sleep(600)
 
     print 'Resetting thermostats'
     for tstat in other_tstats:
         tstat.set_mode(AUTO)
-    print 'Wait for 5 min, then go to next zone'
-    time.sleep(300)
+    print 'Wait for 10 min, then go to next zone'
+    time.sleep(600)
 
