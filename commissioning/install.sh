@@ -13,10 +13,10 @@ confirmY() {
     read -r -p "${1:-Are you sure? [Y/n]} " response
     case "$response" in
         [nN][oO]|[nN]) 
-            true
+            false
             ;;
         *)
-            false
+            true
             ;;
     esac
 }
@@ -44,9 +44,9 @@ EOF
 
     echo "If you want this to go faster, pre-install BOSSWAVE (curl get.bw2.io/agent | bash)"
 
-    ! confirmY "Are you setting up a namespace? [Y/n]"
+    confirmY "Are you setting up a namespace? [Y/n]"
     doingNS=$?
-    if [ $doingNS -ne 0 ]; then
+    if [ $doingNS -eq 0 ]; then
         confirmN "Do you have a namespace entity already? [y/N]"
         if [ $? -eq 0 ]; then
             read -p "Path to entity file: " nspath
@@ -55,10 +55,12 @@ EOF
         fi
         confirmY "Do you want to set up an alias? [Y/n]"
         setupAlias=$?
-        if [ $setupAlias -eq 0]; then
+        if [ $setupAlias -eq 0 ]; then
             read -p "Namespace alias: " alias
         fi
     fi
+    read -p "Contact (full name <email>): " contact
+
 
     # setup $user, $sh_c and $curl like from bosswave
 	user="$(id -un 2>/dev/null || true)"
@@ -91,8 +93,6 @@ EOF
     cd $dot
 
 
-    read -p "Contact (full name <email>): " contact
-
     # set up local git repository
     git init
 
@@ -113,10 +113,14 @@ EOF
     while [ $diff -ne 0 ] || [ $seen_block -eq 0 ]; do
         current_block=$(bw2 status  | sed -n -e 's/Current block: \(.*\).*/\1/p' | xargs)
         seen_block=$(bw2 status  | sed -n -e 's/Seen block: \(.*\).*/\1/p' | xargs)
-        diff=$(($seen_block - $current_block))
-        pct=$(bc <<< "scale=2; 100*$current_block/$seen_block")
-        printf "\r$current_block/$seen_block ($pct%% done). Waited $waited seconds so far..."
-        sleep 10
+        if [ $seen_block -ne 0 ]; then
+            diff=$(($seen_block - $current_block))
+            pct=$(bc <<< "scale=2; 100*$current_block/$seen_block")
+            printf "\r$current_block/$seen_block ($pct%% done). Waited $waited seconds so far..."
+        else
+            printf "\rWaiting for peers to send blocks..."
+        fi
+        sleep 1
         waited=$(($waited + 10))
     done
 
@@ -156,7 +160,7 @@ EOF
     if [ "$funds" -lt 500 ] ; then
         echo "You only have $funds Ξ, but we recommend 500 Ξ. Ask someone to send $((500 - $funds)) Ξ to address $address. We'll wait"
 		confirmY "Do you have the funds? If you don't, we will try our best, but some commands may fail. Continue? [Y/n]"
-        if [ $? -ne 0 ]; then exit ;fi
+        if [ $? -eq 0 ]; then exit ;fi
     fi
 
     # publish default entity
