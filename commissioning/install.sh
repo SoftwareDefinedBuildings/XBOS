@@ -167,10 +167,10 @@ EOF
     echo $BW2_AGENT
     bw2 inspect $BW2_DEFAULT_ENTITY > /dev/null 2>&1
     if [ -z "$BW2_DEFAULT_ENTITY" ] || [ $? -ne 0 ]; then
-	if [ ! -f defaultentity.ent ]; then
-	    echo "${INFO}Could not find BW2_DEFAULT_ENTITY. Creating defaultentity.ent${NC}"
-	    bw2 mke -o defaultentity.ent -e 100y -m "Administrative key" -c "$contact" -n
-	fi
+        if [ ! -f defaultentity.ent ]; then
+            echo "${INFO}Could not find BW2_DEFAULT_ENTITY. Creating defaultentity.ent${NC}"
+            bw2 mke -o defaultentity.ent -e 100y -m "Administrative key" -c "$contact" -n
+        fi
         export BW2_DEFAULT_ENTITY="$(pwd)/defaultentity.ent"
     fi
 
@@ -186,7 +186,7 @@ EOF
     if [[ "$funds" -lt 500 ]] ; then
         echo "${INFO}You only have $funds Ξ, but we recommend 500 Ξ. Ask someone to send $((500 - $funds)) Ξ to address $address. We'll wait${NC}"
 		confirmY "${PROMPT}Do you have the funds? If you don't, we will try our best, but some commands may fail. Continue? [Y/n]${NC}"
-        if [ $? -ne 0 ]; then exit ;fi
+        if [ $? -eq 0 ]; then exit ;fi
     fi
 
     # publish default entity
