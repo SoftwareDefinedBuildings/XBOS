@@ -148,9 +148,9 @@ EOF
 
 
     # set up local git repository
-    $sh_c "git init"
-    $sh_c "git config --global user.name \"${GIT_USER}\""
-    $sh_c "git config --global user.email \"${GIT_EMAIL}\""
+    git init
+    git config --global user.name "${GIT_USER}"
+    git config --global user.email "${GIT_EMAIL}"
 
     # check if bosswave is installed, but update it either way
     if command_exists bw2; then
@@ -215,8 +215,8 @@ EOF
         $echo "${INFO}Could not find BW2_DEFAULT_BANKROLL. Setting it to ${BW2_DEFAULT_ENTITY} ${NC}"
         export BW2_DEFAULT_BANKROLL="$BW2_DEFAULT_ENTITY"
     fi
-    $sh_c "git add defaultentity.ent"
-    $sh_c "git commit -m 'Added default entity and bankroll'"
+    git add defaultentity.ent
+    git commit -m 'Added default entity and bankroll'
 
     # get the monEH
     address=$(bw2 i $BW2_DEFAULT_BANKROLL | sed -n 's/.* 0 (\(0x.*\)) .*/\1/p')
@@ -282,8 +282,8 @@ EOF
             bw2 adro --dr $DESIGNATED_ROUTER_VK --ns namespace.ent
         fi
         $echo "${GO}Namespace configured${NC}"
-        $sh_c "git add namespace.ent"
-        $sh_c "git commit -m 'Configured namespace'"
+        git add namespace.ent
+        git commit -m 'Configured namespace'
     fi
 
     # install go
@@ -322,8 +322,8 @@ EOF
         export SPAWND_INSTALLER_MEM_ALLOC="$SPAWND_MEM_ALLOC"
         export SPAWND_INSTALLER_CPU_SHARES="$SPAWND_CPU_SHARES"
         $sh_c $(curl get.bw2.io/spawnpoint | bash)
-        $sh_c "git add spawnpoint.ent"
-        $sh_c "git commit -m 'Configured spawnpoint'"
+        git add spawnpoint.ent
+        git commit -m 'Configured spawnpoint'
     fi
 
     if $INSTALL_SPAWNPOINT_CLIENT ; then
