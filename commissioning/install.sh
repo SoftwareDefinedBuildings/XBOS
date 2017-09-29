@@ -281,6 +281,7 @@ install_spawnd() {
 }
 
 install_watchdogs() {
+    go get github.com/immesys/wd/wd
     go get github.com/immesys/wd/sdmon
     SDMON_PATH=$(go env GOPATH)/bin/sdmon
     cat <<EOF > sdmon.service
@@ -463,6 +464,7 @@ EOF
     echo "export BW2_DEFAULT_BANKROLL=\"$BW2_DEFAULT_BANKROLL\""
     echo "export BW2_DEFAULT_EXPIRY=\"50y\""
     echo "export BW2_DEFAULT_CONTACT=\"$contact\""
+    echo "export WD_TOKEN=\"$WD_TOKEN\""
     echo "export PATH=\"$PATH\""
     exit 0
 }
