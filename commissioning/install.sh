@@ -270,7 +270,7 @@ install_spawnd() {
     fi
 
     # install spawnpoint server
-    $sh_c "cp spawnpoint.ent /etc/spawnd/spawnpooint.ent"
+    $sh_c "cp spawnpoint.ent /etc/spawnd/spawnpoint.ent"
     export SPAWND_INSTALLER_ENTITY=spawnpoint.ent
     export SPAWND_INSTALLER_PATH="$NAMESPACE_ALIAS/sp"
     export SPAWND_INSTALLER_MEM_ALLOC="$SPAWND_MEM_ALLOC"
@@ -338,6 +338,9 @@ EOF
     $sh_c "cp wdtop.service /etc/systemd/system/wdtop.service"
     $sh_c "systemctl daemon-reload -q --no-pager > /dev/null 2>&1"
     $sh_c "systemctl start wdtop.service -q --no-pager > /dev/null 2>&1"
+
+    git add wdtop.service sdmon.service
+    git commit -m 'Add spawnpoint services'
 }
 
 do_install() {
