@@ -137,7 +137,7 @@ EOF
     $echo "${INFO}Updating apt repos and installing dependencies${NC}"
 
     $sh_c 'apt-get update >/dev/null'
-    $sh_c 'apt-get install -y git python2.7 python-pip python-dev curl bc docker.io'
+    $sh_c 'apt-get install -y git python2.7 python-pip python-dev curl bc docker.io libssl-dev htop nmon'
 
     # trick to get directory of executing script, and move there
     dot="$(cd "$(dirname "$0")"; pwd)"
@@ -149,6 +149,8 @@ EOF
 
     # set up local git repository
     $sh_c "git init"
+    $sh_c "git config --global user.name \"${GIT_USER}\""
+    $sh_c "git config --global user.email \"${GIT_EMAIL}\""
 
     # check if bosswave is installed, but update it either way
     if command_exists bw2; then
@@ -213,6 +215,8 @@ EOF
         $echo "${INFO}Could not find BW2_DEFAULT_BANKROLL. Setting it to ${BW2_DEFAULT_ENTITY} ${NC}"
         export BW2_DEFAULT_BANKROLL="$BW2_DEFAULT_ENTITY"
     fi
+    $sh_c "git add defaultentity.ent"
+    $sh_c "git commit -m 'Added default entity and bankroll'"
 
     # get the monEH
     address=$(bw2 i $BW2_DEFAULT_BANKROLL | sed -n 's/.* 0 (\(0x.*\)) .*/\1/p')
@@ -248,11 +252,11 @@ EOF
         nsvk=$(bw2 i namespace.ent | sed -n 's/.*Entity VK: \(.*\).*/\1/p')
 
         # setup alias if its null
+        export NAMESPACE_ALIAS=$(bw2 i namespace.ent | sed -n 's/.*Alias: \(.*\).*/\1/p')
         if [ -z "$NAMESPACE_ALIAS" ] && [ ! -z "$nsvk" ] ; then
             $echo "${INFO}Creating namespace alias${NC}"
             bw2 mkalias --long "$NAMESPACE_ALIAS" --b64 "$nsvk"
         else
-            export NAMESPACE_ALIAS=$(bw2 i namespace.ent | sed -n 's/.*Alias: \(.*\).*/\1/p')
             if [ -z "$NAMESPACE_ALIAS" ]; then
                 $echo "${ERROR}No alias configured, using VK ${NC}"
                 export NAMESPACE_ALIAS=$nsvk
@@ -275,21 +279,18 @@ EOF
             $echo "${INFO}Now we need to set up the designated router (DR) for this namespace. Ask someone who runs a DR to run the following:${NC}"
             $echo "${INFO}bw2 mkdroffer --dr /etc/bw2/router.ent --ns $NAMESPACE_ALIAS${NC}"
             #$echo "${INFO}Now type in the VK of the DR router entity (obtained by bw2 lsdro --ns $NAMESPACE_ALIAS, or by asking)${NC}"
-            $echo "${INFO}Waiting...${NC}"
             bw2 adro --dr $DESIGNATED_ROUTER_VK --ns namespace.ent
-            while [ $? -ne 0 ]; do
-                sleep 30
-                bw2 adro --dr $DESIGNATED_ROUTER_VK --ns namespace.ent
-            done
         fi
         $echo "${GO}Namespace configured${NC}"
+        $sh_c "git add namespace.ent"
+        $sh_c "git commit -m 'Configured namespace'"
     fi
 
     # install go
     if $INSTALL_GO ; then
         $echo "${YELLOW}Installing Go${NC}"
         $sh_c "curl -O https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz"
-        $sh_c "tar -C /usr/local -xzvf go1.9.linux-amd64.tar.gz"
+        $sh_c "tar -C /usr/local -xzf go1.9.linux-amd64.tar.gz"
         export PATH=/usr/local/go/bin:$PATH
         $echo "${OK}Installed go${NC}"
     fi
@@ -315,19 +316,24 @@ EOF
         fi
 
         # install spawnpoint server
+        $sh_c "cp spawnpoint.ent /etc/spawnd/spawnpooint.ent"
         export SPAWND_INSTALLER_ENTITY=spawnpoint.ent
         export SPAWND_INSTALLER_PATH="$NAMESPACE_ALIAS/sp"
         export SPAWND_INSTALLER_MEM_ALLOC="$SPAWND_MEM_ALLOC"
         export SPAWND_INSTALLER_CPU_SHARES="$SPAWND_CPU_SHARES"
         $sh_c $(curl get.bw2.io/spawnpoint | bash)
+        $sh_c "git add spawnpoint.ent"
+        $sh_c "git commit -m 'Configured spawnpoint'"
     fi
 
     if $INSTALL_SPAWNPOINT_CLIENT ; then
         $echo "${YELLOW} we would install spawnctl here ${NC}"
+        go get github.com/SoftwareDefinedBuildings/spawnpoint/spawnctl
     fi
 
     if $INSTALL_PUNDAT_CLIENT ; then
         $echo "${YELLOW} we would install pundat here ${NC}"
+        go get github.com/SoftwareDefinedBuildings/pundat
     fi
 
 

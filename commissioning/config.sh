@@ -3,6 +3,7 @@
 ######################
 
 # name + email address to be attached to configured BOSSWAVE objects
+# if this contains spaces, make sure to use quotes
 BW2_DEFAULT_CONTACT=
 
 # path to entity to use as an administrative entity for configuring/interacting with services
@@ -13,6 +14,10 @@ BW2_DEFAULT_ENTITY=
 # Leave blank to have the installer configure this (it will default to $BW2_DEFAULT_ENTITY)
 BW2_DEFAULT_BANKROLL=
 
+# name to use for git commits to config repo
+GIT_USER=
+# email to use for git commits to config repo
+GIT_EMAIL=
 
 #######################
 ### CONFIGURE NAMESPACE
