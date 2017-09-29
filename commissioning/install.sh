@@ -99,7 +99,7 @@ install_dependencies() {
     $echo "${INFO}Updating apt repos and installing dependencies${NC}"
 
     $sh_c 'apt-get update >/dev/null'
-    $sh_c 'apt-get install -y git python2.7 python-pip python-dev curl bc docker.io libssl-dev htop nmon'
+    $sh_c 'apt-get install -y git python2.7 python-pip python-dev curl bc docker.io libssl-dev htop nmon mosh'
 }
 
 install_bw2() {
