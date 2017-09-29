@@ -51,6 +51,16 @@ SPAWND_ENTITY=
 SPAWND_MEM_ALLOC="4G"
 SPAWND_CPU_SHARES=2048
 
+#######################
+### CONFIGURE WATCHDOGS
+#######################
+
+# if true, install watchdog services (requires systemd)
+INSTALL_WATCHDOGS=true
+# need to provide a WD_TOKEN in order to configure watchdog services
+WD_TOKEN=
+# need to provide the prefix for watchdog names
+WD_PREFIX=
 
 #######################
 ### ADDITIONAL INSTALLS
