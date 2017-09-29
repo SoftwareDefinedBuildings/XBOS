@@ -151,6 +151,8 @@ EOF
     git init
     git config --global user.name "${GIT_USER}"
     git config --global user.email "${GIT_EMAIL}"
+    git add config.sh
+    git commit -m 'added config file'
 
     # check if bosswave is installed, but update it either way
     if command_exists bw2; then
@@ -292,6 +294,8 @@ EOF
         $sh_c "curl -O https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz"
         $sh_c "tar -C /usr/local -xzf go1.9.linux-amd64.tar.gz"
         export PATH=/usr/local/go/bin:$PATH
+        export PATH=$(go env GOPATH):$PATH
+
         $echo "${OK}Installed go${NC}"
     fi
 
@@ -327,13 +331,13 @@ EOF
     fi
 
     if $INSTALL_SPAWNPOINT_CLIENT ; then
-        $echo "${YELLOW} we would install spawnctl here ${NC}"
+        $echo "${INFO}Installing Spawnpoint${NC}"
         go get github.com/SoftwareDefinedBuildings/spawnpoint/spawnctl
     fi
 
     if $INSTALL_PUNDAT_CLIENT ; then
-        $echo "${YELLOW} we would install pundat here ${NC}"
-        go get github.com/SoftwareDefinedBuildings/pundat
+        $echo "${INFO}Installing Pundat${NC}"
+        go get github.com/gtfierro/pundat
     fi
 
 
