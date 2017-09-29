@@ -274,9 +274,12 @@ EOF
             $echo "${INFO}Now we need to set up the designated router (DR) for this namespace. Ask someone who runs a DR to run the following:${NC}"
             $echo "${INFO}bw2 mkdroffer --dr /etc/bw2/router.ent --ns $NAMESPACE_ALIAS${NC}"
             #$echo "${INFO}Now type in the VK of the DR router entity (obtained by bw2 lsdro --ns $NAMESPACE_ALIAS, or by asking)${NC}"
-            set -e
+            $echo "${INFO}Waiting...${NC}"
             bw2 adro --dr $DESIGNATED_ROUTER_VK --ns namespace.ent
-            set +e
+            while [ $? -ne 0 ]; do
+                sleep 30
+                bw2 adro --dr $DESIGNATED_ROUTER_VK --ns namespace.ent
+            done
         fi
         $echo "${GO}Namespace configured${NC}"
     fi

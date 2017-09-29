@@ -26,7 +26,7 @@ CONFIGURE_NAMESPACE=true
 NAMESPACE_ENTITY=
 
 # alias to use for the namespace.
-# Leave blank to not configure an alias (or use the existing one for your provided NAMESPACE_ENTITY)c
+# Leave blank to not configure an alias (or use the existing one for your provided NAMESPACE_ENTITY)
 NAMESPACE_ALIAS=
 
 # the VK of the designated router (DR) that  will carry traffic for this namespace
