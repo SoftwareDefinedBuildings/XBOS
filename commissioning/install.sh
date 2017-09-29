@@ -252,8 +252,8 @@ EOF
         nsvk=$(bw2 i namespace.ent | sed -n 's/.*Entity VK: \(.*\).*/\1/p')
 
         # setup alias if its null
-        export NAMESPACE_ALIAS=$(bw2 i namespace.ent | sed -n 's/.*Alias: \(.*\).*/\1/p')
-        if [ -z "$NAMESPACE_ALIAS" ] && [ ! -z "$nsvk" ] ; then
+        export EXISTING_ALIAS=$(bw2 i namespace.ent | sed -n 's/.*Alias: \(.*\).*/\1/p')
+        if [ "$EXISTING_ALIAS" != "$NAMESPACE_ALIAS" ] && [ ! -z "$NAMESPACE_ALIAS" ] && [ ! -z "$nsvk" ] ; then
             $echo "${INFO}Creating namespace alias${NC}"
             bw2 mkalias --long "$NAMESPACE_ALIAS" --b64 "$nsvk"
         else
