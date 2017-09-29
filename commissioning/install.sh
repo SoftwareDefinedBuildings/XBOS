@@ -22,7 +22,7 @@ NC='\033[0m' # No Color
 # Light Gray   0;37     White         1;37
 
 command_exists() {
-	command -v "$@" > /dev/null 2>&1
+    command -v "$@" > /dev/null 2>&1
 }
 
 full_path() {
@@ -69,7 +69,7 @@ sleep_til_valid() {
 
 
 do_install() {
-	cat >&2 <<'EOF'
+    cat >&2 <<'EOF'
     logo goes here :)
 EOF
     echo='echo -e'
@@ -100,12 +100,30 @@ EOF
 
 
     # setup $user, $sh_c and $curl like from bosswave
-	user="$(id -un 2>/dev/null || true)"
+    user="$(id -un 2>/dev/null || true)"
 
     export SYSTEMD_PAGER=''
 
+
+    sh_c='sh -c'
+    if [ "$user" != 'root' ]; then
+        if command_exists sudo; then
+            sh_c='sudo -E sh -c'
+        elif command_exists su; then
+            sh_c='su -c'
+        else
+            cat >&2 <<-'EOF'
+            ${ERROR}
+            Error: this installer needs the ability to run commands as root.
+            We are unable to find either "sudo" or "su" available to make this happen.
+            ${NC}
+            EOF
+            exit 1
+        fi
+    fi
+
     # handle systemd/init
-    $sh_c "systemctl > /dev/null 2>&1"
+    $sh_c "systemctl status > /dev/null 2>&1"
     if [ $? -ne 0 ]; then
         # use init
         start_bw2="/etc/init.d/bw2 start > /dev/null 2>&1"
@@ -114,23 +132,6 @@ EOF
         start_bw2="systemctl start -q --no-pager bw2.service > /dev/null 2>&1"
         reload_bw2="systemctl daemon-reload -q --no-pager > /dev/null 2>&1 && systemctl restart -q --no-pager bw2.service > /dev/null 2>&1"
     fi
-
-	sh_c='sh -c'
-	if [ "$user" != 'root' ]; then
-		if command_exists sudo; then
-			sh_c='sudo -E sh -c'
-		elif command_exists su; then
-			sh_c='su -c'
-		else
-			cat >&2 <<-'EOF'
-            ${ERROR}
-			Error: this installer needs the ability to run commands as root.
-			We are unable to find either "sudo" or "su" available to make this happen.
-            ${NC}
-			EOF
-			exit 1
-		fi
-	fi
 
     # install dependencies
     $echo "${INFO}Updating apt repos and installing dependencies${NC}"
@@ -219,7 +220,7 @@ EOF
     if [[ "$funds" -lt 500 ]] ; then
         $echo "${INFO}You only have $funds Ξ, but we recommend 500 Ξ. ${NC}"
         $echo "${INFO}Ask someone to send $((500 - $funds)) Ξ to address $address . We'll wait${NC}"
-		confirmY "${PROMPT}Do you have the funds? If you don't, we will try our best, but some commands may fail. Continue? [Y/n]${NC}"
+        confirmY "${PROMPT}Do you have the funds? If you don't, we will try our best, but some commands may fail. Continue? [Y/n]${NC}"
         if [ $? -ne 0 ]; then exit ;fi
     fi
 
@@ -330,7 +331,7 @@ EOF
     fi
 
 
-	$echo "${OK}XBOS installed successfully${NC}"
+    $echo "${OK}XBOS installed successfully${NC}"
 
     $echo "${OK}Add the following to your .bashrc or .bash_profile${NC}"
     echo "export BW2_AGENT=\"$BW2_AGENT\""
@@ -339,7 +340,7 @@ EOF
     echo "export BW2_DEFAULT_EXPIRY=\"50y\""
     echo "export BW2_DEFAULT_CONTACT=\"$contact\""
     echo "export PATH=\"$PATH\""
-	exit 0
+    exit 0
 }
 
 do_install
