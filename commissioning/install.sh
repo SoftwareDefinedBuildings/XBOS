@@ -83,6 +83,15 @@ check_variables() {
             exit 1
         fi
     fi
+
+    if $INSTALL_WATCHDOGS ; then
+        if [ -z "$WD_TOKEN" ]; then
+            $echo "${ERROR}You need to provide a watchdog token \$WD_TOKEN ${NC}"
+        fi
+        if [ -z "$WD_PREFIX" ]; then
+            $echo "${ERROR}You need to provide a watchdog prefix \$WD_PREFIX ${NC}"
+        fi
+    fi
 }
 
 install_dependencies() {
@@ -236,7 +245,7 @@ install_go() {
     $sh_c "curl -O https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz"
     $sh_c "tar -C /usr/local -xzf go1.9.linux-amd64.tar.gz"
     export PATH=/usr/local/go/bin:$PATH
-    export PATH=$(go env GOPATH):$PATH
+    export PATH=$(go env GOPATH)/bin:$PATH
     $echo "${OK}Installed go${NC}"
 }
 
@@ -269,6 +278,65 @@ install_spawnd() {
     $sh_c $(curl get.bw2.io/spawnpoint | bash)
     git add spawnpoint.ent
     git commit -m 'Configured spawnpoint'
+}
+
+install_watchdogs() {
+    go get github.com/immesys/wd/sdmon
+    SDMON_PATH=$(go env GOPATH)/bin/sdmon
+    cat <<EOF > sdmon.service
+[Unit]
+Description=WatchDog SystemD monitor
+Documentation=https://github.com/immesys/wd/sdmon
+
+[Service]
+Environment=WD_TOKEN=$WD_TOKEN
+ExecStart=$SDMON_PATH \
+  --prefix "$WD_PREFIX" \
+  --holdoff 10m \
+  --interval 5m \
+  --unit bw2:bw2 \
+  --unit spawnd:spawnd \
+  --unit docker:docker \
+
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    $sh_c "cp sdmon.service /etc/systemd/system/sdmon.service"
+    $sh_c "systemctl daemon-reload -q --no-pager > /dev/null 2>&1"
+    $sh_c "systemctl start sdmon.service -q --no-pager > /dev/null 2>&1"
+
+
+    go get github.com/immesys/wd/wdtop
+    WDTOP_PATH=$(go env GOPATH)/bin/wdtop
+    cat <<EOF > wdtop.service
+[Unit]
+Description=WatchDog SystemD monitor
+Documentation=https://github.com/immesys/wd/wdtop
+
+[Service]
+Environment=WD_TOKEN=$WD_TOKEN
+ExecStart=$WDTOP_PATH \
+  --prefix "$WD_PREFIX" \
+  --min-mem-mb 1000 \
+  --max-cpu-percent 50 \
+  --df /:root:2000 \
+  --df /home:home:2000 \
+  --interval 2m \
+  --proc bw2:bw2 \
+  --proc spawnd:spawnd
+
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    $sh_c "cp wdtop.service /etc/systemd/system/wdtop.service"
+    $sh_c "systemctl daemon-reload -q --no-pager > /dev/null 2>&1"
+    $sh_c "systemctl start wdtop.service -q --no-pager > /dev/null 2>&1"
 }
 
 do_install() {
@@ -380,6 +448,10 @@ EOF
     if $INSTALL_PUNDAT_CLIENT ; then
         $echo "${INFO}Installing Pundat${NC}"
         go get github.com/gtfierro/pundat
+    fi
+
+    if $INSTALL_WATCHDOGS ; then
+        install_watchdogs
     fi
 
 
