@@ -117,7 +117,7 @@ EOF
             Error: this installer needs the ability to run commands as root.
             We are unable to find either "sudo" or "su" available to make this happen.
             ${NC}
-            EOF
+EOF
             exit 1
         fi
     fi
