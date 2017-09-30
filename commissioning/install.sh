@@ -233,6 +233,12 @@ configure_namespace() {
         $echo "${INFO}Now we need to set up the designated router (DR) for this namespace. Ask someone who runs a DR to run the following:${NC}"
         $echo "${INFO}bw2 mkdroffer --dr /etc/bw2/router.ent --ns $NAMESPACE_ALIAS${NC}"
         #$echo "${INFO}Now type in the VK of the DR router entity (obtained by bw2 lsdro --ns $NAMESPACE_ALIAS, or by asking)${NC}"
+        confirmY "${PROMPT}Has the designated router made a routing offer?${NC}"
+        if [ $? -ne 0 ]; then
+            $echo "${INFO}If you do not have a designated router, some parts of this installation will fail.${NC}"
+        else
+            $echo "${INFO}Accepting DR offer${NC}"
+        fi
         bw2 adro --dr $DESIGNATED_ROUTER_VK --ns namespace.ent
     fi
     $echo "${GO}Namespace configured${NC}"
@@ -270,6 +276,7 @@ install_spawnd() {
     fi
 
     # install spawnpoint server
+    $sh_c "mkdir -p /etc/spawnd"
     $sh_c "cp spawnpoint.ent /etc/spawnd/spawnpoint.ent"
     export SPAWND_INSTALLER_ENTITY=spawnpoint.ent
     export SPAWND_INSTALLER_PATH="$NAMESPACE_ALIAS/sp"
@@ -278,6 +285,7 @@ install_spawnd() {
     $sh_c $(curl get.bw2.io/spawnpoint | bash)
     git add spawnpoint.ent
     git commit -m 'Configured spawnpoint'
+    $sh_c "systemctl start spawnd.service"
 }
 
 install_watchdogs() {
