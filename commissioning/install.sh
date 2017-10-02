@@ -477,6 +477,7 @@ EOF
     echo "export BW2_DEFAULT_CONTACT=\"$contact\""
     echo "export WD_TOKEN=\"$WD_TOKEN\""
     echo "export PATH=\"$PATH\""
+    echo "export BW2_NAMESPACE=\"$NAMESPACE_ALIAS\""
     exit 0
 }
 
