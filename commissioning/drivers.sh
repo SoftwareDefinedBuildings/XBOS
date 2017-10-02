@@ -9,6 +9,30 @@ list_drivers() {
     return $(ls bw2-contrib/driver)
 }
 
+check_variables() {
+    if [ -z "$BW2_DEFAULT_CONTACT" ]; then
+        $echo "${ERROR}You need to provide a default contact \$BW2_DEFAULT_CONTACT ${NC}"
+        exit 1
+    fi
+
+    if [ -z "$BW2_NAMESPACE" ]; then
+        $echo "${ERROR}You need to provide a namespace \$BW2_NAMESPACE ${NC}"
+        exit 1
+    fi
+
+    if [ -z "$BW2_DEFAULT_ENTITY" ]; then
+        $echo "${ERROR}You need to provide a namespace \$BW2_DEFAULT_ENTITY ${NC}"
+        exit 1
+    fi
+
+    if [ -z "$BW2_DEFAULT_BANKROLL" ]; then
+        $echo "${ERROR}You need to provide a namespace \$BW2_DEFAULT_BANKROLL ${NC}"
+        exit 1
+    fi
+
+}
+
+
 sleep_til_valid() {
     echo -e "${INFO}Waiting until ${1} is valid${NC}..."
     valid=$(bw2 i ${1} | sed -n 's/.*Registry: \(.*\).*/\1/p')
@@ -47,6 +71,7 @@ confirmN() {
     esac
 }
 
+check_variables
 
 exec 3>&1
 selection=$(dialog \
@@ -79,7 +104,7 @@ case $selection in
         echo "Configure"
 
         # get the driver repo
-        if [ ! -f "bw2-contrib" ]; then
+        if [ ! -d "bw2-contrib" ]; then
             git clone https://github.com/SoftwareDefinedBuildings/bw2-contrib
         else
             cd bw2-contrib; git pull; cd -
@@ -110,26 +135,33 @@ case $selection in
         echo "Create params file and edit"
 
         read -r -p "Driver name: " drivername
-        drivernospaces=$(echo $drivername | sed 's/ /_/g')
-        mkdir -p $drivernospaces
-        params_file=$drivernospaces/params.yml
-        archive_file=$drivernospaces/archive.yml
-        deploy_file=$drivernospaces/deploy.yml
-        entity_file=$drivernospaces/entity.ent
+        foldername=$(echo $drivername | sed 's/ /_/g')
+        params_file=$foldername/params.yml
+        archive_file=$foldername/archive.yml
+        deploy_file=$foldername/deploy.yml
+        entity_file=$foldername/entity.ent
+
+        if [ -d "$foldername" ]; then
+            echo "Config folder $foldername already exists"
+        else
+            mkdir -p $foldername
+        fi
 
         confirmY "Edit config file? [Y/n] "
         if [ $? -eq 0 ]; then 
-            cp bw2-contrib/driver/$driver/params.yml $params_file
+            if [ ! -f "$params_file" ]; then
+                cp bw2-contrib/driver/$driver/params.yml $params_file
+            fi
             $EDITOR $params_file
         fi
-        baseuri=$(cat $drivernospaces/params.yml | sed -ne 's/svc_base_uri:\(.*\)/\1/p' | xargs)
+        baseuri=$(cat $foldername/params.yml | sed -ne 's/svc_base_uri:\(.*\)/\1/p' | xargs)
         echo "Base URI for driver: $baseuri"
 
         if [ ! -f "$entity_file" ]; then
-            confirmY "Do you already have an entity for this driver? [Y/n] "
+            confirmN "Do you already have an entity for this driver? [y/N] "
             if [ $? -eq 0 ]; then
                 read -r -p "Driver entity path: " entitypath
-                cp $entitypath $drivernospaces/entity.ent
+                cp $entitypath $entity_file
             else
                 bw2 mke -o $entity_file -m "Driver entity for ${drivername}"
                 sleep_til_valid $entity_file
@@ -137,22 +169,40 @@ case $selection in
         fi
 
         # build chain for driver
-        bw2 bc -t $drivernospaces/entity.ent -u "$baseuri"
+        bw2 bc -t $entity_file -u "$baseuri/*"
         haschain=$?
-        echo "has chain?", $haschain
+        if [ "$haschain" -ne 0 ]; then
+            # make DoT using default entity
+            bw2 mkdot -t $entity_file -u "$baseuri/*" -m "${drivername} operation"
+        fi
 
         confirmY "Configure deployment? [Y/n] "
         if [ $? -eq 0 ]; then 
-            cp bw2-contrib/driver/$driver/deploy.yml $drivernospaces/.
-            $EDITOR $drivernospaces/deploy.yml
+            if [ ! -f "$deploy_file" ]; then
+                cp bw2-contrib/driver/$driver/deploy.yml $deploy_file
+            fi
+            $EDITOR $deploy_file
         fi
 
         confirmY "Configure archival? [Y/n] "
         if [ $? -eq 0 ]; then 
-            cp bw2-contrib/driver/$driver/archive.yml $drivernospaces/.
-            $EDITOR $drivernospaces/archive.yml
+            if [ ! -f "$archive_file" ]; then
+                cp bw2-contrib/driver/$driver/archive.yml $archive_file
+            fi
+            $EDITOR $archive_file
         fi
 
+        # get spawnpoint url
+        spawnpoint_url=$(spawnctl scan $BW2_NAMESPACE | sed -ne "s/.* ago at \(.*\)\$/\1/p")
+        if [ -z "$spawnpoint_url" ];then
+            echo "No spawnpoint deployed at $BW2_NAMESPACE"
+            exit 1
+        fi
+
+        confirmY "Deploy? [Y/n] "
+        if [ $? -eq 0 ]; then
+            spawnctl deploy -c $deploy_file -n $foldername -u $spawnpoint_url
+        fi
 
         ;;
 esac
