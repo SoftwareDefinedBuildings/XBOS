@@ -75,6 +75,10 @@ confirmN() {
     esac
 }
 
+command_exists() {
+    command -v "$@" > /dev/null 2>&1
+}
+
 install_dependencies() {
     # install dependencies
     echo "${INFO}Updating apt repos and installing dependencies${NC}"
