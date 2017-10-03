@@ -77,8 +77,22 @@ confirmN() {
 
 install_dependencies() {
     # install dependencies
-    $echo "${INFO}Updating apt repos and installing dependencies${NC}"
+    echo "${INFO}Updating apt repos and installing dependencies${NC}"
 
+    sh_c='sh -c'
+    if [ "$user" != 'root' ]; then
+        if command_exists sudo; then
+            sh_c='sudo -E sh -c'
+        elif command_exists su; then
+            sh_c='su -c'
+        else
+            cat >&2 <<-'EOF'
+            Error: this installer needs the ability to run commands as root.
+            We are unable to find either "sudo" or "su" available to make this happen.
+EOF
+            exit 1
+        fi
+    fi
     $sh_c 'apt-get update >/dev/null'
     $sh_c 'apt-get install -y git dialog'
 }
