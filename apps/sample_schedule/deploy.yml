@@ -1,0 +1,7 @@
+entity: schedule.ent
+image: gtfierro/xbospy
+cpuShares: 256
+memAlloc: 512M
+build: [pip install -r requirements.txt]
+includedFiles: [estimator.py, params.json, requirements.txt]
+run: [python, estimator.py]

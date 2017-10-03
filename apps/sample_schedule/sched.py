@@ -1,13 +1,22 @@
 import schedule
 import datetime
 import time
+import json
+import sys
 
 from xbos import get_client
 from xbos.services.hod import HodClientHTTP
 from xbos.devices.thermostat import Thermostat
 
-client = get_client(entity="schedule.ent")
-hc = HodClient("ciee/hod", client)
+with open("params.json") as f:
+    try:
+        params = json.loads(f.read())
+    except ValueError:
+        print "Invalid parameter file"
+        sys.exit(1)
+
+client = get_client()
+hc = HodClient(params["HOD_URI"], client)
 
 q = """SELECT ?uri ?zone WHERE {
     ?tstat rdf:type/rdfs:subClassOf* brick:Thermostat .
@@ -21,18 +30,16 @@ for tstat in hc.do_query(q):
     print tstat
     zones[tstat["?zone"]] = Thermostat(client, tstat["?uri"])
 
-normal_zones = ["SouthZone","NorthZone","EastZone","CentralZone"]
-
 def workday():
     p = {"override": True, "heating_setpoint": 70., "cooling_setpoint": 76.}
     print "workday",datetime.datetime.now()
-    for z in normal_zones:
+    for z in zones.keys():
         print z,p
         zones[z].write(p)
 def workday_inactive():
     p = {"override": True, "heating_setpoint": 62., "cooling_setpoint": 85.}
     print "workday inactive",datetime.datetime.now()
-    for z in normal_zones:
+    for z in zones.keys():
         print z,p
         zones[z].write(p)
 
