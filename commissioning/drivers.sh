@@ -11,25 +11,29 @@ list_drivers() {
 
 check_variables() {
     if [ -z "$BW2_DEFAULT_CONTACT" ]; then
-        echo "${ERROR}You need to provide a default contact \$BW2_DEFAULT_CONTACT ${NC}"
+        echo "You need to provide a default contact \$BW2_DEFAULT_CONTACT "
         exit 1
     fi
 
     if [ -z "$BW2_NAMESPACE" ]; then
-        echo "${ERROR}You need to provide a namespace \$BW2_NAMESPACE ${NC}"
+        echo "You need to provide a namespace \$BW2_NAMESPACE "
         exit 1
     fi
 
     if [ -z "$BW2_DEFAULT_ENTITY" ]; then
-        echo "${ERROR}You need to provide a namespace \$BW2_DEFAULT_ENTITY ${NC}"
+        echo "You need to provide a namespace \$BW2_DEFAULT_ENTITY "
         exit 1
     fi
 
     if [ -z "$BW2_DEFAULT_BANKROLL" ]; then
-        echo "${ERROR}You need to provide a namespace \$BW2_DEFAULT_BANKROLL ${NC}"
+        echo "You need to provide a namespace \$BW2_DEFAULT_BANKROLL "
         exit 1
     fi
 
+    if [ -z "$EDITOR" ]; then
+        echo "You need to provide an editor \$EDITOR "
+        exit 1
+    fi
 }
 
 
@@ -71,6 +75,15 @@ confirmN() {
     esac
 }
 
+install_dependencies() {
+    # install dependencies
+    $echo "${INFO}Updating apt repos and installing dependencies${NC}"
+
+    $sh_c 'apt-get update >/dev/null'
+    $sh_c 'apt-get install -y git dialog'
+}
+
+install_dependencies
 check_variables
 
 exec 3>&1
