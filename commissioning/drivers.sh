@@ -11,22 +11,22 @@ list_drivers() {
 
 check_variables() {
     if [ -z "$BW2_DEFAULT_CONTACT" ]; then
-        $echo "${ERROR}You need to provide a default contact \$BW2_DEFAULT_CONTACT ${NC}"
+        echo "${ERROR}You need to provide a default contact \$BW2_DEFAULT_CONTACT ${NC}"
         exit 1
     fi
 
     if [ -z "$BW2_NAMESPACE" ]; then
-        $echo "${ERROR}You need to provide a namespace \$BW2_NAMESPACE ${NC}"
+        echo "${ERROR}You need to provide a namespace \$BW2_NAMESPACE ${NC}"
         exit 1
     fi
 
     if [ -z "$BW2_DEFAULT_ENTITY" ]; then
-        $echo "${ERROR}You need to provide a namespace \$BW2_DEFAULT_ENTITY ${NC}"
+        echo "${ERROR}You need to provide a namespace \$BW2_DEFAULT_ENTITY ${NC}"
         exit 1
     fi
 
     if [ -z "$BW2_DEFAULT_BANKROLL" ]; then
-        $echo "${ERROR}You need to provide a namespace \$BW2_DEFAULT_BANKROLL ${NC}"
+        echo "${ERROR}You need to provide a namespace \$BW2_DEFAULT_BANKROLL ${NC}"
         exit 1
     fi
 
