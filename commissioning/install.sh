@@ -292,6 +292,7 @@ install_watchdogs() {
     go get github.com/immesys/wd/wd
     go get github.com/immesys/wd/sdmon
     SDMON_PATH=$(go env GOPATH)/bin/sdmon
+    ACTUAL_WD_PREFIX=$(echo $WD_PREFIX | sed -e 's/-/_/g')
     cat <<EOF > sdmon.service
 [Unit]
 Description=WatchDog SystemD monitor
@@ -300,7 +301,7 @@ Documentation=https://github.com/immesys/wd/sdmon
 [Service]
 Environment=WD_TOKEN=$WD_TOKEN
 ExecStart=$SDMON_PATH \
-  --prefix "$WD_PREFIX" \
+  --prefix "$ACTUAL_WD_PREFIX" \
   --holdoff 10m \
   --interval 5m \
   --unit bw2:bw2 \
@@ -328,7 +329,7 @@ Documentation=https://github.com/immesys/wd/wdtop
 [Service]
 Environment=WD_TOKEN=$WD_TOKEN
 ExecStart=$WDTOP_PATH \
-  --prefix "$WD_PREFIX" \
+  --prefix "$ACTUAL_WD_PREFIX" \
   --min-mem-mb 1000 \
   --max-cpu-percent 50 \
   --df /:root:2000 \
