@@ -157,7 +157,7 @@ configure_entities() {
     if [ -z "$BW2_DEFAULT_ENTITY" ] || [ $? -ne 0 ]; then
         if [ ! -f defaultentity.ent ]; then
             $echo "${INFO}Could not find BW2_DEFAULT_ENTITY. Creating defaultentity.ent${NC}"
-            bw2 mke -o defaultentity.ent -e 100y -m "Administrative key" -n
+            bw2 mke -o defaultentity.ent -e 100y -m "Administrative key" -n -c "\"$BW2_DEFAULT_CONTACT\""
             # sleep_til_valid defaultentity.ent
         fi
         export BW2_DEFAULT_ENTITY="$(pwd)/defaultentity.ent"
@@ -198,7 +198,7 @@ configure_namespace() {
     # setup entity if it doesn't exist
     if [ ! -f "namespace.ent" ]; then
         $echo "${INFO}Creating a namespace entity${NC}"
-        bw2 mke -o namespace.ent -e 100y -m "Namespace entity"
+        bw2 mke -o namespace.ent -e 100y -m "Namespace entity" -c "\"$BW2_DEFAULT_CONTACT\""
         sleep_til_valid namespace.ent
     fi
 
@@ -224,7 +224,7 @@ configure_namespace() {
     if [ $? -ne 0 ]; then
         $echo "${INFO}Make DOT on $NAMESPACE_ALIAS/*${NC}"
         set -e
-        bw2 mkdot -f namespace.ent -t $BW2_DEFAULT_ENTITY -u "$NAMESPACE_ALIAS/*" -m "Admin access to $NAMESPACE_ALIAS" --ttl 10
+        bw2 mkdot -f namespace.ent -t $BW2_DEFAULT_ENTITY -u "$NAMESPACE_ALIAS/*" -m "Admin access to $NAMESPACE_ALIAS" --ttl 10 -c "\"$BW2_DEFAULT_CONTACT\""
         set +e
     fi
 
@@ -268,10 +268,10 @@ install_spawnd() {
     if [ ! -f spawnpoint.ent ]; then
         set -e
         $echo "${INFO}Could not find spawnpoint.ent. Creating...${NC}"
-        bw2 mke -o spawnpoint.ent -e 100y -m "Spawnpoint entity"
+        bw2 mke -o spawnpoint.ent -e 100y -m "Spawnpoint entity" -c "\"$BW2_DEFAULT_CONTACT\""
         sleep_til_valid spawnpoint.ent
         $echo "${INFO}Updating permissions for spawnpoint.ent${NC}"
-        bw2 mkdot -f namespace.ent -t spawnpoint.ent -u "$NAMESPACE_ALIAS/sp/*" -m "Spawnpoint access"
+        bw2 mkdot -f namespace.ent -t spawnpoint.ent -u "$NAMESPACE_ALIAS/sp/*" -m "Spawnpoint access" -c "\"$BW2_DEFAULT_CONTACT\""
         set +e
     fi
 
@@ -475,7 +475,7 @@ EOF
     echo "export BW2_DEFAULT_ENTITY=\"$BW2_DEFAULT_ENTITY\""
     echo "export BW2_DEFAULT_BANKROLL=\"$BW2_DEFAULT_BANKROLL\""
     echo "export BW2_DEFAULT_EXPIRY=\"50y\""
-    echo "export BW2_DEFAULT_CONTACT=\"$contact\""
+    echo "export BW2_DEFAULT_CONTACT=\"$BW2_DEFAULT_CONTACT\""
     echo "export WD_TOKEN=\"$WD_TOKEN\""
     echo "export PATH=\"$PATH\""
     echo "export BW2_NAMESPACE=\"$NAMESPACE_ALIAS\""
