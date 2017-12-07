@@ -232,7 +232,9 @@ case $selection in
 
         confirmY "Deploy? [Y/n] "
         if [ $? -eq 0 ]; then
-            spawnctl deploy -c $deploy_file -n $foldername -u $spawnpoint_url
+            cd $foldername
+            pundat addreq -c $(basename $archive_file)
+            spawnctl deploy -c $(basename $deploy_file) -n $foldername -u $spawnpoint_url
         fi
 
         ;;
