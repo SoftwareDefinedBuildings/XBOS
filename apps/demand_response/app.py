@@ -21,12 +21,12 @@ hod = HodClient(params["HOD_URI"],c)
 lighting_query = """SELECT ?equipment ?uri WHERE {
 ?equipment rdf:type/rdfs:subClassOf* brick:Lighting_System .
 ?equipment bf:uri ?uri .
-} LIMIT 500;"""
+}"""
 
 tstat_query = """SELECT ?equipment ?uri WHERE {
 ?equipment rdf:type/rdfs:subClassOf* brick:Thermostat .
 ?equipment bf:uri ?uri .
-} LIMIT 500;"""
+}"""
 
 results = hod.do_query(lighting_query)
 lights = []
