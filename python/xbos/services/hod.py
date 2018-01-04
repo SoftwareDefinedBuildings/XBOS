@@ -83,11 +83,12 @@ class HodClient(object):
                     got_response = True
             if got_response:
                 ev.set()
-        self.c.subscribe("{0}/s.hod/_/i.hod/signal/result".format(self.url), _handleresult)
+        h = self.c.subscribe("{0}/s.hod/_/i.hod/signal/result".format(self.url), _handleresult)
         q_struct = msgpack.packb({"Query": query, "Nonce": nonce})
         po = PayloadObject((2,0,10,1), None, q_struct)
         self.c.publish("{0}/s.hod/_/i.hod/slot/query".format(self.url), payload_objects=(po,))
         ev.wait(timeout)
+        self.c.unsubscribe(h)
         if len(response) == 0: # no results
             raise TimeoutException("Query of {0} timed out".format(query))
 
