@@ -101,13 +101,8 @@ class BOSSWAVEMDALClient(object):
             "Time": {
                 "T0": "2017-08-01 00:00:00",
                 "T1": "2017-08-08 00:00:00",
-                "WindowSize": int(1e9*60*5),
+                "WindowSize": '2h',
                 "Aligned": True,
-            },
-
-            # Switch to False when you want Raw data
-            "Params": {
-                "Window": True,
             },
         }
         """
@@ -121,6 +116,11 @@ class BOSSWAVEMDALClient(object):
                 if po.type_dotted == (2,0,10,4):
                     data = msgpack.unpackb(po.content)
                     if data['Nonce'] != query['Nonce']:
+                        continue
+                    print 'error' in data
+                    if 'error' in data:
+                        response['error'] = data['error']
+                        got_response=True
                         continue
                     uuids = [uuid.UUID(bytes=x) for x in data['Rows']]
                     data = data_capnp.StreamCollection.from_bytes_packed(data['Data'])
@@ -146,6 +146,8 @@ class BOSSWAVEMDALClient(object):
         self.c.publish("{0}/s.mdal/_/i.mdal/slot/query".format("scratch.ns"), payload_objects=(po,))
         ev.wait(timeout)
         self.c.unsubscribe(h)
+        if 'error' in response:
+            raise Exception(response['error'])
         return response
 
 if __name__ == '__main__':
