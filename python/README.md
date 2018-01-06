@@ -2,6 +2,8 @@
 
 This is an aggregate package to bring together all XBOS clients under a single package
 
+Current version: 0.0.19
+
 
 ## Usage
 
@@ -147,3 +149,4 @@ for name, tstat in tstats.items():
         - `__init__.py`
         - `pundat.py`
         - `hoddb.py`
+        - `mdal.py`
