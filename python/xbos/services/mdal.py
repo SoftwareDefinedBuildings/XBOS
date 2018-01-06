@@ -141,9 +141,9 @@ class BOSSWAVEMDALClient(object):
                         got_response = True
             if got_response:
                 ev.set()
-        h = self.c.subscribe("{0}/s.mdal/_/i.mdal/signal/{1}".format("scratch.ns", self.vk[:-1]), _handleresult)
+        h = self.c.subscribe("{0}/s.mdal/_/i.mdal/signal/{1}".format(self.url, self.vk[:-1]), _handleresult)
         po = PayloadObject((2,0,10,3), None, msgpack.packb(query))
-        self.c.publish("{0}/s.mdal/_/i.mdal/slot/query".format("scratch.ns"), payload_objects=(po,))
+        self.c.publish("{0}/s.mdal/_/i.mdal/slot/query".format(self.url), payload_objects=(po,))
         ev.wait(timeout)
         self.c.unsubscribe(h)
         if 'error' in response:
