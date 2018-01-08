@@ -25,7 +25,7 @@ All of these are for full building power
         }
         ```
     - parameters:
-        - `{num}`: number of weeks to fetch
+        - `{num}`: number of days to fetch
     - implementation notes:
         - want to align this to beginning of day
 
