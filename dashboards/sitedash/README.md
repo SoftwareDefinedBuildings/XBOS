@@ -1,11 +1,19 @@
 # XBOS Site-specific Dashboard
 
+## Running
 
-Requested data:
-- daily power
-- daily temperature
-- heating/cooling setpoints
-- weekly, monthly power consumption
+Use Python2
+
+```
+virtualenv venv
+. venv/bin/activate
+pip install -r requirements.txt
+FLASK_APP=app.py flask run
+```
+
+You either need a BOSSWAVE agent running on your machine, or you can run a ragent process.
+
+## API Doc
 
 ### Power Endpoints
 
