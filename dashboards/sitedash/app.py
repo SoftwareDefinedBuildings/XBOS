@@ -15,7 +15,7 @@ import os
 from xbos import get_client
 from xbos.services import hod, mdal
 
-SITE = 'avenal-public-works-yard'
+SITE = 'ciee'
 
 def prevmonday(num):
     """
@@ -40,7 +40,7 @@ def weeklypower(numweeks):
         "Selectors": [mdal.MEAN],
         "Variables": [
             {"Name": "meter",
-             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type/rdfs:subClassOf* brick:Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
              "Units": "kW"}
         ],
         "Time": {
@@ -74,7 +74,7 @@ def monthlypower(nummonths):
         "Selectors": [mdal.MEAN],
         "Variables": [
             {"Name": "meter",
-             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type/rdfs:subClassOf* brick:Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
              "Units": "kW"}
         ],
         "Time": {
@@ -105,7 +105,7 @@ def dailypower(numdays):
         "Selectors": [mdal.MEAN],
         "Variables": [
             {"Name": "meter",
-             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type/rdfs:subClassOf* brick:Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
              "Units": "kW"}
         ],
         "Time": {
@@ -129,7 +129,7 @@ def dailypower(numdays):
 
 @app.route('/api/power')
 def streampower():
-    resp = hodclient.do_query("SELECT ?meter_uri FROM %s WHERE { ?meter rdf:type/rdfs:subClassOf* brick:Electric_Meter . ?meter bf:uri ?meter_uri };" % SITE)
+    resp = hodclient.do_query("SELECT ?meter_uri FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uri ?meter_uri };" % SITE)
     if resp['Count'] > 0:
         uri = resp['Rows'][0]['?meter_uri']+'/signal/meter'
         h = c.query(uri)
@@ -148,3 +148,70 @@ def streampower():
             return
         return jsonify({'demand': status['current_demand']})
     return 'NO METER'
+
+def read_uri(uri):
+    h = c.query(uri)
+    if len(h) == 0:
+        return {}
+    if len(h[0].payload_objects) == 0:
+        return {}
+    status = msgpack.unpackb(h[0].payload_objects[0].content)
+    if status is None:
+        return {}
+    return status
+
+#def read_uri_sub(uri):
+#    h = c.subscribe(uri, cb)
+#    if len(h) == 0:
+#        return {}
+#    if len(h[0].payload_objects) == 0:
+#        return {}
+#    status = msgpack.unpackb(h[0].payload_objects[0].content)
+#    if status is None:
+#        return {}
+#    return status
+
+@app.route('/api/hvac')
+def hvacstate():
+    resp = hodclient.do_query("""
+SELECT * FROM %s WHERE {
+  ?rtu rdf:type brick:RTU .
+  ?rtu bf:feeds ?zone .
+  ?zone rdf:type brick:HVAC_Zone .
+  ?rtu bf:isControlledBy ?tstat .
+  ?zone bf:hasPart ?room .
+  ?room bf:hasPoint ?sensor .
+  ?sensor rdf:type/rdfs:subClassOf* brick:Temperature_Sensor .
+  ?tstat bf:uri ?tstat_uri .
+  ?sensor bf:uri ?sensor_uri
+ };""" % SITE)
+    print resp
+    zones = defaultdict(lambda : defaultdict(dict))
+    if resp['Count'] == 0:
+        return 'NO RESULTS'
+    for row in resp['Rows']:
+        zonename = row['?zone']
+        roomname = row['?room']
+        tstat = read_uri(row['?tstat_uri']+'/signal/info')
+        zones[zonename]['heating_setpoint'] = tstat['heating_setpoint']
+        zones[zonename]['cooling_setpoint'] = tstat['cooling_setpoint']
+        zones[zonename]['tstat_temperature'] = tstat['temperature']
+        zones[zonename]['heating'] = tstat['state'] == 1
+        zones[zonename]['cooling'] = tstat['state'] == 2
+        zones[zonename]['timestamp'] = int(tstat['time']/1e9)
+        zones[zonename]['rooms'][roomname] = {'sensors': []}
+
+    for row in resp['Rows']:
+        zonename = row['?zone']
+        roomname = row['?room']
+        uri = row['?sensor_uri']
+        data = read_uri(uri)
+        if len(data) > 0:
+            s = {
+                'uri': uri,
+                'temperature': data['temperature'],
+                'relative_humidity': data['relative_humidity']
+            }
+            zones[zonename]['rooms'][roomname]['sensors'].append(s)
+
+    return jsonify(zones)
