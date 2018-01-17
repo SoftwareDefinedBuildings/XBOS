@@ -122,7 +122,7 @@ class BOSSWAVEMDALClient(object):
                         response['error'] = data['error']
                         got_response=True
                         continue
-                    uuids = [uuid.UUID(bytes=x) for x in data['Rows']]
+                    uuids = [str(uuid.UUID(bytes=x)) for x in data['Rows']]
                     data = data_capnp.StreamCollection.from_bytes_packed(data['Data'])
                     if hasattr(data, 'times'):
                         times = list(data.times)
