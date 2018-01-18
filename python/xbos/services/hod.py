@@ -102,7 +102,7 @@ class LocalHodDB(HodClientHTTP):
         print buildings
 
         # make config directory
-        shutil.rmtree('/tmp/_hoddb')
+        shutil.rmtree('/tmp/_hoddb', ignore_errors=True)
         os.makedirs('/tmp/_hoddb')
         _build = ""
         for dbname, filename in buildings.items():
