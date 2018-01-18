@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 print find_packages()
 setup(name='xbos',
-      version='0.0.21',
+      version='0.0.22',
       description='Aggregate wrapper for XBOS services and devices',
       url='https://github.com/SoftwareDefinedBuildings/XBOS',
       author='Gabe Fierro',
@@ -10,6 +10,7 @@ setup(name='xbos',
       packages=find_packages(),
       data_files=[('xbos/services', ['xbos/services/data.capnp'])],
       install_requires=[
+        'docker==2.5.1',
         'delorean==0.6.0',
         'msgpack-python==0.4.2',
         'bw2python>=0.6.1',
