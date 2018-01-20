@@ -1,0 +1,9 @@
+[submodule "infrastructure/pundat"]
+	path = infrastructure/pundat
+	url = https://github.com/gtfierro/PunDat
+[submodule "infrastructure/hod"]
+	path = infrastructure/hod
+	url = https://github.com/gtfierro/hod
+[submodule "infrastructure/mdal"]
+	path = infrastructure/mdal
+	url = https://github.com/gtfierro/mdal
