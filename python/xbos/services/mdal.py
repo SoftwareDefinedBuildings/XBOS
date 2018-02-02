@@ -1,4 +1,5 @@
 import msgpack
+import pytz
 import pandas as pd
 import uuid
 import time
@@ -60,7 +61,7 @@ class BOSSWAVEMDALClient(object):
             if diff.total_seconds() > timeout:
                 raise TimeoutException("MDAL at {0} is too old".format(self.url))
 
-    def do_query(self, query, timeout=DEFAULT_TIMEOUT):
+    def do_query(self, query, timeout=DEFAULT_TIMEOUT, tz=pytz.timezone("US/Pacific")):
         """
         Query structure is as follows:
 
@@ -126,15 +127,17 @@ class BOSSWAVEMDALClient(object):
                     data = data_capnp.StreamCollection.from_bytes_packed(data['Data'])
                     if hasattr(data, 'times'):
                         times = list(data.times)
-                        df = pd.DataFrame(index=pd.to_datetime(times, unit='ns'))
+                        df = pd.DataFrame(index=pd.to_datetime(times, unit='ns', utc=False))
                         for idx, s in enumerate(data.streams):
                             df[uuids[idx]] = s.values
+                        df.index = df.index.tz_localize(pytz.utc).tz_convert(tz)
                         response['df'] = df
                         got_response = True
                     else:
                         for idx, s in enumerate(data.streams):
                             if hasattr(s, 'times'):
-                                s = pd.Series(s.values, pd.to_datetime(s.times, unit='ns'))
+                                s = pd.Series(s.values, pd.to_datetime(s.times, unit='ns', utc=False))
+                                s.index = s.index.tz_localize(pytz.utc).tz_convert(tz)
                             else:
                                 s = pd.Series(s.values)
                             response[uuids[idx]] = s
