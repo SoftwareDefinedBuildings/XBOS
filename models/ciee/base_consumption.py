@@ -126,10 +126,10 @@ def predict_day(targetday="2018-02-01 00:00:00 PST", WINDOW="30m", N_DAYS=10):
     # thermostat is cooling. We are fudging how to handle the 'statistical summary' of a thermostat 
     # state by using max(); more sophisticated methods may do a linear scale based on the mean value.
 
-    # We use the following values for power consumed: heating (.2 kW) and cooling (5 kW)
+    # We use the following values for power consumed: heating (.3 kW) and cooling (5 kW)
 
-    heating_consume = .1
-    cooling_consume = 5.0
+    heating_consume = .3 # in kW
+    cooling_consume = 5. # kW
     meter = df.columns[0]
     all_but_meter = df.columns[1:]
 
@@ -140,7 +140,7 @@ def predict_day(targetday="2018-02-01 00:00:00 PST", WINDOW="30m", N_DAYS=10):
     meterdata = df[meter]  - h - c
 
     # do the same for lighting
-    meterdata = meterdata - (lighting_df.apply(sum, axis=1))
+    #meterdata = meterdata - (lighting_df.apply(sum, axis=1))
 
     # Similarity-based estimation implementation
     begin = meterdata.index[0].to_pydatetime()
