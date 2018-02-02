@@ -1,7 +1,7 @@
-TEST_DATE = "2018-01-08 00:00:00 PST"
+TEST_DATE = "2017-10-06 00:00:00 PST"
 import pandas as pd
 
-from thermal_model import get_model_per_zone, test_schedule, execute_schedule
+from thermal_model import get_model_per_zone, normal_schedule, dr_schedule, execute_schedule
 print "##################################"
 print "####     THERMAL  MODEL      #####"
 print "##################################"
@@ -11,7 +11,7 @@ allactions = None
 for zone, model in models.items():
     print "   #####################################################"
     print "   Temperature predictions for", zone
-    temps, actions = execute_schedule(TEST_DATE, test_schedule, model, 60) # 60 is starting temperature
+    temps, actions = execute_schedule(TEST_DATE, normal_schedule, model, 65) # 60 is starting temperature
     def action_to_energy(x):
         if x == 1:
             return 0.3

@@ -15,7 +15,7 @@ hod = HodClient("xbos/hod")
 SITE = "ciee"
 
 def predict_day(targetday="2018-01-30 00:00:00 PST", WINDOW="30m", N_DAYS=10):
-    T0 = "2017-07-01 00:00:00 PST"
+    T0 = "2017-09-18 00:00:00 PST"
     day = datetime.strptime(targetday, "%Y-%m-%d %H:%M:%S %Z")
     day = pytz.timezone('US/Pacific').localize(day)
     T1 = (day - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S %Z")
@@ -96,3 +96,6 @@ def predict_day(targetday="2018-01-30 00:00:00 PST", WINDOW="30m", N_DAYS=10):
     predicted_day = predictor_days_df.mean(axis=0)
     predicted_day.index = pd.date_range(targetday, tomorrow, freq="30min")
     return predicted_day
+
+if __name__ == '__main__':
+    print predict_day("2017-10-06 00:00:00 PST")

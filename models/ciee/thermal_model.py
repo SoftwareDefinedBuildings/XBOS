@@ -45,15 +45,15 @@ def f1(row):
 
 # if state is 2 we are doing cooling
 def f2(row):
-    if row['a']>1 and row['a']<=2:
+    if row['a']>1 and row['a']<=3:
         return 1
     return 0
 
 # WE ARE NOT LEARNING VENTILATION RIGHT NOW
 # $T^{IN}_{t+1}= c_1 * a^{H} * T^{IN}_{t} + c_2 * a^{C} * T^{IN}_{t} + c_3 * T^{IN}_{t}$
 def func(X, c1, c2, c3, c4):
-    Tin, a1, a2, Tout = X
-    return c1 * a1 * Tin + c2 * a2 * Tin + c3 * Tin + c4 * (Tout-Tin)#+ c4  * (1-a1)*(1-a2)
+    Tin, heat_a, cool_a, Tout = X
+    return c1 * heat_a * Tin + c2 * cool_a * Tin + c3 * Tin + c4 * (Tout-Tin)#+ c4  * (1-heat_a)*(1-cool_a)
 
 def next_temperature(popt, Tin, Tout, action):
     if action == 1:
@@ -126,9 +126,9 @@ def get_model_per_zone(targetday = "2018-02-01 00:00:00 PST"):
         df = resp['df']
         df.columns = ['tin','a','toutside'] # inside temperature, action, outside temperature
         # column for heating
-        df['a1'] = df.apply(f1, axis=1)
+        df['heat_a'] = df.apply(f1, axis=1)
         # column for cooling
-        df['a2'] = df.apply(f2, axis=1)
+        df['cool_a'] = df.apply(f2, axis=1)
         # pad tempertures to fill holes
         df['tin'] = df['tin'].replace(to_replace=0, method='pad')
         df['toutside'] = df['toutside'].replace(to_replace=0, method='pad')
@@ -138,13 +138,13 @@ def get_model_per_zone(targetday = "2018-02-01 00:00:00 PST"):
         df=df.dropna()
         print df.describe()
         thermal_data = shuffle(df)
-        popt, pcov = curve_fit(func, thermal_data[['tin','a1','a2','toutside']].T.as_matrix(), thermal_data['temp_next'].as_matrix())
+        popt, pcov = curve_fit(func, thermal_data[['tin','heat_a','cool_a','toutside']].T.as_matrix(), thermal_data['temp_next'].as_matrix())
         print popt
         ret[zone] = popt
     return ret
 
 # start at midnight
-test_schedule = [
+normal_schedule = [
     # midnight - 8:00am
     (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), 
     # 8:00am - 4:00pm
@@ -155,11 +155,25 @@ test_schedule = [
     (50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90)
 ]
 
+dr_schedule = [
+    # midnight - 8:00am
+    (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), (50, 90),(50, 90), 
+    # 8:00am - 12:00pm
+    (70, 74),(70, 74),(70, 74),(70, 74),(70, 74),(70, 74),(70, 74),(70, 74),
+    # 12:00am - 3:00pm (precool)
+    (60, 64),(60, 64),(60, 64),(60, 64),(60, 64),(60, 64),
+    # 3:00pm - 6:00pm (dr event
+    (70, 85),(70, 85),(70, 85),(70, 85),(70, 85),(70, 85),
+    # 6:00pm - 12:00am
+    (50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90),(50, 90)
+]
+
 
 if __name__ == "__main__":
-    models = get_model_per_zone("2018-01-11 00:00:00 PST") # don't use data after this argument
+    models = get_model_per_zone("2017-10-06 00:00:00 PST") # don't use data after this argument
     for zone, model in models.items():
         print zone
-        temperatures, actions = execute_schedule("2018-01-11 00:00:00 PST", test_schedule, model, 70) # 70 is starting temperature
+        temperatures, actions = execute_schedule("2017-10-06 00:00:00 PST", normal_schedule, model, 60) # 70 is starting temperature
+        print model
         print "Temp:", temperatures
         print "HVAC:", actions
