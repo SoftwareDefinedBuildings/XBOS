@@ -50,3 +50,48 @@ docker run -d --name pundat -e BTRDB_SERVER=<btrdb ip>:4410 \
 ### HodDB
 
 ### MDAL
+
+MDAL is shipped as a Docker container image `gtfierro/mdal:latest` (most recent version is `gtfierro/mdal:0.0.2`.
+You can build this container yourself by running `make container` in a cloned copy of the [MDAL repository](https://github.com/gtfierro/mdal).
+
+### Run with Kubernetes
+
+If you are running Kubernetes on your node/cluster, then you can easily install Pundat by using its Kubernetes file.
+
+Keep in mind that MDAL currently requires a volume mount where the `mdal.yaml` configuration file is stored.
+```yaml
+# snippet of MDAL kubernetes file
+...
+    spec:
+        containers:
+            - name: mdal
+              image:  gtfierro/mdal:0.0.2
+              imagePullPolicy: Always
+              volumeMounts:
+                - name: mdal
+                  mountPath: /etc/mdal  # <-- this is how your host folder gets mounted in the container.
+        volumes:
+            - name: mdal
+              hostPath:
+                path: /etc/mdal   # <-- create this host folder and place the mdal.yaml config file there
+```
+
+To execute MDAL as a Kubernetes service, use the following:
+
+```bash
+curl -O https://github.com/gtfierro/mdal/blob/master/kubernetes/k8mdal.yaml
+# edit /etc/mdal/mdal.yaml and k8mdal.yaml appropriately
+kubectl create -f k8mdal.yaml
+```
+
+
+### Run with Docker
+
+If you are not running Kubernetes, you can invoke the MDAL container directly
+
+```bash
+docker run -d --name mdal -v /etc/mdal:/etc/mdal gtfierro/mdal:latest
+```
+
+Don't forget to forward the HTTP port if that interface is enabled
+
