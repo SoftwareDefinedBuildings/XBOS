@@ -28,7 +28,7 @@ class HodClientHTTP(object):
         count = d['Count']
         elapsed = d['Elapsed']
         rows = d['Rows']
-        if values_only:
+        if values_only and int(count) > 0:
             rows = [{k: v['Value'] for k,v in r.items()} for r in rows]
         return rows
 
