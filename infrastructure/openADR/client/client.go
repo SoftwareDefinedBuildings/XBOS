@@ -40,7 +40,7 @@ func sendPOSTRequest(url string, header string, stream io.Reader) {
 	}
 
 	// POST the request
-	resp, err := http.Post(url, header, stream)
+	resp, err := client.Post(url, header, stream)
 	if err != nil {
 		log.Fatal(err)
 		return
