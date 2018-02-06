@@ -135,7 +135,7 @@ def predict_day(targetday="2018-02-01 00:00:00 PST", WINDOW="30m", N_DAYS=10):
 
     # amount to subtract for heating, cooling
     h = (df[all_but_meter] == 1).apply(sum, axis=1) * heating_consume
-    c = (df[all_but_meter] == 2).apply(sum, axis=1) * cooling_consume
+    c = (df[all_but_meter] == 2).apply(sum, axis=1) * cooling_consume #[TODO] change this to count
 
     meterdata = df[meter]  - h - c
 
