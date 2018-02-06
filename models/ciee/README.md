@@ -5,6 +5,7 @@ You'll need to install (and probably upgrade) the `xbos` module:
 
 You run this all by running `python main.py`, which calls the other models.
 
+`clipperserver.py`: sample script putting a model into Clipper
 
 ## Thermal Model
 
