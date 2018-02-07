@@ -134,8 +134,9 @@ def predict_day(targetday="2018-02-01 00:00:00 PST", WINDOW="30m", N_DAYS=10):
     all_but_meter = df.columns[1:]
 
     # amount to subtract for heating, cooling
+    # sum() works here because the output of the equality filter is boolean values (True is 1, False is 0)
     h = (df[all_but_meter] == 1).apply(sum, axis=1) * heating_consume
-    c = (df[all_but_meter] == 2).apply(sum, axis=1) * cooling_consume #[TODO] change this to count
+    c = (df[all_but_meter] == 2).apply(sum, axis=1) * cooling_consume
 
     meterdata = df[meter]  - h - c
 
