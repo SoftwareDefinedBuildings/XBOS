@@ -1,5 +1,7 @@
+import os
 import datetime, pytz
 import pandas as pd
+import capnp
 from scipy.optimize import curve_fit
 from datetime import datetime, timedelta
 from xbos import get_client
@@ -81,6 +83,7 @@ def execute_schedule(day, sched, popt, initial_temperature):
         else:
             next_temp = next_temperature(popt, prev_temp, 0, weather[idx]) # 0 is off
             actions.append(0)
+        print prev_temp, weather[idx], actions[-1], next_temp
         output.append(next_temp)
         prev_temp = next_temp
 
@@ -95,6 +98,8 @@ def get_model_per_zone(targetday = "2018-02-01 00:00:00 PST"):
 
     T0 = (targetday - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S %Z")
     T1 = (targetday - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S %Z")
+
+    # TODO: configure the training to go back in time until it has 50 cooling *and* 50 heating actions
 
     ret = {}
     for zone in zones:

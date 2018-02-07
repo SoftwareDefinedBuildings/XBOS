@@ -2,13 +2,14 @@ from setuptools import setup, find_packages
 
 print find_packages()
 setup(name='xbos',
-      version='0.0.24',
+      version='0.0.25',
       description='Aggregate wrapper for XBOS services and devices',
       url='https://github.com/SoftwareDefinedBuildings/XBOS',
       author='Gabe Fierro',
       author_email='gtfierro@cs.berkeley.edu',
       packages=find_packages(),
       data_files=[('xbos/services', ['xbos/services/data.capnp'])],
+      include_package_data=True,
       install_requires=[
         'docker==2.5.1',
         'delorean==0.6.0',
