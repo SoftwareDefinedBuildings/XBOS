@@ -52,5 +52,5 @@ func sendPOSTRequest(url string, header string, stream io.Reader) {
 }
 
 func main() {
-	sendPOSTRequest("http://localhost:8080/", "text/xml", loadXMLFile("price.xml"))
+	sendPOSTRequest("http://localhost:8080/", "text/xml", loadXMLFile("price.json"))
 }
