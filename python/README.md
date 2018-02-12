@@ -2,7 +2,7 @@
 
 This is an aggregate package to bring together all XBOS clients under a single package
 
-Current version: 0.0.19
+Current version: 0.0.26
 
 
 ## Usage
