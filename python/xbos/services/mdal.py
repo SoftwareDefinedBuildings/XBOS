@@ -19,7 +19,7 @@ MAX = 1 << 3
 COUNT = 1 << 4
 
 DEFAULT_TIMEOUT=30
-class BOSSWAVEMDALClient(object):
+class MDALClient(object):
     """
     Simple Python client for the Metadata-Driven-Access-Layer (MDAL).
     MDAL ties together Brick models and timeseries data through the use of the `brickframe:uuid`
@@ -168,8 +168,8 @@ if __name__ == '__main__':
             },
         ],
         "Time": {
-            "T0": "2017-08-01 00:00:00",
-            "T1": "2017-08-08 00:00:00",
+            "T0": "2017-08-01 00:00:00 PST",
+            "T1": "2017-08-08 00:00:00 PST",
             "WindowSize": int(1e9*60*5),
             "Aligned": True,
         },
@@ -179,6 +179,6 @@ if __name__ == '__main__':
         },
     }
 
-    c = MDALClient("scratch.ns")
+    c = MDALClient("xbos/mdal")
     df = c.do_query(query)['df']
     print df.describe()
