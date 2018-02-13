@@ -118,9 +118,9 @@ class MDALClient(object):
                     data = msgpack.unpackb(po.content)
                     if data['Nonce'] != query['Nonce']:
                         continue
-                    print 'error' in data
                     if 'error' in data:
                         response['error'] = data['error']
+                        response['df'] = None
                         got_response=True
                         continue
                     uuids = [str(uuid.UUID(bytes=x)) for x in data['Rows']]
