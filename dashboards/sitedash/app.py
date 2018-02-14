@@ -17,16 +17,20 @@ from xbos.services import hod, mdal
 
 SITE = 'ciee'
 
+def get_today():
+    d = datetime.now()
+    return datetime(year=d.year, month=d.month, day=d.day, tzinfo=pytz.timezone("US/Pacific"))
+
 def prevmonday(num):
     """
     Return unix SECOND timestamp of "num" mondays ago
     """
-    today = date.today()
+    today = get_today()
     lastmonday = today - timedelta(days=today.weekday(), weeks=num)
     return lastmonday
 
 hodclient = hod.HodClient("xbos/hod")
-mdalclient = mdal.BOSSWAVEMDALClient("xbos/mdal")
+mdalclient = mdal.MDALClient("xbos/mdal")
 c = get_client()
 
 app = Flask(__name__, static_url_path='')
@@ -44,8 +48,8 @@ def weeklypower(numweeks):
              "Units": "kW"}
         ],
         "Time": {
-            "T0": monday.strftime("%Y-%m-%d %H:%M:%S"),
-            "T1": date.today().strftime("%Y-%m-%d %H:%M:%S"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T0": monday.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": get_today().strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
             "WindowSize": "30m",
             "Aligned": True
         },
@@ -67,7 +71,7 @@ def monthlypower(nummonths):
     nummonths = int(nummonths)
     if nummonths < 2:
         nummonths = 2
-    today = date.today()
+    today = get_today()
     firstdayofmonth = today.replace(day=1)
     query = {
         "Composition": ["meter"],
@@ -78,8 +82,8 @@ def monthlypower(nummonths):
              "Units": "kW"}
         ],
         "Time": {
-            "T0": (firstdayofmonth - timedelta(days=30*nummonths)).strftime("%Y-%m-%d %H:%M:%S"),
-            "T1": firstdayofmonth.strftime("%Y-%m-%d %H:%M:%S"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T0": (firstdayofmonth - timedelta(days=30*nummonths)).strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": firstdayofmonth.strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
             "WindowSize": "30m",
             "Aligned": True
         },
@@ -109,8 +113,8 @@ def dailypower(numdays):
              "Units": "kW"}
         ],
         "Time": {
-            "T0": (date.today() - timedelta(days=int(numdays))).strftime("%Y-%m-%d %H:%M:%S"),
-            "T1": date.today().strftime("%Y-%m-%d %H:%M:%S"),
+            "T0": (get_today() - timedelta(days=int(numdays))).strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": get_today().strftime("%Y-%m-%d %H:%M:%S %Z"),
             "WindowSize": "30m",
             "Aligned": True
         },
