@@ -19,6 +19,25 @@ You either need a BOSSWAVE agent running on your machine, or you can run a ragen
 
 All of these are for full building power
 
+
+- `/api/power/hourly/{num}`:
+    - returns:
+        ```json
+        {
+            "readings": [
+                # starts with timestamp of the beginning of the hour
+                {1515443111: 70.0},
+                {1515443101: 71.0},
+                {1515443091: 79.0},
+                {1515443081: 80.0},
+            ]
+        }
+        ```
+    - parameters:
+        - `{num}`: number of hours to fetch
+    - implementation notes:
+        - want to align this to beginning of day
+
 - `/api/power/daily/{num}`:
     - returns:
         ```json
