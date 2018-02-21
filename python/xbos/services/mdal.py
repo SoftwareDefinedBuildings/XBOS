@@ -127,6 +127,10 @@ class MDALClient(object):
                     data = data_capnp.StreamCollection.from_bytes_packed(data['Data'])
                     if hasattr(data, 'times'):
                         times = list(data.times)
+                        if len(times) == 0:
+                            response['df'] = pd.DataFrame(columns=uuids)
+                            got_response = True
+                            break
                         df = pd.DataFrame(index=pd.to_datetime(times, unit='ns', utc=False))
                         for idx, s in enumerate(data.streams):
                             df[uuids[idx]] = s.values

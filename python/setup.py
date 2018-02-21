@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 print find_packages()
 setup(name='xbos',
-      version='0.0.26',
+      version='0.0.27',
       description='Aggregate wrapper for XBOS services and devices',
       url='https://github.com/SoftwareDefinedBuildings/XBOS',
       author='Gabe Fierro',
@@ -17,7 +17,8 @@ setup(name='xbos',
         'bw2python>=0.6.1',
         'requests>=2.12.2',
         'python-dateutil>=2.4.2',
-        'pandas>=0.20.1'
+        'pandas>=0.20.1',
+        'pycapnp>=0.6.3',
       ],
       zip_safe=False)
 
