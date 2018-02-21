@@ -131,6 +131,36 @@ def dailypower(numdays):
         return resp['df'].resample('1d').apply(sum).to_json()
     return "ok"
 
+@app.route('/api/power/hourly/<numdays>')
+def hourlypower(numdays):
+    query = {
+        "Composition": ["meter"],
+        "Selectors": [mdal.MEAN],
+        "Variables": [
+            {"Name": "meter",
+             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+             "Units": "kW"}
+        ],
+        "Time": {
+            "T0": (get_today() - timedelta(days=int(numdays))).strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": get_today().strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "WindowSize": "30m",
+            "Aligned": True
+        },
+    }
+    print query
+    resp = mdalclient.do_query(query, timeout=60)
+    if 'error' in resp:
+        print 'ERROR', resp
+        abort(500)
+        abort(Response(status=resp['error']))
+        return
+    else:
+        resp['df'].columns = ['readings']
+        return resp['df'].resample('1h').apply(sum).to_json()
+    return "ok"
+
+
 @app.route('/api/power')
 def streampower():
     resp = hodclient.do_query("SELECT ?meter_uri FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uri ?meter_uri };" % SITE)
