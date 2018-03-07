@@ -11,6 +11,7 @@ from datetime import datetime, date, timedelta
 import pytz
 import msgpack
 import os
+import json
 
 from xbos import get_client
 from xbos.services import hod, mdal
@@ -29,16 +30,31 @@ def prevmonday(num):
     lastmonday = today - timedelta(days=today.weekday(), weeks=num)
     return lastmonday
 
+def get_start(last):
+    today = get_today()
+    if last == 'year':
+        return datetime(year=today.year, month=1, day=1, tzinfo=pytz.timezone("US/Pacific"))
+    elif last == 'month':
+        return datetime(year=today.year, month=today.month, day=1, tzinfo=pytz.timezone("US/Pacific"))
+    elif last == 'week':
+        return datetime(year=today.year, month=today.month, day=today.day-today.weekday(), tzinfo=pytz.timezone("US/Pacific"))
+    elif last == 'hour':
+        return datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour, tzinfo=pytz.timezone("US/Pacific"))
+    else:
+        return datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour, tzinfo=pytz.timezone("US/Pacific"))
+
 hodclient = hod.HodClient("xbos/hod")
 mdalclient = mdal.MDALClient("xbos/mdal")
+#mdalclient = mdal.MDALClient("scratch.ns")
 c = get_client()
 
 app = Flask(__name__, static_url_path='')
 
-@app.route('/api/power/weekly/<numweeks>')
-def weeklypower(numweeks):
-    monday = prevmonday(int(numweeks))
-    print monday
+@app.route('/api/power/<last>/in/<bucketsize>')
+def power_summary(last, bucketsize):
+    # first, determine the start date from the 'last' argument
+    start_date = get_start(last)
+    print start_date
     query = {
         "Composition": ["meter"],
         "Selectors": [mdal.MEAN],
@@ -48,9 +64,9 @@ def weeklypower(numweeks):
              "Units": "kW"}
         ],
         "Time": {
-            "T0": monday.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": get_today().strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
-            "WindowSize": "30m",
+            "T0": start_date.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": datetime.now(pytz.timezone("US/Pacific")).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "WindowSize": bucketsize,
             "Aligned": True
         },
     }
@@ -63,16 +79,14 @@ def weeklypower(numweeks):
         return
     else:
         resp['df'].columns = ['readings']
-        return resp['df'].resample('7d').apply(sum).to_json()
+        return resp['df'].dropna().to_json()
     return "ok"
 
-@app.route('/api/power/monthly/<nummonths>')
-def monthlypower(nummonths):
-    nummonths = int(nummonths)
-    if nummonths < 2:
-        nummonths = 2
-    today = get_today()
-    firstdayofmonth = today.replace(day=1)
+@app.route('/api/energy/<last>/in/<bucketsize>')
+def energy_summary(last, bucketsize):
+    # first, determine the start date from the 'last' argument
+    start_date = get_start(last)
+    print start_date
     query = {
         "Composition": ["meter"],
         "Selectors": [mdal.MEAN],
@@ -82,9 +96,9 @@ def monthlypower(nummonths):
              "Units": "kW"}
         ],
         "Time": {
-            "T0": (firstdayofmonth - timedelta(days=30*nummonths)).strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": firstdayofmonth.strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
-            "WindowSize": "30m",
+            "T0": start_date.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": datetime.now(pytz.timezone("US/Pacific")).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "WindowSize": '15m',
             "Aligned": True
         },
     }
@@ -96,73 +110,13 @@ def monthlypower(nummonths):
         abort(Response(status=resp['error']))
         return
     else:
-        resp['df'].columns = ['readings']
-        return resp['df'].resample('30d').apply(sum).to_json()
+        resp['df'].columns = ['readings'] # in k@
+        resp['df']['readings']/=4. # divide by 4 to get 15min (kW) -> kWh
+        return resp['df'].dropna().resample(bucketsize).apply(sum).to_json()
     return "ok"
-
-
-# does SUM
-@app.route('/api/power/daily/<numdays>')
-def dailypower(numdays):
-    query = {
-        "Composition": ["meter"],
-        "Selectors": [mdal.MEAN],
-        "Variables": [
-            {"Name": "meter",
-             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
-             "Units": "kW"}
-        ],
-        "Time": {
-            "T0": (get_today() - timedelta(days=int(numdays))).strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": get_today().strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "WindowSize": "30m",
-            "Aligned": True
-        },
-    }
-    print query
-    resp = mdalclient.do_query(query, timeout=60)
-    if 'error' in resp:
-        print 'ERROR', resp
-        abort(500)
-        abort(Response(status=resp['error']))
-        return
-    else:
-        resp['df'].columns = ['readings']
-        return resp['df'].resample('1d').apply(sum).to_json()
-    return "ok"
-
-@app.route('/api/power/hourly/<numdays>')
-def hourlypower(numdays):
-    query = {
-        "Composition": ["meter"],
-        "Selectors": [mdal.MEAN],
-        "Variables": [
-            {"Name": "meter",
-             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
-             "Units": "kW"}
-        ],
-        "Time": {
-            "T0": (get_today() - timedelta(days=int(numdays))).strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": get_today().strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "WindowSize": "30m",
-            "Aligned": True
-        },
-    }
-    print query
-    resp = mdalclient.do_query(query, timeout=60)
-    if 'error' in resp:
-        print 'ERROR', resp
-        abort(500)
-        abort(Response(status=resp['error']))
-        return
-    else:
-        resp['df'].columns = ['readings']
-        return resp['df'].resample('1h').apply(sum).to_json()
-    return "ok"
-
 
 @app.route('/api/power')
-def streampower():
+def current_power():
     resp = hodclient.do_query("SELECT ?meter_uri FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uri ?meter_uri };" % SITE)
     if resp['Count'] > 0:
         uri = resp['Rows'][0]['?meter_uri']+'/signal/meter'
@@ -249,3 +203,133 @@ SELECT * FROM %s WHERE {
             zones[zonename]['rooms'][roomname]['sensors'].append(s)
 
     return jsonify(zones)
+
+@app.route('/api/hvac/day/<bucketsize>')
+def hvac_summary(bucketsize):
+    # first, determine the start date from the 'last' argument
+    today = get_today()
+    q = """SELECT * FROM %s WHERE {
+          ?rtu rdf:type brick:RTU .
+          ?rtu bf:feeds ?zone .
+          ?zone rdf:type brick:HVAC_Zone .
+          ?rtu bf:isControlledBy ?tstat .
+          ?tstat bf:hasPoint ?sensor .
+          ?sensor rdf:type/rdfs:subClassOf* brick:Temperature_Sensor .
+          ?sensor bf:uuid ?sensor_uuid .
+    };
+    """
+    res = hodclient.do_query(q % SITE)
+    zones = {}
+    for row in res['Rows']:
+        zones[row['?sensor_uuid']] = row['?zone']
+    print zones
+    query = {
+        "Composition": ["tstat_temp"],
+        "Selectors": [mdal.MEAN],
+        "Variables": [
+            {"Name": "tstat_temp",
+             "Definition": q % SITE,
+             "Units": "F"}
+        ],
+        "Time": {
+            "T0": today.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": datetime.now(pytz.timezone("US/Pacific")).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "WindowSize": bucketsize,
+            "Aligned": True
+        },
+    }
+    print query
+    resp = mdalclient.do_query(query, timeout=60)
+    if 'error' in resp:
+        print 'ERROR', resp
+        abort(500)
+        abort(Response(status=resp['error']))
+        return
+    else:
+        resp['df'].columns = [zones.get(x,x) for x in resp['df'].columns]
+        return resp['df'].dropna().to_json()
+    return "ok"
+
+@app.route('/api/hvac/day/setpoints')
+def setpoint_today():
+    # first, determine the start date from the 'last' argument
+    today = get_today()
+    heat_q = """SELECT * FROM %s WHERE {
+          ?rtu rdf:type brick:RTU .
+          ?rtu bf:feeds ?zone .
+          ?zone rdf:type brick:HVAC_Zone .
+          ?rtu bf:isControlledBy ?tstat .
+          ?tstat bf:hasPoint ?hsp .
+          ?hsp rdf:type/rdfs:subClassOf* brick:Supply_Air_Temperature_Heating_Setpoint .
+          ?hsp bf:uuid ?hsp_uuid
+    };
+    """
+    cool_q = """SELECT * FROM %s WHERE {
+          ?rtu rdf:type brick:RTU .
+          ?rtu bf:feeds ?zone .
+          ?zone rdf:type brick:HVAC_Zone .
+          ?rtu bf:isControlledBy ?tstat .
+          ?tstat bf:hasPoint ?csp .
+          ?csp rdf:type/rdfs:subClassOf* brick:Supply_Air_Temperature_Cooling_Setpoint .
+          ?csp bf:uuid ?csp_uuid
+    };
+    """
+    res = hodclient.do_query(heat_q % SITE)
+    zones = {}
+    for row in res['Rows']:
+        zones[row['?hsp_uuid']] = row['?zone']
+    res = hodclient.do_query(cool_q % SITE)
+    for row in res['Rows']:
+        zones[row['?csp_uuid']] = row['?zone']
+
+    query = {
+        "Composition": ["heating"],
+        "Selectors": [mdal.RAW],
+        "Variables": [
+            {"Name": "heating",
+             "Definition": heat_q % SITE,
+             "Units": "F"},
+            {"Name": "cooling",
+             "Definition": cool_q % SITE,
+             "Units": "F"}
+        ],
+        "Time": {
+            "T0": today.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": datetime.now(pytz.timezone("US/Pacific")).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+        },
+    }
+    print query
+    resp = mdalclient.do_query(query, timeout=60)
+    if 'error' in resp:
+        print 'ERROR', resp
+        abort(500)
+        abort(Response(status=resp['error']))
+        return
+    for k in resp.keys():
+        v = resp.pop(k)
+        zone = zones.get(k,k)
+        v = v[v.dropna().diff() != 0]
+        resp[zone] = json.loads(v.to_json()) # this is the way to solve weird serialization issues
+
+    query["Composition"] = ["cooling"]
+    cool_resp = mdalclient.do_query(query, timeout=60)
+    if 'error' in cool_resp:
+        print 'ERROR', cool_resp
+        abort(500)
+        abort(Response(status=cool_resp['error']))
+        return
+    for k in cool_resp.keys():
+        v = cool_resp.pop(k)
+        zone = zones.get(k,k)
+        v = v[v.dropna().diff() != 0]
+        v = json.loads(v.to_json())
+        for ts, hsp in resp[zone].items():
+            csp = v.get(ts)
+            if not csp:
+                continue
+            resp[zone][ts] =[hsp, csp]
+    return jsonify(resp)
+
+
+if __name__ == '__main__':
+    app.run(threaded=True)
