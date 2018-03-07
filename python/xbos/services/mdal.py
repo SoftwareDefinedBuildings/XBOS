@@ -125,7 +125,7 @@ class MDALClient(object):
                         continue
                     uuids = [str(uuid.UUID(bytes=x)) for x in data['Rows']]
                     data = data_capnp.StreamCollection.from_bytes_packed(data['Data'])
-                    if hasattr(data, 'times'):
+                    if hasattr(data, 'times') and len(data.times):
                         times = list(data.times)
                         if len(times) == 0:
                             response['df'] = pd.DataFrame(columns=uuids)
@@ -140,7 +140,7 @@ class MDALClient(object):
                     else:
                         for idx, s in enumerate(data.streams):
                             if hasattr(s, 'times'):
-                                s = pd.Series(s.values, pd.to_datetime(s.times, unit='ns', utc=False))
+                                s = pd.Series(s.values, pd.to_datetime(list(s.times), unit='ns', utc=False))
                                 s.index = s.index.tz_localize(pytz.utc).tz_convert(tz)
                             else:
                                 s = pd.Series(s.values)
