@@ -38,6 +38,8 @@ def get_start(last):
         return datetime(year=today.year, month=today.month, day=1, tzinfo=pytz.timezone("US/Pacific"))
     elif last == 'week':
         return datetime(year=today.year, month=today.month, day=today.day-today.weekday(), tzinfo=pytz.timezone("US/Pacific"))
+    elif last == 'day':
+        return datetime(year=today.year, month=today.month, day=today.day, tzinfo=pytz.timezone("US/Pacific"))
     elif last == 'hour':
         return datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour, tzinfo=pytz.timezone("US/Pacific"))
     else:
