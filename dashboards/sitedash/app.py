@@ -17,10 +17,11 @@ from xbos import get_client
 from xbos.services import hod, mdal
 
 SITE = 'ciee'
+OURTZ=pytz.timezone("US/Pacific")
 
 def get_today():
-    d = datetime.now()
-    return datetime(year=d.year, month=d.month, day=d.day, tzinfo=pytz.timezone("US/Pacific"))
+    d = datetime.now(OURTZ)
+    return datetime(year=d.year, month=d.month, day=d.day, tzinfo=OURTZ)
 
 def prevmonday(num):
     """
@@ -33,17 +34,18 @@ def prevmonday(num):
 def get_start(last):
     today = get_today()
     if last == 'year':
-        return datetime(year=today.year, month=1, day=1, tzinfo=pytz.timezone("US/Pacific"))
+        dt = datetime(year=today.year, month=1, day=1)
     elif last == 'month':
-        return datetime(year=today.year, month=today.month, day=1, tzinfo=pytz.timezone("US/Pacific"))
+        dt = datetime(year=today.year, month=today.month, day=1)
     elif last == 'week':
-        return datetime(year=today.year, month=today.month, day=today.day-today.weekday(), tzinfo=pytz.timezone("US/Pacific"))
+        dt = datetime(year=today.year, month=today.month, day=today.day-today.weekday())
     elif last == 'day':
-        return datetime(year=today.year, month=today.month, day=today.day, tzinfo=pytz.timezone("US/Pacific"))
+        dt = datetime(year=today.year, month=today.month, day=today.day)
     elif last == 'hour':
-        return datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour, tzinfo=pytz.timezone("US/Pacific"))
+        dt = datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour)
     else:
-        return datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour, tzinfo=pytz.timezone("US/Pacific"))
+        dt = datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour)
+    return OURTZ.localize(dt)
 
 hodclient = hod.HodClient("xbos/hod")
 mdalclient = mdal.MDALClient("xbos/mdal")
@@ -67,7 +69,7 @@ def power_summary(last, bucketsize):
         ],
         "Time": {
             "T0": start_date.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(pytz.timezone("US/Pacific")).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
             "WindowSize": bucketsize,
             "Aligned": True
         },
@@ -99,7 +101,7 @@ def energy_summary(last, bucketsize):
         ],
         "Time": {
             "T0": start_date.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(pytz.timezone("US/Pacific")).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
             "WindowSize": '15m',
             "Aligned": True
         },
@@ -235,7 +237,7 @@ def hvac_summary(bucketsize):
         ],
         "Time": {
             "T0": today.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(pytz.timezone("US/Pacific")).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
             "WindowSize": bucketsize,
             "Aligned": True
         },
@@ -297,7 +299,7 @@ def setpoint_today():
         ],
         "Time": {
             "T0": today.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(pytz.timezone("US/Pacific")).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
         },
     }
     print query
