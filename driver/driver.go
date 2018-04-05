@@ -38,7 +38,7 @@ type BW2DriverExecutor struct {
 // - interface refresh rate
 
 func (exec *BW2DriverExecutor) Run(driver Driver) (err error) {
-	//var entityFile string = "/home/gabe/.ssh/gabe.ent"
+	//var entityFile string = "asdf"
 	var interfaceRefreshRate time.Duration = 30 * time.Second
 	var livenessInterval time.Duration = 10 * time.Second
 	var pollingInterval time.Duration = 1 * time.Second
