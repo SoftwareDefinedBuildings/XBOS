@@ -7,7 +7,9 @@ from flask import jsonify
 from flask_basicauth import BasicAuth
 from collections import defaultdict
 from itertools import groupby
+from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
+import pandas as pd
 import pytz
 import msgpack
 import os
@@ -47,6 +49,18 @@ def get_start(last):
         dt = datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour)
     return OURTZ.localize(dt)
 
+def generate_months(lastN):
+    firstDayThisMonth = get_today().replace(day=1)
+    ranges = [[get_today(), firstDayThisMonth]]
+    lastN = int(lastN)
+    while lastN > 0:
+        firstDayLastMonth = firstDayThisMonth - relativedelta(months=1)
+        ranges.append([firstDayThisMonth - timedelta(days=1), firstDayLastMonth])
+        firstDayThisMonth = firstDayLastMonth
+        lastN -= 1
+    return ranges
+
+
 hodclient = hod.HodClient("xbos/hod")
 mdalclient = mdal.MDALClient("xbos/mdal")
 #mdalclient = mdal.MDALClient("scratch.ns")
@@ -58,7 +72,44 @@ app = Flask(__name__, static_url_path='')
 def power_summary(last, bucketsize):
     # first, determine the start date from the 'last' argument
     start_date = get_start(last)
-    print start_date
+    if last == 'year' and bucketsize == 'month':
+        ranges = generate_months(get_today().month)
+
+        readings = []
+        times = []
+        for t0,t1 in ranges:
+            query = {
+                "Composition": ["meter"],
+                "Selectors": [mdal.MEAN],
+                "Variables": [
+                    {"Name": "meter",
+                     "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+                     "Units": "kW"}
+                ],
+                "Time": {
+                    "T0": t0.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                    "T1": t1.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                    "WindowSize": '{0}d'.format((t0-t1).days),
+                    "Aligned": True
+                },
+            }
+            print query
+            resp = mdalclient.do_query(query, timeout=60)
+            if 'error' in resp:
+                print 'ERROR', resp
+                abort(500)
+                abort(Response(status=resp['error']))
+                return
+            else:
+                resp['df'].columns = ['readings']
+            print resp['df']
+            times.append(resp['df'].index[0])
+            readings.append(resp['df']['readings'][0])
+        print zip(times,readings)
+        df = pd.DataFrame(readings,index=times)
+        df.columns = ['readings']
+        return df.dropna().to_json()
+
     query = {
         "Composition": ["meter"],
         "Selectors": [mdal.MEAN],
@@ -90,6 +141,42 @@ def power_summary(last, bucketsize):
 def energy_summary(last, bucketsize):
     # first, determine the start date from the 'last' argument
     start_date = get_start(last)
+    if last == 'year' and bucketsize == 'month':
+        ranges = generate_months(get_today().month)
+
+        readings = []
+        times = []
+        for t0,t1 in ranges:
+            query = {
+                "Composition": ["meter"],
+                "Selectors": [mdal.MEAN],
+                "Variables": [
+                    {"Name": "meter",
+                     "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+                     "Units": "kW"}
+                ],
+                "Time": {
+                    "T0": t0.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                    "T1": t1.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                    "WindowSize": '15m',
+                    "Aligned": True
+                },
+            }
+            print query
+            resp = mdalclient.do_query(query, timeout=60)
+            if 'error' in resp:
+                print 'ERROR', resp
+                abort(500)
+                abort(Response(status=resp['error']))
+                return
+            else:
+                resp['df'].columns = ['readings']
+                resp['df'].columns = ['readings'] # in k@
+                resp['df']['readings']/=4. # divide by 4 to get 15min (kW) -> kWh
+                times.append(resp['df'].index[0])
+                readings.append(resp['df']['readings'].sum())
+        df = pd.DataFrame(readings,index=times)
+        return df.dropna().to_json()
     print start_date
     query = {
         "Composition": ["meter"],

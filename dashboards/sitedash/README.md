@@ -28,6 +28,7 @@ All of these are for full building power
         - `bucketsize`: follows format `{number}{unit}`
             - `number`: 1,2, etc
             - `unit`: `m` (minute), `h` (hour), `d` (day)
+            - OR specify just `month` to get month-aware divisions
         - examples:
             - `30d` (30 days)
             - `1h` (1 hour)
@@ -69,6 +70,7 @@ All of these are for full building power
         - `bucketsize`: follows format `{number}{unit}`
             - `number`: 1,2, etc
             - `unit`: `m` (minute), `h` (hour), `d` (day)
+            - OR specify just `month` to get month-aware divisions
         - examples:
             - `30d` (30 days)
             - `1h` (1 hour)
