@@ -23,7 +23,7 @@ OURTZ=pytz.timezone("US/Pacific")
 
 def get_today():
     d = datetime.now(OURTZ)
-    return datetime(year=d.year, month=d.month, day=d.day, tzinfo=OURTZ)
+    return OURTZ.localize(datetime(year=d.year, month=d.month, day=d.day))
 
 def prevmonday(num):
     """
@@ -55,7 +55,7 @@ def generate_months(lastN):
     lastN = int(lastN)
     while lastN > 0:
         firstDayLastMonth = firstDayThisMonth - relativedelta(months=1)
-        ranges.append([firstDayThisMonth - timedelta(days=1), firstDayLastMonth])
+        ranges.append([firstDayThisMonth - timedelta(days=1) + timedelta(hours=1), firstDayLastMonth])
         firstDayThisMonth = firstDayLastMonth
         lastN -= 1
     return ranges
@@ -73,7 +73,7 @@ def power_summary(last, bucketsize):
     # first, determine the start date from the 'last' argument
     start_date = get_start(last)
     if last == 'year' and bucketsize == 'month':
-        ranges = generate_months(get_today().month)
+        ranges = generate_months(get_today().month - 1)
 
         readings = []
         times = []
@@ -102,8 +102,8 @@ def power_summary(last, bucketsize):
                 return
             else:
                 resp['df'].columns = ['readings']
-            print resp['df']
-            times.append(resp['df'].index[0])
+            t1_ = t1.strptime(t1.strftime("%Y-%m-%d"), '%Y-%m-%d')
+            times.append(OURTZ.localize(t1_))
             readings.append(resp['df']['readings'][0])
         print zip(times,readings)
         df = pd.DataFrame(readings,index=times)
@@ -142,7 +142,7 @@ def energy_summary(last, bucketsize):
     # first, determine the start date from the 'last' argument
     start_date = get_start(last)
     if last == 'year' and bucketsize == 'month':
-        ranges = generate_months(get_today().month)
+        ranges = generate_months(get_today().month - 1)
 
         readings = []
         times = []
@@ -173,7 +173,8 @@ def energy_summary(last, bucketsize):
                 resp['df'].columns = ['readings']
                 resp['df'].columns = ['readings'] # in k@
                 resp['df']['readings']/=4. # divide by 4 to get 15min (kW) -> kWh
-                times.append(resp['df'].index[0])
+                t1_ = t1.strptime(t1.strftime("%Y-%m-%d"), '%Y-%m-%d')
+                times.append(OURTZ.localize(t1_))
                 readings.append(resp['df']['readings'].sum())
         df = pd.DataFrame(readings,index=times)
         return df.dropna().to_json()
