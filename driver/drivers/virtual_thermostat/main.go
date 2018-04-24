@@ -1,6 +1,7 @@
 package virtualthermostat
 
 import (
+	"fmt"
 	"math"
 	"sync"
 	"time"
@@ -146,6 +147,7 @@ func (vt *VirtualThermostatDriver) GetInterfaces() []driver.Interface {
 func (vt *VirtualThermostatDriver) generateOutsideAirTemp() float64 {
 	currentTime := time.Now()
 	currentTimeSeconds := float64((currentTime.Hour() * 3600) + (currentTime.Minute() * 60) + currentTime.Second())
+	fmt.Println(currentTimeSeconds)
 	temp := BASE_TEMP + (FLUX * math.Sin(0.01*currentTimeSeconds))
 	return temp
 }

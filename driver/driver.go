@@ -24,6 +24,7 @@ type Driver interface {
 
 type BW2DriverExecutor struct {
 	d       Driver
+	cl      sync.Mutex
 	client  *bw2.BW2Client
 	baseURI string
 	wal     *wal
@@ -53,11 +54,23 @@ func (exec *BW2DriverExecutor) Run(driver Driver) (err error) {
 	if err != nil {
 		return errors.Wrap(err, "Could not init WAL")
 	}
+	exec.cl.Lock()
 	exec.client = bw2.ConnectOrExit("")
 	exec.client.OverrideAutoChainTo(true)
 	exec.client.SetEntityFromEnvironOrExit()
 	exec.interfaces = make(map[string]Interface)
 	exec.baseURI = params.MustString("base_uri")
+	exec.client.SetErrorHandler(func(e error) {
+		fmt.Println("Error!", e)
+		for e != nil {
+			time.Sleep(5 * time.Second)
+			exec.cl.Lock()
+			fmt.Println("Attempt reconnect")
+			exec.client, e = bw2.Connect("")
+			exec.cl.Unlock()
+		}
+	})
+	exec.cl.Unlock()
 
 	name := driver.GetName()
 	fmt.Println("Driver name is", name)
@@ -97,6 +110,42 @@ func (exec *BW2DriverExecutor) Run(driver Driver) (err error) {
 		}
 	}()
 
+	//readUncommitted := func(seqno int) []byte {
+	//}
+	//subscribeURI := fmt.Sprintf("%s/s.%s/%s/i.xbos.wal/slot/log",
+	//	exec.baseURI,
+	//	exec.d.GetName(),
+	//	iface.GetInstance(),
+	//)
+	//sub, err := exec.client.Subscribe(&bw2.SubscribeParams{
+	//	URI: subscribeURI,
+	//})
+	//if err != nil {
+	//	return errors.Wrap(err, "Could not subscribe")
+	//}
+	//go func() {
+	//	for msg := range sub {
+	//		po := msg.GetOnePODF(XBOS_WAL_PONUM)
+	//		if po == nil {
+	//			fmt.Println("no valid ponum")
+	//			continue
+	//		}
+	//		msgpo, err := bw2.LoadMsgPackPayloadObject(XBOS_WAL_PONUM, po.GetContents())
+	//		if err != nil {
+	//			fmt.Println("cannot load msgpack", err)
+	//			return
+	//		}
+	//		var walReq XBOSWALRequest
+	//		if err := msgpo.ValueInto(&walReq); err != nil {
+	//			fmt.Println("cannot parse msgpack", err)
+	//			return
+	//		}
+	//		//TODO: add uri
+	//		ret, err := exec.wal.readUncommitted("", walReq.Seqno, walReq.Batch)
+	//		//readUncommitted(msg)
+	//	}
+	//}()
+
 	select {}
 
 	return nil
@@ -131,19 +180,40 @@ func (exec *BW2DriverExecutor) publishSignals(iface Interface) error {
 			iface.GetName(),
 			signalname,
 		)
-		hash, err := exec.wal.add(publishURI, []byte{1, 2, 3, 4, 5})
+		datamp := data.SerializeMsgpack()
+		hash, err := exec.wal.add(publishURI, datamp)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("err wal add", err)
 			continue
 		}
+
+		po, err := bw2.LoadMsgPackPayloadObjectPO(data.GetPONum(), datamp)
+		if err != nil {
+			fmt.Println("err make po", err)
+			continue
+		}
+
+		exec.cl.Lock()
+		err = exec.client.Publish(&bw2.PublishParams{
+			URI:            publishURI,
+			Persist:        true,
+			PayloadObjects: []bw2.PayloadObject{po},
+		})
+		exec.cl.Unlock()
+		if err != nil {
+			fmt.Println("err publishing", err)
+			continue
+		}
+
 		uncommitted, err := exec.wal.uncommitted(publishURI)
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
-		for i, b := range uncommitted {
-			fmt.Println(" >", i, len(b))
-		}
+		fmt.Println("uncommitted (", len(uncommitted), ")")
+		//for i, b := range uncommitted {
+		//	fmt.Println(" >", i, len(b))
+		//}
 
 		fmt.Println(publishURI, data, base64.URLEncoding.EncodeToString(hash))
 	}
@@ -151,6 +221,8 @@ func (exec *BW2DriverExecutor) publishSignals(iface Interface) error {
 }
 
 func (exec *BW2DriverExecutor) publishLiveness(iface Interface) error {
+	exec.cl.Lock()
+	defer exec.cl.Unlock()
 	uri := fmt.Sprintf("%s/s.%s/%s/%s",
 		exec.baseURI,
 		exec.d.GetName(),

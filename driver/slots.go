@@ -12,3 +12,8 @@ type XBOSThermostatStateSlot struct {
 	Fan             bool           `msgpack:"fan"`
 	Mode            ThermostatMode `msgpack:"mode"`
 }
+
+type XBOSWALRequest struct {
+	Seqno uint64 `msgpack:"seqno"`
+	Batch uint64 `msgpack:"batch"`
+}

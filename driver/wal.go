@@ -97,3 +97,33 @@ func (w *wal) uncommitted(uri string) (ret [][]byte, err error) {
 func (w *wal) getSeqno(uri string) uint32 {
 	return 0
 }
+
+func (w *wal) readUncommitted(uri string, seqno uint64, batch uint64) (ret [][]byte, err error) {
+	opts := badger.DefaultIteratorOptions
+	opts.PrefetchSize = 10
+	hash := make([]byte, 12)
+	urihash := make([]byte, 4)
+	_urihash := murmur.Murmur3([]byte(uri))
+	binary.LittleEndian.PutUint32(hash[:4], _urihash)
+	binary.LittleEndian.PutUint32(urihash, _urihash)
+	binary.LittleEndian.PutUint64(hash[4:], seqno)
+	var num = uint64(0)
+	err = w.db.View(func(txn *badger.Txn) error {
+		it := txn.NewIterator(opts)
+		for it.Seek(hash); it.ValidForPrefix(urihash); it.Next() {
+			item := it.Item()
+			v, err := item.Value()
+			if err != nil {
+				return err
+			}
+			ret = append(ret, v)
+			num += 1
+			if num == batch {
+				break
+			}
+		}
+		it.Close()
+		return nil
+	})
+	return
+}
