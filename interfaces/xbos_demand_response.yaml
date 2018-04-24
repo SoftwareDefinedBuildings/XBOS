@@ -1,0 +1,55 @@
+Demand Response:
+    ponum: 2.1.1.9
+    description: Standard XBOS demand response event interface
+    interface: i.xbos.demand_response
+    signals:
+        info:
+            - event_start
+            - event_end
+            - event_type
+            - dr_status
+            - time
+    properties:
+        event_start:
+            type: integer
+            description: DR event start time, expressed as nanoseconds since the Unix epoch
+            required: true
+            units: ns
+        event_end:
+            type: integer
+            description: DR event end time, expressed as nanoseconds since the Unix epoch
+            required: true
+            units: ns
+        event_type:
+            type: integer
+            description: The type (severity) of the DR event
+            required: true
+            units: event_type
+            enum:
+                - value: 0
+                  description: Normal
+                - value: 1
+                  description: Moderate
+                - value: 2
+                  description: High
+                - value: 3
+                  description: Special
+        dr_status:
+            type: integer
+            description: The local site's status regarding the DR event
+            required: true
+            units: dr_status
+            enum:
+                - value: 0
+                  description: Not configured
+                - value: 1
+                  description: Unusable
+                - value: 2
+                  description: Inactive
+                - value: 3
+                  description: Active
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
+            units: ns
