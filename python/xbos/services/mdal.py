@@ -114,38 +114,44 @@ class MDALClient(object):
         def _handleresult(msg):
             got_response = False
             for po in msg.payload_objects:
-                if po.type_dotted == (2,0,10,4):
-                    data = msgpack.unpackb(po.content)
-                    if data['Nonce'] != query['Nonce']:
-                        continue
-                    if 'error' in data:
-                        response['error'] = data['error']
-                        response['df'] = None
-                        got_response=True
-                        continue
-                    uuids = [str(uuid.UUID(bytes=x)) for x in data['Rows']]
-                    data = data_capnp.StreamCollection.from_bytes_packed(data['Data'])
-                    if hasattr(data, 'times') and len(data.times):
-                        times = list(data.times)
-                        if len(times) == 0:
-                            response['df'] = pd.DataFrame(columns=uuids)
-                            got_response = True
-                            break
-                        df = pd.DataFrame(index=pd.to_datetime(times, unit='ns', utc=False))
-                        for idx, s in enumerate(data.streams):
-                            df[uuids[idx]] = s.values
-                        df.index = df.index.tz_localize(pytz.utc).tz_convert(tz)
-                        response['df'] = df
+                if po.type_dotted != (2,0,10,4): continue
+                data = msgpack.unpackb(po.content)
+                if data['Nonce'] != query['Nonce']: continue
+
+                if 'error' in data:
+                    response['error'] = data['error']
+                    response['df'] = None
+                    got_response=True
+                    continue
+
+                uuids = [str(uuid.UUID(bytes=x)) for x in data['Rows']]
+                data = data_capnp.StreamCollection.from_bytes_packed(data['Data'])
+                if hasattr(data, 'times') and len(data.times):
+                    times = list(data.times)
+                    if len(times) == 0:
+                        response['df'] = pd.DataFrame(columns=uuids)
                         got_response = True
-                    else:
-                        for idx, s in enumerate(data.streams):
-                            if hasattr(s, 'times'):
-                                s = pd.Series(s.values, pd.to_datetime(list(s.times), unit='ns', utc=False))
-                                s.index = s.index.tz_localize(pytz.utc).tz_convert(tz)
-                            else:
-                                s = pd.Series(s.values)
-                            response[uuids[idx]] = s
-                        got_response = True
+                        break
+                    df = pd.DataFrame(index=pd.to_datetime(times, unit='ns', utc=False))
+                    for idx, s in enumerate(data.streams):
+                        df[uuids[idx]] = s.values
+                    df.index = df.index.tz_localize(pytz.utc).tz_convert(tz)
+                    response['df'] = df
+                    got_response = True
+                else:
+                    df = pd.DataFrame()
+                    for idx, s in enumerate(data.streams):
+                        if hasattr(s, 'times'):
+                            newdf = pd.DataFrame(list(s.values), index=list(s.times), columns=[uuids[idx]])
+                            newdf.index = pd.to_datetime(newdf.index, unit='ns').tz_localize(pytz.utc).tz_convert(tz)
+                            df = df.join(newdf, how='outer')
+                        else:
+                            raise Exception("Does this ever happen? Tell gabe!")
+                    response['df'] = df
+                    got_response = True
+            df = response.get('df')
+            if df is not None:
+                response['df'] = df[~df.index.duplicated(keep='first')]
             if got_response:
                 ev.set()
         h = self.c.subscribe("{0}/s.mdal/_/i.mdal/signal/{1}".format(self.url, self.vk[:-1]), _handleresult)
