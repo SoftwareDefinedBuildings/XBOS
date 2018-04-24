@@ -7,6 +7,7 @@ definitions:
     - $ref: ./xbos_plug.yaml
     - $ref: ./xbos_temperature_sensor.yaml
     - $ref: ./xbos_meter.yaml
+    - $ref: ./xbos_demand_response.yaml
 tags:
     - name: units
       description: The engineering units for the related field
