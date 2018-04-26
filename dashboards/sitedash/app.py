@@ -3,12 +3,15 @@ from flask import abort
 from flask import Response
 from flask import render_template
 from flask import request
+from flask import current_app
+from flask import make_response
 from flask import jsonify
 from flask_basicauth import BasicAuth
 from collections import defaultdict
 from itertools import groupby
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
+from functools import update_wrapper
 import pandas as pd
 import pytz
 import msgpack
@@ -20,6 +23,47 @@ from xbos.services import hod, mdal
 
 SITE = 'ciee'
 OURTZ=pytz.timezone("US/Pacific")
+
+def crossdomain(origin=None, methods=None, headers=None,
+                max_age=21600, attach_to_all=True,
+                automatic_options=True):
+    if methods is not None:
+        methods = ', '.join(sorted(x.upper() for x in methods))
+    if headers is not None and not isinstance(headers, basestring):
+        headers = ', '.join(x.upper() for x in headers)
+    if not isinstance(origin, basestring):
+        origin = ', '.join(origin)
+    if isinstance(max_age, timedelta):
+        max_age = max_age.total_seconds()
+
+    def get_methods():
+        if methods is not None:
+            return methods
+
+        options_resp = current_app.make_default_options_response()
+        return options_resp.headers['allow']
+
+    def decorator(f):
+        def wrapped_function(*args, **kwargs):
+            if automatic_options and request.method == 'OPTIONS':
+                resp = current_app.make_default_options_response()
+            else:
+                resp = make_response(f(*args, **kwargs))
+            if not attach_to_all and request.method != 'OPTIONS':
+                return resp
+
+            h = resp.headers
+
+            h['Access-Control-Allow-Origin'] = origin
+            h['Access-Control-Allow-Methods'] = get_methods()
+            h['Access-Control-Max-Age'] = str(max_age)
+            if headers is not None:
+                h['Access-Control-Allow-Headers'] = headers
+            return resp
+
+        f.provide_automatic_options = False
+        return update_wrapper(wrapped_function, f)
+    return decorator
 
 def get_today():
     d = datetime.now(OURTZ)
@@ -69,6 +113,7 @@ c = get_client()
 app = Flask(__name__, static_url_path='')
 
 @app.route('/api/power/<last>/in/<bucketsize>')
+@crossdomain(origin="*")
 def power_summary(last, bucketsize):
     # first, determine the start date from the 'last' argument
     start_date = get_start(last)
@@ -138,6 +183,7 @@ def power_summary(last, bucketsize):
     return "ok"
 
 @app.route('/api/energy/<last>/in/<bucketsize>')
+@crossdomain(origin="*")
 def energy_summary(last, bucketsize):
     # first, determine the start date from the 'last' argument
     start_date = get_start(last)
@@ -208,6 +254,7 @@ def energy_summary(last, bucketsize):
     return "ok"
 
 @app.route('/api/power')
+@crossdomain(origin="*")
 def current_power():
     resp = hodclient.do_query("SELECT ?meter_uri FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uri ?meter_uri };" % SITE)
     if resp['Count'] > 0:
@@ -252,6 +299,7 @@ def read_uri(uri):
 #    return status
 
 @app.route('/api/hvac')
+@crossdomain(origin="*")
 def hvacstate():
     resp = hodclient.do_query("""
 SELECT * FROM %s WHERE {
@@ -297,6 +345,7 @@ SELECT * FROM %s WHERE {
     return jsonify(zones)
 
 @app.route('/api/hvac/day/<bucketsize>')
+@crossdomain(origin="*")
 def hvac_summary(bucketsize):
     # first, determine the start date from the 'last' argument
     today = get_today()
@@ -343,6 +392,7 @@ def hvac_summary(bucketsize):
     return "ok"
 
 @app.route('/api/hvac/day/setpoints')
+@crossdomain(origin="*")
 def setpoint_today():
     # first, determine the start date from the 'last' argument
     today = get_today()
