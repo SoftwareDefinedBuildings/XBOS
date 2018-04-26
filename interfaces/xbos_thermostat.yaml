@@ -9,7 +9,8 @@ Thermostat:
             - heating_setpoint
             - cooling_setpoint
             - override
-            - fan
+            - fan_state
+            - fan_mode
             - mode
             - state
             - time
@@ -22,7 +23,7 @@ Thermostat:
             - cooling_setpoint
             - override
             - mode
-            - fan
+            - fan_mode
     properties:
         temperature:
             type: double
@@ -49,11 +50,16 @@ Thermostat:
             description: Override state of the thermostat. If the thermostat is in override mode, it will not follow its programmed schedule.
             required: true
             units: on/off
-        fan:
+        fan_state:
             type: boolean
             description: Fan state of the thermostat
             required: false
             units: on/off
+        fan_mode:
+            type: integer
+            description: Fan mode of the thermostat
+            required: true
+            units: 1 = auto, 2 = on, 3 = schedule/auto
         mode:
             type: integer
             description: The current operating policy of the thermostat
