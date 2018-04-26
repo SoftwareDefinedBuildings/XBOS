@@ -12,7 +12,8 @@ class Thermostat(object):
         self._uri = uri.rstrip('/')
         self._state = {
          "cooling_setpoint": None,
-         "fan": None,
+         "fan_mode": None,
+         "fan_state": None,
          "heating_setpoint": None,
          "mode": None,
          "override": None,
@@ -45,8 +46,12 @@ class Thermostat(object):
         return read_self_timeout(self, 'cooling_setpoint', timeout)
 
     @property
-    def fan(self, timeout=30):
-        return read_self_timeout(self, 'fan', timeout)
+    def fan_mode(self, timeout=30):
+        return read_self_timeout(self, 'fan_mode', timeout)
+
+    @property
+    def fan_state(self, timeout=30):
+        return read_self_timeout(self, 'fan_state', timeout)
 
     @property
     def heating_setpoint(self, timeout=30):
@@ -89,6 +94,6 @@ class Thermostat(object):
     def set_mode(self, value):
         self.write({'mode': value})
 
-    def set_fan(self, value):
-        self.write({'fan': value})
+    def set_fan_mode(self, value):
+        self.write({'fan_mode': value})
 
