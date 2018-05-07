@@ -27,12 +27,14 @@ Demand Response:
             units: event_type
             enum:
                 - value: 0
-                  description: Normal
+                  description: No event
                 - value: 1
-                  description: Moderate
+                  description: Normal
                 - value: 2
-                  description: High
+                  description: Moderate
                 - value: 3
+                  description: High
+                - value: 4
                   description: Special
         dr_status:
             type: integer
