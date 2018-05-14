@@ -8,7 +8,7 @@ from dateutil import rrule
 from datetime import datetime, timedelta
 
 # data clients
-mdal = BOSSWAVEMDALClient("xbos/mdal")
+mdal = MDALClient("xbos/mdal")
 hod = HodClient("xbos/hod")
 
 # temporal parameters
@@ -80,7 +80,12 @@ def predict_day(targetday="2018-01-30 00:00:00 PST", WINDOW="30m", N_DAYS=10):
 	sample_weather = today_data.columns[0]
 	
 	# compare MSE error of today compared with the historical day
-	mse = mean_squared_error(today_data[sample_weather], use_weather)
+        use_weather.dropna(inplace=True)
+        today_data[sample_weather] = today_data[sample_weather].dropna()
+        common = use_weather.join(today_data[sample_weather], how='inner', lsuffix='_').index
+        if len(common) == 0:
+            continue
+	mse = mean_squared_error(today_data[sample_weather].ix[common], use_weather.ix[common])
 	errors.append(mse)
 
     d = pd.DataFrame(errors)

@@ -24,7 +24,7 @@ from dateutil import rrule
 from datetime import datetime, timedelta
 
 # data clients
-mdal = BOSSWAVEMDALClient("xbos/mdal")
+mdal = MDALClient("xbos/mdal")
 hod = HodClient("xbos/hod")
 
 # temporal parameters
@@ -51,7 +51,7 @@ lighting_meter_query = """SELECT ?lighting ?meter_uuid FROM %s WHERE {
 };"""
 
 def predict_day(targetday="2018-02-01 00:00:00 PST", WINDOW="30m", N_DAYS=10):
-    T0 = "2017-07-01 00:00:00 PST"
+    T0 = "2018-01-01 00:00:00 PST"
     day = datetime.strptime(targetday, "%Y-%m-%d %H:%M:%S %Z")
     day = pytz.timezone('US/Pacific').localize(day)
     T1 = (day - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S %Z")
@@ -163,6 +163,9 @@ def predict_day(targetday="2018-02-01 00:00:00 PST", WINDOW="30m", N_DAYS=10):
 	
 	today_data.index = use_meter.index # move them onto the same day to aid subtraction
 	sample_meter = today_data.columns[0]
+
+        use_meter.fillna(0, inplace=True)
+        today_data[sample_meter].fillna(0, inplace=True)
 	
 	# compare MSE error of today compared with the historical day
 	mse = mean_squared_error(today_data[sample_meter], use_meter)

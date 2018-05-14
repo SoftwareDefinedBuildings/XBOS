@@ -1,4 +1,4 @@
-TEST_DATE = "2017-10-06 00:00:00 PST"
+TEST_DATE = "2018-05-06 00:00:00 PST"
 import pandas as pd
 
 from thermal_model import get_model_per_zone, normal_schedule, dr_schedule, execute_schedule

@@ -14,7 +14,7 @@ from dateutil import rrule
 from datetime import datetime, timedelta
 
 # data clients
-mdal = BOSSWAVEMDALClient("xbos/mdal")
+mdal = MDALClient("xbos/mdal")
 hod = HodClient("xbos/hod")
 SITE = "ciee"
 
@@ -37,6 +37,11 @@ thermostat_temp_query = """SELECT ?tstat_temp_uuid FROM %s WHERE {
     ?tstat bf:hasPoint ?temp .
     ?temp rdf:type brick:Temperature_Sensor .
     ?temp bf:uuid ?tstat_temp_uuid .
+};"""
+
+weather_temp_query = """SELECT ?weather_temp_uuid FROM %s WHERE {
+    ?temp rdf:type brick:Weather_Temperature_Sensor .
+    ?temp bf:uuid ?weather_temp_uuid .
 };"""
 
 # if state is 1 we are doing heating
@@ -105,7 +110,7 @@ def get_model_per_zone(targetday = "2018-02-01 00:00:00 PST"):
     for zone in zones:
         print thermostat_state_query % (SITE, zone)
         tstat_data_query = {
-            "Composition": ["tstat_sensor", "tstat_state","1c467b79-b314-3c1e-83e6-ea5e7048c37b"],
+            "Composition": ["tstat_sensor", "tstat_state","weather"],
             "Selectors": [MEAN, MAX, MEAN],
             "Variables": [
                 {
@@ -116,6 +121,10 @@ def get_model_per_zone(targetday = "2018-02-01 00:00:00 PST"):
                 {
                     "Name": "tstat_state",
                     "Definition": thermostat_state_query % (SITE, zone),
+                },
+                {
+                    "Name": "weather",
+                    "Definition": weather_temp_query % (SITE),
                 },
             ],
             "Time": {
@@ -129,6 +138,9 @@ def get_model_per_zone(targetday = "2018-02-01 00:00:00 PST"):
             print resp['error']
             continue
         df = resp['df']
+        if len(df.columns) < 3:
+            continue
+        df = df[df.columns[:3]]
         df.columns = ['tin','a','toutside'] # inside temperature, action, outside temperature
         # column for heating
         df['heat_a'] = df.apply(f1, axis=1)
