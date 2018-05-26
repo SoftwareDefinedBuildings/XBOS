@@ -83,11 +83,15 @@ Thermostat:
                 - value: 0
                   description: The thermostat is off (will not call for heat/cool)
                 - value: 1
-                  description: The thermostat is calling for heat
+                  description: The thermostat is calling for heat (stage one)
                 - value: 2
-                  description: The thermostat is calling for cool
+                  description: The thermostat is calling for cool (stage one)
                 - value: 3
                   description: The thermostat is in auto mode (not currently calling for heat/cool, but can)
+                - value: 4
+                  description: The thermostat is calling for heat (stage two)
+                - value: 5
+                  description: The thermostat is calling for cool (stage two)
         time:
             type: integer
             description: nanoseconds since the Unix epoch
