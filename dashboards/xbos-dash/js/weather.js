@@ -1,6 +1,6 @@
 $(document).ready(function() {  
   getWeather(); //Get the initial weather.
-  setInterval(getWeather, 600000); //Update the weather every 10 minutes.
+  setInterval(getWeather, 6000); //Update the weather every 10 minutes.
 });
 
 function getWeather() {

@@ -84,19 +84,23 @@ $(document).ready(function() {
 		toRet.name = e;
 		toRet.id = toRet.name;
 		energyChart.setTitle(null, { text: toRet.name});
+		if (end()) {
+			energyChart.setTitle({ "text": "Power Consumption" }, null);
+			energyChart.yAxis[0].setTitle({ "text": "kW"});
+		}
 		toRet.data = makeData(j);
 		addDrill(toRet.data);
-		setType(toRet);
+		toRet.type = getType();
 		return toRet;
 	}
 
 	function end() { return lev == (levels.length - 1); }
 
-	function setType(x) {
+	function getType() {
 		if (!end()) {
-			x.type = "column";
+			return "column";
 		} else {
-			x.type = "line";
+			return "line";
 		}
 	}
 
@@ -128,30 +132,37 @@ $(document).ready(function() {
 			"type": 'column',
 			"events": {
 				"load": function(e) {
+					this.showLoading();
 					$.ajax({
 						"url": "http://127.0.0.1:5000/api/" + getPVE() + apis[lev],
 						"type": "GET",
 						"dataType": "json",
 						"success": function(d) {
+							energyChart.hideLoading();
 							energyChart.series[0].setData(processResp(d));
+							// energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
 						}
 					});
 				},
 				"drilldown": function(e) {
 					lev += 1;
 					if (!e.seriesOptions) {
+						energyChart.showLoading();
 						$.ajax({
-							url: "http://127.0.0.1:5000/api/" + getPVE() + apis[lev],
-							type: "GET",
-							dataType: "json",
-							success: function(data) {
+							"url": "http://127.0.0.1:5000/api/" + getPVE() + apis[lev],
+							"type": "GET",
+							"dataType": "json",
+							"success": function(data) {
+								energyChart.hideLoading();
 								energyChart.addSeriesAsDrilldown(e.point, processDD(data, e.point.id));
 							}
 						});
 					}
 				},
 				"drillup": function(e) {
-					energyChart.setTitle(null, { text: upSub(energyChart.subtitle.textStr) });
+					energyChart.setTitle(null, { "text": upSub(energyChart.subtitle.textStr) });
+					energyChart.yAxis[0].setTitle({ "text": "kWh"});
+					energyChart.setTitle({ "text": "Energy Usage" }, null);
 					lev -= 1;
 				}
 			}
@@ -163,6 +174,13 @@ $(document).ready(function() {
 			"text": "2018",
 			"style": {
 				"fontSize": 18
+			}
+		},
+		"loading": {
+			"hideDuration": 0,
+			"showDuration": 1000,
+			"style": {
+				"opacity": .75
 			}
 		},
 		"lang": {
@@ -204,8 +222,8 @@ $(document).ready(function() {
 				"position": {
 					"verticalAlign": "top",
 					"align": "right",
-					"y": -55,
-					"x": -30
+					"y": -50,
+					"x": -40
 				}
 			},
 			"series": [

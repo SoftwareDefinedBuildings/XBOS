@@ -50,7 +50,9 @@ $(document).ready(function() {
         if (zones > 6) {
             var avgs = [];
             var stds = [];
-            // https://stackoverflow.com/questions/1295584/most-efficient-way-to-create-a-zero-filled-javascript-array#comment53285905_23326623
+            // https://stackoverflow.com/questions/1295584/most-
+            // efficient-way-to-create-a-zero-filled-javascript-
+            // array#comment53285905_23326623
             var outs; (outs = []).length = zones; outs.fill(0);
             var times = sums.length;
             for (var l in sums) {
@@ -97,7 +99,6 @@ $(document).ready(function() {
     }
 
     function getMains(m, s, pa) {
-        var toRet = [];
         var twoSD = s.map(function(x) { return x*2; });
         var upper = [];
         var lower = [];
@@ -105,29 +106,26 @@ $(document).ready(function() {
             upper.push(m[i] + twoSD[i]);
             lower.push(m[i] - twoSD[i]);
         }
-        var above = new Object();
-        above.name = "2SDAbove";
-        above.data = stdData(upper, pa, above.name);
-        above.lineWidth = 4;
-        above.color = "#555555";
-        // above.showInLegend = false;
-
-        var below = new Object();
-        below.name = "2SDBelow";
-        below.data = stdData(lower, pa, below.name);
-        below.lineWidth = above.lineWidth;
-        below.color = above.color;
-        // below.showInLegend = false;
 
         var mean = new Object();
         mean.name = "Average";
         mean.data = stdData(m, pa, mean.name);
-        mean.lineWidth = 6;
-        mean.color = "#000000";
-        // mean.showInLegend = false;
+        mean.lineWidth = 5;
+        mean.color = "#888888";
 
-        toRet.push(above, below, mean);
-        return toRet;
+        var range = new Object();
+        range.name = "Range"
+        range.data = rangeData(lower, upper, pa, range.name);
+        range.type = "arearange";
+        range.lineWidth = 0;
+        range.linkedTo = ":previous";
+        range.color = mean.color;
+        range.fillOpacity = .7;
+        range.zIndex = -1;
+        range.marker = new Object();
+        range.marker.enabled = false;
+
+        return [mean, range];
     }
 
     function stdData(x, pa, n) {
@@ -136,6 +134,19 @@ $(document).ready(function() {
             var toAdd = new Object();
             toAdd.name = pa[i];
             toAdd.y = round(x[i], 2);
+            toAdd.id = n + " " + toAdd.name;
+            toRet.push(toAdd);
+        }
+        return toRet;
+    }
+
+    function rangeData(l, u, pa, n) {
+        toRet = [];
+        for (var i in l) {
+            var toAdd = new Object();
+            toAdd.low = round(l[i], 2);
+            toAdd.high = round(u[i], 2);
+            toAdd.name = pa[i];
             toAdd.id = n + " " + toAdd.name;
             toRet.push(toAdd);
         }
@@ -207,51 +218,18 @@ $(document).ready(function() {
         return d;
     }
 
-    // function getPlotBands(j) {
-    //     var toRet = [];
-    //     var i = 0;
-    //     for (var z in j) {
-    //         var toAdd = new Object();
-    //         var other = new Object();
-    //         toAdd.id = clean(z);
-    //         other.id = toAdd.id;
-    //         for (var x in j[z]) {
-    //             toAdd.to = j[z][x][0];
-    //             toAdd.from = toAdd.to;
-    //             other.to = j[z][x][1];
-    //             other.from = other.to;
-    //             setLower(toAdd.from);
-    //             setUpper(other.to);
-    //         }
-    //         toAdd.color = c[i];
-    //         other.color = toAdd.color;
-    //         toRet.push(toAdd);
-    //         toRet.push(other);
-    //         i += 1;
-    //     }
-    //     return toRet;
-    // }
-
-    // function setLower(x) {
-    //     console.log(x);
-    //     console.log(tempChart.yAxis[0].getExtremes);
-    // }
-
-    // function setUpper(x) {
-    //     console.log(x);
-    //     console.log(x);
-    // }
-
     var options = {
         "chart": {
             "renderTo": "chart-temperature",
             "events": {
                 "load": function(e) {
+                    this.showLoading();
                     $.ajax({
                         "url": "http://127.0.0.1:5000/api/hvac/day/30m", //"url": "http://127.0.0.1:5000/api/energy/year/in/month", 
                         "type": "GET",
                         "dataType": "json",
                         "success": function(d) {
+                            tempChart.hideLoading();
                             d = fixResp(d);
                             var a = processResp(d);
                             for (var x in a) {
@@ -261,18 +239,6 @@ $(document).ready(function() {
                             tempChart.redraw();
                         }
                     });
-                    // $.ajax({
-                    //     "url": "http://127.0.0.1:5000/api/hvac/day/setpoints", //"url": "http://127.0.0.1:5000/api/energy/year/in/month", 
-                    //     "type": "GET",
-                    //     "dataType": "json",
-                    //     "success": function(d) {
-                    //         var a = getPlotBands(d);
-                    //         for (var x in a) {
-                    //             tempChart.yAxis[0].addPlotBand(a[x]);
-                    //             console.log(a[x]);
-                    //         }
-                    //     }
-                    // });
                 }
             }
         },
@@ -285,6 +251,13 @@ $(document).ready(function() {
                 "fontSize": 16
             }
         },
+        "loading": {
+            "hideDuration": 0,
+            "showDuration": 1000,
+            "style": {
+                "opacity": .75
+            }
+        },
         "xAxis": {
             "type": "category",
             "tickInterval": 8
@@ -293,30 +266,6 @@ $(document).ready(function() {
             "title": {
                 "text": "°F"
             }
-            // ,
-            // "minorGridLineWidth": 0,
-            // "gridLineWidth": 0,
-            // "plotBands": [{
-            //     "from": 60,
-            //     "to": 65,
-            //     "color": 'rgba(68, 170, 213, 0.1)',
-            //     "label": {
-            //         "text": 'Heating Area',
-            //         "style": {
-            //             "color": '#606060'
-            //         }
-            //     }
-            // }, {
-            //     "from": 75,
-            //     "to": 85,
-            //     "color": 'rgba(68, 170, 213, 0.1)',
-            //     "label": {
-            //         "text": 'Cooling Area',
-            //         "style": {
-            //             "color": '#606060'
-            //         }
-            //     }
-            // }]
         },
         "credits": {
             "enabled": false
@@ -335,16 +284,47 @@ $(document).ready(function() {
             },
             "series": {
                 "animation": true,
-                "dataLabels": {
-                    "enabled": false,
-                    "format": '{point.y}'
+                "point": {
+                    "events": {
+                        // http://jsfiddle.net/gh/get/library/pure/highcharts/
+                        // highcharts/tree/master/samples/highcharts/plotoptions/
+                        // series-point-events-mouseover/
+                        "mouseOver": function () {
+                            var myLabel = this.series.chart;
+                            if (!myLabel.lbl) {
+                                myLabel.lbl = myLabel.renderer.label('').attr(
+                                    {
+                                        padding: 0,
+                                        r: 10,
+                                        fill: "#000000"
+                                    }
+                                ).css(
+                                    {
+                                        color: '#FFFFFF'
+                                    }
+                                ).add();
+                            }
+                            myLabel.lbl.attr(
+                                {
+                                    text: this.id + " " + this.y
+                                }
+                            );
+                        }
+                        // },
+                        // "mouseOut": function () {
+                        //     if (this.series.chart.lbl) {
+                        //         this.series.chart.lbl.hide();
+                        //     }
+                        // }
+                    }
                 }
             }
         },
         "tooltip": {
-            "headerFormat": '<span style="font-size:12px">{series.name}</span><br>',
-            "pointFormat": '<span style="color:{point.color}">{point.name}</span> {point.y}</b> <br/>',
-            "hideDelay": 1000
+            "enabled": false,
+            // "headerFormat": '<span style="font-size:12px">{series.name}</span><br>',
+            // "pointFormat": '<span style="color:{point.color}">{point.name}</span> {point.y}</b> <br/>',
+            // "hideDelay": 1000
         },
         "series": []
     };
