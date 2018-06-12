@@ -1,0 +1,301 @@
+.nav-text {
+  align-items:center;
+  font-size:14px;
+  font-weight:500 !important;
+  height:64px !important;
+  line-height:64px;
+  opacity:0.87;
+  padding:0px 24px;
+}
+
+nav .brand-logo {
+    display: block;
+    position: relative !important;
+    font-size: 20px !important;
+    line-height: 1;
+    letter-spacing: .02em;
+    font-weight: 400 !important;
+    height:64px !important;
+    box-sizing: border-box;
+}
+
+.container-fluid{
+    padding: 0 40px 0 80px !important;
+
+}
+
+nav ul li {
+  margin: 0 !important;
+}
+
+
+.floorplan-image {
+    position: absolute;
+    width: inherit;
+    max-width: 870px;
+}
+
+.font-12px {
+  font-size: 12px !important;
+}
+
+.margin-left-30 {
+  margin-left: 30px;
+}
+
+.margin-left-15 {
+  margin-left: 15px;
+}
+
+.margin-left-25 {
+  margin-left: 25px;
+}
+
+.width-12-col{
+  width: 100% !important;
+}
+
+.mdl-list_item-sub-title-2 {
+      text-align: right !important;
+    margin-top: -18px !important;
+}
+
+.mdl-checkbox {
+    height: auto !important;
+}
+
+.margin-top-30 {
+  margin-top: 30px;
+}
+
+.padding-bottom-none {
+  padding-bottom: 0px !important;
+}
+
+.padding-top-none {
+  padding-top: 0px !important;
+}
+
+.min-height-150 {
+  min-height: 150px !important;
+}
+
+ul {
+  margin: 0 !important;
+  list-style-type: none !important;
+}
+
+li {
+  margin: 4px 0 !important;
+}
+
+.mdl-layout-title {
+  font-weight: 600 !important;
+}
+
+.mdl-layout__header {
+  color: rgb(66,66,66) !important;
+  background-color: white !important;
+
+}
+
+.mdl-navigation__link {
+   color: rgb(66, 66, 66) !important;
+}
+
+.navigation-active, .mdl-navigation__link:hover {
+  background-color: #FF9800 !important;
+  color: rgb(255,255,255) !important;
+}
+
+/*a {
+  color: #F08C27 !important;
+}*/
+
+img {
+  width: 100%;
+}
+
+.setup-icon {
+    /* height: 40px; */
+    /* width: 40px; */
+    /* box-sizing: border-box; */
+    border-radius: 0 !important; 
+    background-color: transparent !important; 
+    color: #01bcd4 !important;
+}
+
+.setup-button {
+  padding-left: 40px;
+  margin-left: 8px;
+
+}
+
+.padding-right-10 {
+  padding-right: 10px;
+}
+
+.margin-left-3rem {
+  margin-left: 3rem;
+}
+
+.margin-right-10 {
+  margin-right: 10px;
+
+}
+
+.vertical-align-bottom {
+  vertical-align: text-bottom;
+  padding-top: 23px;
+
+}
+
+.font-size-16 {
+  font-size: 16px;
+}
+
+
+/* =============== Full Calendar =================*/
+
+
+#external-events {
+  /*position: fixed;*/
+/*  z-index: 2;
+*/  top: 20px;
+  /*left: 20px;*/
+  width: 150px;
+  /*padding: 0 10px;
+  border: 1px solid #ccc;
+  background: #eee;*/
+}
+
+#external-events .fc-event {
+  margin: 1em 0;
+  cursor: move;
+}
+
+
+
+
+/* Remove that awful yellow color and border from today in Schedule */
+.fc-today {
+/*  opacity: 0;
+*/  border: none;
+}
+
+
+
+/* Styling for each event from Schedule */
+.fc-event {
+  border-radius: 20px !important;
+  border: none !important;
+  padding: 10px;
+/*  opacity: .65;*/
+  margin:1px;
+  text-align: center;
+}
+
+
+/* Remove the header border from Schedule */
+.fc td, .fc th {
+  border-style: none !important;
+  border-width: 1px !important;
+  padding: 0 !important;
+  vertical-align: top !important;
+}
+
+/* Inherits background for each event from Schedule. */
+/*.fc-event .fc-bg {
+  z-index: 1 !important;
+  background: inherit !important;
+  opacity: .25 !important;
+}
+*/
+/* Normal font weight for the time in each event */
+.fc-time-grid-event .fc-time {
+  font-weight: normal !important;
+}
+
+/* Apply same opacity to all day events */
+.fc-ltr .fc-h-event.fc-not-end, .fc-rtl .fc-h-event.fc-not-start {
+  opacity: .65 !important;
+  margin-left: 12px !important;
+  padding: 5px! important;
+}
+
+/* Apply same opacity to all day events */
+.fc-day-grid-event.fc-h-event.fc-event.fc-not-start.fc-end {
+  /*opacity: .65 !important;*/
+  margin-left: 12px !important;
+  padding: 5px! important;
+}
+
+
+
+
+
+#calendar {
+  /*margin: 2rem;*/
+}
+
+#calendar .fc-event{
+    background-color: #00BBD6;
+/*    color: rgba(0, 0, 0, 0.8);
+*/    border: 1px solid #00BBD6;
+}
+
+#calendar.fc-unthemed td.fc-today {
+  background: inherit !important;
+}
+
+
+.fc-toolbar h2 {
+    margin: 0;
+    display: block;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 32px;
+
+}
+
+
+/*schedule set up - card view */
+
+.schedule-set-up {
+  width: 256px;
+  height: 256px;
+  
+  margin: 3rem;
+}
+
+.schedule-title h4 {
+  margin-left: 3rem;
+  margin-top: 3rem;
+
+}
+.schedule-set-up > .mdl-card__actions {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.schedule-set-up > .mdl-card__title {
+  align-items: flex-start;
+  background: #00BBD6;
+}
+.schedule-set-up > .mdl-card__title > h4 {
+  margin-top: 0;
+}
+.schedule-set-up > .mdl-card__actions {
+  display: flex;
+  box-sizing:border-box;
+  align-items: center;
+}
+.schedule-set-up > .mdl-card__actions > .material-icons {
+  padding-right: 10px;
+}
+.schedule-set-up > .mdl-card__title {
+  color: #fff;
+
+}
+.schedule-set-up > .mdl-card__actions,
+.schedule-set-up > .mdl-card__actions > .mdl-button {
+  color: #00BBD6;
+}

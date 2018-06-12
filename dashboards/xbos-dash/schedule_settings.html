@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>XBOS</title>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="mystyle.css">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+
+    <!-- Full Calendar -->
+    <link href='css/fullcalendar.css' rel='stylesheet' />
+    <link href='css/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+
+  </head>
+  <body>
+
+
+    <nav>
+      <div class="nav-wrapper container-fluid white ">
+        <a href="#" class="brand-logo black-text">XBOS-DR</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down ">
+          <li><a class="grey-text text-darken-3 nav-text" href="index.html">Home</a></li>
+          <li><a class="grey-text text-darken-3 nav-text" href="schedule_floorplan.html">Schedule</a></li>
+          <li><a class="grey-text text-darken-3 nav-text" href="">Alert</a></li>
+          <li><a class="grey-text text-darken-3 nav-text" href="">Report</a></li>
+          <li><a class="grey-text text-darken-3 nav-text" href="dr.html">Demand Response</a></li>
+          <li><a class="grey-text text-darken-3 nav-text" href="">Configuration</a></li>
+          <li><a class="grey-text text-darken-3 nav-text" href="">Users</a></li>
+        </ul>
+      </div>
+    </nav>
+     
+    <main class="container-fluid">
+      <div class="row">
+        <div class="col s12 margin-top-30">
+          <h5>Customize Your Business Hours</h5>
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <div class="card">
+            <div class="card-content">
+              <div class="section">
+                <div class="row">
+                  <div class="input-field col s8">
+                    <input placeholder="Such as closed, open, day, night, etc." id="schedule_type" type="text" class="validate font-12px">
+                    <label for="schedule_type">Schedule Type</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+              <div class="section">
+                <div class=" row">
+                  <div class="col s12">
+                    <div class="section">
+                      <h6> Setup Time</h6>
+                    </div>
+                    <div class="section">
+                      <div class="row">
+                        <div class="section">
+                          <div class="col s12"> 
+                            <p>
+                              <label for="schedule_start">Start Time</label>
+                              <input type="text" id="schedule_start" class="timepicker">
+                            </p>
+                          </div>
+                          <div class="col s12"> 
+                            <p>
+                              <label for="schedule_start">End Time</label>
+                              <input type="text" id="schedule_start" class="timepicker">
+                            </p>
+                          </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="section">
+                          <label class="margin-left-15">
+                            <input type="checkbox" />
+                            <span class="font-12px">Sun</span>
+                          </label>
+               
+                          <label class="margin-left-15">
+                            <input type="checkbox" />
+                            <span class="font-12px">Mon</span>
+                          </label>
+
+
+                          <label class="margin-left-15">
+                            <input type="checkbox" />
+                            <span class="font-12px">Tue</span>
+                          </label>
+
+                          <label class="margin-left-15">
+                            <input type="checkbox" />
+                            <span class="font-12px">Wed</span>
+                          </label>
+
+                          <label class="margin-left-15">
+                            <input type="checkbox" />
+                            <span class="font-12px">Thu</span>
+                          </label>
+
+                          <label class="margin-left-15">
+                            <input type="checkbox" />
+                            <span class="font-12px">Fri</span>
+                          </label>
+
+                          <label class="margin-left-15">
+                            <input type="checkbox" />
+                            <span class="font-12px">Sat</span>
+                          </label>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col s12">
+                    <div class="section">
+                      <h6> Setup Thermostat Setpoints</h6>
+                    </div>
+                    <div class="col s6">
+                      <p class="range-field">
+                        <label for="schedule_hsp">Heating Setpoint</label>
+                        <input type="range" id="schedule_hsp" min="35" max="74" />
+                      </p>
+                    </div>
+                    <div class="col s6">
+                      <p class="range-field">
+                        <label for="schedule_hsp">Cooling Setpoint</label>
+                        <input type="range" id="schedule_hsp" min="74" max="95" />
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+
+
+          
+              </div>
+            </div>
+          </div>
+
+    </main>
+
+
+
+
+    <script src='js/lib/jquery.min.js'></script>
+    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+    <script src='js/lib/moment.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+    <script src='js/fullcalendar.js'></script>
+    <script src="js/main.js"></script>
+
+  </body>
+</html>

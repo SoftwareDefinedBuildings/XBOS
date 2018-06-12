@@ -1,0 +1,399 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>XBOS</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <link rel="shortcut icon" href="images/favicon.png">
+
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
+    <!-- <link rel="stylesheet" href="material.css"> -->
+    <link rel="stylesheet" href="styles.css">
+     <link rel="stylesheet" href="mystyle.css">
+
+
+
+    <!-- Full Calendar -->
+
+    <link href='../fullcalendar.min.css' rel='stylesheet' />
+    <link href='../fullcalendar.print.min.css' rel='stylesheet' media='print' />
+    <script src='../lib/moment.min.js'></script>
+    <script src='../lib/jquery.min.js'></script>
+    <script src='../fullcalendar.min.js'></script>
+    <script src='events.js'></script>
+
+
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout">
+      <header class="demo-header mdl-layout__header">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">XBOS-DR</span>
+          <div class="mdl-layout-spacer"></div>
+
+          <nav class="demo-navigation mdl-navigation">
+            <a class="mdl-navigation__link" href="index.html">Home</a>
+            <a class="mdl-navigation__link navigation-active" href="schedule_floorplan.html">Schedule</a>
+            <a class="mdl-navigation__link" href="">Alert</a>
+            <a class="mdl-navigation__link" href="">Report</a>
+            <a class="mdl-navigation__link " href="dr.html">Demand Response</a>
+            <a class="mdl-navigation__link" href="">Configuration</a>
+            <a class="mdl-navigation__link" href="">Users</a>
+            
+          </nav>
+        </div>
+      </header>
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid schedule-title">
+          <h4>Customize your business hours</h4>
+        </div>
+        <div class="mdl-grid demo-content">  
+
+          <div class="mdl-cell mdl-cell--1-col vertical-align-bottom font-size-16">Monday</div>
+          <div class="mdl-cell mdl-cell--11-col vertical-align-bottom">
+                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="close-mon">
+                  <input type="checkbox" id="close-mon" class="mdl-switch__input" checked />
+                </label>
+          </div>
+        </div>
+        <div class="mdl-grid demo-content">    
+          <div class="mdl-cell mdl-cell--1-offset mdl-cell--4-col">
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height margin-right-10">
+                <input class="mdl-textfield__input" type="text" id="open-hour-mon" value="8:00 am" readonly tabIndex="-1">
+                <!-- <label for="sample2">
+                    <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                </label> -->
+                <label for="open-hour-mon" class="mdl-textfield__label">Open Hour</label>
+                <ul for="open-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    <li class="mdl-menu__item" data-val="DE">8:00 am</li>
+                    <li class="mdl-menu__item" data-val="BY">9:00 am</li>
+                    <li class="mdl-menu__item" data-val="RU">10:00 am</li>
+                </ul>
+            </div>
+          </div>
+          <div class="mdl-cell mdl-cell--4-col">
+             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                  <input class="mdl-textfield__input" type="text" id="close-hour-mon" value="5:00 pm" readonly tabIndex="-1">
+                  <!-- <label for="sample2">
+                      <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                  </label> -->
+                  <label for="close-hour-mon" class="mdl-textfield__label">Close Hour</label>
+                  <ul for="close-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                      <li class="mdl-menu__item" data-val="DE">5:00 pm</li>
+                    <li class="mdl-menu__item" data-val="BY">6:00 pm</li>
+                    <li class="mdl-menu__item" data-val="RU">7:00 pm</li>
+                  </ul>
+              </div>
+          </div>
+
+
+          <div class="mdl-cell mdl-cell--2-col vertical-align-bottom"><i class="material-icons">edit</i> </div>
+
+        </div>
+
+        <div class="mdl-grid demo-content">  
+
+          <div class="mdl-cell mdl-cell--1-col vertical-align-bottom font-size-16">Tuesday</div>
+          <div class="mdl-cell mdl-cell--11-col vertical-align-bottom">
+                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="close-mon">
+                  <input type="checkbox" id="close-mon" class="mdl-switch__input" checked />
+                </label>
+          </div>
+        </div>
+        <div class="mdl-grid demo-content">    
+          <div class="mdl-cell mdl-cell--1-offset mdl-cell--4-col">
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height margin-right-10">
+                <input class="mdl-textfield__input" type="text" id="open-hour-mon" value="8:00 am" readonly tabIndex="-1">
+                <!-- <label for="sample2">
+                    <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                </label> -->
+                <label for="open-hour-mon" class="mdl-textfield__label">Open Hour</label>
+                <ul for="open-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    <li class="mdl-menu__item" data-val="DE">8:00 am</li>
+                    <li class="mdl-menu__item" data-val="BY">9:00 am</li>
+                    <li class="mdl-menu__item" data-val="RU">10:00 am</li>
+                </ul>
+            </div>
+          </div>
+          <div class="mdl-cell mdl-cell--4-col">
+             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                  <input class="mdl-textfield__input" type="text" id="close-hour-mon" value="5:00 pm" readonly tabIndex="-1">
+                  <!-- <label for="sample2">
+                      <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                  </label> -->
+                  <label for="close-hour-mon" class="mdl-textfield__label">Close Hour</label>
+                  <ul for="close-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                      <li class="mdl-menu__item" data-val="DE">5:00 pm</li>
+                    <li class="mdl-menu__item" data-val="BY">6:00 pm</li>
+                    <li class="mdl-menu__item" data-val="RU">7:00 pm</li>
+                  </ul>
+              </div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col vertical-align-bottom"><i class="material-icons">edit</i> </div>
+
+        </div>
+        <div class="mdl-grid demo-content">  
+          <div class="mdl-cell mdl-cell--1-col vertical-align-bottom font-size-16">Wednesday</div>
+          <div class="mdl-cell mdl-cell--11-col vertical-align-bottom">
+                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="close-mon">
+                  <input type="checkbox" id="close-mon" class="mdl-switch__input" checked />
+                </label>
+          </div>
+        </div>
+        <div class="mdl-grid demo-content">    
+          <div class="mdl-cell mdl-cell--1-offset mdl-cell--4-col">
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height margin-right-10">
+                <input class="mdl-textfield__input" type="text" id="open-hour-mon" value="8:00 am" readonly tabIndex="-1">
+                <!-- <label for="sample2">
+                    <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                </label> -->
+                <label for="open-hour-mon" class="mdl-textfield__label">Open Hour</label>
+                <ul for="open-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    <li class="mdl-menu__item" data-val="DE">8:00 am</li>
+                    <li class="mdl-menu__item" data-val="BY">9:00 am</li>
+                    <li class="mdl-menu__item" data-val="RU">10:00 am</li>
+                </ul>
+            </div>
+          </div>
+          <div class="mdl-cell mdl-cell--4-col">
+             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                  <input class="mdl-textfield__input" type="text" id="close-hour-mon" value="5:00 pm" readonly tabIndex="-1">
+                  <!-- <label for="sample2">
+                      <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                  </label> -->
+                  <label for="close-hour-mon" class="mdl-textfield__label">Close Hour</label>
+                  <ul for="close-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                      <li class="mdl-menu__item" data-val="DE">5:00 pm</li>
+                    <li class="mdl-menu__item" data-val="BY">6:00 pm</li>
+                    <li class="mdl-menu__item" data-val="RU">7:00 pm</li>
+                  </ul>
+              </div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col vertical-align-bottom"><i class="material-icons">edit</i> </div>
+
+        </div>
+        <div class="mdl-grid demo-content">  
+          <div class="mdl-cell mdl-cell--1-col vertical-align-bottom font-size-16">Thursday</div>
+          <div class="mdl-cell mdl-cell--11-col vertical-align-bottom">
+                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="close-mon">
+                  <input type="checkbox" id="close-mon" class="mdl-switch__input" checked />
+                </label>
+          </div>
+        </div>
+        <div class="mdl-grid demo-content">    
+          <div class="mdl-cell mdl-cell--1-offset mdl-cell--4-col">
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height margin-right-10">
+                <input class="mdl-textfield__input" type="text" id="open-hour-mon" value="8:00 am" readonly tabIndex="-1">
+                <!-- <label for="sample2">
+                    <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                </label> -->
+                <label for="open-hour-mon" class="mdl-textfield__label">Open Hour</label>
+                <ul for="open-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    <li class="mdl-menu__item" data-val="DE">8:00 am</li>
+                    <li class="mdl-menu__item" data-val="BY">9:00 am</li>
+                    <li class="mdl-menu__item" data-val="RU">10:00 am</li>
+                </ul>
+            </div>
+          </div>
+          <div class="mdl-cell mdl-cell--4-col">
+             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                  <input class="mdl-textfield__input" type="text" id="close-hour-mon" value="5:00 pm" readonly tabIndex="-1">
+                  <!-- <label for="sample2">
+                      <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                  </label> -->
+                  <label for="close-hour-mon" class="mdl-textfield__label">Close Hour</label>
+                  <ul for="close-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                      <li class="mdl-menu__item" data-val="DE">5:00 pm</li>
+                    <li class="mdl-menu__item" data-val="BY">6:00 pm</li>
+                    <li class="mdl-menu__item" data-val="RU">7:00 pm</li>
+                  </ul>
+              </div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col vertical-align-bottom"><i class="material-icons">edit</i> </div>
+
+        </div>
+        <div class="mdl-grid demo-content">  
+          <div class="mdl-cell mdl-cell--1-col vertical-align-bottom font-size-16">Friday</div>
+          <div class="mdl-cell mdl-cell--11-col vertical-align-bottom">
+                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="close-mon">
+                  <input type="checkbox" id="close-mon" class="mdl-switch__input" checked />
+                </label>
+          </div>
+        </div>
+        <div class="mdl-grid demo-content">    
+          <div class="mdl-cell mdl-cell--1-offset mdl-cell--4-col">
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height margin-right-10">
+                <input class="mdl-textfield__input" type="text" id="open-hour-mon" value="8:00 am" readonly tabIndex="-1">
+                <!-- <label for="sample2">
+                    <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                </label> -->
+                <label for="open-hour-mon" class="mdl-textfield__label">Open Hour</label>
+                <ul for="open-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    <li class="mdl-menu__item" data-val="DE">8:00 am</li>
+                    <li class="mdl-menu__item" data-val="BY">9:00 am</li>
+                    <li class="mdl-menu__item" data-val="RU">10:00 am</li>
+                </ul>
+            </div>
+          </div>
+          <div class="mdl-cell mdl-cell--4-col">
+             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                  <input class="mdl-textfield__input" type="text" id="close-hour-mon" value="5:00 pm" readonly tabIndex="-1">
+                  <!-- <label for="sample2">
+                      <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                  </label> -->
+                  <label for="close-hour-mon" class="mdl-textfield__label">Close Hour</label>
+                  <ul for="close-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                      <li class="mdl-menu__item" data-val="DE">5:00 pm</li>
+                    <li class="mdl-menu__item" data-val="BY">6:00 pm</li>
+                    <li class="mdl-menu__item" data-val="RU">7:00 pm</li>
+                  </ul>
+              </div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col vertical-align-bottom"><i class="material-icons">edit</i> </div>
+
+        </div>
+        <div class="mdl-grid demo-content">  
+          <div class="mdl-cell mdl-cell--1-col vertical-align-bottom font-size-16">Saturday</div>
+          <div class="mdl-cell mdl-cell--11-col vertical-align-bottom">
+                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="close-mon">
+                  <input type="checkbox" id="close-mon" class="mdl-switch__input" checked />
+                </label>
+          </div>
+        </div>
+        <div class="mdl-grid demo-content">    
+          <div class="mdl-cell mdl-cell--1-offset mdl-cell--4-col">
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height margin-right-10">
+                <input class="mdl-textfield__input" type="text" id="open-hour-mon" value="8:00 am" readonly tabIndex="-1">
+                <!-- <label for="sample2">
+                    <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                </label> -->
+                <label for="open-hour-mon" class="mdl-textfield__label">Open Hour</label>
+                <ul for="open-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    <li class="mdl-menu__item" data-val="DE">8:00 am</li>
+                    <li class="mdl-menu__item" data-val="BY">9:00 am</li>
+                    <li class="mdl-menu__item" data-val="RU">10:00 am</li>
+                </ul>
+            </div>
+          </div>
+          <div class="mdl-cell mdl-cell--4-col">
+             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                  <input class="mdl-textfield__input" type="text" id="close-hour-mon" value="5:00 pm" readonly tabIndex="-1">
+                  <!-- <label for="sample2">
+                      <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                  </label> -->
+                  <label for="close-hour-mon" class="mdl-textfield__label">Close Hour</label>
+                  <ul for="close-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                      <li class="mdl-menu__item" data-val="DE">5:00 pm</li>
+                    <li class="mdl-menu__item" data-val="BY">6:00 pm</li>
+                    <li class="mdl-menu__item" data-val="RU">7:00 pm</li>
+                  </ul>
+              </div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col vertical-align-bottom"><i class="material-icons">edit</i> </div>
+
+        </div>
+        <div class="mdl-grid demo-content">  
+          <div class="mdl-cell mdl-cell--1-col vertical-align-bottom font-size-16">Sunday</div>
+          <div class="mdl-cell mdl-cell--11-col vertical-align-bottom">
+                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="close-mon">
+                  <input type="checkbox" id="close-mon" class="mdl-switch__input" checked />
+                </label>
+          </div>
+        </div>
+        <div class="mdl-grid demo-content">    
+          <div class="mdl-cell mdl-cell--1-offset mdl-cell--4-col">
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height margin-right-10">
+                <input class="mdl-textfield__input" type="text" id="open-hour-mon" value="8:00 am" readonly tabIndex="-1">
+                <!-- <label for="sample2">
+                    <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                </label> -->
+                <label for="open-hour-mon" class="mdl-textfield__label">Open Hour</label>
+                <ul for="open-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    <li class="mdl-menu__item" data-val="DE">8:00 am</li>
+                    <li class="mdl-menu__item" data-val="BY">9:00 am</li>
+                    <li class="mdl-menu__item" data-val="RU">10:00 am</li>
+                </ul>
+            </div>
+          </div>
+          <div class="mdl-cell mdl-cell--4-col">
+             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                  <input class="mdl-textfield__input" type="text" id="close-hour-mon" value="5:00 pm" readonly tabIndex="-1">
+                  <!-- <label for="sample2">
+                      <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                  </label> -->
+                  <label for="close-hour-mon" class="mdl-textfield__label">Close Hour</label>
+                  <ul for="close-hour-mon" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                      <li class="mdl-menu__item" data-val="DE">5:00 pm</li>
+                    <li class="mdl-menu__item" data-val="BY">6:00 pm</li>
+                    <li class="mdl-menu__item" data-val="RU">7:00 pm</li>
+                  </ul>
+              </div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col vertical-align-bottom"><i class="material-icons">edit</i> </div>
+
+        </div>
+
+        <div class="mdl-grid demo-content setup-button">  
+          <div class="padding-right-10">
+            <a href="schedule_floorplan.html"> <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored " >Previous</button></a>
+
+          </div>
+          <div class="padding-right-10">
+            <a href="schedule_types.html"> <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Next</button></a>
+          </div>
+          
+        </div>
+
+
+      </main>
+    </div>
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  </body>
+</html>
