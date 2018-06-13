@@ -87,6 +87,8 @@ $(document).ready(function() {
 		if (end()) {
 			energyChart.setTitle({ "text": "Power Consumption" }, null);
 			energyChart.yAxis[0].setTitle({ "text": "kW"});
+			energyChart.options.chart.zoomType = "x";
+			$('#energyChartReset').show();
 		}
 		toRet.data = makeData(j);
 		addDrill(toRet.data);
@@ -128,6 +130,14 @@ $(document).ready(function() {
 
 	var options = {
 		"chart": {
+            "resetZoomButton": {
+                "theme": {
+                    "display": "none"
+                }
+            },
+            "scrollablePlotArea": {
+                "minWidth": 450
+            },
 			"renderTo": "chart-total-energy",
 			"type": 'column',
 			"events": {
@@ -157,12 +167,16 @@ $(document).ready(function() {
 								energyChart.addSeriesAsDrilldown(e.point, processDD(data, e.point.id));
 							}
 						});
+					} else {
+						console.log("already have it");
 					}
 				},
 				"drillup": function(e) {
 					energyChart.setTitle(null, { "text": upSub(energyChart.subtitle.textStr) });
 					energyChart.yAxis[0].setTitle({ "text": "kWh"});
 					energyChart.setTitle({ "text": "Energy Usage" }, null);
+					energyChart.options.chart.zoomType = "";
+					$('#energyChartReset').hide();
 					lev -= 1;
 				}
 			}
@@ -197,6 +211,11 @@ $(document).ready(function() {
 		"plotOptions": {
 			"series": {
 				"animation": true
+			},
+			"line": {
+				"marker": {
+					"enabled": false
+				}
 			}
 		},
 		"credits": {
@@ -242,4 +261,9 @@ $(document).ready(function() {
 	};
 
 	energyChart = new Highcharts.Chart(options);
+
+	$('#energyChartReset').click(function() {
+		energyChart.xAxis[0].setExtremes(null, null);
+    });
+    $('#energyChartReset').hide();
 });

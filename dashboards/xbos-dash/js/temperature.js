@@ -110,18 +110,17 @@ $(document).ready(function() {
         var mean = new Object();
         mean.name = "Average";
         mean.data = stdData(m, pa, mean.name);
-        mean.lineWidth = 5;
+        mean.lineWidth = 4;
         mean.color = "#888888";
 
         var range = new Object();
         range.name = "Range"
         range.data = rangeData(lower, upper, pa, range.name);
         range.type = "arearange";
-        range.lineWidth = 0;
         range.linkedTo = ":previous";
         range.color = mean.color;
+        range.lineWidth = 0;
         range.fillOpacity = .7;
-        range.zIndex = -1;
         range.marker = new Object();
         range.marker.enabled = false;
 
@@ -134,7 +133,9 @@ $(document).ready(function() {
             var toAdd = new Object();
             toAdd.name = pa[i];
             toAdd.y = round(x[i], 2);
-            toAdd.id = n + " " + toAdd.name;
+            // toAdd.id = n + " " + toAdd.name;
+            toAdd.id = n;
+            toAdd.zone = n;
             toRet.push(toAdd);
         }
         return toRet;
@@ -147,7 +148,9 @@ $(document).ready(function() {
             toAdd.low = round(l[i], 2);
             toAdd.high = round(u[i], 2);
             toAdd.name = pa[i];
-            toAdd.id = n + " " + toAdd.name;
+            // toAdd.id = n + " " + toAdd.name;
+            toAdd.id = n;
+            toAdd.zone = n;
             toRet.push(toAdd);
         }
         return toRet;
@@ -178,7 +181,10 @@ $(document).ready(function() {
             } else {
                 sums[i].push(toAdd.y);
             }
-            toAdd.id = z + " " + toAdd.name;
+            // toAdd.id = z + " " + toAdd.name;
+            toAdd.id = z;
+            // toAdd.zone = z;
+            // console.log(toAdd.zone);
             toRet.push(toAdd);
             i += 1;
         }
@@ -220,6 +226,15 @@ $(document).ready(function() {
 
     var options = {
         "chart": {
+            "resetZoomButton": {
+                "theme": {
+                    "display": "none"
+                }
+            },
+            "zoomType": "x",
+            "scrollablePlotArea": {
+                "minWidth": 450
+            },
             "renderTo": "chart-temperature",
             "events": {
                 "load": function(e) {
@@ -235,6 +250,7 @@ $(document).ready(function() {
                             for (var x in a) {
                                 tempChart.addSeries(a[x], false);
                             }
+                            // tempChart.series[0].remove();
                             tempChart.setTitle(null, { text: "Today: " + getMDY()});
                             tempChart.redraw();
                         }
@@ -259,8 +275,8 @@ $(document).ready(function() {
             }
         },
         "xAxis": {
-            "type": "category",
-            "tickInterval": 8
+            "type": "category"
+            // "tickInterval": 8
         },
         "yAxis": {
             "title": {
@@ -284,50 +300,20 @@ $(document).ready(function() {
             },
             "series": {
                 "animation": true,
-                "point": {
-                    "events": {
-                        // http://jsfiddle.net/gh/get/library/pure/highcharts/
-                        // highcharts/tree/master/samples/highcharts/plotoptions/
-                        // series-point-events-mouseover/
-                        "mouseOver": function () {
-                            var myLabel = this.series.chart;
-                            if (!myLabel.lbl) {
-                                myLabel.lbl = myLabel.renderer.label('').attr(
-                                    {
-                                        padding: 0,
-                                        r: 10,
-                                        fill: "#000000"
-                                    }
-                                ).css(
-                                    {
-                                        color: '#FFFFFF'
-                                    }
-                                ).add();
-                            }
-                            myLabel.lbl.attr(
-                                {
-                                    text: this.id + " " + this.y
-                                }
-                            );
-                        }
-                        // },
-                        // "mouseOut": function () {
-                        //     if (this.series.chart.lbl) {
-                        //         this.series.chart.lbl.hide();
-                        //     }
-                        // }
-                    }
-                }
             }
         },
         "tooltip": {
-            "enabled": false,
-            // "headerFormat": '<span style="font-size:12px">{series.name}</span><br>',
-            // "pointFormat": '<span style="color:{point.color}">{point.name}</span> {point.y}</b> <br/>',
-            // "hideDelay": 1000
+            "pointFormat": '<span style="color:{point.color}">●</span> <b>{point.y}</b><br/>',
+            "hideDelay": 1000,
+            "shared": true,
+            "crosshairs": true
         },
         "series": []
     };
 
     tempChart = new Highcharts.Chart(options);
+
+    $('#tempChartReset').click(function() {
+        tempChart.xAxis[0].setExtremes(null, null);
+    });
 });
