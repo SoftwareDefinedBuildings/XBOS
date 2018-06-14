@@ -47,7 +47,7 @@ $(document).ready(function() {
 
     function select(sums, toRet, pa) {
         var zones = sums[0].length;
-        if (zones > 6) {
+        if (zones > 5) {
             var avgs = [];
             var stds = [];
             // https://stackoverflow.com/questions/1295584/most-
@@ -82,7 +82,7 @@ $(document).ready(function() {
             var display = getMains(avgs, stds, pa);
             var i = 0;
             for (var x in toRet) {
-                if (outs[x] > 0) {
+                if (outs[x] / times > 0.05) {
                     if (i < c.length) {
                         toRet[x].color = c[i];
                         i += 1;
@@ -110,17 +110,20 @@ $(document).ready(function() {
         var mean = new Object();
         mean.name = "Average";
         mean.data = stdData(m, pa, mean.name);
-        mean.lineWidth = 4;
-        mean.color = "#888888";
+        mean.lineWidth = 1;
+        mean.color = "#000000";
+        mean.showInLegend = false;
 
         var range = new Object();
         range.name = "Range"
-        range.data = rangeData(lower, upper, pa, range.name);
+        range.data = rangeData(lower, upper, pa, s);
         range.type = "arearange";
         range.linkedTo = ":previous";
         range.color = mean.color;
         range.lineWidth = 0;
-        range.fillOpacity = .7;
+        // range.zIndex = -1;
+        // range.lineColor = "#7bd84e";
+        range.fillOpacity = .2;
         range.marker = new Object();
         range.marker.enabled = false;
 
@@ -133,24 +136,21 @@ $(document).ready(function() {
             var toAdd = new Object();
             toAdd.name = pa[i];
             toAdd.y = round(x[i], 2);
-            // toAdd.id = n + " " + toAdd.name;
             toAdd.id = n;
-            toAdd.zone = n;
+            // toAdd.id = n + " " + toAdd.name;
             toRet.push(toAdd);
         }
         return toRet;
     }
 
-    function rangeData(l, u, pa, n) {
+    function rangeData(l, u, pa, s) {
         toRet = [];
         for (var i in l) {
             var toAdd = new Object();
             toAdd.low = round(l[i], 2);
             toAdd.high = round(u[i], 2);
             toAdd.name = pa[i];
-            // toAdd.id = n + " " + toAdd.name;
-            toAdd.id = n;
-            toAdd.zone = n;
+            toAdd.id = s[i];
             toRet.push(toAdd);
         }
         return toRet;
@@ -158,7 +158,7 @@ $(document).ready(function() {
 
     function getMDY() {
         s = toDate(Date.now()/1000).toString();
-        return s.slice(4, 10) + ", " + s.slice(11, 16);
+        return s.slice(4, 10) + ", " + s.slice(11, 15);
     }
 
     // http://www.jacklmoore.com/notes/rounding-in-javascript/
@@ -181,10 +181,7 @@ $(document).ready(function() {
             } else {
                 sums[i].push(toAdd.y);
             }
-            // toAdd.id = z + " " + toAdd.name;
-            toAdd.id = z;
-            // toAdd.zone = z;
-            // console.log(toAdd.zone);
+            toAdd.id = z + " " + toAdd.name;
             toRet.push(toAdd);
             i += 1;
         }
@@ -224,6 +221,16 @@ $(document).ready(function() {
         return d;
     }
 
+    function pointFormatter() {
+        if ("low" in this) {
+            return '<span style="font-size:12px">σ=</span>' + round(this.id, 2) + '<br/>';
+        } else if (this.id == "Average") {
+            return '<span style="font-size:12px">µ=</span>' + this.y+ '<br/>';
+        } else {
+            return '<span style="color:' + this.color + '; font-size:14px">●</span> <b>' + this.y+ '</b><br/>';
+        }
+    }
+
     var options = {
         "chart": {
             "resetZoomButton": {
@@ -240,7 +247,7 @@ $(document).ready(function() {
                 "load": function(e) {
                     this.showLoading();
                     $.ajax({
-                        "url": "http://127.0.0.1:5000/api/hvac/day/30m", //"url": "http://127.0.0.1:5000/api/energy/year/in/month", 
+                        "url": "http://127.0.0.1:5000/api/hvac/day/30m",
                         "type": "GET",
                         "dataType": "json",
                         "success": function(d) {
@@ -250,9 +257,9 @@ $(document).ready(function() {
                             for (var x in a) {
                                 tempChart.addSeries(a[x], false);
                             }
-                            // tempChart.series[0].remove();
-                            tempChart.setTitle(null, { text: "Today: " + getMDY()});
+                            tempChart.setTitle(null, { text: getMDY()});
                             tempChart.redraw();
+                            $('#tempChartReset').show();
                         }
                     });
                 }
@@ -264,19 +271,18 @@ $(document).ready(function() {
         "subtitle": {
             "text": "",
             "style": {
-                "fontSize": 16
+                "fontSize": 18
             }
         },
         "loading": {
             "hideDuration": 0,
-            "showDuration": 1000,
+            "showDuration": 0,
             "style": {
                 "opacity": .75
             }
         },
         "xAxis": {
             "type": "category"
-            // "tickInterval": 8
         },
         "yAxis": {
             "title": {
@@ -295,18 +301,25 @@ $(document).ready(function() {
         "plotOptions": {
             "line": {
                 "marker": {
-                    "enabled": false
+                    "enabled": false,
                 }
             },
             "series": {
-                "animation": true,
+                "stickyTracking": true,
+                "states": {
+                    "hover": {
+                        "enabled": false
+                    }
+                }
             }
         },
         "tooltip": {
-            "pointFormat": '<span style="color:{point.color}">●</span> <b>{point.y}</b><br/>',
-            "hideDelay": 1000,
+            "headerFormat": '<span style="font-size:14px">{point.key}</span><br/>',
+            "pointFormatter": pointFormatter,
+            "hideDelay": 500,
             "shared": true,
-            "crosshairs": true
+            "crosshairs": true,
+            "padding": 6
         },
         "series": []
     };
@@ -316,4 +329,7 @@ $(document).ready(function() {
     $('#tempChartReset').click(function() {
         tempChart.xAxis[0].setExtremes(null, null);
     });
+
+    $('#tempChartReset').hide();
 });
+

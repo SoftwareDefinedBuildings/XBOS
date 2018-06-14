@@ -5,6 +5,7 @@ $(document).ready(function() {
 	// // assert(apis.length == levels.length);
 	let myLev = 1; // change to 0 if we have data for multiple years
 	var lev = myLev;
+	var onload = true;
 
 	// date format example: Fri Jun 01 2018 17:15:33 GMT-0700 (Pacific Daylight Time)
 	function getName(s) {
@@ -15,7 +16,7 @@ $(document).ready(function() {
 				return s[1];
 			case 2: //day
 				return s[2];
-			case 3:
+			case 3: //time (HH:MM)
 				return s[4].slice(0, 5);
 		}
 	}
@@ -28,24 +29,28 @@ $(document).ready(function() {
 
 	function getDDID(s) {
 		switch(lev) {
-			case 0:
+			case 0: //year
 				return s[3];
-			case 1:
+			case 1: //month year
 				return s[1] + " " + s[3];
-			case 2:
+			case 2: //month day, year
 				return s[1] + " " + s[2] + ", " + s[3];
-			case 3:
+			case 3: //month day, year time (HH:MM)
 				return s[1] + " " + s[2] + ", " + s[3] + " " + s[4].slice(0, 5);
 		}
 	}
 
-	function processResp(j) {
-		j = getData(j);
-		var toRet = makeData(j);
-		toRet.reverse(); // might not need reverse
-		addDrill(toRet); // won't be needed if accessing all data
-		return toRet;
-	}
+	// function processResp(j) {
+	// 	j = getData(j);
+	// 	var toRet = makeData(j);
+	// 	var x = true;
+	// 	if (x) {
+	// 		toRet.reverse(); // might not need reverse
+	// 		x = false;
+	// 	}
+	// 	addDrill(toRet); // won't be needed if accessing all data
+	// 	return toRet;
+	// }
 
 	function getData(j) {
 		if ("0" in j) { return j["0"]; }
@@ -71,26 +76,27 @@ $(document).ready(function() {
 			var date = toDate(k/1000).toString().split(" ");
 			toAdd.name = getName(date);
 			toAdd.id = getDDID(date);
-			toAdd.y = j[k];
-			// toAdd.drilldown = toAdd.id;
+			toAdd.y = round(j[k], 2);
+			// if (!end()) {
+			// 	toAdd.drilldown = toAdd.id;
+			// }
 			toRet.push(toAdd);
 		}
 		return toRet;
 	}
 
-	function processDD(j, e) {
+	// http://www.jacklmoore.com/notes/rounding-in-javascript/
+	function round(val, dec) { return Number(Math.round(val+'e'+dec)+'e-'+dec); }
+
+	function processDD(j, e, flip=false) {
 		j = getData(j);
 		var toRet = new Object();
 		toRet.name = e;
 		toRet.id = toRet.name;
-		energyChart.setTitle(null, { text: toRet.name});
-		if (end()) {
-			energyChart.setTitle({ "text": "Power Consumption" }, null);
-			energyChart.yAxis[0].setTitle({ "text": "kW"});
-			energyChart.options.chart.zoomType = "x";
-			$('#energyChartReset').show();
-		}
 		toRet.data = makeData(j);
+		if (flip) {
+			toRet.data.reverse();
+		}
 		addDrill(toRet.data);
 		toRet.type = getType();
 		return toRet;
@@ -120,6 +126,17 @@ $(document).ready(function() {
 		}
 	}
 
+	function drill(e) {
+		if (end()) {
+			energyChart.setTitle({ "text": "Power Consumption" }, {text: e});
+			energyChart.yAxis[0].setTitle({ "text": "kW"});
+			energyChart.options.chart.zoomType = "x";
+			$('#energyChartReset').show();
+		} else {
+			energyChart.setTitle(null, { text: e});
+		}
+	}
+
 	function getPVE() {
 		if (end()) {
 			return "power/";
@@ -128,16 +145,22 @@ $(document).ready(function() {
 		}
 	}
 
+	function goDown(dd) {
+		energyChart.addSeries(dd, false);
+		energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
+		energyChart.series[energyChart.series.length - 1].remove();
+	}
+
 	var options = {
 		"chart": {
-            "resetZoomButton": {
-                "theme": {
-                    "display": "none"
-                }
-            },
-            "scrollablePlotArea": {
-                "minWidth": 450
-            },
+			"resetZoomButton": {
+				"theme": {
+					"display": "none"
+				}
+			},
+			"scrollablePlotArea": {
+				"minWidth": 450
+			},
 			"renderTo": "chart-total-energy",
 			"type": 'column',
 			"events": {
@@ -149,8 +172,11 @@ $(document).ready(function() {
 						"dataType": "json",
 						"success": function(d) {
 							energyChart.hideLoading();
-							energyChart.series[0].setData(processResp(d));
-							// energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
+							energyChart.addSeries(processDD(d, "2018", true));
+							energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
+							$('#energyChartReset').show();
+							$('#goToAll').show();
+							$('#goToToday').show();
 						}
 					});
 				},
@@ -164,17 +190,25 @@ $(document).ready(function() {
 							"dataType": "json",
 							"success": function(data) {
 								energyChart.hideLoading();
-								energyChart.addSeriesAsDrilldown(e.point, processDD(data, e.point.id));
+								var dd = processDD(data, e.point.id);
+								energyChart.userOptions.drilldown.series.push(dd);
+								lev -= 1;
+								e.point.doDrilldown();
+								if (onload && !end()) {
+									goDown(dd);
+								} else {
+									onload = false;
+								}
+								return;
 							}
 						});
 					} else {
-						console.log("already have it");
+						drill(e.point.id);
 					}
 				},
 				"drillup": function(e) {
-					energyChart.setTitle(null, { "text": upSub(energyChart.subtitle.textStr) });
+					energyChart.setTitle({ "text": "Energy Usage" }, { "text": upSub(energyChart.subtitle.textStr) });
 					energyChart.yAxis[0].setTitle({ "text": "kWh"});
-					energyChart.setTitle({ "text": "Energy Usage" }, null);
 					energyChart.options.chart.zoomType = "";
 					$('#energyChartReset').hide();
 					lev -= 1;
@@ -192,7 +226,7 @@ $(document).ready(function() {
 		},
 		"loading": {
 			"hideDuration": 0,
-			"showDuration": 1000,
+			"showDuration": 0,
 			"style": {
 				"opacity": .75
 			}
@@ -210,7 +244,13 @@ $(document).ready(function() {
 		},
 		"plotOptions": {
 			"series": {
-				"animation": true
+				"animation": true,
+				"stickyTracking": true,
+				"states": {
+					"hover": {
+						"enabled": false
+					}
+				}
 			},
 			"line": {
 				"marker": {
@@ -226,16 +266,12 @@ $(document).ready(function() {
 		},
 		"tooltip": {
 			"headerFormat": '<span style="font-size:11px">{point.name}</span><br>',
-			"pointFormat": '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> <br/>',
-			"hideDelay": 1000
+			"pointFormat": '<span style="color:{point.color}">{point.name}: </span><b>{point.y:.2f}</b><br/>',
+			"hideDelay": 500,
+			"crosshairs": true,
+			"padding": 6
 		},
-		"series": [
-			{
-				"name": "2018",
-				"id": "2018",
-				"data": []
-			}
-		],
+		"series": [],
 		"drilldown": {
 			"drillUpButton": {
 				"position": {
@@ -245,25 +281,39 @@ $(document).ready(function() {
 					"x": -40
 				}
 			},
-			"series": [
-				{
-					"name": "Mar 2018",
-					"id": "Mar 2018",
-					"data": [
-						{
-							"name": "ideeekk",
-							"y": 6
-						}
-					]
-				}
-			]
+			"series": []
 		}
 	};
 
 	energyChart = new Highcharts.Chart(options);
 
-	$('#energyChartReset').click(function() {
+	function resetAxes() {
 		energyChart.xAxis[0].setExtremes(null, null);
-    });
-    $('#energyChartReset').hide();
+	}
+
+	function showAll() {
+		while (energyChart.drilldownLevels.length > 0) {
+			energyChart.drillUp();
+		}
+	}
+
+	$('#energyChartReset').click(resetAxes);
+
+	$('#goToAll').click(showAll);
+
+	$('#goToToday').click(function() {
+		var s = toDate(Date.now()/1000).toString();
+        s = s.slice(4, 10) + ", " + s.slice(11, 15);
+		if (energyChart.subtitle.textStr != s) {
+			showAll();
+			while (!end()) {
+				energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
+			}
+		}
+	});
+
+	$('#energyChartReset').hide();
+	$('#goToAll').hide();
+	$('#goToToday').hide();
+
 });

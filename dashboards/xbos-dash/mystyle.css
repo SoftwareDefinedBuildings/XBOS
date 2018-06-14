@@ -21,18 +21,29 @@ nav .brand-logo {
 
 .container-fluid{
     padding: 0 40px 0 80px !important;
-
 }
 
 nav ul li {
   margin: 0 !important;
 }
 
+#energyButtons {
+  display: flex;
+  justify-content: space-between;
+}
+
+#tempButtons {
+  align-self: center;
+}
 
 .floorplan-image {
     position: absolute;
     width: inherit;
     max-width: 870px;
+}
+
+.btn {
+  cursor: pointer;
 }
 
 .font-12px {
@@ -56,7 +67,7 @@ nav ul li {
 }
 
 .mdl-list_item-sub-title-2 {
-      text-align: right !important;
+    text-align: right !important;
     margin-top: -18px !important;
 }
 
@@ -147,7 +158,6 @@ img {
 .vertical-align-bottom {
   vertical-align: text-bottom;
   padding-top: 23px;
-
 }
 
 .font-size-16 {
@@ -179,8 +189,8 @@ img {
 
 /* Remove that awful yellow color and border from today in Schedule */
 .fc-today {
-/*  opacity: 0;
-*/  border: none;
+  /*opacity: 0;*/
+  border: none;
 }
 
 
