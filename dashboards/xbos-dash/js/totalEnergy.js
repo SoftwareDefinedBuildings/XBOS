@@ -24,6 +24,7 @@ $(document).ready(function() {
 	function toDate(et) {
 		var d = new Date(0);
 		d.setUTCSeconds(et);
+		// TODO: modify timezone
 		return d;
 	}
 
@@ -285,14 +286,14 @@ $(document).ready(function() {
 		}
 	};
 
-	energyChart = new Highcharts.Chart(options);
+	// energyChart = new Highcharts.Chart(options);
 
 	function resetAxes() {
 		energyChart.xAxis[0].setExtremes(null, null);
 	}
 
 	function showAll() {
-		while (energyChart.drilldownLevels.length > 0) {
+		while (lev != myLev) {
 			energyChart.drillUp();
 		}
 	}

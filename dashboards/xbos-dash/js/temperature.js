@@ -112,7 +112,7 @@ $(document).ready(function() {
         mean.data = stdData(m, pa, mean.name);
         mean.lineWidth = 1;
         mean.color = "#000000";
-        mean.showInLegend = false;
+        // mean.showInLegend = false;
 
         var range = new Object();
         range.name = "Range"
@@ -125,6 +125,7 @@ $(document).ready(function() {
         // range.lineColor = "#7bd84e";
         range.fillOpacity = .2;
         range.marker = new Object();
+        range.showInLegend = false;
         range.marker.enabled = false;
 
         return [mean, range];
@@ -156,10 +157,10 @@ $(document).ready(function() {
         return toRet;
     }
 
-    function getMDY() {
-        s = toDate(Date.now()/1000).toString();
-        return s.slice(4, 10) + ", " + s.slice(11, 15);
-    }
+    // function getMDY() {
+    //     s = toDate(Date.now()/1000).toString();
+    //     return s.slice(4, 10) + ", " + s.slice(11, 15);
+    // }
 
     // http://www.jacklmoore.com/notes/rounding-in-javascript/
     function round(val, dec) { return Number(Math.round(val+'e'+dec)+'e-'+dec); }
@@ -223,9 +224,10 @@ $(document).ready(function() {
 
     function pointFormatter() {
         if ("low" in this) {
-            return '<span style="font-size:12px">σ=</span>' + round(this.id, 2) + '<br/>';
-        } else if (this.id == "Average") {
-            return '<span style="font-size:12px">µ=</span>' + this.y+ '<br/>';
+            return "";
+            // return '<span style="font-size:12px">σ=</span>' + round(this.id, 2) + '<br/>';
+        // } else if (this.id == "Average") {
+        //     return '<span style="font-size:12px">µ=</span>' + this.y+ '<br/>';
         } else {
             return '<span style="color:' + this.color + '; font-size:14px">●</span> <b>' + this.y+ '</b><br/>';
         }
@@ -257,7 +259,7 @@ $(document).ready(function() {
                             for (var x in a) {
                                 tempChart.addSeries(a[x], false);
                             }
-                            tempChart.setTitle(null, { text: getMDY()});
+                            // tempChart.setTitle(null, { text: getMDY()});
                             tempChart.redraw();
                             $('#tempChartReset').show();
                         }
@@ -266,12 +268,12 @@ $(document).ready(function() {
             }
         },
         "title": {
-            "text": 'Temperature'
+            "text": "Today's Temperature"
         },
         "subtitle": {
-            "text": "",
+            "text": "95% of data lies in gray area",
             "style": {
-                "fontSize": 18
+                "fontSize": 12
             }
         },
         "loading": {
@@ -296,7 +298,8 @@ $(document).ready(function() {
             "enabled": true,
             "layout": "vertical",
             "align": "right",
-            "verticalAlign": "middle"
+            "verticalAlign": "middle",
+            "maxHeight": 400
         },
         "plotOptions": {
             "line": {
@@ -324,7 +327,7 @@ $(document).ready(function() {
         "series": []
     };
 
-    tempChart = new Highcharts.Chart(options);
+    // tempChart = new Highcharts.Chart(options);
 
     $('#tempChartReset').click(function() {
         tempChart.xAxis[0].setExtremes(null, null);
