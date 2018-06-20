@@ -108,9 +108,15 @@ html, body {
 }
 
 .demo-charts {
+  /*width: 80%;*/
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+.demo-charts * {
+  position: center;
+  width: 100%;
 }
 .demo-chart:nth-child(1) {
   color: #ACEC00;
