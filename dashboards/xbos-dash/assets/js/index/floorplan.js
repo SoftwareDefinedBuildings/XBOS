@@ -5,10 +5,18 @@ $(document).ready(function() {
 		"dataType": "json",
 		"success": function(d) {
 			var ret = processResp(d);
-			ret.forEach(function(v) { if (!v.length) { v[0] = "None"; }});
-			$("#heatingDiv").html(ret[0].join(""));
-			$("#coolingDiv").html(ret[1].join(""));
-			$("#offDiv").html(ret[2].join(""));
+			var bools = [];
+			ret.forEach(function(v) {
+				if (!v.length) {
+					v[0] = "None";
+					bools.push(false);
+				} else {
+					bools.push(true);
+				}
+			});
+			var divs = [$("#heatingDiv"), $("#coolingDiv"), $("#offDiv"), $("#lightingDiv")];
+			var instance = M.Collapsible.getInstance($("#hvac"));
+			setZones(ret, bools, divs, instance);
 		},
 		"complete": function(d) {
 			var zones = [];
@@ -18,7 +26,6 @@ $(document).ready(function() {
 			var z = $("#zone" + i);
 			var h = $("#HVAC-" + i);
 			while (i < 30) {
-				z.css("opacity", .5);
 				zones.push([z, i]);
 				hvacs.push(h);
 				i += 1;
@@ -29,11 +36,11 @@ $(document).ready(function() {
 			zones.forEach(function(v) {
 				v[0].hover(function() {
 					myHover(0);
-					v[0].css("opacity", 1);
+					v[0].css("opacity", .5);
 					hvacs[v[1] - 1].css("opacity", 1);
 				}, function() {
 					myHover(1);
-					v[0].css("opacity", .5);
+					v[0].css("opacity", 1);
 				});
 			});
 
@@ -46,7 +53,7 @@ $(document).ready(function() {
 	});
 
 	function processResp(d) {
-		var toRet = [[], [], []];
+		var toRet = [[], [], [], []];
 		var i = 1;
 		for (var x in d) {
 			var o = d[x];
@@ -66,8 +73,17 @@ $(document).ready(function() {
 		} else {
 			toRet.push(2);
 		}
-		toRet.push("<div class='zones' id='zone" + i + "'><div class='zoneNum'>Zone " + i + "</div><div class='zoneTemp'>" + t + "°</div></div>");
+		toRet.push("<div class='zones' id='zone" + i + "'><span>Zone " + i + "</span><span>" + t + "°</span></div>");
 		return toRet;
 
+	}
+
+	function setZones(r, b, d, i) {
+		for (var x in r) {
+			d[x].html(r[x].join(""));
+			if (b[x]) {
+				i.open(x);
+			}
+		}
 	}
 });

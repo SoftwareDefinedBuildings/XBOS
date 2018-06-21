@@ -244,7 +244,7 @@ $(document).ready(function() {
             "scrollablePlotArea": {
                 "minWidth": 450
             },
-            "renderTo": "chart-temperature",
+            "renderTo": "tempChart",
             "events": {
                 "load": function(e) {
                     this.showLoading();
@@ -327,7 +327,7 @@ $(document).ready(function() {
         "series": []
     };
 
-    // tempChart = new Highcharts.Chart(options);
+    tempChart = new Highcharts.Chart(options);
 
     $('#tempChartReset').click(function() {
         tempChart.xAxis[0].setExtremes(null, null);

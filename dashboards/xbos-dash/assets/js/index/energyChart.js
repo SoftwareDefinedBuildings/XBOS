@@ -162,7 +162,7 @@ $(document).ready(function() {
 			"scrollablePlotArea": {
 				"minWidth": 450
 			},
-			"renderTo": "chart-total-energy",
+			"renderTo": "energyChart",
 			"type": 'column',
 			"events": {
 				"load": function(e) {
@@ -286,7 +286,7 @@ $(document).ready(function() {
 		}
 	};
 
-	// energyChart = new Highcharts.Chart(options);
+	energyChart = new Highcharts.Chart(options);
 
 	function resetAxes() {
 		energyChart.xAxis[0].setExtremes(null, null);
