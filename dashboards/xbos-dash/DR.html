@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>XBOS Dashboard</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel='shortcut icon' type='image/png' href='./assets/img/favicon2.png'/>
+	<link rel='stylesheet' href='./assets/css/materialize.css'>
+	<link rel='stylesheet' href='./assets/css/nouislider.css'>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+<body id="body">
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper blue">
+				<a href="#" class="brand-logo">XBOS-DR</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="schedule.html">Schedule</a></li>
+					<li><a href="report.html">Report</a></li>
+					<li class="active"><a href="#">DR</a></li>
+					<li><a href="settings.html">Settings</a></li>
+					<li><a id="weatherLI">73</a></li>
+				</ul>
+			</div>
+			<div id="DRBG" class="row center-align pulse z-depth-1 scale-transition scale-out" style="line-height: 2;">
+				<a id="DRTXT" href="html/DR.html">"</a>
+			</div>
+		</nav>
+	</div>
+
+	<div class="row" id="DRROW" style="display: none;"></div>
+	<div class="row"></div>
+	<div class="row"></div>
+
+	<div class="container">
+		<div id="zone-sel" class="row valign-wrapper">
+			<div id="zone-loader" class="col s10 push-s1">
+				<div class="progress"><div class="indeterminate"></div></div>
+			</div>
+			<div id="zone-btns" class="col s2 scale-transition scale-out">
+				<div class="switch center-align">
+					<label class="valign-wrapper">
+      					<span id="switch-label" style="font-size: 20px; color: black;">Zones</span>
+						<input id="bvz" type="checkbox">
+      					<span class="lever"></span>
+    				</label>
+  				</div>
+  				<div class="row"></div>
+				<div class="row">
+					<a id="sel-all" class="waves-effect waves-light btn-small disabled">All</a>
+					<a id="del-all" class="waves-effect waves-light btn-small disabled">None</a>
+				</div>
+			</div>
+		</div>
+
+		<div id="bldng-charts" class="section z-depth-1">
+			<div class="row valign-wrapper">
+				<div id="prevChart" class="col s6"></div>
+				<div id="DRChart" class="col s6"></div>
+			</div>
+			<div class="center-align"><a id="prevChartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom (Building)</a></div>
+		</div>
+
+		<!-- <div id="zone-charts" class="section z-depth-1">
+			<div class="row valign-wrapper">
+				<div id="prevChart" class="col s6"></div>
+				<div id="DRChart" class="col s6"></div>
+			</div>
+			<div class="center-align"><a id="prevChartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom (Zones)</a></div>
+		</div> -->
+
+		<div class="row"></div>
+		<div class="row"></div>
+
+		<!-- <div id="bldng-config" class="section z-depth-1">
+			<h4 class="center-align">Whole Building</h4>
+			<div class="row valign-wrapper">
+				<div class="col s6 push-s1 left-align">
+					<h5 id="historic-lam" class="grey-text text-darken-2"></h5>
+					<h5 id="historic-money-savings" class="grey-text text-darken-2"></h5>
+					<h5 id="historic-energy-savings" class="grey-text text-darken-2"></h5>
+					<h5 id="historic-dis" class="grey-text text-darken-2"></h5>
+				</div>
+				<div class="col s6 pull-s1 right-align">
+					<div class="row valign-wrapper">
+						<div class="col s3 push-s3 center-align">
+							<h5 id="sim-lam">λ=0.50</h5>
+						</div>
+						<div class="col s3 center-align">
+							<a id="sim-btn" class="waves-effect waves-light btn-small">Simulate</a>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s6 push-s6">
+							<p class="range-field"><input type="range" class="lam-range" id="sim-lam-range" min="0" max="1" step="0.01"/></p>
+						</div>
+					</div>
+					<h5 id="sim-money-savings" class="green-text text-darken-1">$310 saved</h5>
+					<h5 id="sim-energy-savings" class="orange-text text-darken-1">416 kWH saved</h5>
+					<h5 id="sim-dis" class="purple-text text-darken-5">Discomfort: 84</h5>
+				</div>
+			</div>
+		</div> -->
+
+		<div id="bldng-config" class="section z-depth-1">
+			<h4 class="center-align">Whole Building</h4>
+			<div class="row valign-wrapper">
+				<div class="col s3"></div>
+				<div class="col s6">
+					<p class="range-field"><input type="range" class="lam-range" id="sim-lam-range" min="0" max="1" step="0.01"/></p>
+				</div>
+				<div class="col s3 push-s1">
+					<a id="sim-btn" class="waves-effect waves-light btn-small scale-transition scale-out">Run</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s3 push-s1 right-align">
+					<h5 id="historic-lam" class="grey-text text-darken-2"></h5>
+					<h5 id="historic-money-savings" class="grey-text text-darken-2"></h5>
+					<h5 id="historic-energy-savings" class="grey-text text-darken-2"></h5>
+					<h5 id="historic-dis" class="grey-text text-darken-2"></h5>
+				</div>
+				<div class="col s4 push-s1 center-align">
+					<h5>λ</h5>
+					<h5>$ Saved</h5>
+					<h5>kWH Saved</h5>
+					<h5>Discomfort</h5>
+				</div>
+				<div class="col s4 push-s1 left-align">
+					<h5 id="sim-lam">_____</h5>
+					<h5 id="sim-money-savings" class="green-text text-darken-1">_____</h5>
+					<h5 id="sim-energy-savings" class="orange-text text-darken-1">_____</h5>
+					<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
+				</div>
+			</div>
+		</div>
+				<!-- <div class="col s6 push-s1 left-align">
+					
+				</div>
+				<div class="col s6 pull-s1 right-align">
+					<div class="row valign-wrapper">
+						<div class="col s3 push-s3 center-align">
+							
+						</div>
+						<div class="col s3 center-align">
+							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s6 push-s6">
+							
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div> -->
+
+
+		<div id="zone-config" class="section z-depth-1" style="display: none;">
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="assets/js/lib/materialize.js"></script>
+<script type="text/javascript" src="assets/js/lib/jquery.js"></script>
+<script type="text/javascript" src="assets/js/script.js"></script>
+<script type="text/javascript" src="assets/js/lib/highcharts.js"></script>
+<script type="text/javascript" src="assets/js/lib/drilldown.js"></script>
+<script type="text/javascript" src="assets/js/lib/highcharts-more.js"></script>
+<script type="text/javascript" src="assets/js/DR/zones.js"></script>
+<script type="text/javascript" src="assets/js/DR/DR.js"></script>
+<script type="text/javascript" src="assets/js/DR/DRChart.js"></script>
+<script type="text/javascript" src="assets/js/DR/prevChart.js"></script>
+
+</html>

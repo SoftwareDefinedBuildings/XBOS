@@ -1,21 +1,28 @@
 $(document).ready(function() {
+	$("#hvac").hide();
+	$("#hvac-loader").show();
+	$("#hvac-loader").addClass("scale-in");
 	$.ajax({
 		"url": "http://127.0.0.1:5000/api/hvac",
 		"type": "GET",
 		"dataType": "json",
 		"success": function(d) {
+			$("#hvac-loader").addClass("scale-out");
+			$("#hvac").addClass("scale-in");
+			$("#hvac-loader").hide();
+			$("#hvac").show();
 			var ret = processResp(d);
 			var bools = [];
 			ret.forEach(function(v) {
 				if (!v.length) {
-					v[0] = "None";
+					v[0] = "<span>None</span>";
 					bools.push(false);
 				} else {
 					bools.push(true);
 				}
 			});
 			var divs = [$("#heatingDiv"), $("#coolingDiv"), $("#offDiv"), $("#lightingDiv")];
-			var instance = M.Collapsible.getInstance($("#hvac"));
+			var instance = M.Collapsible.getInstance($("#hvac-dropdown"));
 			setZones(ret, bools, divs, instance);
 		},
 		"complete": function(d) {

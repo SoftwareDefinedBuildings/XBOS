@@ -5,6 +5,20 @@
   line-height: 2;
 }
 
+body {
+  padding-bottom: 125px;
+}
+
+/*#prev-col:after {
+  content: '';
+  top: 150px;
+  bottom: 150px;
+  left: 50%;
+  width: 1px;
+  background: #DDDDDD;
+  position: absolute;
+}*/
+
 /*!
  * Materialize v1.0.0-beta (http://materializecss.com)
  * Copyright 2014-2017 Materialize
@@ -2691,6 +2705,12 @@ a {
   background-color: #e0e0e0;
 }
 
+.vert-divider {
+  width: 1px;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+
 blockquote {
   margin: 20px 0;
   padding-left: 1.5rem;
@@ -4277,10 +4297,7 @@ table span.badge {
 }
 
 nav {
-  color: #fff;
-  background-color: #2196F3;
   width: 100%;
-  padding: 0 3%;
   height: 56px;
   line-height: 56px;
 }
@@ -5859,7 +5876,7 @@ button.btn-floating {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   line-height: 1.5;
-  padding: 1rem;
+  padding: .75rem;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
 }
@@ -6844,12 +6861,14 @@ textarea.materialize-textarea {
 
 [type="checkbox"] + span:not(.lever) {
   position: relative;
-  padding-left: 35px;
+  padding: 0 20px 0 25px;
   cursor: pointer;
   display: inline-block;
   height: 25px;
   line-height: 25px;
+  line-height: 20px;
   font-size: 1rem;
+  color: black;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
@@ -6953,6 +6972,12 @@ textarea.materialize-textarea {
   z-index: 1;
 }
 
+/*idk */
+/*.my-cb + span {
+  -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+  transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+}*/
+
 [type="checkbox"].filled-in:not(:checked) + span:not(.lever):before {
   width: 0;
   height: 0;
@@ -6969,7 +6994,8 @@ textarea.materialize-textarea {
   height: 20px;
   width: 20px;
   background-color: transparent;
-  border: 2px solid #5a5a5a;
+  /*checkbox color*/
+  border: 2px solid black;
   top: 0px;
   z-index: 0;
 }
@@ -7327,6 +7353,7 @@ select:disabled {
   position: relative;
 }
 
+
 input[type=range],
 input[type=range] + .thumb {
   cursor: pointer;
@@ -7360,6 +7387,8 @@ input[type=range] + .thumb {
           transform-origin: 50% 50%;
   -webkit-transform: rotate(-45deg);
           transform: rotate(-45deg);
+  /*my styling*/
+  display: none;
 }
 
 input[type=range] + .thumb .value {
@@ -7370,6 +7399,8 @@ input[type=range] + .thumb .value {
   font-size: 0;
   -webkit-transform: rotate(45deg);
           transform: rotate(45deg);
+  /*my styling*/
+  display: none;
 }
 
 input[type=range] + .thumb.active {
@@ -7484,6 +7515,21 @@ input[type=range]::-ms-thumb {
 
 input[type=range].focused:focus:not(.active)::-ms-thumb {
   box-shadow: 0 0 0 10px rgba(38, 166, 154, 0.26);
+}
+
+/*my styling*/
+input[type=range]:disabled {
+  /* fix for FF unable to apply focus style bug  */
+  border: 1px solid white;
+  /*required for proper track sizing in FF*/
+  /*opacity: .8;*/
+  cursor: default;
+}
+
+/*my styling*/
+input[type=range]:disabled::-webkit-slider-thumb {
+  background: gray;
+  background-color: gray;
 }
 
 /***************

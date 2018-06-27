@@ -48,6 +48,7 @@ $(document).ready(function() {
     function select(sums, toRet, pa) {
         var zones = sums[0].length;
         if (zones > 5) {
+            tempChart.setTitle(null, { text: "95% of data lies in gray area"});
             var avgs = [];
             var stds = [];
             // https://stackoverflow.com/questions/1295584/most-
@@ -247,7 +248,6 @@ $(document).ready(function() {
             "renderTo": "tempChart",
             "events": {
                 "load": function(e) {
-                    this.showLoading();
                     $.ajax({
                         "url": "http://127.0.0.1:5000/api/hvac/day/30m",
                         "type": "GET",
@@ -261,7 +261,7 @@ $(document).ready(function() {
                             }
                             // tempChart.setTitle(null, { text: getMDY()});
                             tempChart.redraw();
-                            $('#tempChartReset').show();
+                            $('#tempChartReset').addClass("scale-in");
                         }
                     });
                 }
@@ -271,7 +271,7 @@ $(document).ready(function() {
             "text": "Today's Temperature"
         },
         "subtitle": {
-            "text": "95% of data lies in gray area",
+            "text": "",
             "style": {
                 "fontSize": 12
             }
@@ -328,11 +328,10 @@ $(document).ready(function() {
     };
 
     tempChart = new Highcharts.Chart(options);
+    tempChart.showLoading();
 
     $('#tempChartReset').click(function() {
         tempChart.xAxis[0].setExtremes(null, null);
     });
-
-    $('#tempChartReset').hide();
 });
 

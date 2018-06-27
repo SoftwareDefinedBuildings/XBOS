@@ -166,7 +166,6 @@ $(document).ready(function() {
 			"type": 'column',
 			"events": {
 				"load": function(e) {
-					this.showLoading();
 					$.ajax({
 						"url": "http://127.0.0.1:5000/api/" + getPVE() + apis[lev],
 						"type": "GET",
@@ -175,9 +174,9 @@ $(document).ready(function() {
 							energyChart.hideLoading();
 							energyChart.addSeries(processDD(d, "2018", true));
 							energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
-							$('#energyChartReset').show();
-							$('#goToAll').show();
-							$('#goToToday').show();
+							$('#energyChartReset').addClass("scale-in");
+							$('#goToAll').addClass("scale-in");
+							$('#goToToday').addClass("scale-in");
 						}
 					});
 				},
@@ -288,6 +287,8 @@ $(document).ready(function() {
 
 	energyChart = new Highcharts.Chart(options);
 
+	energyChart.showLoading();
+
 	function resetAxes() {
 		energyChart.xAxis[0].setExtremes(null, null);
 	}
@@ -312,9 +313,4 @@ $(document).ready(function() {
 			}
 		}
 	});
-
-	$('#energyChartReset').hide();
-	$('#goToAll').hide();
-	$('#goToToday').hide();
-
 });
