@@ -52,18 +52,23 @@ $(document).ready(function() {
 	var hlam = .9;
 	var hms = 327;
 	var hes = 404;
-	var hdis = 1997;
-	// $("#historic-lam").html("λ=" + myFix(hlam));
+	var hdis = .8;
+	$("#historic-lam").html("λ: " + myFix(hlam));
 	// $("#historic-money-savings").html("$" + myFix(hms) + " saved");
+	// $("#historic-savings").html("Savings: $" + myFix(hms) + " & ");
 	// $("#historic-energy-savings").html(myFix(hes) + " kWH saved");
-	// $("#historic-dis").html(myFix("Discomfort: " + hdis));
-	$("#historic-lam").html(myFix(hlam));
-	$("#historic-money-savings").html(myFix(hms));
-	$("#historic-energy-savings").html(myFix(hes));
-	$("#historic-dis").html(myFix(hdis));
+	// $("#historic-savings").append(myFix(hes) + "kWH");
+	$("#historic-dis").html("Discomfort: " + myFix(hdis));
+	
+	// $("#historic-lam").html(myFix(hlam));
+	// $("#historic-money-savings").html(myFix(hms));
+	// $("#historic-energy-savings").html(myFix(hes));
+	$("#historic-money-savings").html("$" + myFix(hms));
+	$("#historic-energy-savings").html(myFix(hes) + "kWH");
+	// $("#historic-dis").html(myFix(hdis));
 
-	// var simms = 1;
-	// var simes = 2;
+	var simms = 404;
+	var simes = 2122;
 	// var simdis = 3;
 	// $("#sim-money-savings").html("$" + myFix(simms) + " saved");
 	// $("#sim-energy-savings").html(myFix(simes) + " kWH saved");
@@ -73,13 +78,18 @@ $(document).ready(function() {
 	// $("#sim-energy-savings").html(myFix(simes));
 	// $("#sim-dis").html(myFix(simdis));
 
+	// $("#sim-money-savings").html("$" + myFix(simms));
+	// $("#sim-energy-savings").html(myFix(simes) + "kWH");
+	// $("#sim-dis").html(myFix("Discomfort: " + simdis));
+
 	let b = true;
 	$(".lam-range").each(function() {
 		var x = $("#" + this.id.replace("-range", ""));
 		this.oninput = function() {
 			if (b) { $("#sim-btn").addClass("scale-in"); b = false; }
 			// x.html("λ=" + myFix(this.value));
-			x.html(myFix(this.value));
+			x.html("λ: " + myFix(this.value));
+			// x.html(myFix(this.value));
 		}
 	});
 

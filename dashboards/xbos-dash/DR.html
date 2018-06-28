@@ -41,14 +41,14 @@
 				<div class="progress"><div class="indeterminate"></div></div>
 			</div>
 			<div id="zone-btns" class="col s2 scale-transition scale-out">
-				<div class="switch center-align">
+				<div class="switch">
 					<label class="valign-wrapper">
-      					<span id="switch-label" style="font-size: 20px; color: black;">Zones</span>
+						<span id="switch-label" style="font-size: 20px; color: black;">Zones</span>
 						<input id="bvz" type="checkbox">
-      					<span class="lever"></span>
-    				</label>
-  				</div>
-  				<div class="row"></div>
+						<span class="lever"></span>
+					</label>
+				</div>
+				<div class="row"></div>
 				<div class="row">
 					<a id="sel-all" class="waves-effect waves-light btn-small disabled">All</a>
 					<a id="del-all" class="waves-effect waves-light btn-small disabled">None</a>
@@ -56,13 +56,13 @@
 			</div>
 		</div>
 
-		<div id="bldng-charts" class="section z-depth-1">
+		<!-- <div id="bldng-charts" class="section z-depth-1">
 			<div class="row valign-wrapper">
 				<div id="prevChart" class="col s6"></div>
 				<div id="DRChart" class="col s6"></div>
 			</div>
 			<div class="center-align"><a id="prevChartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom (Building)</a></div>
-		</div>
+		</div> -->
 
 		<!-- <div id="zone-charts" class="section z-depth-1">
 			<div class="row valign-wrapper">
@@ -105,7 +105,7 @@
 			</div>
 		</div> -->
 
-		<div id="bldng-config" class="section z-depth-1">
+		<!-- <div id="bldng-config" class="section z-depth-1" style="display: none;">
 			<h4 class="center-align">Whole Building</h4>
 			<div class="row valign-wrapper">
 				<div class="col s3"></div>
@@ -117,51 +117,59 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col s3 push-s1 right-align">
+				<div class="col s4 right-align">
 					<h5 id="historic-lam" class="grey-text text-darken-2"></h5>
 					<h5 id="historic-money-savings" class="grey-text text-darken-2"></h5>
 					<h5 id="historic-energy-savings" class="grey-text text-darken-2"></h5>
 					<h5 id="historic-dis" class="grey-text text-darken-2"></h5>
 				</div>
-				<div class="col s4 push-s1 center-align">
+				<div class="col s4 center-align">
 					<h5>λ</h5>
 					<h5>$ Saved</h5>
 					<h5>kWH Saved</h5>
 					<h5>Discomfort</h5>
 				</div>
-				<div class="col s4 push-s1 left-align">
+				<div class="col s4 left-align">
 					<h5 id="sim-lam">_____</h5>
 					<h5 id="sim-money-savings" class="green-text text-darken-1">_____</h5>
 					<h5 id="sim-energy-savings" class="orange-text text-darken-1">_____</h5>
 					<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
 				</div>
 			</div>
-		</div>
-				<!-- <div class="col s6 push-s1 left-align">
-					
-				</div>
-				<div class="col s6 pull-s1 right-align">
-					<div class="row valign-wrapper">
-						<div class="col s3 push-s3 center-align">
-							
-						</div>
-						<div class="col s3 center-align">
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col s6 push-s6">
-							
-						</div>
-					</div>
-					
-				</div>
-			</div>
 		</div> -->
 
-
-		<div id="zone-config" class="section z-depth-1" style="display: none;">
+		<div id="zone-config" class="section">
+			<div class="row z-depth-1 valign-wrapper" style="border-radius: 2px; padding: 12px 6px;">
+				<div class="col s1 center-align">
+					<h2 style="margin: 0;">88</h2>
+				</div>
+				<div class="col s2 center-align">
+					<h5 class="blue-grey-text text-darken-2" style="margin-top: 0;">Historical</h5>
+					<h6 id="historic-lam" class="blue-grey-text"></h6>
+					<h6 id="historic-dis" class="blue-grey-text"></h6>
+				</div>
+				<div class="col s1"></div>
+				<div class="col s6">
+					<div class="row valign-wrapper" style="margin: 0;">
+						<div class="col s3 pull-s1">
+							<span id="sim-lam" class="right-align" style="font-size: 22px;">λ: 0.50</span>
+						</div>
+						<div class="col s7 pull-s2">
+							<p class="range-field"><input type="range" class="lam-range" id="sim-lam-range" min="0" max="1" step="0.01"/></p>
+						</div>
+						<div class="col s2 pull-s2">
+							<a id="sim-btn" class="waves-effect waves-light btn-small">Run</a>
+						</div>
+					</div>
+				</div>
+				<div class="col s1 center-align">
+					<h5 style="margin-top: 0;">Save</h5>
+					<h6 id="sim-money-savings" class="green-text text-darken-1">$...</h6>
+					<h6 id="sim-energy-savings" class="orange-text text-darken-1">...kWH</h6>
+				</div>
+			</div>
 		</div>
+
 	</div>
 </body>
 
