@@ -139,36 +139,30 @@
 		</div> -->
 
 		<div id="zone-config" class="section">
-			<div class="row z-depth-1 valign-wrapper" style="border-radius: 2px; padding: 12px 0;">
-				<div class="col s1 center-align"><h2 style="margin: 0;">88</h2></div>
-				<div class="col s3">
-					<h5 class="blue-grey-text center-align text-darken-2" style="margin: 0;">Historical</h5>
-					<div style="clear: both;">
-						<h6 id="historic-lam" style="float: left; margin-bottom: 0;" class="blue-grey-text"></h6>
-						<h6 id="historic-dis" style="float: right; margin-bottom: 0;" class="blue-grey-text">asdfsadffs</h6>
-					</div>
-					<div style="clear: both; display: flex; justify-content: space-between;">
-						<h6 style="float: left;" class="blue-grey-text">Savings:</h6>
-						<h6 id="historic-money-savings" style="float: left;" class="blue-grey-text"></h6>
-						<h6 id="historic-energy-savings" style="float: left;" class="blue-grey-text"></h6>
-					</div>
+			<div class="row z-depth-1 valign-wrapper" style="border-radius: 2px; padding: 18px 48px 18px 12px;">
+				<div class="col s1"><h2 class="center-align" style="margin: 0;">88</h2></div>
+				<div class="col s3 center-align">
+					<h5 class="blue-grey-text text-darken-1" style="margin: 0;">Historical</h5>
+					<h6 id="historic-lam" class="blue-grey-text text-lighten-1"></h6>
+					<h6 id="historic-dis" class="blue-grey-text text-lighten-1" style="margin-top: 0;"></h6>
+					<h6 id="historic-savings" class="blue-grey-text text-lighten-1" style="margin: 0;">Saved</h6>
 				</div>
-				<div class="col s5">
+				<div class="col s6">
 					<div class="row valign-wrapper" style="margin: 0;">
-						<div class="col s4 right-align pull-s1">
-							<span id="sim-lam" style="font-size: 24px;">λ: 0.50</span>
+						<div class="col s4 pull-s2 right-align">
+							<span id="sim-lam" style="font-size: 20px;">λ: 0.50</span>
 						</div>
-						<div class="col s7 pull-s1">
-							<p class="range-field"><input type="range" class="lam-range" id="sim-lam-range" min="0" max="1" step="0.01"/></p>
+						<div class="col s7 pull-s2">
+							<p class="range-field" style="margin: 0;"><input type="range" class="lam-range" id="sim-lam-range" min="0" max="1" step="0.01"/></p>
 						</div>
-						<div class="col s1 pull-s1">
+						<div class="col s1 pull-s2">
 							<a id="sim-btn" class="waves-effect waves-light btn-small">Run</a>
 						</div>
 					</div>
-					<h6 style="float: left; margin: 0;">Discomfort...</h6>
+					<h6 class="left-align">Discomfort...</h6>
 				</div>
-				<div class="col s2 center-align">
-					<h5 style="margin: 0;">Savings</h5>
+				<div class="col s1 center-align">
+					<h5 style="margin: 0;">Save</h5>
 					<h6 id="sim-money-savings" class="green-text text-darken-1">$...</h6>
 					<h6 id="sim-energy-savings" class="orange-text text-darken-1">...kWH</h6>
 				</div>

@@ -55,20 +55,20 @@ $(document).ready(function() {
 	var hdis = .8;
 	$("#historic-lam").html("λ: " + myFix(hlam));
 	// $("#historic-money-savings").html("$" + myFix(hms) + " saved");
-	// $("#historic-savings").html("Savings: $" + myFix(hms) + " & ");
+	$("#historic-savings").html("Saved: $" + myFix(hms) + " & ");
 	// $("#historic-energy-savings").html(myFix(hes) + " kWH saved");
-	// $("#historic-savings").append(myFix(hes) + "kWH");
+	$("#historic-savings").append(myFix(hes) + "kWH");
 	$("#historic-dis").html("Discomfort: " + myFix(hdis));
 	
 	// $("#historic-lam").html(myFix(hlam));
 	// $("#historic-money-savings").html(myFix(hms));
 	// $("#historic-energy-savings").html(myFix(hes));
-	$("#historic-money-savings").html("$" + myFix(hms));
-	$("#historic-energy-savings").html(myFix(hes) + "kWH");
+	// $("#historic-money-savings").html("$" + myFix(hms));
+	// $("#historic-energy-savings").html(myFix(hes) + "kWH");
 	// $("#historic-dis").html(myFix(hdis));
 
 	var simms = 404;
-	var simes = 2122;
+	var simes = 222;
 	// var simdis = 3;
 	// $("#sim-money-savings").html("$" + myFix(simms) + " saved");
 	// $("#sim-energy-savings").html(myFix(simes) + " kWH saved");
