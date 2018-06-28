@@ -78,8 +78,8 @@ $(document).ready(function() {
 	// $("#sim-energy-savings").html(myFix(simes));
 	// $("#sim-dis").html(myFix(simdis));
 
-	// $("#sim-money-savings").html("$" + myFix(simms));
-	// $("#sim-energy-savings").html(myFix(simes) + "kWH");
+	$("#sim-money-savings").html("$" + myFix(simms));
+	$("#sim-energy-savings").html(myFix(simes) + "kWH");
 	// $("#sim-dis").html(myFix("Discomfort: " + simdis));
 
 	let b = true;
