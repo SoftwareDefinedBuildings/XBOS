@@ -7080,11 +7080,21 @@ textarea.materialize-textarea {
   background-color: #84c7c1;
 }
 
+/*mine*/
+.switch label input[type=checkbox] + .lever {
+  background-color: #84c7c1;
+}
+
 .switch label input[type=checkbox]:checked + .lever:before, .switch label input[type=checkbox]:checked + .lever:after {
   left: 18px;
 }
 
 .switch label input[type=checkbox]:checked + .lever:after {
+  background-color: #26a69a;
+}
+
+/*mine*/
+.switch label input[type=checkbox] + .lever:after {
   background-color: #26a69a;
 }
 

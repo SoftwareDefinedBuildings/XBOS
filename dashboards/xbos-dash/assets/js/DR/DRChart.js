@@ -38,7 +38,8 @@ $(document).ready(function() {
                             // }
                             // DRChart.setTitle(null, { text: getMDY()});
                             // DRChart.redraw();
-                            $('#DRChartReset').addClass("scale-in");
+                            // $('#DRChartReset').addClass("scale-in");
+                            $('#chartReset').addClass("scale-in");
                         }
                     });
                 }

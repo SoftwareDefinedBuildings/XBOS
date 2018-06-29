@@ -30,7 +30,6 @@ $(document).ready(function() {
 							prevChart.hideLoading();
 							// prevChart.addSeries(processDD(d, "2018", true));
 							// prevChart.series[0].data[prevChart.series[0].data.length - 1].doDrilldown();
-							$('#prevChartReset').addClass("scale-in");
 						}
 					});
 				},

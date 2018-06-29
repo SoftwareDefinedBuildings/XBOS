@@ -1,37 +1,44 @@
 $(document).ready(function() {
-	$("#bvz").click(function () {
-		if ($("#bvz").prop("checked")) {
-			x = "";
-			$("#del-all").removeClass("disabled");
-			$("#sel-all").removeClass("disabled");
-			$(".my-cb + span").removeClass("grey-text");
-			$("#switch-label").removeClass("grey-text");
-			$("#zone-config").show();
-			$("#bldng-config").hide();
-			// $("#zone-charts").show();
-			// $("#bldng-charts").hide();
-		} else {
-			x = "disabled";
-			$("#del-all").addClass("disabled");
-			$("#sel-all").addClass("disabled");
-			$(".my-cb + span").addClass("grey-text");
-			$("#switch-label").addClass("grey-text");
-			$("#bldng-config").show();
+	var checked = false;
+	$("#bvz").click(mySwitch);
+	function mySwitch() {
+		if (checked) {
+			$("#switch-bldng").addClass("black-text");
+			$("#switch-zone").removeClass("black-text");
 			$("#zone-config").hide();
-			// $("#bldng-charts").show();
-			// $("#zone-charts").hide();
+			$("#bldng-config").show();
+			$("#lever").prop("checked", false);
+		} else {
+			$("#switch-zone").addClass("black-text");
+			$("#switch-bldng").removeClass("black-text");
+			$("#bldng-config").hide();
+			$("#zone-config").show();
+			$("#lever").prop("checked", true);
 		}
-		setAll("disabled", x);
-	});
-
-	function setAll(p, x) {
-		$(".my-cb").each(function() {
-			$(this).prop(p, x);
-		});
+		checked = !checked;
 	}
 
-	$("#del-all").click(function() { setAll("checked", ""); });
-	$("#sel-all").click(function() { setAll("checked", "checked"); });
+	$("#checkbox").click(function() { console.log("checkbox"); });
+	$("#lever").click(function() { console.log("lever"); });
+	$("#switch-zone").click(function() { console.log("switch"); });
+
+
+	// $("#switch-zone").('click', function (event) {
+	// 	event.stopPropagation();
+	// 	$("#lever").prop("checked", true);
+	// 	$("#switch-zone").addClass("black-text");
+	// 	$("#switch-bldng").removeClass("black-text");
+	// 	$("#bldng-config").hide();
+	// 	$("#zone-config").show();
+	// 	// if ($(event.target).is($("#switch-zone"))) {
+	// 	// 	alert('clicked');
+	// 	// }
+	// });
+
+	// $("#switch-zone").click(function() {
+		// checked = false;
+		// mySwitch();
+	// });
 
 	function myFix(x) {
 		if (x > 1) {
@@ -53,33 +60,32 @@ $(document).ready(function() {
 	var hms = 327;
 	var hes = 404;
 	var hdis = .8;
-	$("#historic-lam").html("λ: " + myFix(hlam));
+	// $("#historic-lam").html("λ: " + myFix(hlam));
 	// $("#historic-money-savings").html("$" + myFix(hms) + " saved");
-	$("#historic-savings").html("Saved: $" + myFix(hms) + " & ");
 	// $("#historic-energy-savings").html(myFix(hes) + " kWH saved");
-	$("#historic-savings").append(myFix(hes) + "kWH");
-	$("#historic-dis").html("Discomfort: " + myFix(hdis));
+	// $("#historic-savings").append(myFix(hes) + "kWH");
+	// $("#historic-dis").html("Discomfort: " + myFix(hdis));
 	
-	// $("#historic-lam").html(myFix(hlam));
-	// $("#historic-money-savings").html(myFix(hms));
-	// $("#historic-energy-savings").html(myFix(hes));
+	$("#historic-lam").html(myFix(hlam));
+	$("#historic-money-savings").html(myFix(hms));
+	$("#historic-energy-savings").html(myFix(hes));
 	// $("#historic-money-savings").html("$" + myFix(hms));
 	// $("#historic-energy-savings").html(myFix(hes) + "kWH");
-	// $("#historic-dis").html(myFix(hdis));
+	$("#historic-dis").html(myFix(hdis));
 
 	var simms = 404;
 	var simes = 222;
-	// var simdis = 3;
+	var simdis = 3;
 	// $("#sim-money-savings").html("$" + myFix(simms) + " saved");
 	// $("#sim-energy-savings").html(myFix(simes) + " kWH saved");
 	// $("#sim-dis").html(myFix("Discomfort: " + simdis));
 	
-	// $("#sim-money-savings").html(myFix(simms));
-	// $("#sim-energy-savings").html(myFix(simes));
-	// $("#sim-dis").html(myFix(simdis));
+	$("#sim-money-savings").html(myFix(simms));
+	$("#sim-energy-savings").html(myFix(simes));
+	$("#sim-dis").html(myFix(simdis));
 
-	$("#sim-money-savings").html("$" + myFix(simms));
-	$("#sim-energy-savings").html(myFix(simes) + "kWH");
+	// $("#sim-money-savings").html("$" + myFix(simms));
+	// $("#sim-energy-savings").html(myFix(simes) + "kWH");
 	// $("#sim-dis").html(myFix("Discomfort: " + simdis));
 
 	let b = true;
@@ -88,8 +94,8 @@ $(document).ready(function() {
 		this.oninput = function() {
 			if (b) { $("#sim-btn").addClass("scale-in"); b = false; }
 			// x.html("λ=" + myFix(this.value));
-			x.html("λ: " + myFix(this.value));
-			// x.html(myFix(this.value));
+			// x.html("λ: " + myFix(this.value));
+			x.html(myFix(this.value));
 		}
 	});
 
