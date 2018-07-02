@@ -104,7 +104,17 @@ All of these are for full building power/energy
         }
         ```
 - `/api/price`
-    - Returns: TODO: how is pricing information encoded?
+    - Returns: TODO: how is pricing information encoded? maybe epoch start time mapped to price per kwh?
+        ```json
+        {
+            "readings": {
+                "1530550800000": .13,
+                "1530557000000": .18,
+                "1530565200000": .68,
+                "1530579600000": .18,
+            }
+        }
+        ```
 
 
 ### HVAC Endpoints
@@ -220,10 +230,10 @@ All of these are for full building power/energy
                  },
                  "state": {
                     "1520322778000": "heat stage 1",
-                    "1520329978000": "off"
-                    "1520358778000": "heat stage 1"
-                    "1520365978000": "heat stage 2"
-                    "1520369578000": "off"
+                    "1520329978000": "off",
+                    "1520358778000": "heat stage 1",
+                    "1520365978000": "heat stage 2",
+                    "1520369578000": "off",
                     "1520373178000": "heat stage 1"
                  },
             }
@@ -361,10 +371,10 @@ All of these are for full building power/energy
                  },
                  "state": {
                     "1520322778000": "heat stage 1",
-                    "1520329978000": "off"
-                    "1520358778000": "heat stage 1"
-                    "1520365978000": "heat stage 2"
-                    "1520369578000": "off"
+                    "1520329978000": "off",
+                    "1520358778000": "heat stage 1",
+                    "1520365978000": "heat stage 2",
+                    "1520369578000": "off",
                     "1520373178000": "heat stage 1"
                  },
             }
