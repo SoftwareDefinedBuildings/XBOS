@@ -17,10 +17,7 @@ You either need a BOSSWAVE agent running on your machine, or you can run a ragen
 
 ### Power Endpoints
 
-All of these are for full building power
-
-
-### HVAC Endpoints
+All of these are for full building power/energy
 
 - `/api/power/<last>/in/<bucketsize>`
     - Parameter:
@@ -106,6 +103,11 @@ All of these are for full building power
             }
         }
         ```
+- `/api/price`
+    - Returns: TODO: how is pricing information encoded?
+
+
+### HVAC Endpoints
 
 - `/api/hvac`:
     - get current HVAC state
@@ -151,7 +153,7 @@ All of these are for full building power
         }
         ```
 
-- `/api/hvac/day/<bucketsize>`
+- `/api/hvac/day/in/<bucketsize>`
     - get current day of temperature data for each zone in `<bucketsize>`. Aggregates using mean
     - `bucketsize`: follows format `{number}{unit}`
         - `number`: 1,2, etc
@@ -159,68 +161,71 @@ All of these are for full building power
     - examples:
         - `1h` (1 hour)
         - `15min` (1 minute)
-    - returns: dictionary whose keys are zone names. Values are dictionaries from timestamp to temperature in Fahrenheit. Timestamps are in milliseconds since the Unix epoch
+    - returns: dictionary whose keys are zone names. Values are dictionaries with the following values. All timestamps are in milliseconds since the Unix epoch
+        - `inside`: map of timestamp to value for inside air temperature in Fahrenheit
+        - `outside`: map of timestamp to value for outside air temperature in Fahrenheit
+        - `heating_setpoint`: map of timestamp to value for heating setpoint in Fahrenheit. Returned timestamps indicate when heating setpoint takes effect
+        - `cooling_setpoint`: map of timestamp to value for cooling setpoint in Fahrenheit. Returned timestamps indicate when cooling setpoint takes effect
+        - `state`: map of timestamp to value for HVAC state. Returned timestamps indicate when the HVAC state takes effect
         ```json
         {
             "EastZone": {
-                "1520322778000": 69.4473087819,
-                "1520326378000": 69.204815864,
-                "1520329978000": 69.2362606232,
-                "1520333578000": 69.2615819209,
-                "1520337178000": 69.2750708215,
-                "1520340778000": 69.2776203966,
-                "1520344378000": 69.2759206799,
-                "1520347978000": 69.5719546742,
-                "1520351578000": 69.2436260623,
-                "1520355178000": 69.6504249292,
-                "1520358778000": 70.0016997167,
-                "1520362378000": 70.3898550725,
-                "1520365978000": 70.4116147309,
-                "1520369578000": 70.6051136364,
-                "1520373178000": 70.728125,
-                "1520376778000": 70.856980057,
-                "1520380378000": 71.547592068,
-                "1520383978000": 72.1147727273
-            },
-            "NorthZone": {
-                "1520322778000": 75.0916905444,
-                "1520326378000": 75.1257142857,
-                "1520329978000": 75.1232091691,
-                "1520333578000": 75.0769230769,
-                "1520337178000": 75.005730659,
-                "1520340778000": 75.0942857143,
-                "1520344378000": 75.1171428571,
-                "1520347978000": 75.18,
-                "1520351578000": 75.1685714286,
-                "1520355178000": 75.1685714286,
-                "1520358778000": 75.0143266476,
-                "1520362378000": 75.0,
-                "1520365978000": 75.0,
-                "1520369578000": 75.0,
-                "1520373178000": 75.3180515759,
-                "1520376778000": 76.0,
-                "1520380378000": 76.0,
-                "1520383978000": 76.0
-            },
-            "SouthZone": {
-                "1520322778000": 73.0,
-                "1520326378000": 73.0,
-                "1520329978000": 73.0,
-                "1520333578000": 73.0,
-                "1520337178000": 73.0,
-                "1520340778000": 73.0,
-                "1520344378000": 73.0,
-                "1520347978000": 73.0,
-                "1520351578000": 73.0,
-                "1520355178000": 73.0,
-                "1520358778000": 73.3008595989,
-                "1520362378000": 74.0802292264,
-                "1520365978000": 75.0,
-                "1520369578000": 75.5428571429,
-                "1520373178000": 76.0228571429,
-                "1520376778000": 76.0,
-                "1520380378000": 76.0,
-                "1520383978000": 76.0
+                "inside": {
+                    "1520322778000": 69.4473087819,
+                    "1520326378000": 69.204815864,
+                    "1520329978000": 69.2362606232,
+                    "1520333578000": 69.2615819209,
+                    "1520337178000": 69.2750708215,
+                    "1520340778000": 69.2776203966,
+                    "1520344378000": 69.2759206799,
+                    "1520347978000": 69.5719546742,
+                    "1520351578000": 69.2436260623,
+                    "1520355178000": 69.6504249292,
+                    "1520358778000": 70.0016997167,
+                    "1520362378000": 70.3898550725,
+                    "1520365978000": 70.4116147309,
+                    "1520369578000": 70.6051136364,
+                    "1520373178000": 70.728125,
+                    "1520376778000": 70.856980057,
+                    "1520380378000": 71.547592068,
+                    "1520383978000": 72.1147727273
+                 },
+                "outside": {
+                    "1520322778000": 89.49,
+                    "1520326378000": 89.2,
+                    "1520329978000": 89.22,
+                    "1520333578000": 89.29,
+                    "1520337178000": 89.25,
+                    "1520340778000": 89.26,
+                    "1520344378000": 89.29,
+                    "1520347978000": 89.52,
+                    "1520351578000": 89.23,
+                    "1520355178000": 89.62,
+                    "1520358778000": 80.07,
+                    "1520362378000": 80.35,
+                    "1520365978000": 80.49,
+                    "1520369578000": 80.64,
+                    "1520373178000": 80.7,
+                    "1520376778000": 80.8,
+                    "1520380378000": 81.5,
+                    "1520383978000": 82.13
+                 },
+                "heating_setpoint": {
+                    "1520332782137": 75.0,
+                    "1520330000000": 55.0,
+                 },
+                "cooling_setpoint": {
+                    "1520322782137": 78.0,
+                    "1520330000000": 85.0,
+                 },
+                 "state": {
+                    "1520322778000": "heat stage 1",
+                    "1520329978000": "off"
+                    "1520358778000": "heat stage 1"
+                    "1520365978000": "heat stage 2"
+                    "1520369578000": "off"
+                    "1520373178000": "heat stage 1"
+                 },
             }
         }
         ```
@@ -243,4 +248,125 @@ All of these are for full building power
             }
         }
         ```
+
+### Occupancy
+
+- `/api/occupancy/<last>/in/<bucketsize>`
+    - Parameter:
+        - `last`: one of `year`,`month`,`week`,`day`,`hour`
+        - `bucketsize`: follows format `{number}{unit}`
+            - `number`: 1,2, etc
+            - `unit`: `m` (minute), `h` (hour), `d` (day)
+            - OR specify just `month` to get month-aware divisions
+        - examples:
+            - `30d` (30 days)
+            - `1h` (1 hour)
+    - Returns: JSON dictionary with key `readings`. Contains dictionary of timestamp (in milliseconds since Unix epoch) to value (in binary occupancy signal over the bucket period)
+        ```json
+        {
+            "readings": {
+                "1520283178000": 0,
+                "1520286778000": 1,
+                "1520290378000": 1,
+                "1520293978000": 1,
+                "1520297578000": 1,
+                "1520301178000": 1,
+                "1520304778000": 0,
+                "1520308378000": 0,
+                "1520311978000": 1,
+                "1520315578000": 0,
+                "1520319178000": 1,
+                "1520322778000": 0,
+                "1520326378000": 0,
+                "1520329978000": 1,
+                "1520333578000": 0,
+                "1520337178000": 1,
+                "1520340778000": 1,
+                "1520344378000": 1,
+                "1520347978000": 0,
+                "1520351578000": 0,
+                "1520355178000": 1,
+                "1520358778000": 1,
+                "1520362378000": 1,
+                "1520365978000": 0
+            }
+        }
+        ```
+
+
+### Prediction Endpoints
+
+- `/api/prediction/hvac/day/in/<bucketsize>`: Predictions for the *current* day (TODO: want for more than just today?)
+    - Parameters:
+        - `bucketsize`: follows format `{number}{unit}`
+            - `number`: 1,2, etc
+            - `unit`: `m` (minute), `h` (hour), `d` (day)
+            - OR specify just `month` to get month-aware divisions
+    - Returns: dictionary keyed by HVAC zone. Each zone has predictions delivered in a predefined prediction interval 
+        - `inside`: inside temperature predictions at given interval
+        - `outside`: outside temperature predictions at given interval
+        - `heating_setpoint`: projected heating setpoint changes
+        - `cooling_setpoint`: projected cooling setpoint changes
+        - `state`: projected sequence of HVAC state changes
+        ```json
+        {
+            "EastZone": {
+                "inside": {
+                    "1520322778000": 69.4473087819,
+                    "1520326378000": 69.204815864,
+                    "1520329978000": 69.2362606232,
+                    "1520333578000": 69.2615819209,
+                    "1520337178000": 69.2750708215,
+                    "1520340778000": 69.2776203966,
+                    "1520344378000": 69.2759206799,
+                    "1520347978000": 69.5719546742,
+                    "1520351578000": 69.2436260623,
+                    "1520355178000": 69.6504249292,
+                    "1520358778000": 70.0016997167,
+                    "1520362378000": 70.3898550725,
+                    "1520365978000": 70.4116147309,
+                    "1520369578000": 70.6051136364,
+                    "1520373178000": 70.728125,
+                    "1520376778000": 70.856980057,
+                    "1520380378000": 71.547592068,
+                    "1520383978000": 72.1147727273
+                 },
+                "outside": {
+                    "1520322778000": 89.49,
+                    "1520326378000": 89.2,
+                    "1520329978000": 89.22,
+                    "1520333578000": 89.29,
+                    "1520337178000": 89.25,
+                    "1520340778000": 89.26,
+                    "1520344378000": 89.29,
+                    "1520347978000": 89.52,
+                    "1520351578000": 89.23,
+                    "1520355178000": 89.62,
+                    "1520358778000": 80.07,
+                    "1520362378000": 80.35,
+                    "1520365978000": 80.49,
+                    "1520369578000": 80.64,
+                    "1520373178000": 80.7,
+                    "1520376778000": 80.8,
+                    "1520380378000": 81.5,
+                    "1520383978000": 82.13
+                 },
+                "heating_setpoint": {
+                    "1520332782137": 75.0,
+                    "1520330000000": 55.0,
+                 },
+                "cooling_setpoint": {
+                    "1520322782137": 78.0,
+                    "1520330000000": 85.0,
+                 },
+                 "state": {
+                    "1520322778000": "heat stage 1",
+                    "1520329978000": "off"
+                    "1520358778000": "heat stage 1"
+                    "1520365978000": "heat stage 2"
+                    "1520369578000": "off"
+                    "1520373178000": "heat stage 1"
+                 },
+            }
+        }
         ```
