@@ -7,21 +7,53 @@ $(document).ready(function() {
 			$("#switch-zone").removeClass("black-text");
 			$("#zone-config").hide();
 			$("#bldng-config").show();
-			$("#lever").prop("checked", false);
+			// $("#lever").prop("checked", false);
 		} else {
 			$("#switch-zone").addClass("black-text");
 			$("#switch-bldng").removeClass("black-text");
 			$("#bldng-config").hide();
 			$("#zone-config").show();
-			$("#lever").prop("checked", true);
+			// $("#lever").prop("checked", true);
 		}
 		checked = !checked;
 	}
 
-	$("#checkbox").click(function() { console.log("checkbox"); });
-	$("#lever").click(function() { console.log("lever"); });
-	$("#switch-zone").click(function() { console.log("switch"); });
+	let l = 10;
+	var s = "";
+	for (var i = 0; i < l; i += 1) {
+		s += "<span id='z" + i + "banner' style='font-size: 28px;'>Zone " + (i+1) + "</span>";
+		s += "<div class='row center-align valign-wrapper'>";
+		s += "<div class='col s7 z-depth-1' style='border-radius: 2px;'>";
+		s += "<div style='display: flex;'>";
+		s += "<h5 id='z" + i + "hislam' style='width: 33%;' class='grey-text left-align'></h5>";
+		s += "<h5 id='z" + i + "simlam' style='width: 34%; margin-right: 33%;'>λ</h5>";
+		s += "</div>";
+		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' style='width: 85%;' type='range' min='0' max='1' step='0.01'/></p>";
+		s += "</div>";
+		s += "<div class='col s2'>";
+		s += "<h5 id='z" + i + "date' class='grey-text' style='margin-top: 0;'>Historical</h5>";
+		s += "<h6 id='z" + i + "dis' class='grey-text' style='margin: 0;'>_____</h6>";
+		s += "<h6 id='z" + i + "dol' class='grey-text'>_____</h6>";
+		s += "<h6 id='z" + i + "kWH' class='grey-text' style='margin-bottom: 0;'>_____</h6>";
+		s += "</div>";
+		s += "<div class='col s3'>";
+		s += "<h5 style='margin-top: 0;'>Simulated</h5>";
+		s += "<h6 id='z" + i + "simdis' class='purple-text text-darken-5' style='margin: 0;'>_____</h6>";
+		s += "<h6 id='z" + i + "simdol' class='green-text text-darken-1'>_____</h6>";
+		s += "<h6 id='z" + i + "simkWH' class='orange-text text-darken-1' style='margin-bottom: 0;'>_____</h6>";
+		s += "</div>";
+		s += "</div>";
+		s += "<div class='row'></div>";
+		s += "<div class='row'></div>";
+	}
+	$("#zone-config").append(s);
 
+
+	// $("#checkbox").click(function() { console.log("checkbox"); });
+	// $("#lever").click(function() { console.log("lever"); });
+	// $("#switch-zone").click(function() { console.log("switch"); });
+
+	$("#lever").click(mySwitch);
 
 	// $("#switch-zone").('click', function (event) {
 	// 	event.stopPropagation();
@@ -36,8 +68,8 @@ $(document).ready(function() {
 	// });
 
 	// $("#switch-zone").click(function() {
-		// checked = false;
-		// mySwitch();
+	// 	// checked = false;
+	// 	mySwitch();
 	// });
 
 	function myFix(x) {
@@ -56,47 +88,21 @@ $(document).ready(function() {
 		}
 	}
 
-	var hlam = .9;
-	var hms = 327;
-	var hes = 404;
-	var hdis = .8;
-	// $("#historic-lam").html("λ: " + myFix(hlam));
-	// $("#historic-money-savings").html("$" + myFix(hms) + " saved");
-	// $("#historic-energy-savings").html(myFix(hes) + " kWH saved");
-	// $("#historic-savings").append(myFix(hes) + "kWH");
-	// $("#historic-dis").html("Discomfort: " + myFix(hdis));
-	
-	$("#historic-lam").html(myFix(hlam));
-	$("#historic-money-savings").html(myFix(hms));
-	$("#historic-energy-savings").html(myFix(hes));
-	// $("#historic-money-savings").html("$" + myFix(hms));
-	// $("#historic-energy-savings").html(myFix(hes) + "kWH");
-	$("#historic-dis").html(myFix(hdis));
-
-	var simms = 404;
-	var simes = 222;
-	var simdis = 3;
-	// $("#sim-money-savings").html("$" + myFix(simms) + " saved");
-	// $("#sim-energy-savings").html(myFix(simes) + " kWH saved");
-	// $("#sim-dis").html(myFix("Discomfort: " + simdis));
-	
-	$("#sim-money-savings").html(myFix(simms));
-	$("#sim-energy-savings").html(myFix(simes));
-	$("#sim-dis").html(myFix(simdis));
-
-	// $("#sim-money-savings").html("$" + myFix(simms));
-	// $("#sim-energy-savings").html(myFix(simes) + "kWH");
-	// $("#sim-dis").html(myFix("Discomfort: " + simdis));
-
 	let b = true;
-	$(".lam-range").each(function() {
-		var x = $("#" + this.id.replace("-range", ""));
+	$("#sim-lam-range").each(function() {
+		var x = $("#sim-lam");
 		this.oninput = function() {
-			if (b) { $("#sim-btn").addClass("scale-in"); b = false; }
-			// x.html("λ=" + myFix(this.value));
-			// x.html("λ: " + myFix(this.value));
+			if (b) { $("#sim-btn").addClass("scale-in"); b = false; };
 			x.html(myFix(this.value));
-		}
+		};
+	});
+
+
+	$(".simrange").each(function() {
+		var x = $("#" + this.id.replace("range", "simlam"));
+		this.oninput = function() {
+			x.html("λ: " + myFix(this.value));
+		};
 	});
 
 });

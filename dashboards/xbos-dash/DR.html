@@ -48,11 +48,11 @@
 
 		<!-- <div id="zone-sel"> -->
 			<div class="switch">
-				<label class="valign-wrapper">
-					<span id="switch-bldng" class="black-text" style="font-size: 24px;">Building</span>
-					<input id="checkbox" type="checkbox">
+				<label>
+					<span id="switch-bldng" class="black-text" style="font-size: 32px; cursor: text;">Building</span>
+					<input id="checkbox" type="checkbox"/>
 					<span id="lever" class="lever"></span>
-					<span id="switch-zone" style="font-size: 24px;">Zones</span>
+					<span id="switch-zone" style="font-size: 32px; cursor: text;">Zones</span>
 				</label>
 			</div>
 		<!-- </div> -->
@@ -70,37 +70,36 @@
 			</div>
 			<div class="row">
 				<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
-				<div class="col s6"><p class="range-field"><input type="range" class="lam-range" id="sim-lam-range" min="0" max="1" step="0.01"/></p></div>
+				<div class="col s6"><p class="range-field"><input type="range" id="sim-lam-range" min="0" max="1" step="0.01"/></p></div>
 				<div class="col s3"><h5>Costs ↓</h5></div>
-				<div class="col s4 right-align"><h5 id="historic-date" class="grey-text text-darken-2">March 27, 1997</h5></div>
-				<div class="col s4 center-align"><a id="sim-btn" class="waves-effect waves-light btn-small scale-transition scale-out">Run</a></div>
+				<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical Values</h5></div>
+				<div class="col s4 center-align"><a id="sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
 				<div class="col s4 left-align"><h5>Simulated Values</h5></div>
 				<div class="col s2"></div>
 				<div class="col s3 center-align">
 					<h5 id="historic-lam" class="grey-text">_____</h5>
+					<h5 id="historic-dis" class="grey-text">_____</h5>
 					<h5 id="historic-money-savings" class="grey-text">_____</h5>
 					<h5 id="historic-energy-savings" class="grey-text">_____</h5>
-					<h5 id="historic-dis" class="grey-text">_____</h5>
 				</div>
 				<div class="col s2 center-align">
 					<h5>λ</h5>
-					<h5>$ Saved</h5>
-					<h5>kWH Saved</h5>
 					<h5>Discomfort</h5>
+					<h5>$ saved</h5>
+					<h5>kWH saved</h5>
 				</div>
 				<div class="col s3 center-align">
 					<h5 id="sim-lam">_____</h5>
+					<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
 					<h5 id="sim-money-savings" class="green-text text-darken-1">_____</h5>
 					<h5 id="sim-energy-savings" class="orange-text text-darken-1">_____</h5>
-					<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
 				</div>
 				<div class="col s2"></div>
 			</div>
 		</div>
 
-		<div id="zone-config" class="section" style="display: none;">
-			<div class="row z-depth-1 valign-wrapper" style="border-radius: 2px; padding: 18px 48px 18px 12px;">
-			</div>
+		<div id="zone-config" style="display: none;">
+			<!-- simrange and runsim -->
 		</div>
 
 	</div>
@@ -109,11 +108,11 @@
 <script type="text/javascript" src="assets/js/lib/materialize.js"></script>
 <script type="text/javascript" src="assets/js/lib/jquery.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
-<script type="text/javascript" src="assets/js/lib/highcharts.js"></script>
-<script type="text/javascript" src="assets/js/lib/drilldown.js"></script>
-<script type="text/javascript" src="assets/js/lib/highcharts-more.js"></script>
+<!-- <script type="text/javascript" src="assets/js/lib/highcharts.js"></script> -->
+<!-- <script type="text/javascript" src="assets/js/lib/drilldown.js"></script> -->
+<!-- <script type="text/javascript" src="assets/js/lib/highcharts-more.js"></script> -->
 <script type="text/javascript" src="assets/js/DR/DR.js"></script>
-<script type="text/javascript" src="assets/js/DR/DRChart.js"></script>
-<script type="text/javascript" src="assets/js/DR/prevChart.js"></script>
+<!-- <script type="text/javascript" src="assets/js/DR/DRChart.js"></script> -->
+<!-- <script type="text/javascript" src="assets/js/DR/prevChart.js"></script> -->
 
 </html>
