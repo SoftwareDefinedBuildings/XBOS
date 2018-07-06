@@ -22,22 +22,22 @@ $(document).ready(function() {
 	var s = "";
 	for (var i = 0; i < l; i += 1) {
 		s += "<span id='z" + i + "banner' style='font-size: 28px;'>Zone " + (i+1) + "</span>";
-		s += "<div class='row center-align valign-wrapper'>";
-		s += "<div class='col s7 z-depth-1' style='border-radius: 2px;'>";
+		s += "<div class='row center-align valign-wrapper z-depth-1' style='border-radius: 2px;'>";
+		s += "<div class='col s6'>";
 		s += "<div style='display: flex;'>";
 		s += "<h5 id='z" + i + "hislam' style='width: 33%;' class='grey-text left-align'></h5>";
 		s += "<h5 id='z" + i + "simlam' style='width: 34%; margin-right: 33%;'>λ</h5>";
 		s += "</div>";
-		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' style='width: 85%;' type='range' min='0' max='1' step='0.01'/></p>";
+		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' step='0.01'/></p>";
 		s += "</div>";
-		s += "<div class='col s2'>";
-		s += "<h5 id='z" + i + "date' class='grey-text' style='margin-top: 0;'>Historical</h5>";
+		s += "<div class='col s3'>";
+		// s += "<h5 id='z" + i + "date' class='grey-text' style='margin-top: 0;'>Historical</h5>";
 		s += "<h6 id='z" + i + "dis' class='grey-text' style='margin: 0;'>_____</h6>";
 		s += "<h6 id='z" + i + "dol' class='grey-text'>_____</h6>";
 		s += "<h6 id='z" + i + "kWH' class='grey-text' style='margin-bottom: 0;'>_____</h6>";
 		s += "</div>";
 		s += "<div class='col s3'>";
-		s += "<h5 style='margin-top: 0;'>Simulated</h5>";
+		// s += "<h5 style='margin-top: 0;'>Simulated</h5>";
 		s += "<h6 id='z" + i + "simdis' class='purple-text text-darken-5' style='margin: 0;'>_____</h6>";
 		s += "<h6 id='z" + i + "simdol' class='green-text text-darken-1'>_____</h6>";
 		s += "<h6 id='z" + i + "simkWH' class='orange-text text-darken-1' style='margin-bottom: 0;'>_____</h6>";
