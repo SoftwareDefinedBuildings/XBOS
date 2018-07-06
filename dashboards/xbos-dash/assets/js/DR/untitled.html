@@ -1,30 +1,98 @@
-		s += "<span id='z" + i + "banner' style='font-size: 28px; margin: 0;'>Zone " + (i+1) + "</span>";
-		s += "<div class='row center-align valign-wrapper z-depth-1' style='border-radius: 2px; padding-bottom: 10px;'>";
+		s += "<span id='z" + i + "banner' style='font-size: 28px;'>Zone " + i + "</span>";
+		s += "<div class='row center-align valign-wrapper z-depth-1' style='border-radius: 2px; padding-bottom: 12px;'>";
 		s += "<div class='col s6'>";
-		s += "<h5 id='z" + i + "simlam'>λ: 0.50</h5>";
-		s += "<p class='range-field' style='margin: 0;'><input id='z" + i + "range' class='simrange' type='range' min='0' max='1' step='0.01'/></p>";
+		s += "<div style='display: flex;'>";
+		s += "<h5 id='z" + i + "hislam' style='width: 33%; margin-bottom: 0;' class='grey-text left-align'>λ</h5>";
+		s += "<h5 id='z" + i + "simlam' style='width: 34%; margin-bottom: 0; margin-right: 33%;'>λ</h5>";
 		s += "</div>";
-		s += "<div class='col s2'>";
-		s += "<h5 id='z" + i + "date' class='grey-text text-darken-2'>Historical</h5>";
-		s += "<h6 id='z" + i + "dis' style='margin: 0;'>δ: 0.00</h6>";
-		s += "<div style='display: flex; justify-content: space-around;'>";
-		s += "<h6 id='z" + i + "dol'>$... saved</h6>";
-		s += "<h6 id='z" + i + "kWH'>...kWH saved</h6>";
+		s += "<p class='range-field'><input style='margin: 0; padding: 0;' id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' step='0.01'/></p>";
+		s += "<div style='display: flex;'>";
+		s += "<h6 class='left-align' style='width: 50%; margin-top: 0;'>↑ Comfort</h6>";
+		s += "<h6 class='right-align' style='width: 50%; margin-top: 0;'>Costs ↓</h6>";
 		s += "</div>";
 		s += "</div>";
-		s += "<div class='col s2'>";
-		s += "<h5>Simulated</h5>";
-		s += "<h6 id='z" + i + "simdis' style='margin: 0;'>δ: 0.00</h6>";
-		s += "<div style='display: flex; justify-content: space-around;'>";
-		s += "<h6 id='z" + i + "simdol'>$... saved</h6>";
-		s += "<h6 id='z" + i + "simkWH'>...kWH saved</h6>";
+		s += "<div class='col s3'>";
+		// s += "<h5 id='z" + i + "date' class='grey-text' style='margin-top: 0;'>Historical</h5>";
+		s += "<h6 id='z" + i + "dis' class='grey-text' style='margin: 0;'>_____</h6>";
+		s += "<h6 id='z" + i + "dol' class='grey-text'>_____</h6>";
+		s += "<h6 id='z" + i + "kWH' class='grey-text' style='margin-bottom: 0;'>_____</h6>";
 		s += "</div>";
+		s += "<div class='col s3'>";
+		// s += "<h5 style='margin-top: 0;'>Simulated</h5>";
+		s += "<h6 id='z" + i + "simdis' class='purple-text text-darken-5' style='margin: 0;'>_____</h6>";
+		s += "<h6 id='z" + i + "simdol' class='green-text text-darken-1'>_____</h6>";
+		s += "<h6 id='z" + i + "simkWH' class='orange-text text-darken-1' style='margin-bottom: 0;'>_____</h6>";
 		s += "</div>";
 		s += "</div>";
 
 
-<!-- s += "<div style='display: flex; justify-content: space-around;'>"; -->
-<!-- s += "<h6 id='z" + i + "lam' style='margin: 0;'>λ: 0.00</h6>"; -->
-<!-- <h6 id='z" + i + "simdis' style='margin: 0;'>Simulated Discomfort: 0.88</h6> -->
-<!-- <h6 id='z" + i + "simdol' class='green-text text-darken-1'>$...</h6> -->
-<!-- <h6 id='z" + i + "simkWH' class='orange-text text-darken-1'>...kWH</h6> -->
+
+<div class="row center-align">
+			<div class="col s5">
+				<span id='z" + i + "banner' style='font-size: 28px;'>Zone " + i + "</span>
+				<p class='range-field'><input style='margin: 0; padding: 0;' id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' step='0.01'/></p>
+				<div style='space-around'>
+					<h5 id='z" + i + "date' class='grey-text' style='margin-top: 0;'>Historical</h5>
+					<h5>Simulated Values</h5>
+				</div>
+				<div style='space-evenly'>
+					<h5 id='z" + i + "hislam' class='grey-text'>_____</h5>
+					<h5>λ</h5>
+					<h5 id='z" + i + "simlam'>_____</h5>
+				</div>
+				<div style='space-evenly'>
+					<h6 id='z" + i + "dis' class='grey-text'>_____</h6>
+					<h5>Discomfort</h5>
+					<h6 id='z" + i + "simdis' class='purple-text text-darken-5'>_____</h6>
+				</div>
+				<div style='space-evenly'>
+					<h6 id='z" + i + "dol' class='grey-text'>_____</h6>
+					<h5>$ saved</h5>
+					<h6 id='z" + i + "simdol' class='green-text text-darken-1'>_____</h6>
+				</div>
+				<div style='space-evenly'>
+					<h6 id='z" + i + "kWH' class='grey-text'>_____</h6>
+					<h5>kWH saved</h5>
+					<h6 id='z" + i + "simkWH' class='orange-text text-darken-1'>_____</h6>
+				</div>
+			</div>
+		</div>
+
+
+
+
+		<!-- simrange and runsim -->
+			<!-- <div style="z-index: 2;">
+				<span style='font-size: 30px;'>User Guide</span>
+				<div class="row z-depth-1 valign-wrapper" style="border-radius: 2px; padding-bottom: 12px;">
+					<div class="col s6">
+						<div style="display: flex;">
+							<h5 style="width: 33%; margin: 0;" class="grey-text left-align">Historical λ</h5>
+							<h5 style="width: 34%; margin: 0; margin-right: 33%;" class="center-align">Simulation λ</h5>
+						</div>
+						<div class="col s12 center-align">
+							<p class="range-field"><input style="margin: 0; padding: 0;" type="range" disabled="disabled" /></p>
+						</div>
+						<div class="col s6">
+							<h6 style="margin: 0;">↑ Comfort</h6>
+						</div>
+						<div class="col s6">
+							<h6 class="right-align" style="margin: 0;">Costs ↓</h6>
+						</div>
+					</div>
+					<div class="col s3 center-align">
+						<h5 class="grey-text">Historical Values</h5>
+						<h6 class="grey-text">Discomfort</h6>
+						<h6 class="grey-text">$ saved</h6>
+						<h6 class="grey-text">kWH saved</h6>
+					</div>
+					<div class="col s3 center-align">
+						<h5>Simulated Values</h5>
+						<h6 class="purple-text text-darken-5">Discomfort</h6>
+						<h6 class="green-text text-darken-1">$ saved</h6>
+						<h6 class="orange-text text-darken-1">kWH saved</h6>
+					</div>
+				</div>
+			</div>
+			<div class="row"></div>
+			<div class="row"></div> -->

@@ -18,33 +18,47 @@ $(document).ready(function() {
 		checked = !checked;
 	}
 
-	let l = 10;
+	let l = 18;
 	var s = "";
-	for (var i = 0; i < l; i += 1) {
-		s += "<span id='z" + i + "banner' style='font-size: 28px;'>Zone " + (i+1) + "</span>";
-		s += "<div class='row center-align valign-wrapper z-depth-1' style='border-radius: 2px;'>";
-		s += "<div class='col s6'>";
+	for (var i = 1; i <= l; i += 1) {
+		if (i % 2 == 1) { s += "<div class='row valign-wrapper'>"; }
+		s += "<div class='col s6 z-depth-1' style='padding: 18px 30px; border-radius: 2px;'>";
+		s += "<h5 class='center-align' style='margin: 0;' id='z" + i + "banner'>Zone " + i + "</h5>";
+		s += "<p class='range-field'><input style='margin: 0; padding: 0;' id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' step='0.01'/></p>";
+		s += "<div style='display: flex; justify-content: space-between;'>";
+		s += "<h5 id='z" + i + "date' class='grey-text' style='margin-top: 0;'>Historical</h5>";
+		s += "<h5 style='margin-top: 0;'>Simulated</h5>";
+		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 id='z" + i + "hislam' style='width: 33%;' class='grey-text left-align'></h5>";
-		s += "<h5 id='z" + i + "simlam' style='width: 34%; margin-right: 33%;'>λ</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hislam' class='grey-text left-align'>____</h5>";
+		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>λ</h5>";
+		s += "<h5 class='right-align' style='width: 25%; margin-top: 0;' id='z" + i + "simlam'>____</h5>";
 		s += "</div>";
-		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' step='0.01'/></p>";
+		s += "<div style='display: flex;'>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dis' class='grey-text left-align'>____</h5>";
+		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>Discomfort</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdis' class='purple-text right-align text-darken-5'>____</h5>";
 		s += "</div>";
-		s += "<div class='col s3'>";
-		// s += "<h5 id='z" + i + "date' class='grey-text' style='margin-top: 0;'>Historical</h5>";
-		s += "<h6 id='z" + i + "dis' class='grey-text' style='margin: 0;'>_____</h6>";
-		s += "<h6 id='z" + i + "dol' class='grey-text'>_____</h6>";
-		s += "<h6 id='z" + i + "kWH' class='grey-text' style='margin-bottom: 0;'>_____</h6>";
+		s += "<div style='display: flex;'>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dol' class='grey-text left-align'>____</h5>";
+		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>$ saved</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdol' class='green-text right-align text-darken-1'>____</h5>";
 		s += "</div>";
-		s += "<div class='col s3'>";
-		// s += "<h5 style='margin-top: 0;'>Simulated</h5>";
-		s += "<h6 id='z" + i + "simdis' class='purple-text text-darken-5' style='margin: 0;'>_____</h6>";
-		s += "<h6 id='z" + i + "simdol' class='green-text text-darken-1'>_____</h6>";
-		s += "<h6 id='z" + i + "simkWH' class='orange-text text-darken-1' style='margin-bottom: 0;'>_____</h6>";
+		s += "<div style='display: flex;'>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "kWH' class='grey-text left-align'>____</h5>";
+		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>kWH saved</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simkWH' class='orange-text right-align text-darken-1'>____</h5>";
 		s += "</div>";
 		s += "</div>";
-		s += "<div class='row'></div>";
-		s += "<div class='row'></div>";
+		if (i % 2 == 1) {
+			if (i == l) {
+				s += "<div class='col s7'></div></div>";
+			} else {
+				s += "<div class='col s1'></div>";
+			}
+		} else {
+			if (i % 2 == 0) { s += "</div>"; s += "<div class='row'></div><div class='row'></div>"; }
+		}
 	}
 	$("#zone-config").append(s);
 
@@ -101,7 +115,8 @@ $(document).ready(function() {
 	$(".simrange").each(function() {
 		var x = $("#" + this.id.replace("range", "simlam"));
 		this.oninput = function() {
-			x.html("λ: " + myFix(this.value));
+			// x.html("λ: " + myFix(this.value));
+			x.html(myFix(this.value));
 		};
 	});
 

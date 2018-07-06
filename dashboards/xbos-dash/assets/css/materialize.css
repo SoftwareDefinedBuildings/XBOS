@@ -7397,7 +7397,7 @@ input[type=range] + .thumb {
           transform-origin: 50% 50%;
   -webkit-transform: rotate(-45deg);
           transform: rotate(-45deg);
-  /*my styling*/
+  /*mine*/
   display: none;
 }
 
@@ -7409,7 +7409,7 @@ input[type=range] + .thumb .value {
   font-size: 0;
   -webkit-transform: rotate(45deg);
           transform: rotate(45deg);
-  /*my styling*/
+  /*mine*/
   display: none;
 }
 
@@ -7530,7 +7530,7 @@ input[type=range].focused:focus:not(.active)::-ms-thumb {
 /*my styling*/
 input[type=range]:disabled {
   /* fix for FF unable to apply focus style bug  */
-  border: 1px solid white;
+  /*border: 1px solid white;*/
   /*required for proper track sizing in FF*/
   /*opacity: .8;*/
   cursor: default;
@@ -7538,8 +7538,8 @@ input[type=range]:disabled {
 
 /*my styling*/
 input[type=range]:disabled::-webkit-slider-thumb {
-  background: gray;
-  background-color: gray;
+  /*background: gray;*/
+  /*background-color: gray;*/
 }
 
 /***************

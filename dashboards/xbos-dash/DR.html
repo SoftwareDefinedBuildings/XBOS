@@ -60,7 +60,6 @@
 		
 
 		<div class="row"></div>
-		<div class="row"></div>
 
 		<div id="bldng-config" class="section z-depth-1" style="display: none;">
 			<div class="row center-align">
@@ -76,19 +75,21 @@
 				<div class="col s4 center-align"><a id="sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
 				<div class="col s4 left-align"><h5>Simulated Values</h5></div>
 				<div class="col s2"></div>
-				<div class="col s3 center-align">
+				<div class="col s2 right-align">
 					<h5 id="historic-lam" class="grey-text">_____</h5>
 					<h5 id="historic-dis" class="grey-text">_____</h5>
 					<h5 id="historic-money-savings" class="grey-text">_____</h5>
 					<h5 id="historic-energy-savings" class="grey-text">_____</h5>
 				</div>
+				<div class="col s1"></div>
 				<div class="col s2 center-align">
 					<h5>λ</h5>
 					<h5>Discomfort</h5>
 					<h5>$ saved</h5>
 					<h5>kWH saved</h5>
 				</div>
-				<div class="col s3 center-align">
+				<div class="col s1"></div>
+				<div class="col s2">
 					<h5 id="sim-lam">_____</h5>
 					<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
 					<h5 id="sim-money-savings" class="green-text text-darken-1">_____</h5>
@@ -98,39 +99,7 @@
 			</div>
 		</div>
 
-		<div id="zone-config">
-			<!-- simrange and runsim -->
-			<div class="row z-depth-1" style="border-radius: 2px; padding-bottom: 12px;">
-				<div class="col s6">
-					<div style="display: flex;">
-						<h5 style="width: 33%;" class="grey-text left-align">Historical λ</h5>
-						<h5 style="width: 34%; margin-right: 33%;" class="center-align">Simulation λ</h5>
-					</div>
-					<div class="row valign-wrapper center-align">
-						<div class="col s3">
-							<h6>↑ Comfort</h6>
-						</div>
-						<div class="col s8">
-							<p class="range-field"><input style="margin: 0;" type="range" min="0" max="1" step="0.01" disabled="disabled" /></p>
-						</div>
-						<div class="col s3">
-							<h6>Costs ↓</h6>
-						</div>
-					</div>
-				</div>
-				<div class="col s3 center-align">
-					<h5 class="grey-text">Historical Values</h5>
-					<h6 class="grey-text">Discomfort</h6>
-					<h6 class="grey-text">$ saved</h6>
-					<h6 class="grey-text">kWH saved</h6>
-				</div>
-				<div class="col s3 center-align">
-					<h5>Simulated Values</h5>
-					<h6 class="purple-text text-darken-5">Discomfort</h6>
-					<h6 class="green-text text-darken-1">$ saved</h6>
-					<h6 class="orange-text text-darken-1">kWH saved</h6>
-				</div>
-			</div>
+		<div id="zone-config" class=" section">
 		</div>
 
 	</div>
