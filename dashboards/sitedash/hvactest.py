@@ -85,6 +85,15 @@ full_query = {
     ],
 }
 
+state_to_string = {
+    0: 'off',
+    1: 'heat stage 1',
+    2: 'cool stage 1',
+    3: 'auto',
+    4: 'heat stage 2',
+    5: 'cool stage 2'
+}
+
 def get_hvac_streams_per_zone(bucketsize="1m"):
     zones = defaultdict(lambda : defaultdict(list))
     inside_res = hodclient.do_query(thermostat_temperature)
@@ -128,7 +137,7 @@ def get_hvac_streams_per_zone(bucketsize="1m"):
         zonedict['outside'] = json.loads(df[zonedict['outside']].mean(axis=1).to_json())
         zonedict['heating'] = json.loads(df[zonedict['heating']].max(axis=1).to_json())
         zonedict['cooling'] = json.loads(df[zonedict['cooling']].max(axis=1).to_json())
-        zonedict['state'] = json.loads(df[zonedict['state']].max(axis=1).to_json())
+        zonedict['state'] = json.loads(df[zonedict['state']].max(axis=1).apply(lambda x: state_to_string[x]).to_json())
         results[zonename] = zonedict
     json.dump(results, open('results.json','w'))
     return results
