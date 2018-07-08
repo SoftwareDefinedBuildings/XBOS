@@ -17,6 +17,7 @@ import pytz
 import msgpack
 import os
 import json
+import hvactest
 
 from xbos import get_client
 from xbos.services import hod, mdal
@@ -391,6 +392,11 @@ def hvac_summary(bucketsize):
         return resp['df'].dropna().to_json()
     return "ok"
 
+@app.route('/api/hvac/day/in/<bucketsize>')
+@crossdomain(origin="*")
+def hvac_day(bucketsize):
+    return jsonify(hvactest.get_hvac_streams_per_zone(bucketsize))
+
 @app.route('/api/hvac/day/setpoints')
 @crossdomain(origin="*")
 def setpoint_today():
@@ -474,4 +480,4 @@ def setpoint_today():
 
 
 if __name__ == '__main__':
-    app.run(threaded=True)
+    app.run(host='0.0.0.0',threaded=True)
