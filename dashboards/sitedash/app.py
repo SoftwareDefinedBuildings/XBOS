@@ -18,12 +18,12 @@ import msgpack
 import os
 import json
 import hvactest
+import occupancy
 
 from xbos import get_client
 from xbos.services import hod, mdal
+import config
 
-SITE = 'ciee'
-OURTZ=pytz.timezone("US/Pacific")
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -67,8 +67,8 @@ def crossdomain(origin=None, methods=None, headers=None,
     return decorator
 
 def get_today():
-    d = datetime.now(OURTZ)
-    return OURTZ.localize(datetime(year=d.year, month=d.month, day=d.day))
+    d = datetime.now(config.TZ)
+    return config.TZ.localize(datetime(year=d.year, month=d.month, day=d.day))
 
 def prevmonday(num):
     """
@@ -92,7 +92,7 @@ def get_start(last):
         dt = datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour)
     else:
         dt = datetime(year=today.year, month=today.month, day=today.day, hour=datetime.now().hour)
-    return OURTZ.localize(dt)
+    return config.TZ.localize(dt)
 
 def generate_months(lastN):
     firstDayThisMonth = get_today().replace(day=1)
@@ -106,10 +106,7 @@ def generate_months(lastN):
     return ranges
 
 
-hodclient = hod.HodClient("xbos/hod")
-mdalclient = mdal.MDALClient("xbos/mdal")
-#mdalclient = mdal.MDALClient("scratch.ns")
-c = get_client()
+c = get_client(config.AGENT, config.ENTITY)
 
 app = Flask(__name__, static_url_path='')
 
@@ -129,7 +126,7 @@ def power_summary(last, bucketsize):
                 "Selectors": [mdal.MEAN],
                 "Variables": [
                     {"Name": "meter",
-                     "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+                     "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % config.SITE,
                      "Units": "kW"}
                 ],
                 "Time": {
@@ -140,7 +137,7 @@ def power_summary(last, bucketsize):
                 },
             }
             print query
-            resp = mdalclient.do_query(query, timeout=60)
+            resp = config.MDAL.do_query(query, timeout=60)
             if 'error' in resp:
                 print 'ERROR', resp
                 abort(500)
@@ -149,7 +146,7 @@ def power_summary(last, bucketsize):
             else:
                 resp['df'].columns = ['readings']
             t1_ = t1.strptime(t1.strftime("%Y-%m-%d"), '%Y-%m-%d')
-            times.append(OURTZ.localize(t1_))
+            times.append(config.TZ.localize(t1_))
             readings.append(resp['df']['readings'][0])
         print zip(times,readings)
         df = pd.DataFrame(readings,index=times)
@@ -161,18 +158,18 @@ def power_summary(last, bucketsize):
         "Selectors": [mdal.MEAN],
         "Variables": [
             {"Name": "meter",
-             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % config.SITE,
              "Units": "kW"}
         ],
         "Time": {
             "T0": start_date.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T1": datetime.now(config.TZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
             "WindowSize": bucketsize,
             "Aligned": True
         },
     }
     print query
-    resp = mdalclient.do_query(query, timeout=60)
+    resp = config.MDAL.do_query(query, timeout=60)
     if 'error' in resp:
         print 'ERROR', resp
         abort(500)
@@ -199,7 +196,7 @@ def energy_summary(last, bucketsize):
                 "Selectors": [mdal.MEAN],
                 "Variables": [
                     {"Name": "meter",
-                     "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+                     "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % config.SITE,
                      "Units": "kW"}
                 ],
                 "Time": {
@@ -210,7 +207,7 @@ def energy_summary(last, bucketsize):
                 },
             }
             print query
-            resp = mdalclient.do_query(query, timeout=60)
+            resp = config.MDAL.do_query(query, timeout=60)
             if 'error' in resp:
                 print 'ERROR', resp
                 abort(500)
@@ -221,7 +218,7 @@ def energy_summary(last, bucketsize):
                 resp['df'].columns = ['readings'] # in k@
                 resp['df']['readings']/=4. # divide by 4 to get 15min (kW) -> kWh
                 t1_ = t1.strptime(t1.strftime("%Y-%m-%d"), '%Y-%m-%d')
-                times.append(OURTZ.localize(t1_))
+                times.append(config.TZ.localize(t1_))
                 readings.append(resp['df']['readings'].sum())
         df = pd.DataFrame(readings,index=times)
         return df.dropna().to_json()
@@ -231,18 +228,18 @@ def energy_summary(last, bucketsize):
         "Selectors": [mdal.MEAN],
         "Variables": [
             {"Name": "meter",
-             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % SITE,
+             "Definition": "SELECT ?meter_uuid FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uuid ?meter_uuid };" % config.SITE,
              "Units": "kW"}
         ],
         "Time": {
             "T0": start_date.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T1": datetime.now(config.TZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
             "WindowSize": '15m',
             "Aligned": True
         },
     }
     print query
-    resp = mdalclient.do_query(query, timeout=60)
+    resp = config.MDAL.do_query(query, timeout=60)
     if 'error' in resp:
         print 'ERROR', resp
         abort(500)
@@ -256,8 +253,17 @@ def energy_summary(last, bucketsize):
 
 @app.route('/api/power')
 @crossdomain(origin="*")
+def price():
+    # TODO: retrieve this from config
+    price_signal = {"readings": {
+        "1530550800000": .13,
+    }}
+    return jsonify(price_signal)
+
+@app.route('/api/power')
+@crossdomain(origin="*")
 def current_power():
-    resp = hodclient.do_query("SELECT ?meter_uri FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uri ?meter_uri };" % SITE)
+    resp = config.HOD.do_query("SELECT ?meter_uri FROM %s WHERE { ?meter rdf:type brick:Building_Electric_Meter . ?meter bf:uri ?meter_uri };" % config.SITE)
     if resp['Count'] > 0:
         uri = resp['Rows'][0]['?meter_uri']+'/signal/meter'
         h = c.query(uri)
@@ -302,7 +308,7 @@ def read_uri(uri):
 @app.route('/api/hvac')
 @crossdomain(origin="*")
 def hvacstate():
-    resp = hodclient.do_query("""
+    resp = config.HOD.do_query("""
 SELECT * FROM %s WHERE {
   ?rtu rdf:type brick:RTU .
   ?rtu bf:feeds ?zone .
@@ -313,7 +319,7 @@ SELECT * FROM %s WHERE {
   ?sensor rdf:type/rdfs:subClassOf* brick:Temperature_Sensor .
   ?tstat bf:uri ?tstat_uri .
   ?sensor bf:uri ?sensor_uri
- };""" % SITE)
+ };""" % config.SITE)
     print resp
     zones = defaultdict(lambda : defaultdict(dict))
     if resp['Count'] == 0:
@@ -360,7 +366,7 @@ def hvac_summary(bucketsize):
           ?sensor bf:uuid ?sensor_uuid .
     };
     """
-    res = hodclient.do_query(q % SITE)
+    res = config.HOD.do_query(q % config.SITE)
     zones = {}
     for row in res['Rows']:
         zones[row['?sensor_uuid']] = row['?zone']
@@ -370,18 +376,18 @@ def hvac_summary(bucketsize):
         "Selectors": [mdal.MEAN],
         "Variables": [
             {"Name": "tstat_temp",
-             "Definition": q % SITE,
+             "Definition": q % config.SITE,
              "Units": "F"}
         ],
         "Time": {
             "T0": today.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T1": datetime.now(config.TZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
             "WindowSize": bucketsize,
             "Aligned": True
         },
     }
     print query
-    resp = mdalclient.do_query(query, timeout=60)
+    resp = config.MDAL.do_query(query, timeout=60)
     if 'error' in resp:
         print 'ERROR', resp
         abort(500)
@@ -394,8 +400,13 @@ def hvac_summary(bucketsize):
 
 @app.route('/api/hvac/day/in/<bucketsize>')
 @crossdomain(origin="*")
-def hvac_day(bucketsize):
+def serve_historical_hvac(bucketsize):
     return jsonify(hvactest.get_hvac_streams_per_zone(bucketsize))
+
+@app.route('/api/occupancy/<last>/in/<bucketsize>')
+@crossdomain(origin="*")
+def serve_occupancy(last, bucketsize):
+    return jsonify(occupancy.get_occupancy(last, bucketsize))
 
 @app.route('/api/hvac/day/setpoints')
 @crossdomain(origin="*")
@@ -422,11 +433,11 @@ def setpoint_today():
           ?csp bf:uuid ?csp_uuid
     };
     """
-    res = hodclient.do_query(heat_q % SITE)
+    res = config.HOD.do_query(heat_q % config.SITE)
     zones = {}
     for row in res['Rows']:
         zones[row['?hsp_uuid']] = row['?zone']
-    res = hodclient.do_query(cool_q % SITE)
+    res = config.HOD.do_query(cool_q % config.SITE)
     for row in res['Rows']:
         zones[row['?csp_uuid']] = row['?zone']
 
@@ -435,19 +446,19 @@ def setpoint_today():
         "Selectors": [mdal.RAW],
         "Variables": [
             {"Name": "heating",
-             "Definition": heat_q % SITE,
+             "Definition": heat_q % config.SITE,
              "Units": "F"},
             {"Name": "cooling",
-             "Definition": cool_q % SITE,
+             "Definition": cool_q % config.SITE,
              "Units": "F"}
         ],
         "Time": {
             "T0": today.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "T1": datetime.now(config.TZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
         },
     }
     print query
-    resp = mdalclient.do_query(query, timeout=60)
+    resp = config.MDAL.do_query(query, timeout=60)
     if 'error' in resp:
         print 'ERROR', resp
         abort(500)
@@ -460,7 +471,7 @@ def setpoint_today():
         resp[zone] = json.loads(v.to_json()) # this is the way to solve weird serialization issues
 
     query["Composition"] = ["cooling"]
-    cool_resp = mdalclient.do_query(query, timeout=60)
+    cool_resp = config.MDAL.do_query(query, timeout=60)
     if 'error' in cool_resp:
         print 'ERROR', cool_resp
         abort(500)
