@@ -46,62 +46,99 @@
 
 		<div class="row"></div> -->
 
-		<!-- <div id="zone-sel"> -->
-			<div class="switch">
-				<label>
-					<span id="switch-bldng" class="black-text" style="font-size: 32px; cursor: text;">Building</span>
-					<input id="checkbox" type="checkbox"/>
-					<span id="lever" class="lever"></span>
-					<span id="switch-zone" style="font-size: 32px; cursor: text;">Zones</span>
-				</label>
-			</div>
-		<!-- </div> -->
+		<div id="my-div" class="switch">
+			<label id="label" class="valign-wrapper" style="cursor: default;">
+				<span id="switch-bldng" class="black-text" style="font-size: 28px; cursor: text;">Building</span>
+				<input id="checkbox" type="checkbox"/>
+				<span id="lever" class="lever" style="cursor: pointer;"></span>
+				<span id="switch-zone" style="font-size: 28px; cursor: text;">Zones</span>
+			</label>
+		</div>
 
-		
+		 <!-- <a onclick="M.toast({html: 'I am a toast'})" class="btn">Toast!</a> -->
+		 <!-- <a class="btn tooltipped" data-position="top" data-tooltip="jkbvkghjhkjg">Hover me!</a> -->
 
 		<div class="row"></div>
 
-		<div id="bldng-config" class="section z-depth-1" style="display: none;">
-			<div class="row center-align">
-				<div class="col s2"></div>
-				<div id="bldng-title" class="col s8"><h4 class="center-align" style="margin: 0; padding: 15px 0;">Orinda Community Center Building</h4></div>
-				<div class="col s2"></div>
-			</div>
-			<div class="row">
-				<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
-				<div class="col s6"><p class="range-field"><input type="range" id="sim-lam-range" min="0" max="1" step="0.01"/></p></div>
-				<div class="col s3"><h5>Costs ↓</h5></div>
-				<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical Values</h5></div>
-				<div class="col s4 center-align"><a id="sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
-				<div class="col s4 left-align"><h5>Simulated Values</h5></div>
-				<div class="col s2"></div>
-				<div class="col s2 right-align">
-					<h5 id="historic-lam" class="grey-text">_____</h5>
-					<h5 id="historic-dis" class="grey-text">_____</h5>
-					<h5 id="historic-money-savings" class="grey-text">_____</h5>
-					<h5 id="historic-energy-savings" class="grey-text">_____</h5>
+		<div id="bldng-config" class="section">
+			<div class="section z-depth-1">
+				<div class="row center-align">
+					<div class="col s2"></div>
+					<div id="bldng-title" class="col s8"><h4 class="center-align" style="margin-bottom: 0;">Orinda Community Center Building</h4></div>
+					<div class="col s2"></div>
 				</div>
-				<div class="col s1"></div>
-				<div class="col s2 center-align">
-					<h5>λ</h5>
-					<h5>Discomfort</h5>
-					<h5>$ saved</h5>
-					<h5>kWH saved</h5>
+				<div class="row center-align">
+					<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
+					<div class="col s6"><p class="range-field"><input type="range" id="sim-lam-range" min="0" max="1" step="0.01"/></p></div>
+					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
+					<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical</h5></div>
+					<div class="col s4 center-align"><a id="sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
+					<div class="col s4 left-align"><h5>Simulated</h5></div>
+					<div class="col s2"></div>
+					<div class="col s2">
+						<h5 id="historic-lam" class="grey-text">_____</h5>
+						<h5 id="historic-dis" class="grey-text">_____</h5>
+						<h5 id="historic-money-savings" class="grey-text">_____</h5>
+						<h5 id="historic-energy-savings" class="grey-text">_____</h5>
+					</div>
+					<div class="col s4 center-align">
+						<h5>λ</h5>
+						<h5>Discomfort</h5>
+						<h5>$ Saved</h5>
+						<h5>kWH Saved</h5>
+					</div>
+					<div class="col s2">
+						<h5 id="sim-lam">0.50</h5>
+						<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
+						<h5 id="sim-money-savings" class="green-text text-darken-1">_____</h5>
+						<h5 id="sim-energy-savings" class="orange-text text-darken-1">_____</h5>
+					</div>
+					<div class="col s2"></div>
 				</div>
-				<div class="col s1"></div>
-				<div class="col s2">
-					<h5 id="sim-lam">_____</h5>
-					<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
-					<h5 id="sim-money-savings" class="green-text text-darken-1">_____</h5>
-					<h5 id="sim-energy-savings" class="orange-text text-darken-1">_____</h5>
-				</div>
-				<div class="col s2"></div>
 			</div>
 		</div>
 
-		<div id="zone-config" class=" section">
+		<div id="zone-config" class="section" style="display: none;">
+			<div class="section z-depth-1">
+				<div class="row center-align">
+					<div class="col s2"></div>
+					<div class="col s8">
+						<h4 class="center-align" style="margin-bottom: 0;">Summary</h4>
+						<h6 class="center-align" style="margin-bottom: 0;">use the sliders to set each zone's lambda value then click "RUN"</h6>
+					</div>
+					<div class="col s2"></div>
+					<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
+					<div class="col s6"><p class="range-field"><input type="range" disabled="disabled"/></p></div>
+					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
+					<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical</h5></div>
+					<div class="col s4 center-align"><a id="avg-sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
+					<div class="col s4 left-align"><h5>Simulated</h5></div>
+					<div class="col s2"></div>
+					<div class="col s2">
+						<h5 id="his-lam-avg" class="grey-text">_____</h5>
+						<h5 id="his-dis-avg" class="grey-text">_____</h5>
+						<h5 id="his-money-avg" class="grey-text">_____</h5>
+						<h5 id="his-energy-avg" class="grey-text">_____</h5>
+					</div>
+					<div class="col s4 center-align">
+						<h5>Average λ</h5>
+						<h5>Average Discomfort</h5>
+						<h5>Total $ Saved</h5>
+						<h5>Total kWH Saved</h5>
+					</div>
+					<div class="col s2">
+						<h5 id="sim-lam-avg">0.50</h5>
+						<h5 id="sim-dis-avg" class="purple-text text-darken-5">_____</h5>
+						<h5 id="sim-money-avg" class="green-text text-darken-1">_____</h5>
+						<h5 id="sim-energy-avg" class="orange-text text-darken-1">_____</h5>
+					</div>
+					<div class="col s2"></div>
+				</div>
+			</div>
+			<div class="row"></div>
+			<div class="row"></div>
+			<div class="row"></div>
 		</div>
-
 	</div>
 </body>
 
