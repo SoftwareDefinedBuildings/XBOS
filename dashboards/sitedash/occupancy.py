@@ -16,6 +16,10 @@ occupancy_query = """SELECT * FROM %s WHERE {
     ?occ bf:uuid ?occ_uuid
 };""" % config.SITE
 
+zone_query = """SELECT * FROM %s WHERE {
+    ?zone rdf:type brick:HVAC_Zone .
+};""" % config.SITE
+
 occupancy_data_query = {
     "Composition": ["occ"],
     "Selectors": [mdal.MAX],
@@ -43,29 +47,34 @@ def get_occupancy(last, bucketsize):
     start_date = get_start(last)
 
     zones = defaultdict(list)
-    md = config.HOD.do_query(occupancy_query)
-    for row in md['Rows']:
-        zones[row['?zone']].append(row['?occ_uuid'])
-
-    q = occupancy_data_query.copy()
     prediction_start = datetime.now(config.TZ)
-    q["Time"] = {
-        "T0": start_date.strftime("%Y-%m-%d %H:%M:%S %Z"),
-        "T1": prediction_start.strftime("%Y-%m-%d %H:%M:%S %Z"),
-        "WindowSize": bucketsize,
-        "Aligned": True,
-    }
-    resp = config.MDAL.do_query(q, timeout=120)
-    if 'error' in resp:
-        print 'ERROR', resp
-        return
-    df = resp['df'].fillna(method='ffill')
 
-    for zone, uuidlist in zones.items():
-        if len(uuidlist) > 0:
-            zones[zone] = json.loads(df[uuidlist].mean(axis=1).to_json())
-        else:
-            zones[zone] = {}
+    md = config.HOD.do_query(occupancy_query)
+    if md['Rows'] is not None:
+        for row in md['Rows']:
+            zones[row['?zone']].append(row['?occ_uuid'])
+        q = occupancy_data_query.copy()
+        q["Time"] = {
+            "T0": start_date.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": prediction_start.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "WindowSize": bucketsize,
+            "Aligned": True,
+        }
+        resp = config.MDAL.do_query(q, timeout=120)
+        if 'error' in resp:
+            print 'ERROR', resp
+            return
+        df = resp['df'].fillna(method='ffill')
+
+        for zone, uuidlist in zones.items():
+            if len(uuidlist) > 0:
+                zones[zone] = json.loads(df[uuidlist].mean(axis=1).to_json())
+            else:
+                zones[zone] = {}
+    else:
+        md = config.HOD.do_query(zone_query)
+        for row in md['Rows']:
+            zones[row['?zone']] = {}
 
     # now we have data up until now; need to generate data until end of day
     prediction_end = get_tomorrow() 

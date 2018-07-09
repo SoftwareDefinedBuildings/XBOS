@@ -1,7 +1,6 @@
 import os
 import pytz
 import yaml
-
 from xbos.services import hod, mdal
 
 cfg = yaml.load(open('config.yml'))

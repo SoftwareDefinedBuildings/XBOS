@@ -1,4 +1,5 @@
 from collections import defaultdict
+import pandas as pd
 from xbos import get_client
 from xbos.services import hod, mdal
 from datetime import datetime, date, timedelta
@@ -82,14 +83,19 @@ full_query = {
     ],
 }
 
-state_to_string = {
-    0: 'off',
-    1: 'heat stage 1',
-    2: 'cool stage 1',
-    3: 'auto',
-    4: 'heat stage 2',
-    5: 'cool stage 2'
-}
+def state_to_string(state):
+    if state == 0:
+        return 'off'
+    elif state == 1:
+        return 'heat stage 1'
+    elif state == 2:
+        return 'cool stage 1'
+    elif state == 4:
+        return 'heat stage 2'
+    elif state == 5:
+        return 'cool stage 2'
+    else:
+        return 'unknown'
 
 def get_hvac_streams_per_zone(bucketsize="1m"):
     zones = defaultdict(lambda : defaultdict(list))
@@ -126,7 +132,7 @@ def get_hvac_streams_per_zone(bucketsize="1m"):
     if 'error' in resp:
         print 'ERROR', resp
         return
-    df = resp['df'].fillna(method='ffill')
+    df = resp['df'].fillna(method='ffill').fillna(method='bfill')
     results = zones.copy()
     #import IPython; IPython.embed()
     for zonename, zonedict in results.items():
@@ -134,7 +140,7 @@ def get_hvac_streams_per_zone(bucketsize="1m"):
         zonedict['outside'] = json.loads(df[zonedict['outside']].mean(axis=1).to_json())
         zonedict['heating'] = json.loads(df[zonedict['heating']].max(axis=1).to_json())
         zonedict['cooling'] = json.loads(df[zonedict['cooling']].max(axis=1).to_json())
-        zonedict['state'] = json.loads(df[zonedict['state']].max(axis=1).apply(lambda x: state_to_string[x]).to_json())
+        zonedict['state'] = json.loads(df[zonedict['state']].max(axis=1).apply(state_to_string).to_json())
         results[zonename] = zonedict
     json.dump(results, open('results.json','w'))
     return results
