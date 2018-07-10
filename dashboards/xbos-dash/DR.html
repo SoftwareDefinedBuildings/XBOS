@@ -139,45 +139,35 @@
 			<div class="row"></div>
 			<div class="row valign-wrapper">
 				<div class="col s2 pull-s2">
-					<a id="sort-btn" class='dropdown-trigger btn' href='#' data-target='zone-sort'>Sort: Default</a>
+					<a id="sort-btn" style="width: 100%;" class="dropdown-trigger btn" data-target="zone-sort">Default</a>
 					<ul id='zone-sort' class='dropdown-content'>
-						<li class="active"><a>Default</a></li>
-						<li><a>Lambda</a></li>
-						<li><a>Discomfort</a></li>
-						<li><a>$ Savings</a></li>
-						<li><a>kWH Savings</a></li>
+						<li id="normal" class="sort-li active"><a>Default</a></li>
+						<li id="lam" class="sort-li"><a>Lambda</a></li>
+						<li id="dis" class="sort-li"><a>Discomfort</a></li>
+						<li id="dol" class="sort-li"><a>$ Savings</a></li>
+						<li id="kWH" class="sort-li"><a>kWH Savings</a></li>
 					</ul>
 				</div>
 				<div class="col s2 pull-s4">
 					<p><label>
-						<input name="zone-as-des" type="radio" disabled />
-						<span>Ascending</span>
+						<input id="zad1" name="zone-as-des" type="radio" checked disabled />
+						<span>Descending</span>
 					</label></p>
 					<p><label>
-						<input name="zone-as-des" type="radio" disabled />
-						<span>Descending</span>
+						<input id="zad0" name="zone-as-des" type="radio" disabled />
+						<span>Ascending</span>
 					</label></p>
 				</div>
 				<div class="col s2 pull-s6">
 					<p><label>
-						<input name="zone-sim-his" type="radio" disabled />
-						<span>Historical</span>
-					</label></p>
-					<p><label>
-						<input name="zone-sim-his" type="radio" disabled />
+						<input id="zsh1" name="zone-sim-his" type="radio" checked disabled />
 						<span>Simulation</span>
 					</label></p>
+					<p><label>
+						<input id="zsh0" name="zone-sim-his" type="radio" disabled />
+						<span>Historical</span>
+					</label></p>
 				</div>
-<!-- 				$.each($("#zone-sort").children(), function() {
-					$(this).click(function() {
-						$.each($("zone-sort").children(), function(i, v) {
-							console.log(v);
-							v.removeClass("active");
-						});
-						$("#sort-btn").html($(this).text());
-						$(this).addClass("active");
-					});
-				}); -->
 			</div>
 		</div>
 	</div>

@@ -45,7 +45,7 @@ $(document).ready(function() {
 		s += "<div style='display: flex;'>";
 		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dis' class='hisdis grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>Discomfort</h5>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdis' class='simdis purple-text right-align text-darken-5'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdis' class='simdis purple-text right-align text-darken-5'>5</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
 		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dol' class='hisdol grey-text left-align'>____</h5>";
@@ -105,6 +105,54 @@ $(document).ready(function() {
 	// 	console.log(this);
 	// });
 
+	$(".sort-li").each(function(i, v) {
+		$(this).click(function() {
+			console.log(i, v);
+			if (i == 0) {
+				$("#zad0").prop("disabled", "disabled");
+				$("#zad1").prop("disabled", "disabled");
+				$("#zsh0").prop("disabled", "disabled");
+				$("#zsh1").prop("disabled", "disabled");
+			} else {
+				$("#zad0").prop("disabled", "");
+				$("#zad1").prop("disabled", "");
+				$("#zsh0").prop("disabled", "");
+				$("#zsh1").prop("disabled", "");
+			}
+			$(".sort-li").each(function() { $(this).removeClass("active"); });
+			$(v).addClass("active");
+			$("#sort-btn").html($(this).text());
+			mySort(v.id);
+		});
+	});
+
+	function mySort(x) {
+		var toRet = [];
+		if (x == "normal") { for (var i = 1; i <= l; i += 1) { toRet.push(i); } return toRet; }
+		if ($("#zsh1").prop("checked")) {
+			x = "sim" + x;
+		} else {
+			x = "his" + x;
+		}
+		for (var i = 1; i <= l; i += 1) {
+			var toAdd = new Object();
+			toAdd.id = i;
+			toAdd.val = parseFloat($("#z" + i + x).text());
+			toRet.push(toAdd);
+		}
+		toRet.sort(myCompare);
+		var r = [];
+		for (var i = 0; i < l; i += 1) { r.push(toRet[i].id); }
+		if ($("#zad1").prop("checked")) { r.reverse(); }
+		return r;
+	}
+	
+	// https://stackoverflow.com/posts/1129270
+	function myCompare(a, b) {
+		if (a.val < b.val) { return -1; }
+		if (a.val > b.val) { return 1; }
+		return 0;
+	}
 
 	$(".simrange").each(function() {
 		var x = $("#" + this.id.replace("range", "simlam"));
