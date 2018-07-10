@@ -48,10 +48,10 @@
 
 		<div id="my-div" class="switch">
 			<label id="label" class="valign-wrapper" style="cursor: default;">
-				<span id="switch-bldng" class="black-text" style="font-size: 28px; cursor: text;">Building</span>
+				<span id="switch-bldng" class="black-text" style="font-size: 28px; cursor: pointer;">Building</span>
 				<input id="checkbox" type="checkbox"/>
 				<span id="lever" class="lever" style="cursor: pointer;"></span>
-				<span id="switch-zone" style="font-size: 28px; cursor: text;">Zones</span>
+				<span id="switch-zone" style="font-size: 28px; cursor: pointer;">Zones</span>
 			</label>
 		</div>
 
@@ -73,7 +73,7 @@
 					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
 					<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical</h5></div>
 					<div class="col s4 center-align"><a id="sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
-					<div class="col s4 left-align"><h5>Simulated</h5></div>
+					<div class="col s4 left-align"><h5>Simulation</h5></div>
 					<div class="col s2"></div>
 					<div class="col s2">
 						<h5 id="historic-lam" class="grey-text">_____</h5>
@@ -88,7 +88,7 @@
 						<h5>kWH Saved</h5>
 					</div>
 					<div class="col s2">
-						<h5 id="sim-lam">0.50</h5>
+						<h5 id="sim-lam">_____</h5>
 						<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
 						<h5 id="sim-money-savings" class="green-text text-darken-1">_____</h5>
 						<h5 id="sim-energy-savings" class="orange-text text-darken-1">_____</h5>
@@ -112,7 +112,7 @@
 					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
 					<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical</h5></div>
 					<div class="col s4 center-align"><a id="avg-sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
-					<div class="col s4 left-align"><h5>Simulated</h5></div>
+					<div class="col s4 left-align"><h5>Simulation</h5></div>
 					<div class="col s2"></div>
 					<div class="col s2">
 						<h5 id="his-lam-avg" class="grey-text">_____</h5>
@@ -127,7 +127,7 @@
 						<h5>Total kWH Saved</h5>
 					</div>
 					<div class="col s2">
-						<h5 id="sim-lam-avg">0.50</h5>
+						<h5 id="sim-lam-avg">_____</h5>
 						<h5 id="sim-dis-avg" class="purple-text text-darken-5">_____</h5>
 						<h5 id="sim-money-avg" class="green-text text-darken-1">_____</h5>
 						<h5 id="sim-energy-avg" class="orange-text text-darken-1">_____</h5>
@@ -137,7 +137,48 @@
 			</div>
 			<div class="row"></div>
 			<div class="row"></div>
-			<div class="row"></div>
+			<div class="row valign-wrapper">
+				<div class="col s2 pull-s2">
+					<a id="sort-btn" class='dropdown-trigger btn' href='#' data-target='zone-sort'>Sort: Default</a>
+					<ul id='zone-sort' class='dropdown-content'>
+						<li class="active"><a>Default</a></li>
+						<li><a>Lambda</a></li>
+						<li><a>Discomfort</a></li>
+						<li><a>$ Savings</a></li>
+						<li><a>kWH Savings</a></li>
+					</ul>
+				</div>
+				<div class="col s2 pull-s4">
+					<p><label>
+						<input name="zone-as-des" type="radio" disabled />
+						<span>Ascending</span>
+					</label></p>
+					<p><label>
+						<input name="zone-as-des" type="radio" disabled />
+						<span>Descending</span>
+					</label></p>
+				</div>
+				<div class="col s2 pull-s6">
+					<p><label>
+						<input name="zone-sim-his" type="radio" disabled />
+						<span>Historical</span>
+					</label></p>
+					<p><label>
+						<input name="zone-sim-his" type="radio" disabled />
+						<span>Simulation</span>
+					</label></p>
+				</div>
+<!-- 				$.each($("#zone-sort").children(), function() {
+					$(this).click(function() {
+						$.each($("zone-sort").children(), function(i, v) {
+							console.log(v);
+							v.removeClass("active");
+						});
+						$("#sort-btn").html($(this).text());
+						$(this).addClass("active");
+					});
+				}); -->
+			</div>
 		</div>
 	</div>
 </body>

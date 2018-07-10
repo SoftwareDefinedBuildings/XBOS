@@ -6734,7 +6734,7 @@ textarea.materialize-textarea {
 [type="radio"]:not(:checked) + span,
 [type="radio"]:checked + span {
   position: relative;
-  padding-left: 35px;
+  padding-left: 30px;
   cursor: pointer;
   display: inline-block;
   height: 25px;
@@ -6830,10 +6830,14 @@ textarea.materialize-textarea {
 [type="radio"]:disabled:checked + span:before {
   background-color: transparent;
   border-color: rgba(0, 0, 0, 0.42);
+  /*mine*/
+  cursor: default;
 }
 
 [type="radio"]:disabled + span {
   color: rgba(0, 0, 0, 0.42);
+  /*mine*/
+  cursor: default;
 }
 
 [type="radio"]:disabled:not(:checked) + span:before {
