@@ -4,7 +4,7 @@ $(document).ready(function() {
 	if (dr) {
 		$("#DRROW").show();
 		$("#DRTXT").addClass("white-text");
-		$("#DRTXT").html("<b>DEMAND RESPONSE EVENT CURRENTLY IN PROGRESS</b>");
+		$("#DRTXT").html("<b>Demand Response Event In Progress</b>");
 		$("#DRBG").addClass("red");
 		$("#DRBG").addClass("scale-in");
 	}

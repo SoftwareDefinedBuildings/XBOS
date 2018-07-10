@@ -3561,6 +3561,14 @@ table span.badge {
   right: auto;
 }
 
+/*mine*/
+.row .col.s5-5 {
+  width: 47%;
+  /*margin-left: auto;*/
+  /*left: auto;*/
+  /*right: auto;*/
+}
+
 .row .col.s7 {
   width: 58.3333333333%;
   margin-left: auto;
