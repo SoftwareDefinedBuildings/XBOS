@@ -351,54 +351,12 @@ SELECT * FROM %s WHERE {
 
     return jsonify(zones)
 
-@app.route('/api/hvac/day/<bucketsize>')
-@crossdomain(origin="*")
-def hvac_summary(bucketsize):
-    # first, determine the start date from the 'last' argument
-    today = get_today()
-    q = """SELECT * FROM %s WHERE {
-          ?rtu rdf:type brick:RTU .
-          ?rtu bf:feeds ?zone .
-          ?zone rdf:type brick:HVAC_Zone .
-          ?rtu bf:isControlledBy ?tstat .
-          ?tstat bf:hasPoint ?sensor .
-          ?sensor rdf:type/rdfs:subClassOf* brick:Temperature_Sensor .
-          ?sensor bf:uuid ?sensor_uuid .
-    };
-    """
-    res = config.HOD.do_query(q % config.SITE)
-    zones = {}
-    for row in res['Rows']:
-        zones[row['?sensor_uuid']] = row['?zone']
-    print zones
-    query = {
-        "Composition": ["tstat_temp"],
-        "Selectors": [mdal.MEAN],
-        "Variables": [
-            {"Name": "tstat_temp",
-             "Definition": q % config.SITE,
-             "Units": "F"}
-        ],
-        "Time": {
-            "T0": today.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            "T1": datetime.now(config.TZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
-            "WindowSize": bucketsize,
-            "Aligned": True
-        },
-    }
-    print query
-    resp = config.MDAL.do_query(query, timeout=60)
-    if 'error' in resp:
-        print 'ERROR', resp
-        abort(500)
-        abort(Response(status=resp['error']))
-        return
-    else:
-        resp['df'].columns = [zones.get(x,x) for x in resp['df'].columns]
-        return resp['df'].dropna().to_json()
-    return "ok"
-
 @app.route('/api/hvac/day/in/<bucketsize>')
+@crossdomain(origin="*")
+def serve_historipcal_hvac(bucketsize):
+    return jsonify(hvactest.get_hvac_streams_per_zone(bucketsize))
+
+@app.route('/api/prediction/hvac/day/in/<bucketsize>')
 @crossdomain(origin="*")
 def serve_historical_hvac(bucketsize):
     return jsonify(hvactest.get_hvac_streams_per_zone(bucketsize))
@@ -407,7 +365,7 @@ def serve_historical_hvac(bucketsize):
 @crossdomain(origin="*")
 def serve_occupancy(last, bucketsize):
     return jsonify(occupancy.get_occupancy(last, bucketsize))
-
+#
 @app.route('/api/hvac/day/setpoints')
 @crossdomain(origin="*")
 def setpoint_today():

@@ -241,7 +241,7 @@ All of these are for full building power/energy
         ```
 
 - `/api/hvac/day/setpoints`
-    - returns: dictionary whose keys are zone names. Values are dictionaries from timestamp to a list of `[heating setpoint, cooling setpoint]` (in fahrenheit). Timestamps are in milliseconds since the Unix epoch
+    - returns: dictionary whose keys are zone names. Values are dictionaries from timestamp to a list of `[heating setpoint, cooling setpoint]` (in fahrenheit). Timestamps are in milliseconds since the Unix epoch. This is sort of like the schedule
         ```json
         {
             "CentralZone": {
