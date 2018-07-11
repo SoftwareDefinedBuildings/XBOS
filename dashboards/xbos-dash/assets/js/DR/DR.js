@@ -2,7 +2,8 @@ $(document).ready(function() {
 	M.AutoInit();
 	var checked = false;
 	$("#bvz").click(mySwitch);
-	function mySwitch() {
+	function mySwitch(x) {
+		checked = x;
 		if (checked) {
 			$("#switch-bldng").addClass("black-text");
 			$("#switch-zone").removeClass("black-text");
@@ -16,14 +17,69 @@ $(document).ready(function() {
 			$("#avg-sim-btn").addClass("scale-in");
 		}
 		checked = !checked;
+		$("#checkbox").prop("checked", checked);
 	}
 
 	$("#my-div").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
 	$("#label").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
-	$("#switch-bldng").click(function(event) { event.stopImmediatePropagation(); checked = true; mySwitch(); $("#checkbox").prop("checked", checked); });
-	$("#lever").click(function(event) { event.stopImmediatePropagation(); mySwitch(); });
 	$("#checkbox").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
-	$("#switch-zone").click(function(event) { event.stopImmediatePropagation(); checked = false; mySwitch(); $("#checkbox").prop("checked", checked); });
+	$("#switch-bldng").click(function(event) { event.stopImmediatePropagation(); mySwitch(true); });
+	$("#switch-zone").click(function(event) { event.stopImmediatePropagation(); mySwitch(false); });
+	$("#lever").click(function(event) { event.stopImmediatePropagation(); mySwitch(checked); });
+
+	function asDesSwitch(x) {
+		if (sb != "normal") {
+			asDesChecked = x;
+			$("#as-des-checkbox").prop("checked", asDesChecked);
+			setTextColor(asDesChecked, $("#switch-des"), $("#switch-as"));
+			mySort(sb);
+		}
+	}
+
+	function simHisSwitch(x) {
+		if (sb != "normal") {
+			simHisChecked = x;
+			$("#sim-his-checkbox").prop("checked", simHisChecked);
+			setTextColor(simHisChecked, $("#switch-his"), $("#switch-sim"));
+			mySort(sb);
+		}
+	}
+
+	function setTextColor(x, a, b) {
+		if (x) { a.addClass("black-text"); b.removeClass("black-text"); }
+		else { a.removeClass("black-text"); b.addClass("black-text"); }
+	}
+
+	function disableSwitches() {
+		$("#as-des-checkbox").prop("disabled", "disabled");
+		$("#sim-his-checkbox").prop("disabled", "disabled");
+		$(".mySwitch").each(function() { $(this).css("cursor", "default"); });
+		$(".mySwitch").each(function() { $(this).removeClass("black-text"); });
+	}
+
+	function enableSwitches() {
+		$("#as-des-checkbox").prop("disabled", "");
+		$("#sim-his-checkbox").prop("disabled", "");
+		setTextColor(asDesChecked, $("#switch-des"), $("#switch-as"));
+		setTextColor(simHisChecked, $("#switch-his"), $("#switch-sim"));
+		$(".mySwitch").each(function() { $(this).css("cursor", "pointer"); });
+	}
+
+	var asDesChecked = false;
+	$("#as-des-div").click(function(event) { event.stopImmediatePropagation(); $("#as-des-checkbox").prop("checked", asDesChecked); });
+	$("#as-des-label").click(function(event) { event.stopImmediatePropagation(); $("#as-des-checkbox").prop("checked", asDesChecked); });
+	$("#as-des-checkbox").click(function(event) { event.stopImmediatePropagation(); $("#as-des-checkbox").prop("checked", asDesChecked); });
+	$("#switch-as").click(function(event) { event.stopImmediatePropagation(); asDesSwitch(false); });
+	$("#switch-des").click(function(event) { event.stopImmediatePropagation(); asDesSwitch(true); });
+	$("#as-des-lever").click(function(event) { event.stopImmediatePropagation(); asDesSwitch(!asDesChecked); });
+
+	var simHisChecked = false;
+	$("#sim-his-div").click(function(event) { event.stopImmediatePropagation(); $("#sim-his-checkbox").prop("checked", simHisChecked); });
+	$("#sim-his-label").click(function(event) { event.stopImmediatePropagation(); $("#sim-his-checkbox").prop("checked", simHisChecked); });
+	$("#sim-his-checkbox").click(function(event) { event.stopImmediatePropagation(); $("#sim-his-checkbox").prop("checked", simHisChecked); });
+	$("#switch-sim").click(function(event) { event.stopImmediatePropagation(); simHisSwitch(false); });
+	$("#switch-his").click(function(event) { event.stopImmediatePropagation(); simHisSwitch(true); });
+	$("#sim-his-lever").click(function(event) { event.stopImmediatePropagation(); simHisSwitch(!simHisChecked); });
 
 	let l = 17;
 	var s = "";
@@ -63,18 +119,11 @@ $(document).ready(function() {
 	$("#zone-config").append(s);
 
 	function myFix(x) {
-		if (x > 1) {
-			return x;
-		}
-		if (x == 0) {
-			return "0.0";
-		} else if (x == 1) {
-			return "1.0";
-		} else if (x.length < 4) {
-			return x + "0";
-		} else {
-			return x;
-		}
+		if (x > 1) { return x; }
+		if (x == 0) { return "0.0"; }
+		if (x == 1) { return "1.0"; }
+		if (x.length < 4) { return x + "0"; }
+		return x;
 	}
 
 	let b = true;
@@ -96,20 +145,9 @@ $(document).ready(function() {
 	// 	}
 	// 	console.log(this);
 	// });
-	var sb;
+	var sb = "normal";
 	$(".sort-li").each(function(i, v) {
 		$(this).click(function() {
-			if (i == 0) {
-				$("#zad0").prop("disabled", "disabled");
-				$("#zad1").prop("disabled", "disabled");
-				$("#zsh0").prop("disabled", "disabled");
-				$("#zsh1").prop("disabled", "disabled");
-			} else {
-				$("#zad0").prop("disabled", "");
-				$("#zad1").prop("disabled", "");
-				$("#zsh0").prop("disabled", "");
-				$("#zsh1").prop("disabled", "");
-			}
 			$(".sort-li").each(function() { $(this).removeClass("active"); });
 			$(v).addClass("active");
 			mySort(v.id);
@@ -118,17 +156,15 @@ $(document).ready(function() {
 		});
 	});
 
-	$("#zad0").click(function() { mySort(sb); });
-	$("#zad1").click(function() { mySort(sb); });
-	$("#zsh0").click(function() { mySort(sb); });
-	$("#zsh1").click(function() { mySort(sb); });
-
 	function mySort(x) {
 		var r = [];
-		if (x == "normal") { for (var i = 0; i < l; i += 1) { r.push(i); }
+		if (x == "normal") {
+			disableSwitches();
+			for (var i = 0; i < l; i += 1) { r.push(i); }
 		} else {
+			enableSwitches();
 			var toRet = [];
-			if ($("#zsh1").prop("checked")) { x = "sim" + x; } else { x = "his" + x; }
+			if (!simHisChecked) { x = "sim" + x; } else { x = "his" + x; }
 			for (var i = 0; i < l; i += 1) {
 				var toAdd = new Object();
 				toAdd.id = i;
@@ -136,9 +172,9 @@ $(document).ready(function() {
 				toRet.push(toAdd);
 			}
 			toRet.sort(myCompare);
-			if ($("#zad1").prop("checked")) { toRet.reverse(); }
+			if (asDesChecked) { toRet.reverse(); }
 			for (var i = 0; i < l; i += 1) { r.push(toRet[i].id); }
-		}	
+		}
 		for (var i = 0; i < l; i += 1) { $("#z" + i + "card").css("order", r[i]); }
 	}
 	

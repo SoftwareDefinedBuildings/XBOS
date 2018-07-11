@@ -151,27 +151,26 @@
 						<li id="kWH" class="sort-li"><a>kWH Savings</a></li>
 					</ul>
 				</div>
-				<div class="col s2 pull-s1">
-					<p><label>
-						<input id="zad1" name="zone-as-des" type="radio" checked disabled />
-						<span>Descending</span>
-					</label></p>
-					<p><label>
-						<input id="zad0" name="zone-as-des" type="radio" disabled />
-						<span>Ascending</span>
-					</label></p>
+				<div class="col s4">
+					<div id="as-des-div" class="switch">
+						<label id="as-des-label" class="valign-wrapper" style="cursor: default;">
+							<span class="mySwitch" id="switch-as" style="font-size: 20px;">Ascending</span>
+							<input id="as-des-checkbox" type="checkbox" disabled />
+							<span id="as-des-lever" class="lever" style="cursor: pointer;"></span>
+							<span class="mySwitch" id="switch-des" style="font-size: 20px;">Descending</span>
+						</label>
+					</div>
 				</div>
-				<div class="col s2 pull-s1">
-					<p><label>
-						<input id="zsh1" name="zone-sim-his" type="radio" checked disabled />
-						<span>Simulation</span>
-					</label></p>
-					<p><label>
-						<input id="zsh0" name="zone-sim-his" type="radio" disabled />
-						<span>Historical</span>
-					</label></p>
+				<div class="col s4">
+					<div id="sim-his-div" class="switch disabled">
+						<label id="sim-his-label" class="valign-wrapper" style="cursor: default;">
+							<span class="mySwitch" id="switch-sim" style="font-size: 20px;">Simulation</span>
+							<input id="sim-his-checkbox" type="checkbox" disabled />
+							<span id="sim-his-lever" class="lever" style="cursor: pointer;"></span>
+							<span class="mySwitch" id="switch-his" style="font-size: 20px;">Historical</span>
+						</label>
+					</div>
 				</div>
-				<div class="col s4"></div>
 			</div>
 		</div>
 	</div>
