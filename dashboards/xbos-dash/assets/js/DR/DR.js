@@ -136,8 +136,8 @@ $(document).ready(function() {
 				toRet.push(toAdd);
 			}
 			toRet.sort(myCompare);
+			if ($("#zad1").prop("checked")) { toRet.reverse(); }
 			for (var i = 0; i < l; i += 1) { r.push(toRet[i].id); }
-			if ($("#zad1").prop("checked")) { r.reverse(); }
 		}	
 		for (var i = 0; i < l; i += 1) { $("#z" + i + "card").css("order", r[i]); }
 	}
