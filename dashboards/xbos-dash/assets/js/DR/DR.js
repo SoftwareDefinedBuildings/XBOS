@@ -94,24 +94,24 @@ $(document).ready(function() {
 		s += "<h5 style='margin-top: 0;'>Simulation</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hislam' class='hislam grey-text left-align'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hislam' class='z" + i + "-val hislam grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>λ</h5>";
-		s += "<h5 class='right-align' style='width: 25%; margin-top: 0;' id='z" + i + "simlam'>____</h5>";
+		s += "<h5 class='z" + i + "-val right-align' style='width: 25%; margin-top: 0;' id='z" + i + "simlam'>____</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dis' class='hisdis grey-text left-align'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dis' class='z" + i + "-val hisdis grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>Discomfort</h5>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdis' class='simdis purple-text right-align text-darken-5'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdis' class='z" + i + "-val simdis purple-text right-align text-darken-5'>____</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dol' class='hisdol grey-text left-align'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dol' class='z" + i + "-val hisdol grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>$ Saved</h5>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdol' class='simdol green-text right-align text-darken-1'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdol' class='z" + i + "-val simdol green-text right-align text-darken-1'>____</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "kWH' class='hiskWH grey-text left-align'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "kWH' class='z" + i + "-val hiskWH grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>kWH Saved</h5>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simkWH' class='simkWH orange-text right-align text-darken-1'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simkWH' class='z" + i + "-val simkWH orange-text right-align text-darken-1'>____</h5>";
 		s += "</div>";
 		s += "</div>";
 	}
@@ -198,23 +198,15 @@ $(document).ready(function() {
 	});
 
 	function clearSummary() {
-		$("#his-lam-avg").html("_____");
-		$("#his-dis-avg").html("_____");
-		$("#his-money-avg").html("_____");
-		$("#his-energy-avg").html("_____");
-		$("#sim-dis-avg").html("_____");
-		$("#sim-money-avg").html("_____");
-		$("#sim-energy-avg").html("_____");
+		$(".sum-val").each(function() {
+			$(this).html("_____");
+		});
 	}
 
 	function clearZone(x) {
-		$("#" + x + "hislam").html("____");
-		$("#" + x + "dis").html("____");
-		$("#" + x + "simdis").html("____");
-		$("#" + x + "dol").html("____");
-		$("#" + x + "simdol").html("____");
-		$("#" + x + "kWH").html("____");
-		$("#" + x + "simkWH").html("____");
+		$(".z" + x + "-val").each(function() {
+			$(this).html("____");
+		});
 	}
 
 	function setSummaryVals() {
@@ -241,15 +233,7 @@ $(document).ready(function() {
 		$(k).html(myFix(x.toFixed(2)));
 	}
 
-	function clearBldng() {
-		$("#historic-lam").html("_____");
-		$("#historic-dis").html("_____");
-		$("#historic-money-savings").html("_____");
-		$("#historic-energy-savings").html("_____");
-		$("#sim-dis").html("_____");
-		$("#sim-money-savings").html("_____");
-		$("#sim-energy-savings").html("_____");
-	}
+	function clearBldng() { $(".bldng-val").each(function() { $(this).html("_____"); });}
 
 });
 				

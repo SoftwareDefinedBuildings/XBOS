@@ -36,15 +36,16 @@
 	<div class="row"></div>
 
 	<div class="container">
-		<!-- <div id="bldng-charts" class="section z-depth-1">
+		<div id="bldng-charts" class="section z-depth-1">
 			<div class="row valign-wrapper">
-				<div id="prevChart" class="col s6"></div>
-				<div id="DRChart" class="col s6"></div>
+				<!-- <div id="prevChart" class="col s6"></div> -->
+				<!-- <div id="DRChart" class="col s6"></div> -->
+				<div id="DRChart" class="col s12"></div>
 			</div>
 			<div class="center-align"><a id="chartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom (Building)</a></div>
 		</div>
 
-		<div class="row"></div> -->
+		<div class="row"></div>
 
 		<div id="my-div" class="switch">
 			<label id="label" class="valign-wrapper" style="cursor: default;">
@@ -76,10 +77,10 @@
 					<div class="col s4 left-align"><h5>Simulation</h5></div>
 					<div class="col s2"></div>
 					<div class="col s2">
-						<h5 id="historic-lam" class="grey-text">_____</h5>
-						<h5 id="historic-dis" class="grey-text">_____</h5>
-						<h5 id="historic-money-savings" class="grey-text">_____</h5>
-						<h5 id="historic-energy-savings" class="grey-text">_____</h5>
+						<h5 id="historic-lam" class="bldng-val grey-text">_____</h5>
+						<h5 id="historic-dis" class="bldng-val grey-text">_____</h5>
+						<h5 id="historic-money-savings" class="bldng-val grey-text">_____</h5>
+						<h5 id="historic-energy-savings" class="bldng-val grey-text">_____</h5>
 					</div>
 					<div class="col s4 center-align">
 						<h5>λ</h5>
@@ -89,9 +90,9 @@
 					</div>
 					<div class="col s2">
 						<h5 id="sim-lam">_____</h5>
-						<h5 id="sim-dis" class="purple-text text-darken-5">_____</h5>
-						<h5 id="sim-money-savings" class="green-text text-darken-1">_____</h5>
-						<h5 id="sim-energy-savings" class="orange-text text-darken-1">_____</h5>
+						<h5 id="sim-dis" class="bldng-val purple-text text-darken-5">_____</h5>
+						<h5 id="sim-money-savings" class="bldng-val green-text text-darken-1">_____</h5>
+						<h5 id="sim-energy-savings" class="bldng-val orange-text text-darken-1">_____</h5>
 					</div>
 					<div class="col s2"></div>
 				</div>
@@ -115,10 +116,10 @@
 					<div class="col s4 left-align"><h5>Simulation</h5></div>
 					<div class="col s2"></div>
 					<div class="col s2">
-						<h5 id="his-lam-avg" class="grey-text">_____</h5>
-						<h5 id="his-dis-avg" class="grey-text">_____</h5>
-						<h5 id="his-money-avg" class="grey-text">_____</h5>
-						<h5 id="his-energy-avg" class="grey-text">_____</h5>
+						<h5 id="his-lam-avg" class="sum-val grey-text">_____</h5>
+						<h5 id="his-dis-avg" class="sum-val grey-text">_____</h5>
+						<h5 id="his-money-avg" class="sum-val grey-text">_____</h5>
+						<h5 id="his-energy-avg" class="sum-val grey-text">_____</h5>
 					</div>
 					<div class="col s4 center-align">
 						<h5>Average λ</h5>
@@ -128,9 +129,9 @@
 					</div>
 					<div class="col s2">
 						<h5 id="sim-lam-avg">_____</h5>
-						<h5 id="sim-dis-avg" class="purple-text text-darken-5">_____</h5>
-						<h5 id="sim-money-avg" class="green-text text-darken-1">_____</h5>
-						<h5 id="sim-energy-avg" class="orange-text text-darken-1">_____</h5>
+						<h5 id="sim-dis-avg" class="sum-val purple-text text-darken-5">_____</h5>
+						<h5 id="sim-money-avg" class="sum-val green-text text-darken-1">_____</h5>
+						<h5 id="sim-energy-avg" class="sum-val orange-text text-darken-1">_____</h5>
 					</div>
 					<div class="col s2"></div>
 				</div>
@@ -179,11 +180,11 @@
 <script type="text/javascript" src="assets/js/lib/materialize.js"></script>
 <script type="text/javascript" src="assets/js/lib/jquery.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
-<!-- <script type="text/javascript" src="assets/js/lib/highcharts.js"></script> -->
+<script type="text/javascript" src="assets/js/lib/highcharts.js"></script>
 <!-- <script type="text/javascript" src="assets/js/lib/drilldown.js"></script> -->
 <!-- <script type="text/javascript" src="assets/js/lib/highcharts-more.js"></script> -->
 <script type="text/javascript" src="assets/js/DR/DR.js"></script>
-<!-- <script type="text/javascript" src="assets/js/DR/DRChart.js"></script> -->
+<script type="text/javascript" src="assets/js/DR/DRChart.js"></script>
 <!-- <script type="text/javascript" src="assets/js/DR/prevChart.js"></script> -->
 
 </html>
