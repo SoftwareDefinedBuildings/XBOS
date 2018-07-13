@@ -85,7 +85,7 @@ func parseTable(z *html.Tokenizer) {
 							log.Println(t.Data, s)
 							//see for more details on CPP https://www.sce.com/NR/sc3/tm2/pdf/ce300.pdf
 							if s == "EXTREMELY HOT SUMMER WEEKDAY" {
-								notify("SCE CPP event scheduled on: "+t.Data+" from: 2:00 pm to 6:00 pm", config.Usrtopic)
+								notify("SCE CPP DR event likely to happen on: "+t.Data+" from: 2:00 pm to 6:00 pm", config.Usrtopic)
 							}
 						}
 					}

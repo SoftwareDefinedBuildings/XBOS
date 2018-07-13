@@ -103,9 +103,9 @@ func parseRows(z *html.Tokenizer) {
 			}
 			for i := 0; i < len(s); i += 4 {
 				if s[i] == s[i+1] {
-					notify("SCE CPP event scheduled on: "+s[i]+" from: "+s[i+2]+" to: "+s[i+3], config.Usrtopic)
+					notify("SCE CPP DR event confirmed for: "+s[i]+" from: "+s[i+2]+" to: "+s[i+3], config.Usrtopic)
 				} else {
-					notify("SCE CPP event scheduled for start date:"+s[i]+" end date: "+s[i+1]+" from: "+s[i+2]+" to: "+s[i+3], config.Usrtopic)
+					notify("SCE CPP DR event scheduled for start date:"+s[i]+" to end date: "+s[i+1]+" from: "+s[i+2]+" to: "+s[i+3], config.Usrtopic)
 				}
 				// sleep briefly to guarantee delivery of notification in order
 				time.Sleep(500 * time.Millisecond)
