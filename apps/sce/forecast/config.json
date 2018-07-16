@@ -1,6 +1,10 @@
 {
-  "Usrtopic": "arn:aws:sns:us-west-2:459826155428:scecppevent",
-  "Devtopic": "arn:aws:sns:us-west-2:459826155428:scecppeventdev",
+  "Usrtopic": "arn:aws:sns:us-west-2:459826155428:SCEFORCAST",
+  "Usrtopicregion":"us-west-2",
+  "Devtopic": "arn:aws:sns:us-west-2:459826155428:DEV-PGESCE",
+  "Devtopicregion":"us-west-2",
+  "Disablenotification": false,
+  "Period": 24,
+  "Forecastdays": 5,
   "Sceurl": "https://www.sce.openadr.com/dr.website/scepr-event-status.jsf"
-
 }

@@ -1,3 +1,19 @@
+/*
+ go build -o pgeconfirmed
+ ./pgeconfirmed
+
+ The code runs a predefined times separated by predefined hours during a predefined period
+ (e.g., run 3 times every 2 hours in 24 hours)
+
+ The code checks for a confirmed PG&E PDP event by subscribing to
+ a DR topic on a preconfigured Pelican thermostat
+
+ If there is an event:
+     it uses AWS SNS to notify everyone on the user topic
+ If the subscription times out a predefined amount of times:
+     it will notify everyone on the developer topic
+*/
+
 package main
 
 import (
@@ -23,20 +39,21 @@ var config Config
 var bw2client *bw2.BW2Client
 var msgchan chan *bw2.SimpleMessage
 
-// time format
+// time format for notification
 const layout = "January 02, 2006 at 3:04 PM"
 
 type Config struct {
-	Usrtopic            string //AWS user SNS Email topic
-	Smstopic            string //AWS user SNS SMS topic
+	Usrtopic            string //AWS user SNS topic
+	Usrtopicregion      string //AWS user SNS topic region
 	Devtopic            string //AWS developer SNS topic
-	BWtopic             string //DR BW topic (e.g., ciee/devices/pelican/s.pelican/+/i.xbos.demand_response/signal/info)
+	Devtopicregion      string //AWS developer SNS topic region
+	Disablenotification bool   //set true to disable SNS notification
+	BWtopic             string //BOSSWAVE DR topic (e.g., ciee/devices/pelican/s.pelican/+/i.xbos.demand_response/signal/info)
 	BTtopicmaxwait      int    //Max wait time in seconds for a message on a topic
 	BTtopictimeoutcount int    //Max number of consecutive timeouts before notifying developer
 	Period              int    //Overall period in hours to repeat notification (e.g., 24 hours)
-	RetriesPerPeriod    int    //Max number of retries per day
+	RetriesPerPeriod    int    //Max number of retries per period
 	RetryInterval       int    //Wait time in hours between retries
-
 }
 
 type Signal struct {
@@ -51,6 +68,7 @@ func main() {
 	var timeoutcount int
 Main:
 	for {
+		// reload configuration in case something changed
 		configure()
 		for i := 0; i < config.RetriesPerPeriod; i++ {
 			start := time.Now()
@@ -66,7 +84,7 @@ Main:
 				timeoutcount++
 				log.Println("Reading on BWTopic", config.BWtopic, "timed out", timeoutcount, "consecutive time(s)")
 				if timeoutcount >= config.BTtopictimeoutcount {
-					notify("PG&E PDP - reading on BWTopic "+config.BWtopic+" timed out "+strconv.Itoa(timeoutcount)+" consecutive time(s)", []string{config.Devtopic})
+					notify("PG&E PDP - reading on BWTopic "+config.BWtopic+" timed out "+strconv.Itoa(timeoutcount)+" consecutive time(s)", config.Devtopic, config.Devtopicregion)
 					//reset timeoutcount and parse message
 					timeoutcount = 0
 				}
@@ -78,12 +96,12 @@ Main:
 			elapsed := time.Since(start)
 			//dt is empty if there are no events otherwise dt has start date for the event
 			if dt != "" {
-				notify("PG&E PDP DR event confirmed for: "+dt, []string{config.Usrtopic, config.Smstopic})
+				notify("PG&E PDP DR event CONFIRMED for: "+dt, config.Usrtopic, config.Usrtopicregion)
 				// repeat the next day
 				time.Sleep(time.Duration(config.Period-(i*config.RetryInterval))*time.Hour - elapsed)
 				continue Main
 			}
-			// run this code three times at 2 hour intervals (e.g., 9:30am, 11:30am, and 1:30pm) if needed
+			// run this code RetriesPerPeriod times at RetryInterval hour intervals (e.g., 9:30am, 11:30am, and 1:30pm) if needed
 			time.Sleep(time.Duration(config.RetryInterval)*time.Hour - elapsed)
 
 		}
@@ -93,9 +111,9 @@ Main:
 }
 
 // parseMsg reads a message from a BW topic and returns the start date of the DR event
-// The start date is 0 if there is no event and a unix time stamp of the event otherwise
+// The start date is 0 if there is no event and a unix time stamp of the event in nanoseconds otherwise
 func parseMsg(msg *bw2.SimpleMessage) string {
-	log.Println("parsing message on", time.Now().Format(layout))
+	log.Println("about to parse BW message")
 	var st string
 	var sig Signal
 	po := msg.GetOnePODF("2.1.1.9")
@@ -114,32 +132,28 @@ func parseMsg(msg *bw2.SimpleMessage) string {
 			if err != nil {
 				return st
 			}
-			return time.Unix(sig.Event_start, 0).In(loc).Format(layout)
+			return time.Unix(0, sig.Event_start).In(loc).Format(layout)
 		}
 	}
 }
 
 // notify notifies someone when a DR event is about to happen using AWS SNS
-func notify(msg string, topics []string) {
+func notify(msg string, topic string, region string) {
 	log.Println(msg)
+	if config.Disablenotification {
+		log.Println("notification is disabled")
+		return
+	}
 	sess := session.Must(session.NewSession())
-	for _, topic := range topics {
-		//region for AWS SNS topics
-		svc := sns.New(sess, aws.NewConfig().WithRegion("us-west-1"))
-		if topic == config.Smstopic {
-			//region for SMS
-			svc = sns.New(sess, aws.NewConfig().WithRegion("us-west-2"))
-		}
-
-		params := &sns.PublishInput{
-			Message:  aws.String(msg),
-			TopicArn: aws.String(topic),
-		}
-		_, err := svc.Publish(params)
-
-		if err != nil {
-			log.Println("failed to send SNS", err)
-		}
+	//region for AWS SNS topics
+	svc := sns.New(sess, aws.NewConfig().WithRegion(region))
+	params := &sns.PublishInput{
+		Message:  aws.String(msg),
+		TopicArn: aws.String(topic),
+	}
+	_, err := svc.Publish(params)
+	if err != nil {
+		log.Println("failed to send SNS", err)
 	}
 }
 

@@ -1,11 +1,18 @@
 /*
- go build -o estimate
- ./estimate
+ go build -o pgeforecast
+ ./pgeforecast
+
  THIS CODE FOLLOWS TO AN EXTENT THE FOLLOWING LOGIC:
  https://www.pge.com/resources/js/pge_five_day_forecast_par-pdp.js
- The code runs once a day and checks the likelyhood of an event for the next 7 days
- If there is a chance an event will occur it uses AWS SNS to notify someone
- If the code fails (in case PG&E changes their logic), it will notify the developer topic (currently Moustafa)
+
+ The code runs once every a predefined hour period and checks the likelyhood of
+ an event in the next predefined number of days (MAX forecast is 7 days)
+ (e.g., runs once every 24 hours and checks the forecast for the next 5 days)
+
+ If there is a chance an event will occur:
+  it uses AWS SNS to notify everyone on the user topic
+ If the code fails (in case PG&E changes their logic):
+  it will notify everyone on the developer topic
 */
 
 package main
@@ -27,67 +34,75 @@ import (
 )
 
 // configuration file path and variable
-var confPath = "./config.json"
+const confPath = "./config.json"
+
 var config Config
 
 type Config struct {
-	Usrtopic  string
-	Smstopic  string
-	Devtopic  string
-	Pgeurl    string
-	WkdyMxTmp int
-	WkdyMnTmp int
-	WkenMxTmp int
-	WkenMnTmp int
+	Usrtopic            string //AWS user SNS topic
+	Usrtopicregion      string //AWS user SNS topic region
+	Devtopic            string //AWS developer SNS topic
+	Devtopicregion      string //AWS developer SNS topic region
+	Disablenotification bool   //set true to disable SNS notification
+	Period              int    //Overall period in hours to repeat notification (e.g., 24 hours)
+	Forecastdays        int    //Number of days to get the forecast for MAX = 7
+	Pgeurl              string //URL for PG&E temperature forecast
+	WkdyMxTmp           int    //weekday temperature setpoint for a likely event
+	WkdyMnTmp           int    //weekday temperature setpoint for a possible event
+	WkenMxTmp           int    //weekend temperature setpoint for a likely event
+	WkenMnTmp           int    //weekend temperature setpoint for a possible event
 }
 
 func main() {
-	configure()
 	httpclient := &http.Client{Timeout: 10 * time.Second}
 Main:
 	for {
+		// reload configuration in case something changed
+		configure()
+		start := time.Now()
 		//GET CSV with temperatures from PG&E
 		resp, err := httpclient.Get(config.Pgeurl)
 		if err != nil {
-			notify("Error: failed to GET temperatures from PG&E: "+err.Error(), []string{config.Devtopic})
+			notify("Error: failed to GET temperatures from PG&E: "+err.Error(), config.Devtopic, config.Devtopicregion)
 			break Main
 		}
 		defer resp.Body.Close()
-		log.Println("Response for GET registerServer:", resp)
+		// log.Println("Response for GET registerServer:", resp)
 		if resp.StatusCode != 200 {
-			notify("Error: GET status code is: "+strconv.Itoa(resp.StatusCode), []string{config.Devtopic})
+			notify("Error: GET status code is: "+strconv.Itoa(resp.StatusCode), config.Devtopic, config.Devtopicregion)
 			break Main
 		}
 		body, err := ioutil.ReadAll(resp.Body)
 		if body == nil || err != nil {
-			notify("Error: could not read request body or body is empty:"+err.Error(), []string{config.Devtopic})
+			notify("Error: could not read request body or body is empty:"+err.Error(), config.Devtopic, config.Devtopicregion)
 			break Main
 		}
-		log.Println("csv is:", string(body))
+		// log.Println("csv is:", string(body))
+		log.Println("about to parse CSV file")
 		//Parse PG&E CSV
 		allTextLines := strings.Split(string(body), "\n")
-		log.Println("dates are:", allTextLines[3])
+		// log.Println("dates are:", allTextLines[3])
 		dateRow := strings.Split(allTextLines[3], ",")
-		log.Println("temperatures are:", allTextLines[26])
+		// log.Println("temperatures are:", allTextLines[26])
 		tempRow := strings.Split(allTextLines[26], ",")
 
-		for i := 0; i < 14; i += 2 {
+		for i := 0; i < 2*config.Forecastdays; i += 2 {
 			// parse time
 			dt, err := parseTime(dateRow[i+9])
 			if err != nil {
-				notify("Error: failed to parseTime "+err.Error(), []string{config.Devtopic})
+				notify("Error: failed to parseTime "+err.Error(), config.Devtopic, config.Devtopicregion)
 				break Main
 			}
 			// parse temperature
 			tmp, err := strconv.Atoi(tempRow[i+18])
 			if err != nil {
-				notify("could not parse temperature:"+tempRow[i+18]+" "+err.Error(), []string{config.Devtopic})
+				notify("could not parse temperature:"+tempRow[i+18]+" "+err.Error(), config.Devtopic, config.Devtopicregion)
 				break Main
 			}
 			// if weekend or holiday then threshold temp is 105, otherwise its 98
 			if dt.Weekday() == 0 || dt.Weekday() == 6 || isHoliday(dt) {
 				if tmp >= config.WkenMxTmp {
-					notify("PG&E PDP DR event likely to happen on weekend or holiday: "+dateRow[i+9]+" temp: "+tempRow[i+18], []string{config.Usrtopic, config.Smstopic})
+					notify("PG&E PDP DR event likely to happen on weekend or holiday: "+dateRow[i+9]+" temp: "+tempRow[i+18], config.Usrtopic, config.Usrtopicregion)
 				} else if tmp >= config.WkenMnTmp {
 					log.Println("PG&E PDP DR event possible to happen on weekend or holiday: ", dateRow[i+9], "temp:", tempRow[i+18])
 				} else {
@@ -95,7 +110,7 @@ Main:
 				}
 			} else {
 				if tmp >= config.WkdyMxTmp {
-					notify("PG&E PDP DR event likely to happen on weekday: "+dateRow[i+9]+" temp: "+tempRow[i+18], []string{config.Usrtopic, config.Smstopic})
+					notify("PG&E PDP DR event likely to happen on weekday: "+dateRow[i+9]+" temp: "+tempRow[i+18], config.Usrtopic, config.Usrtopicregion)
 				} else if tmp >= config.WkdyMnTmp {
 					log.Println("PG&E PDP DR event possible to happen on weekday:", dateRow[i+9], "temp:", tempRow[i+18])
 				} else {
@@ -105,10 +120,9 @@ Main:
 			// sleep briefly to guarantee delivery of notification in order
 			time.Sleep(500 * time.Millisecond)
 		}
-		// run this code once a day
-		time.Sleep(24 * time.Hour)
-		// reload configuration in case threshold temperatures changed
-		configure()
+		// run this code once every Period hours (e.g., 24 hours)
+		elapsed := time.Since(start)
+		time.Sleep(time.Duration(config.Period)*time.Hour - elapsed)
 	}
 }
 
@@ -144,26 +158,22 @@ func parseTime(t string) (time.Time, error) {
 }
 
 // notify notifies someone when a DR event is about to happen using AWS SNS
-func notify(msg string, topics []string) {
+func notify(msg string, topic string, region string) {
 	log.Println(msg)
+	if config.Disablenotification {
+		log.Println("notification is disabled")
+		return
+	}
 	sess := session.Must(session.NewSession())
-	for _, topic := range topics {
-		//region for AWS SNS topics
-		svc := sns.New(sess, aws.NewConfig().WithRegion("us-west-1"))
-		if topic == config.Smstopic {
-			//region for SMS
-			svc = sns.New(sess, aws.NewConfig().WithRegion("us-west-2"))
-		}
-
-		params := &sns.PublishInput{
-			Message:  aws.String(msg),
-			TopicArn: aws.String(topic),
-		}
-		_, err := svc.Publish(params)
-
-		if err != nil {
-			log.Println("failed to send SNS", err)
-		}
+	//region for AWS SNS topics
+	svc := sns.New(sess, aws.NewConfig().WithRegion(region))
+	params := &sns.PublishInput{
+		Message:  aws.String(msg),
+		TopicArn: aws.String(topic),
+	}
+	_, err := svc.Publish(params)
+	if err != nil {
+		log.Println("failed to send SNS", err)
 	}
 }
 
@@ -172,12 +182,14 @@ func configure() {
 	f, err := os.Open(confPath)
 	if err != nil {
 		log.Fatal(errors.New("Error: failed to load configuration file (./config.json). " + err.Error()))
-		return
 	}
 	d := json.NewDecoder(f)
 	err = d.Decode(&config)
 	if err != nil {
 		log.Fatal(errors.New("Error: failed to configure server. " + err.Error()))
-		return
+	}
+	if config.Forecastdays > 7 {
+		log.Println("Forecastdays cannot exceed 7 days, setting to 7")
+		config.Forecastdays = 7
 	}
 }
