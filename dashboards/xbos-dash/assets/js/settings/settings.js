@@ -90,6 +90,7 @@ $(document).ready(function() {
 		});
 		toRet.recipients.push(toAdd);
 		console.log(toRet);
+		M.toast({html: 'Saved!', classes: 'rounded', displayLength: 1000});
 		// return toRet;
 	});
 
