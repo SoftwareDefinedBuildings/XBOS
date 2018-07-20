@@ -1,4 +1,47 @@
 $(document).ready(function() {
+<<<<<<< HEAD
+=======
+	var inum = 1;
+	$("#rbtn1").click(addEntry);
+	function addEntry() {
+		inum += 1;
+		var s = "";
+		s += "<div id='rec" + inum + "row' class='row valign-wrapper'>";
+		s += "<div class='input-field col s3'>";
+		s += "<input class='ntin' type='text'>";
+		s += "<label>Recipient Name</label></div>";
+		s += "<div class='input-field col s3'>";
+		s += "<input class='ntin' type='text'>";
+		s += "<label>Phone Number</label></div>";
+		s += "<div class='input-field col s4'>";
+		s += "<input class='ntin' type='text'>";
+		s += "<label>Email Address</label></div>";
+		s += "<div class='col s2 center-align'>";
+		s += "<a id='del" + inum + "btn' class='rbtn waves-effect waves-light btn-small red'>remove</a></div>";
+		s += "</div>";
+		$("#notif-card").append(s);
+		$("#del" + inum + "btn").click(function() { $("#" + this.id.replace("del", "rec").replace("btn", "row")).remove(); });
+	}
+
+	function loadNotifs() {
+		if (d.notifs) { notifSwitch(); }
+		$(".day-cb").each(function(i) { $(this).prop("checked", d.days[i].checked); });
+		$(".ev-cb").each(function(i) { $(this).prop("checked", d.events[i].checked); });
+		for (var j = 0; j < d.recipients.length - 1; j += 1) { addEntry(); }
+		var k = 0;
+		var i = 1;
+		var obj = d.recipients[k];
+		$(".ntin").each(function() {
+			if (i == 0) { i = 1; k += 1; obj = d.recipients[k]; }
+			if (i == 1) { $(this).prop("value", obj.name); }
+			if (i == 2) { $(this).prop("value", obj.phone); }
+			if (i == 3) { $(this).prop("value", obj.email); i = -1; }
+			i += 1;
+		});
+		M.updateTextFields();
+	}
+	
+>>>>>>> 882dc35... notifs
 	var nchecked = false;
 	function notifSwitch() {
 		nchecked = !nchecked;
@@ -16,6 +59,7 @@ $(document).ready(function() {
 		$("#notif-checkbox").prop("checked", nchecked);
 	}
 
+<<<<<<< HEAD
 	var inum = 1;
 	$("#rbtn1").click(function() {
 		inum += 1;
@@ -37,6 +81,8 @@ $(document).ready(function() {
 		$("#del" + inum + "btn").click(function() { $("#" + this.id.replace("del", "rec").replace("btn", "row")).remove(); });
 	});
 
+=======
+>>>>>>> 882dc35... notifs
 	$("#save-notifs").click(function() {
 		var toRet = new Object();
 		toRet.name = "Notification Recipients";
