@@ -1,6 +1,4 @@
 $(document).ready(function() {
-<<<<<<< HEAD
-=======
 	var inum = 1;
 	$("#rbtn1").click(addEntry);
 	function addEntry() {
@@ -40,8 +38,7 @@ $(document).ready(function() {
 		});
 		M.updateTextFields();
 	}
-	
->>>>>>> 882dc35... notifs
+
 	var nchecked = false;
 	function notifSwitch() {
 		nchecked = !nchecked;
@@ -59,7 +56,6 @@ $(document).ready(function() {
 		$("#notif-checkbox").prop("checked", nchecked);
 	}
 
-<<<<<<< HEAD
 	var inum = 1;
 	$("#rbtn1").click(function() {
 		inum += 1;
@@ -81,8 +77,6 @@ $(document).ready(function() {
 		$("#del" + inum + "btn").click(function() { $("#" + this.id.replace("del", "rec").replace("btn", "row")).remove(); });
 	});
 
-=======
->>>>>>> 882dc35... notifs
 	$("#save-notifs").click(function() {
 		var toRet = new Object();
 		toRet.name = "Notification Recipients";
