@@ -21,9 +21,10 @@ import json
 from xbos import get_client
 from xbos.services import hod, mdal
 
-# SITE = 'ciee'
+SITE = 'ciee'
 # SITE = 'jesse-turner-center'
-SITE = 'orinda-community-center'
+# SITE = 'orinda-community-center'
+# SITE = 'jesse-turner-center'
 OURTZ=pytz.timezone("US/Pacific")
 
 def crossdomain(origin=None, methods=None, headers=None,
