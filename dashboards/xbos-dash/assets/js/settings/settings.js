@@ -38,7 +38,7 @@ $(document).ready(function() {
 		});
 		M.updateTextFields();
 	}
-
+	
 	var nchecked = false;
 	function notifSwitch() {
 		nchecked = !nchecked;
@@ -56,41 +56,38 @@ $(document).ready(function() {
 		$("#notif-checkbox").prop("checked", nchecked);
 	}
 
-	var inum = 1;
-	$("#rbtn1").click(function() {
-		inum += 1;
-		var s = "";
-		s += "<div id='rec" + inum + "row' class='row valign-wrapper'>";
-		s += "<div class='input-field col s3'>";
-		s += "<input class='ntin' type='text'>";
-		s += "<label>Recipient Name</label></div>";
-		s += "<div class='input-field col s3'>";
-		s += "<input class='ntin' type='text'>";
-		s += "<label>Phone Number</label></div>";
-		s += "<div class='input-field col s4'>";
-		s += "<input class='ntin' type='text'>";
-		s += "<label>Email Address</label></div>";
-		s += "<div class='col s2 center-align'>";
-		s += "<a id='del" + inum + "btn' class='rbtn waves-effect waves-light btn-small red'>remove</a></div>";
-		s += "</div>";
-		$("#notif-card").append(s);
-		$("#del" + inum + "btn").click(function() { $("#" + this.id.replace("del", "rec").replace("btn", "row")).remove(); });
-	});
-
 	$("#save-notifs").click(function() {
 		var toRet = new Object();
-		toRet.name = "Notification Recipients";
-		toRet.data = [];
-		var toAdd = new Object();
+		toRet.notifs = $("#notif-checkbox").prop("checked");
+		var toAdd;
+		toRet.days = [];
+		$(".day-cb").each(function(i) {
+			i += 1;
+			toAdd = new Object();
+			toAdd.name = i.toString();
+			toAdd.checked = $(this).prop("checked");
+			toRet.days.push(toAdd);
+		});
+
+		toRet.events = [];
+		$(".ev-cb").each(function() {
+			toAdd = new Object();
+			toAdd.name = this.id;
+			toAdd.checked = $(this).prop("checked");
+			toRet.events.push(toAdd);
+		});
+
+		toRet.recipients = [];
+		toAdd = new Object();
 		var i = 1;
 		$(".ntin").each(function() {
-			if (i == 0) { toRet.data.push(toAdd); toAdd = new Object(); i = 1; }
-			if (i == 1) { toAdd.name = $(this)[0].value; }
-			if (i == 2) { toAdd.phone = $(this)[0].value; }
-			if (i == 3) { toAdd.email = $(this)[0].value; i = -1; }
+			if (i == 0) { toRet.recipients.push(toAdd); toAdd = new Object(); i = 1; }
+			if (i == 1) { toAdd.name = $(this).prop("value"); }
+			if (i == 2) { toAdd.phone = $(this).prop("value"); }
+			if (i == 3) { toAdd.email = $(this).prop("value"); i = -1; }
 			i += 1;
 		});
-		toRet.data.push(toAdd);
+		toRet.recipients.push(toAdd);
 		console.log(toRet);
 		return toRet;
 	});
