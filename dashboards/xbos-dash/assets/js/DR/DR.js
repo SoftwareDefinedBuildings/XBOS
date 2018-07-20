@@ -85,7 +85,7 @@ $(document).ready(function() {
 	var s = "";
 	s += "<div class='row' style='display: flex; flex-wrap: wrap; justify-content: space-between;'>";
 	for (var i = 0; i < l; i += 1) {
-		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable' style='padding: 18px 30px; order: " + i + "; margin-bottom: 48px; border-radius: 2px;'>";
+		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable' style='padding: 18px 30px; order: " + i + "; margin-bottom: 48px;'>";
 		s += "<h6 id='z" + i + "note' style='margin: 0;'></h6>";
 		s += "<h4 class='center-align' style='margin-bottom: 0;' id='z" + i + "banner'>Zone " + i + "</h4>";
 		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' value='0.50' step='0.01'/></p>";
@@ -96,20 +96,20 @@ $(document).ready(function() {
 		s += "<div style='display: flex;'>";
 		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hislam' class='z" + i + "-val hislam grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>λ</h5>";
-		s += "<h5 class='z" + i + "-val right-align' style='width: 25%; margin-top: 0;' id='z" + i + "simlam'>____</h5>";
+		s += "<h5 class='right-align' style='width: 25%; margin-top: 0;' id='z" + i + "simlam'>0.50</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dis' class='z" + i + "-val hisdis grey-text left-align'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hisdis' class='z" + i + "-val hisdis grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>Discomfort</h5>";
 		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdis' class='z" + i + "-val simdis purple-text right-align text-darken-5'>____</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "dol' class='z" + i + "-val hisdol grey-text left-align'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hisdol' class='z" + i + "-val hisdol grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>$ Saved</h5>";
 		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdol' class='z" + i + "-val simdol green-text right-align text-darken-1'>____</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "kWH' class='z" + i + "-val hiskWH grey-text left-align'>____</h5>";
+		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hiskWH' class='z" + i + "-val hiskWH grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>kWH Saved</h5>";
 		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simkWH' class='z" + i + "-val simkWH orange-text right-align text-darken-1'>____</h5>";
 		s += "</div>";
@@ -150,8 +150,8 @@ $(document).ready(function() {
 		$(this).click(function() {
 			$(".sort-li").each(function() { $(this).removeClass("active"); });
 			$(v).addClass("active");
-			mySort(v.id);
 			sb = v.id;
+			mySort(v.id);
 			$("#sort-btn").text($(v).children().text());
 		});
 	});
@@ -172,10 +172,10 @@ $(document).ready(function() {
 				toRet.push(toAdd);
 			}
 			toRet.sort(myCompare);
-			if (asDesChecked) { toRet.reverse(); }
 			for (var i = 0; i < l; i += 1) { r.push(toRet[i].id); }
+			if (asDesChecked) { r.reverse(); }
 		}
-		for (var i = 0; i < l; i += 1) { $("#z" + i + "card").css("order", r[i]); }
+		for (var i = 0; i < l; i += 1) { $("#z" + r[i] + "card").css("order", i); }
 	}
 	
 	// https://stackoverflow.com/posts/1129270
@@ -190,24 +190,15 @@ $(document).ready(function() {
 		this.oninput = function() {
 			x.html(myFix(this.value));
 			$("#" + this.id.replace("range", "card")).addClass("grey").addClass("lighten-4");
-			$("#" + this.id.replace("range", "card")).addClass("grey").addClass("lighten-4");
 			setLamAvg();
 			clearZone(this.id.replace("range", ""));
 			clearSummary();
 		};
 	});
 
-	function clearSummary() {
-		$(".sum-val").each(function() {
-			$(this).html("_____");
-		});
-	}
-
-	function clearZone(x) {
-		$(".z" + x + "-val").each(function() {
-			$(this).html("____");
-		});
-	}
+	function clearSummary() { $(".sum-val").each(function() { $(this).html("_____"); });}
+	function clearZone(x) { $(".z" + x + "-val").each(function() { $(this).html("____"); });}
+	function clearBldng() { $(".bldng-val").each(function() { $(this).html("_____"); });}
 
 	function setSummaryVals() {
 		setSumVal(".hislam", "#his-lam-avg", true);
@@ -232,8 +223,5 @@ $(document).ready(function() {
 		if (b) { x = x / l.toFixed(2); }
 		$(k).html(myFix(x.toFixed(2)));
 	}
-
-	function clearBldng() { $(".bldng-val").each(function() { $(this).html("_____"); });}
-
 });
 				

@@ -1,7 +1,7 @@
 var DRChart;
 $(document).ready(function() {
 	let lines = ["Solid", "LongDash", "Dash", "ShortDashDot", "DashDot", "ShortDash", "Dot", "ShortDot"];
-	let timeDif = 3600000;
+	let c = ["#000000", "#000080", "#800000", "#e6194b", "#008080", "#911eb4", "#0082c8"];
 
 	function getTime(et, x) { return toDate(et).toString().split(" ")[4].slice(0, x); }
 
@@ -38,12 +38,13 @@ $(document).ready(function() {
 					if (k.length > prevKeys.length) { prevKeys = k; }
 					if (ret[2] < low) { low = ret[2]; }
 					if (ret[3] > up) { up = ret[3]; }
-					console.log(low, up);
 					lst.push(toAdd);
 				}
 			}
 			st.data = makeState(st.data, prevKeys, st.id, low, up);
-			st.lineWidth = 5;
+			st.lineWidth = 4;
+			st.yAxis = 1;
+			st.color = "#000000";
 			lst.push(st);
 			for (var i = 1; i < lst.length; i += 1) { lst[i].linkedTo = clean(z);
 				// lst[i].dashStyle = lines[i];
@@ -55,34 +56,43 @@ $(document).ready(function() {
 			else { lst[0].visible = false; }
 			$.merge(toRet, lst);
 		}
-		// console.log(toRet);
+		console.log(toRet);
 		return toRet;
 	}
 
 	function makeState(j, l, n, low, up) {
 		var toRet = [];
 		var prev = null;
+		var r;
 		for (var k in l) {
 			var toAdd = new Object();
 			toAdd.name = getTime(l[k]/1000, 5);
 			toAdd.id = n + " " + toAdd.name;
-			if (l[k] in j) { prev = stateClean(j[l[k]], low, up); }
+			if (l[k] in j) {
+				r = stateClean(j[l[k]], low, up); 
+				prev = round(r[0], 2);
+			}
 			toAdd.y = prev;
+			toAdd.id += " " + r[1];
 			toRet.push(toAdd);
 		}
-		// console.log(toRet);
 		return toRet;
 	}
 
 	function stateClean(x, low, up) {
-		// low -= 10;
-		// up += 10;
-		if (x == "off") { return (low+up) / 2; }
-		if (x == "heat stage 1") { return ((low+up)/2 + up)/2; }
-		if (x == "heat stage 2") { return up; }
-		if (x == "cool stage 1") { return ((low+up)/2 + low)/2; }
-		if (x == "cool stage 2") { return low; }
-		return null;
+		// low -= 3;
+		// up += 3;
+		// if (x == "off") { return [(low+up) / 2, "off"]; }
+		// if (x == "heat stage 1") { return [((low+up)/2 + up)/2, "he1"]; }
+		// if (x == "heat stage 2") { return [up, "he2"]; }
+		// if (x == "cool stage 1") { return [((low+up)/2 + low)/2, "co1"]; }
+		// if (x == "cool stage 2") { return [low, "co2"]; }
+		// console.log("strange");
+		if (x == "off") { return [-2, "off"]; }
+		if (x == "heat stage 1") { return [2, "he1"]; }
+		if (x == "heat stage 2") { return [0, "he2"]; }
+		if (x == "cool stage 1") { return [0, "co1"]; }
+		if (x == "cool stage 2") { return [0, "co2"]; }
 	}
 
 	function makeData(j, n) {
@@ -104,10 +114,6 @@ $(document).ready(function() {
 		return [toRet, ret, min, max];
 	}
 
-	function pointFormatter() {
-		return $(this)[0].id.split(" ")[1] + "<br>";
-	}
-
 	function clean(s, shorten=false, amt=null) {
 		s = s.replace("-", "_");
 		s = s.split("_");
@@ -120,8 +126,14 @@ $(document).ready(function() {
 	}
 
 	function pointFormatter() {
-		if ("low" in this) { return ""; }
-		else { return "<span style='font-size: 14px;'>" + this.id.split(" ")[1] + this.y + "<br/>"; }
+		// if ("state" in this) {
+			// last 3 chars
+			// return this.id.toString().reverse().slice(3).reverse();
+		// }
+		// if (state in $(this).id) { return "sdf"; }
+		// else { 
+			return "<span style='font-size: 14px;'>" + this.id.split(" ")[1] + this.y + "<br/>";
+		// }
     }
 
 	var options = {
@@ -159,21 +171,19 @@ $(document).ready(function() {
 
 							DRChart.addSeries(a[0], false);
 							DRChart.setTitle(null, { text: "Zone: " + DRChart.series[0].name });
-							var prev = [DRChart.series[0].color];
+							DRChart.series[0].color = c[0];
 							var flag = false;
-							var mod;
+							var mod = 1;
 							var p;
 							for (var x = 1; x < a.length; x += 1) {
 								DRChart.addSeries(a[x], false);
 								if (!flag && a[x].linkedTo) {
-									prev.push(DRChart.series[x].color);
+									DRChart.series[x].color = c[x];
+									mod += 1;
 								} else {
-									if (!mod) {
-										mod = prev.length;
-										flag = true;
-									}
+									flag = true;
 									p = x % mod;
-									DRChart.series[x].color = prev[p];
+									DRChart.series[x].color = c[p];
 								}
 							}
 
@@ -201,14 +211,28 @@ $(document).ready(function() {
 				"opacity": .75
 			}
 		},
-		"xAxis": {
-			"type": "category"
-		},
-		"yAxis": {
-			"title": {
-				"text": "°F"
+		"xAxis": [
+			{
+				"id": "myXAxis",
+				"type": "category",
+				"plotBands": {
+					"color": "#eeeeee",
+					"from": 2,
+					"to": 6
+				}
 			}
-		},
+		],
+		"yAxis": [
+			{
+				"title": { "text": "°F" },
+				"height": 225
+			},
+			{
+				"title": { "text": "State" },
+				"height": 50,
+				"top": 310
+			}
+		],
 		"credits": {
 			"enabled": false
 		},

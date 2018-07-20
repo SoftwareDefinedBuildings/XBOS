@@ -36,17 +36,6 @@
 	<div class="row"></div>
 
 	<div class="container">
-		<div id="bldng-charts" class="section z-depth-1">
-			<div class="row valign-wrapper">
-				<!-- <div id="prevChart" class="col s6"></div> -->
-				<!-- <div id="DRChart" class="col s6"></div> -->
-				<div id="DRChart" class="col s12"></div>
-			</div>
-			<div class="center-align"><a id="chartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom</a></div>
-		</div>
-
-		<div class="row"></div>
-
 		<div id="my-div" class="switch">
 			<label id="label" class="valign-wrapper" style="cursor: default;">
 				<span id="switch-bldng" class="black-text" style="font-size: 28px; cursor: pointer;">Building</span>
@@ -54,6 +43,15 @@
 				<span id="lever" class="lever" style="cursor: pointer;"></span>
 				<span id="switch-zone" style="font-size: 28px; cursor: pointer;">Zones</span>
 			</label>
+		</div>
+
+		<div class="row"></div>
+
+		<div id="bldng-charts" class="section z-depth-1">
+			<div class="row valign-wrapper">
+				<div id="DRChart" class="col s12"></div>
+			</div>
+			<div class="center-align"><a id="chartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom</a></div>
 		</div>
 
 		 <!-- <a onclick="M.toast({html: 'I am a toast'})" class="btn">Toast!</a> -->
@@ -89,7 +87,7 @@
 						<h5>kWH Saved</h5>
 					</div>
 					<div class="col s2">
-						<h5 id="sim-lam">_____</h5>
+						<h5 id="sim-lam">0.50</h5>
 						<h5 id="sim-dis" class="bldng-val purple-text text-darken-5">_____</h5>
 						<h5 id="sim-money-savings" class="bldng-val green-text text-darken-1">_____</h5>
 						<h5 id="sim-energy-savings" class="bldng-val orange-text text-darken-1">_____</h5>
@@ -128,7 +126,7 @@
 						<h5>Total kWH Saved</h5>
 					</div>
 					<div class="col s2">
-						<h5 id="sim-lam-avg">_____</h5>
+						<h5 id="sim-lam-avg">0.50</h5>
 						<h5 id="sim-dis-avg" class="sum-val purple-text text-darken-5">_____</h5>
 						<h5 id="sim-money-avg" class="sum-val green-text text-darken-1">_____</h5>
 						<h5 id="sim-energy-avg" class="sum-val orange-text text-darken-1">_____</h5>
@@ -136,6 +134,7 @@
 					<div class="col s2"></div>
 				</div>
 			</div>
+			<div class="row"></div>
 			<div class="row"></div>
 			<div class="row"></div>
 			<div class="row valign-wrapper">
@@ -185,6 +184,5 @@
 <!-- <script type="text/javascript" src="assets/js/lib/highcharts-more.js"></script> -->
 <script type="text/javascript" src="assets/js/DR/DR.js"></script>
 <script type="text/javascript" src="assets/js/DR/DRChart.js"></script>
-<!-- <script type="text/javascript" src="assets/js/DR/prevChart.js"></script> -->
 
 </html>

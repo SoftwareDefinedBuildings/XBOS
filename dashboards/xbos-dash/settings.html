@@ -30,11 +30,88 @@
 	<div id="DRBG" class="row center-align z-depth-1 scale-transition scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
 
 	<div class="container">
+		<div id="notif-card" class="section z-depth-1">
+			<div class="row valign-wrapper">
+				<div class="col s2 pull-s2">
+					<span id="notifs-text" class="grey-text fi-text" style="font-size: 30px; cursor: pointer;">Notifications</span>
+				</div>
+				<div class="col s2 pull-s4">
+					<div id="notifs-div" class="switch">
+						<label id="notifs-label" class="valign-wrapper" style="cursor: default;">
+							<input class="ogswitch" id="notif-checkbox" type="checkbox" />
+							<span id="notif-lever" class="lever" style="cursor: pointer;"></span>
+						</label>
+					</div>
+				</div>
+				<div class="col s2">
+					<a id="save-notifs" class="rbtn disabled waves-effect waves-light btn blue">save<i class="material-icons right">save</i></a>
+				</div>
+			</div>
+			<div style="display: flex; justify-content: space-around; align-items: center;">
+				<h5 class="grey-text fi-text" style="margin: 0;">Alert me</h5>
+				<div>
+					<label>
+						<input type="checkbox" class="filled-in" disabled />
+						<span class="fi-text grey-text">1</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" disabled />
+						<span class="fi-text grey-text">2</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" disabled />
+						<span class="fi-text grey-text">3</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" disabled />
+						<span class="fi-text grey-text">4</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" disabled />
+						<span class="fi-text grey-text" style="padding-right: 0;">5</span>
+					</label>
+				</div>
+				<h5 class="grey-text fi-text" style="margin: 0;">days before</h5>
+				<div>
+					<label>
+						<input type="checkbox" class="filled-in" disabled />
+						<span class="fi-text grey-text">likely</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" disabled />
+						<span class="fi-text grey-text">probable</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" disabled />
+						<span class="fi-text grey-text" style="padding-right: 0;">certain</span>
+					</label>
+				</div>
+				<h5 class="grey-text fi-text" style="margin: 0;">DR events</h5>
+			</div>
+			<div class="row valign-wrapper">
+				<div class="input-field col s3">
+					<input class="ntin" type="text" disabled>
+					<label>Recipient Name</label>
+				</div>
+				<div class="input-field col s3">
+					<input class="ntin" type="text" disabled>
+					<label>Phone Number</label>
+				</div>
+				<div class="input-field col s4">
+					<input class="ntin" type="text" disabled>
+					<label>Email Address</label>
+				</div>
+				<div class="col s2 center-align">
+					<a id="rbtn1" class="rbtn disabled waves-effect waves-light btn-small">add</a>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 
 <script type="text/javascript" src="assets/js/lib/materialize.js"></script>
 <script type="text/javascript" src="assets/js/lib/jquery.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
+<script type="text/javascript" src="assets/js/settings/settings.js"></script>
 
 </html>

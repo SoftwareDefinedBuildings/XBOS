@@ -6873,10 +6873,10 @@ textarea.materialize-textarea {
 
 [type="checkbox"] + span:not(.lever) {
   position: relative;
-  padding: 0 20px 0 25px;
+  padding: 0 24px 0 23px;
   cursor: pointer;
   display: inline-block;
-  height: 25px;
+  height: 20px;
   line-height: 25px;
   line-height: 20px;
   font-size: 1rem;
@@ -7093,7 +7093,7 @@ textarea.materialize-textarea {
 }
 
 /*mine*/
-.switch label input[type=checkbox] + .lever {
+.switch label input[type=checkbox]:not(.ogswitch) + .lever {
   background-color: #84c7c1;
 }
 
@@ -7101,12 +7101,13 @@ textarea.materialize-textarea {
   left: 18px;
 }
 
-.switch label input[type=checkbox]:checked + .lever:after {
+/*mine*/
+.switch label input[type=checkbox]:checked:not(:disabled) + .lever:after {
   background-color: #26a69a;
 }
 
 /*mine*/
-.switch label input[type=checkbox] + .lever:after {
+.switch label input[type=checkbox]:not(.ogswitch) + .lever:after {
   background-color: #26a69a;
 }
 
@@ -7166,13 +7167,13 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::before {
 
 .switch input[type=checkbox][disabled] + .lever {
   cursor: default !important;
-  background-color: rgba(0, 0, 0, 0.12);
+  background-color: rgba(0, 0, 0, 0.12) !important;
 }
 
 /*mine*/
 .switch input[type=checkbox][disabled]:checked + .lever {
   cursor: default !important;
-  background-color: rgba(0, 0, 0, 0.12);
+  background-color: rgba(0, 0, 0, 0.12) !important;
 }
 
 .switch label input[type=checkbox][disabled] + .lever:after,
