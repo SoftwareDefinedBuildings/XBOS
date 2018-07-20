@@ -76,6 +76,7 @@ $(document).ready(function() {
 			toAdd.checked = $(this).prop("checked");
 			toRet.events.push(toAdd);
 		});
+		console.log(toRet);
 
 		toRet.recipients = [];
 		toAdd = new Object();
@@ -89,7 +90,7 @@ $(document).ready(function() {
 		});
 		toRet.recipients.push(toAdd);
 		console.log(toRet);
-		return toRet;
+		// return toRet;
 	});
 
 	$("#notifs-div").click(function(event) { event.stopImmediatePropagation(); $("#notif-checkbox").prop("checked", nchecked); });
