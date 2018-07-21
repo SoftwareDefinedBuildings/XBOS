@@ -76,7 +76,6 @@ $(document).ready(function() {
 			toAdd.checked = $(this).prop("checked");
 			toRet.events.push(toAdd);
 		});
-		console.log(toRet);
 
 		toRet.recipients = [];
 		toAdd = new Object();

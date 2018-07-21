@@ -7,11 +7,15 @@ $(document).ready(function() {
 		if (checked) {
 			$("#switch-bldng").addClass("black-text");
 			$("#switch-zone").removeClass("black-text");
+			$("#zone-chart").hide();
+			$("#bldng-chart").show();
 			$("#zone-config").hide();
 			$("#bldng-config").show();
 		} else {
 			$("#switch-zone").addClass("black-text");
 			$("#switch-bldng").removeClass("black-text");
+			$("#bldng-chart").hide();
+			$("#zone-chart").show();
 			$("#bldng-config").hide();
 			$("#zone-config").show();
 			$("#avg-sim-btn").addClass("scale-in");
@@ -23,9 +27,31 @@ $(document).ready(function() {
 	$("#my-div").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
 	$("#label").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
 	$("#checkbox").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
-	$("#switch-bldng").click(function(event) { event.stopImmediatePropagation(); mySwitch(true); });
-	$("#switch-zone").click(function(event) { event.stopImmediatePropagation(); mySwitch(false); });
-	$("#lever").click(function(event) { event.stopImmediatePropagation(); mySwitch(checked); });
+	
+	function enableBZSwitch() {
+		$("#switch-bldng").click(function(event) { event.stopImmediatePropagation(); mySwitch(true); });
+		$("#switch-zone").click(function(event) { event.stopImmediatePropagation(); mySwitch(false); });
+		$("#lever").click(function(event) { event.stopImmediatePropagation(); mySwitch(checked); });
+		$("#checkbox").prop("disabled", "");
+		setTextColor(checked, $("#switch-zone"), $("#switch-bldng"));
+		$("#switch-zone").css("cursor", "pointer");
+		$("#switch-bldng").css("cursor", "pointer");
+	}
+	enableBZSwitch();
+
+	function disableBZSwitch() {
+		$("#switch-bldng").unbind();
+		$("#switch-bldng").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
+		$("#switch-zone").unbind();
+		$("#switch-zone").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
+		$("#lever").unbind();
+		$("#lever").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
+		$("#checkbox").prop("disabled", "disabled");
+		$("#switch-zone").removeClass("black-text");
+		$("#switch-bldng").removeClass("black-text");
+		$("#switch-zone").css("cursor", "default");
+		$("#switch-bldng").css("cursor", "default");
+	}
 
 	function asDesSwitch(x) {
 		if (sb != "normal") {
@@ -85,7 +111,7 @@ $(document).ready(function() {
 	var s = "";
 	s += "<div class='row' style='display: flex; flex-wrap: wrap; justify-content: space-between;'>";
 	for (var i = 0; i < l; i += 1) {
-		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable' style='padding: 18px 30px; order: " + i + "; margin-bottom: 48px;'>";
+		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable lighten-4' style='padding: 18px 30px; order: " + i + "; margin-bottom: 48px;'>";
 		s += "<h6 id='z" + i + "note' style='margin: 0;'></h6>";
 		s += "<h4 class='center-align' style='margin-bottom: 0;' id='z" + i + "banner'>Zone " + i + "</h4>";
 		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' value='0.50' step='0.01'/></p>";
@@ -136,15 +162,6 @@ $(document).ready(function() {
 		};
 	});
 
-	// $("#sim-lam-range").each(function() {
-	// 	this.onchange = function() {
-	// 		$("#sim-lam-range").trigger('mouseenter');
-	// 		setTimeout(function() {
-	// 			$("#sim-lam-range").trigger('mouseleave');
-	// 		}, 200);
-	// 	}
-	// 	console.log(this);
-	// });
 	var sb = "normal";
 	$(".sort-li").each(function(i, v) {
 		$(this).click(function() {
@@ -189,12 +206,57 @@ $(document).ready(function() {
 		var x = $("#" + this.id.replace("range", "simlam"));
 		this.oninput = function() {
 			x.html(myFix(this.value));
-			$("#" + this.id.replace("range", "card")).addClass("grey").addClass("lighten-4");
+			$("#" + this.id.replace("range", "card")).addClass("grey");
 			setLamAvg();
 			clearZone(this.id.replace("range", ""));
 			clearSummary();
 		};
 	});
+
+	$("#bldng-btn").click(function() {
+		$("#bldng-config").hide();
+		$("#sim-loader").show();
+		disableBZSwitch();
+		M.toast({html: 'Please allow the simulation a few minutes', classes: 'rounded', displayLength: 5000});
+		var toRet = new Object();
+		toRet.isBuilding = true;
+		toRet.lam = parseFloat($("#sim-lam-range").prop("value"));
+		console.log(toRet);
+		return toRet;
+	});
+
+	$("#zone-btn").click(function() {
+		$(".zone-card").each(function() { $(this).removeClass("grey"); });
+		$("#zone-config").hide();
+		$("#sim-loader").show();
+		var toRet = new Object();
+		toRet.isBuilding = false;
+		toRet.lam = [];
+		var i = 0;
+		var toAdd;
+		$(".simrange").each(function() {
+			toAdd = new Object();
+			toAdd.id = i;
+			toAdd.val = parseFloat($(this).prop("value"));
+			toRet.lam.push(toAdd);
+			$("#z" + i + "note").html("values shown are for λ=" + toAdd.val);
+			i += 1;
+		});
+		console.log(toRet);
+		return toRet;
+	});
+
+	// function setSummary() {
+
+	// }
+
+	// function setZone(x, obj) {
+
+	// }
+
+	// function setBldng() {
+
+	// }
 
 	function clearSummary() { $(".sum-val").each(function() { $(this).html("_____"); });}
 	function clearZone(x) { $(".z" + x + "-val").each(function() { $(this).html("____"); });}

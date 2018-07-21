@@ -47,11 +47,18 @@
 
 		<div class="row"></div>
 
-		<div id="bldng-charts" class="section z-depth-1">
+		<div id="bldng-chart" class="section z-depth-1">
 			<div class="row valign-wrapper">
-				<div id="DRChart" class="col s12"></div>
+				<div id="bldng-DR" class="col s12"></div>
 			</div>
-			<div class="center-align"><a id="chartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom</a></div>
+			<div class="center-align"><a id="bldng-reset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom</a></div>
+		</div>
+
+		<div id="zone-chart" class="section z-depth-1" style="display: none;">
+			<div class="row valign-wrapper">
+				<div id="zone-DR" class="col s12"></div>
+			</div>
+			<div class="center-align"><a id="zone-reset" class="waves-effect waves-light btn">Reset Zoom</a></div>
 		</div>
 
 		 <!-- <a onclick="M.toast({html: 'I am a toast'})" class="btn">Toast!</a> -->
@@ -59,11 +66,21 @@
 
 		<div class="row"></div>
 
+		<div id="sim-loader" style="display: none;">
+			<div class="row"></div><div class="row"></div><div class="row"></div>
+			<div class="progress">
+				<div class="indeterminate"></div>
+			</div>
+		</div>
+
 		<div id="bldng-config" class="section">
 			<div class="section z-depth-1">
 				<div class="row center-align">
 					<div class="col s2"></div>
-					<div id="bldng-title" class="col s8"><h4 class="center-align" style="margin-bottom: 0;">Orinda Community Center Building</h4></div>
+					<div class="col s8">
+						<h4 class="center-align dr-title" style="margin-bottom: 0;">Orinda Community Center Building</h4>
+						<h6 class="center-align" style="margin-bottom: 0;">use the slider to set a lambda value</h6>
+					</div>
 					<div class="col s2"></div>
 				</div>
 				<div class="row center-align">
@@ -71,7 +88,7 @@
 					<div class="col s6"><p class="range-field"><input type="range" id="sim-lam-range" min="0" max="1" step="0.01"/></p></div>
 					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
 					<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical</h5></div>
-					<div class="col s4 center-align"><a id="sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
+					<div class="col s4 center-align"><a id="bldng-btn" class="waves-effect waves-light btn">Run</a></div>
 					<div class="col s4 left-align"><h5>Simulation</h5></div>
 					<div class="col s2"></div>
 					<div class="col s2">
@@ -102,15 +119,15 @@
 				<div class="row center-align">
 					<div class="col s2"></div>
 					<div class="col s8">
-						<h4 class="center-align" style="margin-bottom: 0;">Summary</h4>
-						<h6 class="center-align" style="margin-bottom: 0;">use the sliders to set each zone's lambda value then click "RUN"</h6>
+						<h4 class="center-align dr-title" style="margin-bottom: 0;">Orinda Community Center Building</h4>
+						<h6 class="center-align" style="margin-bottom: 0;">use the sliders below to set each zone's lambda value</h6>
 					</div>
 					<div class="col s2"></div>
 					<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
 					<div class="col s6"><p class="range-field"><input type="range" disabled="disabled"/></p></div>
 					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
 					<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical</h5></div>
-					<div class="col s4 center-align"><a id="avg-sim-btn" class="waves-effect waves-light btn scale-transition scale-out">Run</a></div>
+					<div class="col s4 center-align"><a id="zone-btn" class="waves-effect waves-light btn">Run</a></div>
 					<div class="col s4 left-align"><h5>Simulation</h5></div>
 					<div class="col s2"></div>
 					<div class="col s2">
@@ -183,6 +200,7 @@
 <!-- <script type="text/javascript" src="assets/js/lib/drilldown.js"></script> -->
 <!-- <script type="text/javascript" src="assets/js/lib/highcharts-more.js"></script> -->
 <script type="text/javascript" src="assets/js/DR/DR.js"></script>
-<script type="text/javascript" src="assets/js/DR/DRChart.js"></script>
+<script type="text/javascript" src="assets/js/DR/zone-chart.js"></script>
+<script type="text/javascript" src="assets/js/DR/bldng-chart.js"></script>
 
 </html>
