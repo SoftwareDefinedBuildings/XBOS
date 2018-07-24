@@ -1,7 +1,9 @@
 var zoneChart;
 $(document).ready(function() {
-	let lines = ["Solid", "LongDash", "Dash", "ShortDashDot", "DashDot", "ShortDash", "Dot", "ShortDot"];
-	let c = ["#000000", "#000080", "#800000", "#e6194b", "#008080", "#911eb4", "#0082c8"];
+	// works for up to 9 series
+	let c = ["#66bb6a", "#8d6e63", "#EF5350", "#42A5F5", "#000000", "#e6194b", "#008080", "#911eb4", "#0082c8"];
+	let lines = ["Solid", "Solid", "ShortDash", "ShortDash", "Solid", "ShortDash", "Dot", "ShortDot", "Solid"];
+	let ws = [4, 2, 2, 2, 2, 2, 2, 2, 2];
 
 	function getTime(et, x) { return toDate(et).toString().split(" ")[4].slice(0, x); }
 
@@ -42,16 +44,17 @@ $(document).ready(function() {
 				}
 			}
 			st.data = makeState(st.data, prevKeys, st.id, low, up);
-			st.lineWidth = 4;
 			st.yAxis = 1;
-			st.color = "#000000";
 			lst.push(st);
-			for (var i = 1; i < lst.length; i += 1) { lst[i].linkedTo = clean(z);
-				// lst[i].dashStyle = lines[i];
-			}
-			lst[0].dashStyle = lines[0];
-			lst[0].name = clean(z);
+			var cleaned = clean(z);
+			lst[0].name = cleaned;
 			lst[0].id = lst[0].name;
+			for (var i = 0; i < lst.length; i += 1) {
+				if (i != 0) { lst[i].linkedTo = cleaned; }
+				lst[i].dashStyle = lines[i];
+				lst[i].color = c[i];
+				lst[i].lineWidth = ws[i];
+			}
 			if (!toRet.length) { lst[0].visible = true; }
 			else { lst[0].visible = false; }
 			$.merge(toRet, lst);
@@ -169,7 +172,7 @@ $(document).ready(function() {
 							var a = processResp(d);
 
 							zoneChart.addSeries(a[0], false);
-							zoneChart.setTitle(null, { text: "Zone: " + zoneChart.series[0].name });
+							// zoneChart.setTitle(null, { text: "Zone: " + zoneChart.series[0].name });
 							zoneChart.series[0].color = c[0];
 							var flag = false;
 							var mod = 1;
@@ -193,10 +196,10 @@ $(document).ready(function() {
 			}
 		},
 		"title": {
-			"text": "Simulated"
+			"text": "Baseline"
 		},
 		"subtitle": {
-			"text": "",
+			"text": "click one of the zones below to view its data",
 			"style": {
 				"fontSize": 16
 			}
@@ -214,8 +217,8 @@ $(document).ready(function() {
 				"type": "category",
 				"plotBands": {
 					"color": "#eeeeee",
-					"from": 2,
-					"to": 6
+					"from": 14,
+					"to": 18
 				}
 			}
 		],
@@ -235,10 +238,15 @@ $(document).ready(function() {
 		},
 		"legend": {
 			"enabled": true,
-			"layout": "vertical",
-			"align": "left",
-			"verticalAlign": "middle",
-			"maxHeight": 400
+			"layout": "horizontal",
+			"align": "center",
+			"verticalAlign": "top",
+			"maxHeight": 400,
+			// "squareSymbol": false,
+			// "symbolHeight": 0,
+			// "symbolPadding": 0,
+			"symbolWidth": 0,
+			"padding": 0
 		},
 		"plotOptions": {
 			"line": {
@@ -259,7 +267,7 @@ $(document).ready(function() {
 						for (var i = 0; i < s.length; i += 1) {
 							s[i].hide();
 						}
-						zoneChart.setTitle(null, { text: "Zone: " + this.name} );
+						// zoneChart.setTitle(null, { text: "Zone: " + this.name} );
 						return true;
 					}
 				}

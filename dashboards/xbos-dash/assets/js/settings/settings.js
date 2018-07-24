@@ -47,55 +47,92 @@ $(document).ready(function() {
 			$(".ntin").each(function() { $(this).prop("disabled", ""); });
 			$(".filled-in").each(function() { $(this).prop("disabled", ""); });
 			$(".fi-text").each(function() { $(this).removeClass("grey-text"); });
+			$(".my-divider").each(function() { $(this).css("background-color", "black"); });
 		} else {
 			$(".rbtn").each(function() { $(this).addClass("disabled"); });
 			$(".ntin").each(function() { $(this).prop("disabled", "disabled"); });
 			$(".filled-in").each(function() { $(this).prop("disabled", "disabled"); });
 			$(".fi-text").each(function() { $(this).addClass("grey-text"); });
+			$(".my-divider").each(function() { $(this).css("background-color", "#949494"); });
 		}
 		$("#notif-checkbox").prop("checked", nchecked);
 	}
+	notifSwitch();
 
 	$("#save-notifs").click(function() {
 		var toRet = new Object();
 		toRet.notifs = $("#notif-checkbox").prop("checked");
+		if (!toRet.notifs) { M.toast({ html: 'Saved! You will not receive any notifications.', displayLength: 2000 }); return; }
 		var toAdd;
 		toRet.days = [];
+		var b = false;
 		$(".day-cb").each(function(i) {
 			i += 1;
 			toAdd = new Object();
 			toAdd.name = i.toString();
 			toAdd.checked = $(this).prop("checked");
+			b = b || toAdd.checked;
 			toRet.days.push(toAdd);
 		});
+		if (!b) { return invalid(" notification "); }
 
+		var b = false;
 		toRet.events = [];
 		$(".ev-cb").each(function() {
 			toAdd = new Object();
 			toAdd.name = this.id;
 			toAdd.checked = $(this).prop("checked");
+			b = b || toAdd.checked;
 			toRet.events.push(toAdd);
 		});
+		if (!b) { return invalid(" notification "); }
 
 		toRet.recipients = [];
 		toAdd = new Object();
 		var i = 1;
 		$(".ntin").each(function() {
-			if (i == 0) { toRet.recipients.push(toAdd); toAdd = new Object(); i = 1; }
+			if (i == 0) { 
+				if (!toAdd.name || !toAdd.phone && !toAdd.email) { return invalid(" recipient "); }
+				else { toRet.recipients.push(toAdd); toAdd = new Object(); i = 1; }
+			}
 			if (i == 1) { toAdd.name = $(this).prop("value"); }
 			if (i == 2) { toAdd.phone = $(this).prop("value"); }
 			if (i == 3) { toAdd.email = $(this).prop("value"); i = -1; }
 			i += 1;
 		});
-		toRet.recipients.push(toAdd);
+		if (!toAdd.name || !toAdd.phone && !toAdd.email) { return invalid(" recipient "); }
+		else { toRet.recipients.push(toAdd); }
 		console.log(toRet);
-		M.toast({html: 'Saved!', classes: 'rounded', displayLength: 1000});
+		M.toast({ html: notifSummary(toRet), displayLength: 6000 });
 		// return toRet;
 	});
 
-	$("#notifs-div").click(function(event) { event.stopImmediatePropagation(); $("#notif-checkbox").prop("checked", nchecked); });
-	$("#notifs-label").click(function(event) { event.stopImmediatePropagation(); $("#notif-checkbox").prop("checked", nchecked); });
+	function invalid(x) { M.toast({ html: 'Some' + x + ' fields are missing!', classes: 'red', displayLength: 3000 }); return; }
+
+	function notifSummary(x) {
+		var s = "Saved! You will receive notifications ";
+		var days = [];
+		var i = 0;
+		while (i < x.days.length) { if (x.days[i].checked) { days.push(i+1); } i += 1; }
+		if (days.length == 1 && days[0] == 1) { s += "1 day before a "; }
+		else {
+			if (days.length == 1) { s += days[0]; }
+			else if (days.length == 2) { s += days[0] + " and " + days[1]; }
+			else { var i = 0; while (i < days.length - 1) { s += days[i] + ", "; i += 1; } s += "and " + days[i+1]; }
+			s += " days before a ";
+		}
+		var ev = [];
+		for (var i in x.events) { if (x.events[i].checked) { ev.push(x.events[i].name); }}
+		if (ev.length == 1) { s += ev[0]; }
+		else { s += ev[0] + " or " + ev[1]; }
+		s += " event.";
+		return s;
+	}
+
+	$("#notif-div").click(function(event) { event.stopImmediatePropagation(); $("#notif-checkbox").prop("checked", nchecked); });
+	$("#notif-label").click(function(event) { event.stopImmediatePropagation(); $("#notif-checkbox").prop("checked", nchecked); });
 	$("#notif-checkbox").click(function(event) { event.stopImmediatePropagation(); $("#notif-checkbox").prop("checked", nchecked); });
 	$("#notif-lever").click(function(event) { event.stopImmediatePropagation(); notifSwitch(); });
-	$("#notifs-text").click(function(event) { event.stopImmediatePropagation(); notifSwitch(); });
+	$("#notif-on").click(function(event) { event.stopImmediatePropagation(); nchecked = false; notifSwitch(); });
+	$("#notif-off").click(function(event) { event.stopImmediatePropagation(); nchecked = true; notifSwitch(); });
 });

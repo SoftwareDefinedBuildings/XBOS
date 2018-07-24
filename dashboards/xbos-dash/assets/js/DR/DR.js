@@ -217,10 +217,14 @@ $(document).ready(function() {
 		$("#bldng-config").hide();
 		$("#sim-loader").show();
 		disableBZSwitch();
-		M.toast({html: 'Please allow the simulation a few minutes', classes: 'rounded', displayLength: 5000});
+		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 25000});
+		$("#cancel-sim").click(function() { M.Toast.dismissAll(); });
 		var toRet = new Object();
 		toRet.isBuilding = true;
 		toRet.lam = parseFloat($("#sim-lam-range").prop("value"));
+		bldngChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
+		// https://stackoverflow.com/questions/2275274/
+		setTimeout(function() { $('html, body').animate({ scrollTop: '0px' }, 200) }, 10);
 		console.log(toRet);
 		return toRet;
 	});
@@ -229,6 +233,9 @@ $(document).ready(function() {
 		$(".zone-card").each(function() { $(this).removeClass("grey"); });
 		$("#zone-config").hide();
 		$("#sim-loader").show();
+		disableBZSwitch();
+		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 25000});
+		$("#cancel-sim").click(function() { M.Toast.dismissAll(); });
 		var toRet = new Object();
 		toRet.isBuilding = false;
 		toRet.lam = [];
@@ -242,9 +249,14 @@ $(document).ready(function() {
 			$("#z" + i + "note").html("values shown are for λ=" + toAdd.val);
 			i += 1;
 		});
+		zoneChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
+		// https://stackoverflow.com/questions/2275274/
+		setTimeout(function() { $('html, body').animate({ scrollTop: '0px' }, 200) }, 10);
 		console.log(toRet);
 		return toRet;
 	});
+
+
 
 	// function setSummary() {
 

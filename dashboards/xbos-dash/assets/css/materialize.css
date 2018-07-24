@@ -664,6 +664,15 @@ body {
   color: #304ffe !important;
 }
 
+/*mine*/
+.my-blue {
+  background-color: #00B0DA !important;
+}
+
+.tp-blue {
+  background-color: #3B7EA1 !important;
+}
+
 .blue {
   background-color: #2196F3 !important;
 }
@@ -2703,6 +2712,13 @@ a {
   height: 1px;
   overflow: hidden;
   background-color: #e0e0e0;
+}
+
+/*mine*/
+.my-divider {
+  height: 2px;
+  overflow: hidden;
+  background-color: #949494;
 }
 
 .vert-divider {
@@ -6873,7 +6889,7 @@ textarea.materialize-textarea {
 
 [type="checkbox"] + span:not(.lever) {
   position: relative;
-  padding: 0 24px 0 23px;
+  padding: 0 15px 0 23px;
   cursor: pointer;
   display: inline-block;
   height: 20px;
