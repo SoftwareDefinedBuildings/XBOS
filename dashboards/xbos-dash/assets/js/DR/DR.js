@@ -112,7 +112,7 @@ $(document).ready(function() {
 	s += "<div class='row' style='display: flex; flex-wrap: wrap; justify-content: space-between;'>";
 	for (var i = 0; i < l; i += 1) {
 		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable lighten-4' style='padding: 18px 30px; order: " + i + "; margin-bottom: 48px;'>";
-		s += "<h6 id='z" + i + "note' style='margin: 0;'></h6>";
+		s += "<h6 id='z" + i + "note' class='znote' style='margin: 0;'></h6>";
 		s += "<h4 class='center-align' style='margin-bottom: 0;' id='z" + i + "banner'>Zone " + i + "</h4>";
 		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' value='0.50' step='0.01'/></p>";
 		s += "<div style='display: flex; justify-content: space-between;'>";
@@ -216,45 +216,59 @@ $(document).ready(function() {
 	$("#bldng-btn").click(function() {
 		$("#bldng-config").hide();
 		$("#sim-loader").show();
+		// https://stackoverflow.com/questions/2275274/
+		setTimeout(function() { $('html, body').animate({ scrollTop: '0px' }, 200) }, 10);
 		disableBZSwitch();
 		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 25000});
-		$("#cancel-sim").click(function() { M.Toast.dismissAll(); });
+		$("#cancel-sim").click(function() { $("#sim-loader").hide(); $("#bldng-config").show(); M.Toast.dismissAll(); });
 		var toRet = new Object();
 		toRet.isBuilding = true;
 		toRet.lam = parseFloat($("#sim-lam-range").prop("value"));
 		bldngChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
-		// https://stackoverflow.com/questions/2275274/
-		setTimeout(function() { $('html, body').animate({ scrollTop: '0px' }, 200) }, 10);
+		
 		console.log(toRet);
 		return toRet;
 	});
 
 	$("#zone-btn").click(function() {
-		$(".zone-card").each(function() { $(this).removeClass("grey"); });
 		$("#zone-config").hide();
 		$("#sim-loader").show();
+		// https://stackoverflow.com/questions/2275274/
+		setTimeout(function() { $('html, body').animate({ scrollTop: '0px' }, 200) }, 10);
 		disableBZSwitch();
-		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 25000});
-		$("#cancel-sim").click(function() { M.Toast.dismissAll(); });
+		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 60000});
+		$("#cancel-sim").click(function() { cancelSim(); postSim(); });
 		var toRet = new Object();
 		toRet.isBuilding = false;
 		toRet.lam = [];
-		var i = 0;
 		var toAdd;
-		$(".simrange").each(function() {
+		var notes = [];
+		$(".simrange").each(function(i) {
 			toAdd = new Object();
 			toAdd.id = i;
 			toAdd.val = parseFloat($(this).prop("value"));
 			toRet.lam.push(toAdd);
-			$("#z" + i + "note").html("values shown are for λ=" + toAdd.val);
-			i += 1;
+			notes.push(toAdd.val);
 		});
-		zoneChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
-		// https://stackoverflow.com/questions/2275274/
-		setTimeout(function() { $('html, body').animate({ scrollTop: '0px' }, 200) }, 10);
 		console.log(toRet);
+		setTimeout(function() {
+			M.Toast.dismissAll();
+			zoneChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
+			$(".zone-card").each(function() { $(this).removeClass("grey"); });
+			notes.each(function(i, v) { $("#z" + i + "note").html("values shown are for λ=" + v); });
+		}, 5000);
 		return toRet;
 	});
+
+	function cancelSim() {
+		M.Toast.dismissAll();
+	}
+
+	function postSim() {
+		$("#sim-loader").hide();
+		$("#zone-config").show();
+		$(".znote").each(function() { $(this).html(""); });
+	}
 
 
 

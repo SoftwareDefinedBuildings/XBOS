@@ -90,9 +90,11 @@ $(document).ready(function() {
 		toRet.recipients = [];
 		toAdd = new Object();
 		var i = 1;
+		var tst = false;
 		$(".ntin").each(function() {
+			tst = false;
 			if (i == 0) { 
-				if (!toAdd.name || !toAdd.phone && !toAdd.email) { return invalid(" recipient "); }
+				if (!toAdd.name || !toAdd.phone && !toAdd.email) { tst = true; return invalid(" recipient "); }
 				else { toRet.recipients.push(toAdd); toAdd = new Object(); i = 1; }
 			}
 			if (i == 1) { toAdd.name = $(this).prop("value"); }
@@ -100,14 +102,14 @@ $(document).ready(function() {
 			if (i == 3) { toAdd.email = $(this).prop("value"); i = -1; }
 			i += 1;
 		});
-		if (!toAdd.name || !toAdd.phone && !toAdd.email) { return invalid(" recipient "); }
+		if (!toAdd.name || !toAdd.phone && !toAdd.email) { if (!tst) { return invalid(" recipient "); } else { return; }}
 		else { toRet.recipients.push(toAdd); }
 		console.log(toRet);
 		M.toast({ html: notifSummary(toRet), displayLength: 6000 });
 		// return toRet;
 	});
 
-	function invalid(x) { M.toast({ html: 'Some' + x + ' fields are missing!', classes: 'red', displayLength: 3000 }); return; }
+	function invalid(x) { M.toast({ html: 'Some' + x + 'fields are missing!', classes: 'red', displayLength: 3000 }); return false; }
 
 	function notifSummary(x) {
 		var s = "Saved! You will receive notifications ";
