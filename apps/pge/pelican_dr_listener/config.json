@@ -1,0 +1,13 @@
+{
+  "Usrtopic" : "arn:aws:sns:us-west-2:459826155428:PGECONFIRM",
+  "Usrtopicregion":"us-west-2",
+  "Devtopic" : "arn:aws:sns:us-west-2:459826155428:DEV-PGESCE",
+  "Devtopicregion":"us-west-2",
+  "Disablenotification": false,
+  "BWtopic"  : "ciee/devices/pelican/s.pelican/+/i.xbos.demand_response/signal/info",
+  "BTtopicmaxwait" : 31,
+  "BTtopictimeoutcount": 2,
+  "Period": 24,
+  "RetriesPerPeriod": 3,
+  "RetryInterval": 2
+}

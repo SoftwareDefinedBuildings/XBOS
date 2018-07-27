@@ -1,6 +1,0 @@
-{
-  "Usrtopic": "arn:aws:sns:us-west-2:459826155428:scecppevent",
-  "Devtopic": "arn:aws:sns:us-west-2:459826155428:scecppeventdev",
-  "Sceurl": "https://www.sce.openadr.com/dr.website/scepr-event-status.jsf"
-
-}
