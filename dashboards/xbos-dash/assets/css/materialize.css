@@ -1,8 +1,7 @@
 .zones {
   cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  line-height: 2;
+  margin-bottom: 0 !important;
+  line-height: 2.25;
 }
 
 body {
@@ -3549,6 +3548,14 @@ table span.badge {
   right: auto;
 }
 
+/*mine*/
+.row .col.s2-5 {
+  width: 19%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
 .row .col.s3 {
   width: 25%;
   margin-left: auto;
@@ -3578,11 +3585,19 @@ table span.badge {
 }
 
 /*mine*/
+.row .col.s6-5 {
+  width: 52.5%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+/*mine*/
 .row .col.s5-5 {
-  width: 47%;
-  /*margin-left: auto;*/
-  /*left: auto;*/
-  /*right: auto;*/
+  width: 47.5%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
 }
 
 .row .col.s7 {
@@ -3601,6 +3616,14 @@ table span.badge {
 
 .row .col.s9 {
   width: 75%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+/*mine*/
+.row .col.s9-5 {
+  width: 81%;
   margin-left: auto;
   left: auto;
   right: auto;
@@ -6164,7 +6187,8 @@ input[type=date]:not(.browser-default),
 input[type=datetime]:not(.browser-default),
 input[type=datetime-local]:not(.browser-default),
 input[type=tel]:not(.browser-default),
-input[type=number]:not(.browser-default),
+/*mine*/
+input[type=number]:not(.browser-default):not(.my-input),
 input[type=search]:not(.browser-default),
 textarea.materialize-textarea {
   background-color: transparent;
@@ -6176,6 +6200,30 @@ textarea.materialize-textarea {
   width: 100%;
   font-size: 16px;
   margin: 0 0 8px 0;
+  padding: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
+  -webkit-transition: border .3s, -webkit-box-shadow .3s;
+  transition: border .3s, -webkit-box-shadow .3s;
+  transition: box-shadow .3s, border .3s;
+  transition: box-shadow .3s, border .3s, -webkit-box-shadow .3s;
+}
+
+/**/
+input[type=number]:not(.browser-default) {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #9e9e9e;
+  border-radius: 0;
+  outline: none;
+  /*mine*/
+  /*height: 3rem;*/
+  width: 100%;
+  font-size: 16px;
+  /*mine*/
+  /*margin: 0 0 8px 0;*/
   padding: 0;
   -webkit-box-shadow: none;
           box-shadow: none;

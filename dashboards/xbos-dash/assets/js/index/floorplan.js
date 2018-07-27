@@ -15,7 +15,7 @@ $(document).ready(function() {
 			var bools = [];
 			ret.forEach(function(v) {
 				if (!v.length) {
-					v[0] = "<span>None</span>";
+					v[0] = "None";
 					bools.push(false);
 				} else {
 					bools.push(true);
@@ -43,19 +43,15 @@ $(document).ready(function() {
 			zones.forEach(function(v) {
 				v[0].hover(function() {
 					myHover(0);
-					v[0].css("opacity", .5);
+					v[0].find('span').each(function() { $(this).css("opacity", .5); });
 					hvacs[v[1] - 1].css("opacity", 1);
 				}, function() {
 					myHover(1);
-					v[0].css("opacity", 1);
+					v[0].find('span').each(function() { $(this).css("opacity", 1); });
 				});
 			});
 
-			function myHover(num) {
-				hvacs.forEach(function(v) {
-					v.css("opacity", num);
-				});
-			}
+			function myHover(num) { hvacs.forEach(function(v) { v.css("opacity", num); });}
 		}
 	});
 
@@ -73,24 +69,19 @@ $(document).ready(function() {
 
 	function makeHTML(c, h, t, i) {
 		var toRet = [];
-		if (h) {
-			toRet.push(0);
-		} else if (c) {
-			toRet.push(1);
-		} else {
-			toRet.push(2);
-		}
-		toRet.push("<div class='zones' id='zone" + i + "'><span>Zone " + i + "</span><span>" + t + "°</span></div>");
+		if (h) { toRet.push(0); }
+		else if (c) { toRet.push(1); }
+		else { toRet.push(2); }
+		// toRet.push("<div class='zones' id='zone" + i + "'><span>Zone " + i + "</span><span class='zonestemp'>" + t + "°</span></div>");
+		toRet.push("<div class='row zones valign-wrapper' id='zone" + i + "'><span class='col s7 left-align'>Zone " + i + "</span><span class='col s5 zonestemp right-align'>" + t + "°</span></div>");
 		return toRet;
-
 	}
 
 	function setZones(r, b, d, i) {
 		for (var x in r) {
-			d[x].html(r[x].join(""));
-			if (b[x]) {
-				i.open(x);
-			}
+			// if (b[x]) { d[x].append("<div class='zones valign-wrapper'><span>Zone</span><span>Temp</span></div>"); i.open(x); }
+			d[x].append(r[x].join(""));
+			if (b[x]) { i.open(x); }
 		}
 	}
 });
