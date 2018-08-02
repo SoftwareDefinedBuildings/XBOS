@@ -120,7 +120,14 @@ $(document).ready(function() {
 		else {
 			if (days.length == 1) { s += days[0]; }
 			else if (days.length == 2) { s += days[0] + " and " + days[1]; }
-			else { var i = 0; while (i < days.length - 1) { s += days[i] + ", "; i += 1; } s += "and " + days[i+1]; }
+			else {
+				var i = 0;
+				while (i < days.length - 1) {
+					s += days[i] + ", ";
+					i += 1;
+				}
+				s += "and " + days[i];
+			}
 			s += " days before a ";
 		}
 		var ev = [];
