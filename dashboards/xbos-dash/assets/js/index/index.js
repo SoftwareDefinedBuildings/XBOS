@@ -20,8 +20,8 @@ $(document).ready(function() {
 			x.addClass("scale-in");
 			clearTimeout(this);
 		}, 200);
+		if (!tb) { console.log(ret); }
 		tb = !tb;
-		return ret;
 	});
 });
 

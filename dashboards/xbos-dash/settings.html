@@ -47,64 +47,32 @@
 					<a id="save-notifs" class="waves-effect waves-light btn my-blue">save<i class="material-icons right">save</i></a>
 				</div>
 			</div>
-			<h6 class="grey-text fi-text" style="padding-left: 12px;">Modify your preferences using the boxes below:</h6>
-			<div style="display: flex; align-items: center; padding-left: 12px;">
-				<h5 class="grey-text fi-text" style="margin: 0;">Alert me &nbsp; </h5>
-				<div style="display: flex; flex-direction: column;">
-					<div>
-						<label>
-							<input type="checkbox" class="filled-in day-cb" disabled checked />
-							<span class="fi-text grey-text">1</span>
-						</label>
-						<label>
-							<input type="checkbox" class="filled-in day-cb" disabled />
-							<span class="fi-text grey-text">2</span>
-						</label>
-						<label>
-							<input type="checkbox" class="filled-in day-cb" disabled />
-							<span class="fi-text grey-text">3</span>
-						</label>
-						<label>
-							<input type="checkbox" class="filled-in day-cb" disabled />
-							<span class="fi-text grey-text">4</span>
-						</label>
-						<label>
-							<input type="checkbox" class="filled-in day-cb" disabled />
-							<span class="fi-text grey-text" style="padding-right: 0;">5</span>
-						</label>
-					</div>
-					<div class="my-divider"></div>
+			<div class="row">
+				<div class="col s4">
+					<label>
+						<input id="dayBefore" type="checkbox" class="filled-in ntin" disabled />
+						<span class="fi-text grey-text">alert me 1 day before confirmed events</span>
+					</label>
 				</div>
-				<h5 class="grey-text fi-text" style="margin: 0;"> &nbsp; day(s) before a &nbsp; </h5>
-				<div style="display: flex; flex-direction: column;">
-					<div>
-						<label>
-							<input id="likely" type="checkbox" class="filled-in ev-cb" disabled />
-							<span class="fi-text grey-text">likely</span>
-						</label>
-						<label>
-							<input id="confirmed" type="checkbox" class="filled-in ev-cb" disabled checked />
-							<span class="fi-text grey-text" style="padding-right: 0;">confirmed</span>
-						</label>
-					</div>
-					<div class="my-divider"></div>
+				<div class="col s4">
+					<label>
+						<input id="5DFC" type="checkbox" class="filled-in ntin" disabled />
+						<span class="fi-text grey-text">send me 5-day forecasts</span>
+					</label>
 				</div>
-				<h5 class="grey-text fi-text" style="margin: 0;"> &nbsp; DR event.</h5>
 			</div>
-			<div class="row"></div>
-			<div class="row"></div>
 			<h6 class="grey-text fi-text" style="padding-left: 12px;">Enter a phone number and/or email address to receive SMS and/or email notifications. Standard SMS rates may apply.</h6>
 			<div class="row valign-wrapper">
 				<div class="input-field col s3">
-					<input class="ntin" type="text" disabled>
+					<input class="ntin rfield" type="text" disabled>
 					<label>Recipient Name</label>
 				</div>
 				<div class="input-field col s3">
-					<input class="ntin" type="text" disabled>
+					<input class="ntin rfield" type="text" disabled>
 					<label>Phone Number</label>
 				</div>
 				<div class="input-field col s4">
-					<input class="ntin" type="text" disabled>
+					<input class="ntin rfield" type="text" disabled>
 					<label>Email Address</label>
 				</div>
 				<div class="col s2 center-align">
