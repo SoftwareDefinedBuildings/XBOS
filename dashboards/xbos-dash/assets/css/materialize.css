@@ -8,6 +8,13 @@
   width: 18.5%;
 }
 
+.zone-card {
+  padding: 16px 30px 18px !important;
+  margin: 0 !important;
+  margin-bottom: 40px !important;
+
+}
+
 body {
   padding-bottom: 125px;
 }
@@ -3598,7 +3605,7 @@ table span.badge {
 
 /*mine*/
 .row .col.s5-5 {
-  width: 47.5%;
+  width: 48%;
   margin-left: auto;
   left: auto;
   right: auto;

@@ -114,7 +114,7 @@ $(document).ready(function() {
 	var s = "";
 	s += "<div class='row' style='display: flex; flex-wrap: wrap; justify-content: space-between;'>";
 	for (var i = 0; i < l; i += 1) {
-		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable lighten-4' style='padding: 18px 30px; order: " + i + "; margin-bottom: 26px;'>";
+		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable lighten-4' style='order: " + i + ";'>";
 		s += "<h6 id='z" + i + "note' class='znote' style='margin: 0;'></h6>";
 		s += "<h4 class='center-align' style='margin-bottom: 0;' id='z" + i + "banner'>Zone " + i + "</h4>";
 		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' value='0.50' step='0.01'/></p>";
