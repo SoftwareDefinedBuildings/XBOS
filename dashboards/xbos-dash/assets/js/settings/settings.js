@@ -6,13 +6,13 @@ $(document).ready(function() {
 		var s = "";
 		s += "<div id='rec" + inum + "row' class='row valign-wrapper'>";
 		s += "<div class='input-field col s3'>";
-		s += "<input class='ntin rfield' type='text'>";
+		s += "<input class='ntin rfield validate' type='text'>";
 		s += "<label>Recipient Name</label></div>";
 		s += "<div class='input-field col s3'>";
-		s += "<input class='ntin rfield' type='text'>";
+		s += "<input class='ntin rfield validate' type='tel' pattern='^[0-9-+s()]*$>'";
 		s += "<label>Phone Number</label></div>";
 		s += "<div class='input-field col s4'>";
-		s += "<input class='ntin rfield' type='text'>";
+		s += "<input class='ntin rfield validate' type='email'>";
 		s += "<label>Email Address</label></div>";
 		s += "<div class='col s2 center-align'>";
 		s += "<a id='del" + inum + "btn' class='rbtn waves-effect waves-light btn-small red'>remove</a></div>";
@@ -61,6 +61,9 @@ $(document).ready(function() {
 		toRet.dayBefore = $("#dayBefore").prop("checked");
 		toRet.forecast = $("#5DFC").prop("checked");
 		if (!toRet.dayBefore && !toRet.forecast) { return invalid("notification"); }
+		var ex = false;
+		$(".validate").each(function() { if (!this.checkValidity()) { ex = true; return invalid("recipient"); }});
+		if (ex) { return; }
 		toRet.recipients = [];
 		var toAdd = new Object();
 		var i = 1;
@@ -119,7 +122,7 @@ $(document).ready(function() {
 		// console.log(s);
 	}
 
-	function invalid(x) { M.toast({ html: 'Some ' + x + ' fields are missing/incomplete!', classes: 'red', displayLength: 3000 }); return false; }
+	function invalid(x) { M.toast({ html: 'Some ' + x + ' fields are missing/incorrect!', classes: 'red', displayLength: 3000 }); return false; }
 
 	function notifSummary(x) {
 		var s = "Saved! You will be notified";
