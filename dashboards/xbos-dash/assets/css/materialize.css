@@ -4,6 +4,10 @@
   line-height: 2.25;
 }
 
+.forecast-card {
+  width: 18.5%;
+}
+
 body {
   padding-bottom: 125px;
 }

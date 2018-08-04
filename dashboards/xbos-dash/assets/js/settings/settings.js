@@ -78,10 +78,46 @@ $(document).ready(function() {
 		});
 		if (!toAdd.name || !toAdd.phone && !toAdd.email) { if (!tst) { return invalid("recipient"); } else { return; }}
 		else { toRet.recipients.push(toAdd); }
-		console.log(toRet);
 		M.toast({ html: notifSummary(toRet), displayLength: 6000 });
+		// doSub(toRet);
 		// return toRet;
 	});
+
+	function doSub(x) {
+		var dep = "PGE";
+		var ns = [];
+		if (dep == "PGE") {
+			if (x.dayBefore) { ns.push("arn:aws:sns:us-west-2:459826155428:PGECONFIRM"); }
+			if (x.forecast) { ns.push("arn:aws:sns:us-west-2:459826155428:PGEFORCAST"); }
+		} else if (dep == "SCE") {
+			if (x.dayBefore) { ns.push("arn:aws:sns:us-west-2:459826155428:SCECONFIRM"); }
+			if (x.forecast) { ns.push("arn:aws:sns:us-west-2:459826155428:SCEFORCAST"); }
+		}
+		var phones = [];
+		var emails = [];
+		x.recipients.forEach(function(elem) {
+			if (elem.phone) { phones.push(elem.phone); }
+			if (elem.email) { emails.push(elem.email); }
+		});
+		var sns = new AWS.SNS({apiVersion: '2010-03-31'});
+		for (var i in ns) {
+			phones.forEach(function (elem) { sendSub(ns[i], "sms", elem, sns); });
+			emails.forEach(function (elem) { sendSub(ns[i], "email", elem, sns); });
+		}
+	}
+
+	function sendSub(ns, pve, val, sns) {
+		var params = {Protocol: pve, TopicArn: ns, Endpoint: val};
+		sns.subscribe(params, function(err, data) { 
+			if (err) { console.log(err, err.stack); }
+			else { console.log(data); }
+		});
+		// var s = "https://sns.us-west-2.amazonaws.com/&Action=Subscribe&Version=2010-03-31";
+		// s += "&Endpoint=" + val;
+		// s += "&Protocol=" + pve;
+		// s += "&TopicArn=" + ns;
+		// console.log(s);
+	}
 
 	function invalid(x) { M.toast({ html: 'Some ' + x + ' fields are missing/incomplete!', classes: 'red', displayLength: 3000 }); return false; }
 
