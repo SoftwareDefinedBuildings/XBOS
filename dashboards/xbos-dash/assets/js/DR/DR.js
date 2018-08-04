@@ -29,8 +29,11 @@ $(document).ready(function() {
 	$("#checkbox").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
 	
 	function enableBZSwitch() {
+		$("#switch-bldng").unbind();
 		$("#switch-bldng").click(function(event) { event.stopImmediatePropagation(); mySwitch(true); });
+		$("#switch-zone").unbind();
 		$("#switch-zone").click(function(event) { event.stopImmediatePropagation(); mySwitch(false); });
+		$("#lever").unbind();
 		$("#lever").click(function(event) { event.stopImmediatePropagation(); mySwitch(checked); });
 		$("#checkbox").prop("disabled", "");
 		setTextColor(checked, $("#switch-zone"), $("#switch-bldng"));
@@ -148,6 +151,7 @@ $(document).ready(function() {
 		if (x > 1) { return x; }
 		if (x == 0) { return "0.0"; }
 		if (x == 1) { return "1.0"; }
+		x = x.toString();
 		if (x.length < 4) { return x + "0"; }
 		return x;
 	}
@@ -237,7 +241,10 @@ $(document).ready(function() {
 		setTimeout(function() { $('html, body').animate({ scrollTop: '0px' }, 200) }, 10);
 		disableBZSwitch();
 		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 60000});
-		$("#cancel-sim").click(function() { cancelSim(); postSim(); });
+		$("#cancel-sim").click(function() {
+			postSim();
+			$(".znote").each(function() { $(this).html(""); });
+		});
 		var toRet = new Object();
 		toRet.isBuilding = false;
 		toRet.lam = [];
@@ -250,25 +257,26 @@ $(document).ready(function() {
 			toRet.lam.push(toAdd);
 			notes.push(toAdd.val);
 		});
-		console.log(toRet);
 		setTimeout(function() {
-			M.Toast.dismissAll();
-			zoneChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
-			$(".zone-card").each(function() { $(this).removeClass("grey"); });
-			notes.each(function(i, v) { $("#z" + i + "note").html("values shown are for λ=" + v); });
-		}, 5000);
-		return toRet;
+			simSuccess();
+			var i = 0;
+			$(".znote").each(function() { $(this).html("values shown are for λ=" + myFix(notes[i])); i += 1; });
+		}, 3000);
 	});
 
-	function cancelSim() {
-		M.Toast.dismissAll();
+	function simSuccess() {
+		zoneChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
+		$(".zone-card").each(function() { $(this).removeClass("grey"); });
+		postSim();
 	}
 
 	function postSim() {
+		M.Toast.dismissAll();
 		$("#sim-loader").hide();
 		$("#zone-config").show();
-		$(".znote").each(function() { $(this).html(""); });
+		enableBZSwitch();
 	}
+	
 
 
 
