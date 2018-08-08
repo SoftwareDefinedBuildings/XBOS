@@ -138,7 +138,10 @@ func parseRows(z *html.Tokenizer) {
 				return
 			}
 			if len(s) > 0 {
-				notified = true
+				// if event is today then try again later in case of a consecutive event getting announced later
+				if s[0] != time.Now().Format("02/01/2006") {
+					notified = true
+				}
 			}
 			for i := 0; i < len(s); i += 4 {
 				if s[i] == s[i+1] {
