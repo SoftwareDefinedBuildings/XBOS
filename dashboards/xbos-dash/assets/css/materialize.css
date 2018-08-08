@@ -12,7 +12,11 @@
   padding: 16px 30px 18px !important;
   margin: 0 !important;
   margin-bottom: 40px !important;
+}
 
+.zrow {
+  width: 25%;
+  margin: 0;
 }
 
 body {

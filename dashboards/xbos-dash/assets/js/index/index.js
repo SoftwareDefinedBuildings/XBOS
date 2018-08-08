@@ -10,7 +10,7 @@ $(document).ready(function() {
 		var x = $(this);
 		var ret = [];
 		var v;
-		if (tb) { y = "save"; $(".zonestemp").each(function() { $(this).replaceWith("<div class='right-align col s5 zonestemp'><input class='my-input' type='number' max=150 min=-150 value='" + $(this).html().replace("°", "") + "' /></div>"); });}
+		if (tb) { y = "save"; $(".zonestemp").each(function() { $(this).replaceWith("<div class='right-align col s5 zonestemp'><input class='my-input' type='number' max=90 min=35 value='" + $(this).html().replace("°", "") + "' /></div>"); });}
 		else { y = "edit"; $(".zonestemp").each(function() { v = $(this).find("input").prop("value"); ret.push(v); $(this).replaceWith("<span class='col s5 zonestemp right-align'>" + v + "°</span>"); })}
 		x.removeClass("scale-in");
 		x.addClass("scale-out");

@@ -1,5 +1,7 @@
 $(document).ready(function() {
 	M.AutoInit();
+	var histArr;
+
 	var checked = false;
 	$("#bvz").click(mySwitch);
 	function mySwitch(x) {
@@ -18,7 +20,6 @@ $(document).ready(function() {
 			$("#zone-chart").show();
 			$("#bldng-config").hide();
 			$("#zone-config").show();
-			$("#avg-sim-btn").addClass("scale-in");
 		}
 		checked = !checked;
 		$("#checkbox").prop("checked", checked);
@@ -27,13 +28,13 @@ $(document).ready(function() {
 	$("#my-div").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
 	$("#label").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
 	$("#checkbox").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
+
+	function unbind() { $("#switch-bldng").unbind(); $("#switch-zone").unbind(); $("#lever").unbind(); }
 	
 	function enableBZSwitch() {
-		$("#switch-bldng").unbind();
+		unbind();
 		$("#switch-bldng").click(function(event) { event.stopImmediatePropagation(); mySwitch(true); });
-		$("#switch-zone").unbind();
 		$("#switch-zone").click(function(event) { event.stopImmediatePropagation(); mySwitch(false); });
-		$("#lever").unbind();
 		$("#lever").click(function(event) { event.stopImmediatePropagation(); mySwitch(checked); });
 		$("#checkbox").prop("disabled", "");
 		setTextColor(checked, $("#switch-zone"), $("#switch-bldng"));
@@ -43,11 +44,9 @@ $(document).ready(function() {
 	enableBZSwitch();
 
 	function disableBZSwitch() {
-		$("#switch-bldng").unbind();
+		unbind();
 		$("#switch-bldng").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
-		$("#switch-zone").unbind();
 		$("#switch-zone").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
-		$("#lever").unbind();
 		$("#lever").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
 		$("#checkbox").prop("disabled", "disabled");
 		$("#switch-zone").removeClass("black-text");
@@ -114,7 +113,7 @@ $(document).ready(function() {
 	var s = "";
 	s += "<div class='row' style='display: flex; flex-wrap: wrap; justify-content: space-between;'>";
 	for (var i = 0; i < l; i += 1) {
-		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable lighten-4' style='order: " + i + ";'>";
+		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable lighten-5' style='order: " + i + ";'>";
 		s += "<h6 id='z" + i + "note' class='znote' style='margin: 0;'></h6>";
 		s += "<h4 class='center-align' style='margin-bottom: 0;' id='z" + i + "banner'>Zone " + i + "</h4>";
 		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' value='0.50' step='0.01'/></p>";
@@ -123,24 +122,24 @@ $(document).ready(function() {
 		s += "<h5 style='margin-top: 0;'>Simulation</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hislam' class='z" + i + "-val hislam grey-text left-align'>____</h5>";
+		s += "<h5 id='z" + i + "hislam' class='zrow z" + i + "-val zone-his-val hislam grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>λ</h5>";
-		s += "<h5 class='right-align' style='width: 25%; margin-top: 0;' id='z" + i + "simlam'>0.50</h5>";
+		s += "<h5 id='z" + i + "simlam' class='zrow right-align' >0.50</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hisdis' class='z" + i + "-val hisdis grey-text left-align'>____</h5>";
+		s += "<h5 id='z" + i + "hisdis' class='zrow z" + i + "-val zone-his-val hisdis grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>Discomfort</h5>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdis' class='z" + i + "-val simdis purple-text right-align text-darken-5'>____</h5>";
+		s += "<h5 id='z" + i + "simdis' class='zrow z" + i + "-val simdis purple-text right-align text-darken-5'>____</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hisdol' class='z" + i + "-val hisdol grey-text left-align'>____</h5>";
+		s += "<h5 id='z" + i + "hisdol' class='zrow z" + i + "-val zone-his-val hisdol grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>$ Saved</h5>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simdol' class='z" + i + "-val simdol green-text right-align text-darken-1'>____</h5>";
+		s += "<h5 id='z" + i + "simdol' class='zrow z" + i + "-val simdol green-text right-align text-darken-1'>____</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "hiskWH' class='z" + i + "-val hiskWH grey-text left-align'>____</h5>";
+		s += "<h5 id='z" + i + "hiskWH' class='zrow z" + i + "-val zone-his-val hiskWH grey-text left-align'>____</h5>";
 		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>kWH Saved</h5>";
-		s += "<h5 style='width: 25%; margin-top: 0;' id='z" + i + "simkWH' class='z" + i + "-val simkWH orange-text right-align text-darken-1'>____</h5>";
+		s += "<h5 id='z" + i + "simkWH' class='zrow z" + i + "-val simkWH orange-text right-align text-darken-1'>____</h5>";
 		s += "</div>";
 		s += "</div>";
 	}
@@ -156,11 +155,9 @@ $(document).ready(function() {
 		return x;
 	}
 
-	let b = true;
 	$("#sim-lam-range").each(function() {
 		var x = $("#sim-lam");
 		this.oninput = function() {
-			if (b) { $("#sim-btn").addClass("scale-in"); b = false; };
 			x.html(myFix(this.value));
 			clearBldng();
 		};
@@ -169,13 +166,18 @@ $(document).ready(function() {
 	var sb = "normal";
 	$(".sort-li").each(function(i, v) {
 		$(this).click(function() {
-			$(".sort-li").each(function() { $(this).removeClass("active"); });
-			$(v).addClass("active");
+			selAndSet($(".sort-li"), v, $("#sort-btn"));
 			sb = v.id;
 			mySort(v.id);
-			$("#sort-btn").text($(v).children().text());
 		});
 	});
+
+	function selAndSet(selClass, v, btn) {
+		selClass.each(function() { $(this).removeClass("active"); });
+		$(v).addClass("active");
+		if ($(v).text() == "None") { btn.text("Historical"); return false; }
+		else { btn.text($(v).text()); return true; }
+	}
 
 	function mySort(x) {
 		var r = [];
@@ -224,12 +226,13 @@ $(document).ready(function() {
 		setTimeout(function() { $('html, body').animate({ scrollTop: '0px' }, 200) }, 10);
 		disableBZSwitch();
 		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 25000});
-		$("#cancel-sim").click(function() { $("#sim-loader").hide(); $("#bldng-config").show(); M.Toast.dismissAll(); });
+		$("#cancel-sim").click(function() { postSim("bldng"); });
 		var toRet = new Object();
 		toRet.isBuilding = true;
+		toRet.date = new Date().getTime();
 		toRet.lam = parseFloat($("#sim-lam-range").prop("value"));
-		bldngChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
-		
+		setTimeout(function() { simSuccess(bldngChart, "bldng"); }, 3000);
+		// bldngChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
 		console.log(toRet);
 		return toRet;
 	});
@@ -242,11 +245,12 @@ $(document).ready(function() {
 		disableBZSwitch();
 		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 60000});
 		$("#cancel-sim").click(function() {
-			postSim();
-			$(".znote").each(function() { $(this).html(""); });
+			postSim("zone");
+			// $(".znote").each(function() { $(this).html(""); });
 		});
 		var toRet = new Object();
 		toRet.isBuilding = false;
+		toRet.date = new Date().getTime();
 		toRet.lam = [];
 		var toAdd;
 		var notes = [];
@@ -258,43 +262,117 @@ $(document).ready(function() {
 			notes.push(toAdd.val);
 		});
 		setTimeout(function() {
-			simSuccess();
+			simSuccess(zoneChart, "zone");
+			$(".zone-card").each(function() { $(this).removeClass("grey"); });
 			var i = 0;
 			$(".znote").each(function() { $(this).html("values shown are for λ=" + myFix(notes[i])); i += 1; });
 		}, 3000);
+		console.log(toRet);
+		return toRet;
 	});
 
-	function simSuccess() {
-		zoneChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
-		$(".zone-card").each(function() { $(this).removeClass("grey"); });
-		postSim();
+	function simSuccess(x, y) {
+		x.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
+		postSim(y);
 	}
 
-	function postSim() {
+	function postSim(x) {
 		M.Toast.dismissAll();
 		$("#sim-loader").hide();
-		$("#zone-config").show();
+		$("#" + x + "-config").show();
 		enableBZSwitch();
 	}
-	
 
+	function chooseBVZ(d) { if (d.isBuilding) { setBldngData(d); } else { setZoneData(d); }}
 
+	function setZoneData(d, b=false) {
+		var x;
+		var id;
+		var s; if (b) { s = "his"; } else { s = "sim"; }
+		var lamvals = [];
+		var disvals = [];
+		var dolvals = [];
+		var kWHvals = [];
+		for (var i in d.vals) {
+			x = d.vals[i];
+			id = x.id;
+			$("#z" + id + s + "lam").html(x.lam); lamvals.push(x.lam);
+			$("#z" + id + s + "dis").html(x.dis); disvals.push(x.dis);
+			$("#z" + id + s + "dol").html(x.dol); dolvals.push(x.dol);
+			$("#z" + id + s + "kWH").html(x.kWH); kWHvals.push(x.kWH);
+		}
+		var l = lamvals.length;
+		var lamsum = lamvals.reduce((pv, cv) => pv+cv, 0);
+		var dissum = disvals.reduce((pv, cv) => pv+cv, 0);
+		var dolsum = dolvals.reduce((pv, cv) => pv+cv, 0);
+		var kWHsum = kWHvals.reduce((pv, cv) => pv+cv, 0);
+		$("#" + s + "=lam-avg").html(lamsum/l);
+		$("#" + s + "=dis-avg").html(dissum/l);
+		$("#" + s + "=money-avg").html(dolsum/l);
+		$("#" + s + "=energy-avg").html(kWHsum/l);
+	}
 
-	// function setSummary() {
+	function setBldngData(d, b=false) {
+		var s;
+		if (b) { s = "historic"; } else { s = "sim"; }
+		$("#" + s + "-lam").html(d.lam);
+		$("#" + s + "-dis").html(d.dis);
+		$("#" + s + "-money-savings").html(d.dol);
+		$("#" + s + "-energy-savings").html(d.kWH);
+	}
 
-	// }
+	function getHist() {
+		var d = [{isBuilding: true, date: 1533705708847, lam: 0.5}, {isBuilding: false, date: 1533705708847, lam: 0.5}, {isBuilding: true, date: 1531705708847, lam: 0.87}];
+		histArr = d;
+		var a = "";
+		var b = "";
+		for (var i in d) {
+			if (d[i].isBuilding) {
+				a += "<li id='hist" + i + "' class='his-sel'><a>" + toMDY(d[i].date).toString() + "</a></li>";
+			} else {
+				b += "<li id='hist" + i + "' class='zone-his-sel'><a>" + toMDY(d[i].date).toString() + "</a></li>";
+			}
+		}
+		$("#date-dropdown").append(a);
+		$("#zone-date-dropdown").append(b);
+	}
+	getHist();
 
-	// function setZone(x, obj) {
+	var hisDate = "";
+	$(".his-sel").each(function(i, v) {
+		$(this).click(function() {
+			if (selAndSet($(".his-sel"), v, $("#historic-date"))) {
+				setBldngData(histArr[parseInt($(v)[0].id.replace("hist", ""))], true);
+			} else {
+				clearBldngHist();
+			}
+		});
+	});
 
-	// }
+	var zoneHisDate = "";
+	$(".zone-his-sel").each(function(i, v) {
+		$(this).click(function() {
+			if (selAndSet($(".zone-his-sel"), v, $("#zone-historic-date"))) {
+				setZoneData(histArr[parseInt($(v)[0].id.replace("hist", ""))], true);
+			} else {
+				clearSummaryHist();
+				clearZoneHistAll();
+			}
+		});
+	});
 
-	// function setBldng() {
-
-	// }
+	function toMDY(et) {
+		var d = new Date(0);
+		d.setUTCSeconds(et/1000);
+		return (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear();
+	}
 
 	function clearSummary() { $(".sum-val").each(function() { $(this).html("_____"); });}
+	function clearSummaryHist() { $(".sum-his-val").each(function() { $(this).html("_____"); });}
 	function clearZone(x) { $(".z" + x + "-val").each(function() { $(this).html("____"); });}
+	function clearZoneHistAll() { $(".zone-his-val").each(function() { $(this).html("____"); });}
 	function clearBldng() { $(".bldng-val").each(function() { $(this).html("_____"); });}
+	function clearBldngHist() { $(".bldng-his-val").each(function() { $(this).html("_____"); });}
 
 	function setSummaryVals() {
 		setSumVal(".hislam", "#his-lam-avg", true);

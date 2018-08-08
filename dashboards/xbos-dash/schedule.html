@@ -8,6 +8,7 @@
 	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
 	<link rel='shortcut icon' type='image/png' href='./assets/img/favicon2.png'/>
 	<link rel='stylesheet' href='./assets/css/materialize.css'>
+	<link rel='stylesheet' href='./assets/css/nouislider.css'>
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <body id="body" class="">
@@ -27,7 +28,7 @@
 		</nav>
 	</div>
 
-<!-- 	<div class="navbar-fixed">
+	<div class="navbar-fixed">
 		<nav>
 			<div class="nav-wrapper materialize-red lighten-2">
 				<div class="col s12">
@@ -37,17 +38,9 @@
 				</div>
 			</div>
 		</nav>
-	</div> -->
+	</div>
 
-	<div id="DRBG" class="row center-align z-depth-1 scale-transition pulse scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
-
-	<div class="container">
-		<div id="forecast-loader">
-			<div class="progress"><div class="indeterminate"></div></div>
-			<div class="row"></div><div class="row"></div>
-		</div>
-		<div id="forecast-row" style="display: none; justify-content: space-between;"></div>
-		<div class="section z-depth-1">
+	<!-- <div class="section z-depth-1">
 			<div class="row">
 				<h5>Name this schedule</h5>
 				<h5>Select Zones:</h5>
@@ -61,6 +54,47 @@
 				<br>
 				<p class="range-field"><input type="range" id="test5" min="0" max="100" /></p>
 			</div>
+		</div> -->
+
+	<div id="DRBG" class="row center-align z-depth-1 scale-transition pulse scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
+
+	<div class="container">
+		<div class="section">
+			<div style="display: flex; width: 100%; justify-content: space-around;">
+				<div style="display: flex; flex-direction: column; width: 100%;">
+					<div style="display: flex; justify-content: space-around; width: 13%;">
+						<input style="width: 48%; line-height: 1.5;" class="center-align my-input red lighten-2" value=55 type="number" max="72" min="35" />
+						<input style="width: 48%; line-height: 1.5;" class="center-align my-input blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch">
+						<label>
+							off
+							<input type="checkbox">
+							<span class="lever"></span>
+						</label>
+					</div>
+				</div>
+				<div style="display: flex; justify-content: space-around; width: 13%;">
+					<input style="width: 48%;" class="my-input" type="number" max="150" min="-150" />
+					<input style="width: 48%;" class="my-input" type="number" max="150" min="-150" />
+				</div>
+				<div style="display: flex; justify-content: space-around; width: 13%;">
+					<input style="width: 48%;" class="my-input" type="number" max="150" min="-150" />
+					<input style="width: 48%;" class="my-input" type="number" max="150" min="-150" />
+				</div>
+				<div style="display: flex; justify-content: space-around; width: 13%;">
+					<input style="width: 48%;" class="my-input" type="number" max="150" min="-150" />
+					<input style="width: 48%;" class="my-input" type="number" max="150" min="-150" />
+				</div>
+			</div>
+			<div class="row"></div>
+			<div class="row"></div>
+			<div class="row"></div>
+			<div class="row valign-wrapper">
+				<a id="mon-add" class="blue btn-floating btn waves-effect waves-light"><i class="material-icons">add</i></a>
+				<div class="col s9" id="slider"></div>
+				<a class="col s1 waves-effect waves-light btn">copy</a>
+			</div>
 		</div>
 	</div>
 </body>
@@ -68,6 +102,7 @@
 <script type="text/javascript" src="assets/js/lib/materialize.js"></script>
 <script type="text/javascript" src="assets/js/lib/jquery.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
+<script type="text/javascript" src="assets/js/lib/nouislider.js"></script>
 <script type="text/javascript" src="assets/js/schedule/schedule.js"></script>
 
 </html>

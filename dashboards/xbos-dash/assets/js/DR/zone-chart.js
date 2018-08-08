@@ -201,7 +201,8 @@ $(document).ready(function() {
 		"subtitle": {
 			"text": "click one of the zones below to view its data",
 			"style": {
-				"fontSize": 16
+				"fontSize": 16,
+				"fontStyle": "italic"
 			}
 		},
 		"loading": {

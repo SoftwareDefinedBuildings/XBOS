@@ -86,15 +86,20 @@
 					<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
 					<div class="col s6"><p class="range-field"><input type="range" id="sim-lam-range" min="0" max="1" step="0.01"/></p></div>
 					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
-					<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical</h5></div>
+					<div class="col s4 right-align">
+						<a id="historic-date" class="dropdown-trigger btn" data-target="date-dropdown">Historical</a>
+						<ul id='date-dropdown' class='dropdown-content'>
+							<li class="his-sel active"><a>None</a></li>
+						</ul>
+					</div>
 					<div class="col s4 center-align"><a id="bldng-btn" class="waves-effect waves-light btn">Run</a></div>
 					<div class="col s4 left-align"><h5>Simulation</h5></div>
 					<div class="col s2"></div>
 					<div class="col s2">
-						<h5 id="historic-lam" class="bldng-val grey-text">_____</h5>
-						<h5 id="historic-dis" class="bldng-val grey-text">_____</h5>
-						<h5 id="historic-money-savings" class="bldng-val grey-text">_____</h5>
-						<h5 id="historic-energy-savings" class="bldng-val grey-text">_____</h5>
+						<h5 id="historic-lam" class="bldng-his-val grey-text">_____</h5>
+						<h5 id="historic-dis" class="bldng-his-val grey-text">_____</h5>
+						<h5 id="historic-money-savings" class="bldng-his-val grey-text">_____</h5>
+						<h5 id="historic-energy-savings" class="bldng-his-val grey-text">_____</h5>
 					</div>
 					<div class="col s4 center-align">
 						<h5>Cost-Comfort Index</h5>
@@ -125,15 +130,20 @@
 					<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
 					<div class="col s6"><p class="range-field"><input type="range" disabled="disabled"/></p></div>
 					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
-					<div class="col s4 right-align"><h5 id="historic-date" class="grey-text">Historical</h5></div>
+					<div class="col s4 right-align">
+						<a id="zone-historic-date" class="dropdown-trigger btn" data-target="zone-date-dropdown">Historical</a>
+						<ul id='zone-date-dropdown' class='dropdown-content'>
+							<li class="zone-his-sel active"><a>None</a></li>
+						</ul>
+					</div>
 					<div class="col s4 center-align"><a id="zone-btn" class="waves-effect waves-light btn">Run</a></div>
 					<div class="col s4 left-align"><h5>Simulation</h5></div>
 					<div class="col s2"></div>
 					<div class="col s2">
-						<h5 id="his-lam-avg" class="sum-val grey-text">_____</h5>
-						<h5 id="his-dis-avg" class="sum-val grey-text">_____</h5>
-						<h5 id="his-money-avg" class="sum-val grey-text">_____</h5>
-						<h5 id="his-energy-avg" class="sum-val grey-text">_____</h5>
+						<h5 id="his-lam-avg" class="sum-his-val grey-text">_____</h5>
+						<h5 id="his-dis-avg" class="sum-his-val grey-text">_____</h5>
+						<h5 id="his-money-avg" class="sum-his-val grey-text">_____</h5>
+						<h5 id="his-energy-avg" class="sum-his-val grey-text">_____</h5>
 					</div>
 					<div class="col s4 center-align">
 						<h5>Average λ</h5>

@@ -202,7 +202,8 @@ $(document).ready(function() {
 		"subtitle": {
 			"text": "set your simulation preferences below",
 			"style": {
-				"fontSize": 16
+				"fontSize": 16,
+				"fontStyle": "italic"
 			}
 		},
 		"loading": {
