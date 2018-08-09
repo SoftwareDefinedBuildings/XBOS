@@ -19,6 +19,7 @@ import os
 import json
 import hvactest
 import occupancy
+import drprediction
 
 from xbos import get_client
 from xbos.services import hod, mdal
