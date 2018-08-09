@@ -15,6 +15,26 @@ You either need a BOSSWAVE agent running on your machine, or you can run a ragen
 
 ## API Doc
 
+### DR Endpoints
+
+- `/api/prediction/dr`
+    - Returns: list of (usually 3) upcoming days and the likelihood of a DR event on those days.
+      The `likelihood` value takes on one of `unlikely`, `possible`, `likely`, `confirmed`.
+        ```json
+        {
+            "days": [
+                {
+                    "date": 1533324092,
+                    "likelihood": "unlikely"
+                },
+                {
+                    "date": 1566624092,
+                    "likelihood": "possible"
+                },
+            ]
+        }
+        ```
+
 ### Power Endpoints
 
 All of these are for full building power/energy
