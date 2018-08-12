@@ -14,7 +14,7 @@
 <body id="body" class="">
 	<div class="navbar-fixed">
 		<nav>
-			<div class="nav-wrapper blue">
+			<div class="nav-wrapper tp-blue">
 				<a href="#" class="brand-logo" style="padding-left: 15px;">XBOS-DR</a>
 				<ul id="nav-mobile" class="right hide-on-med-and-down">
 					<li><a href="index.html">Home</a></li>
@@ -28,7 +28,7 @@
 		</nav>
 	</div>
 
-	<div class="navbar-fixed">
+<!-- 	<div class="navbar-fixed">
 		<nav>
 			<div class="nav-wrapper materialize-red lighten-2">
 				<div class="col s12">
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 		</nav>
-	</div>
+	</div> -->
 
 	<!-- <div class="section z-depth-1">
 			<div class="row">
@@ -59,12 +59,12 @@
 	<div id="DRBG" class="row center-align z-depth-1 scale-transition pulse scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
 
 	<div class="container">
-		<div class="section">
+		<!-- <div class="section">
 			<div style="display: flex; width: 100%; justify-content: space-around;">
 				<div style="display: flex; flex-direction: column; width: 100%;">
 					<div style="display: flex; justify-content: space-around; width: 13%;">
-						<input style="width: 48%; line-height: 1.5;" class="center-align my-input red lighten-2" value=55 type="number" max="72" min="35" />
-						<input style="width: 48%; line-height: 1.5;" class="center-align my-input blue lighten-2" value=85 type="number" max="90" min="74" />
+						<input class="center-align red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="center-align blue lighten-2" value=85 type="number" max="90" min="74" />
 					</div>
 					<div class="switch">
 						<label>
@@ -94,6 +94,62 @@
 				<a id="mon-add" class="blue btn-floating btn waves-effect waves-light"><i class="material-icons">add</i></a>
 				<div class="col s9" id="slider"></div>
 				<a class="col s1 waves-effect waves-light btn">copy</a>
+			</div>
+		</div> -->
+		<div class="section center-align">
+			<div class="row valign-wrapper">
+				<div style="margin-left:0" class="col s1-5">
+					<h6 style="margin-top: 0;">Zone name</h6>
+					<div class="setpnt-div">
+						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
+				</div>
+				<div class="col s1-5">
+					<h6 style="margin-top: 0;">Zone name</h6>
+					<div class="setpnt-div">
+						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
+				</div>
+				<div class="col s1-5">
+					<h6 style="margin-top: 0;">Zone name</h6>
+					<div class="setpnt-div">
+						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
+				</div>
+				<div class="col s1-5">
+					<h6 style="margin-top: 0;">Zone name</h6>
+					<div class="setpnt-div">
+						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
+				</div>
+				<div class="col s1-5">
+					<h6 style="margin-top: 0;">Zone name</h6>
+					<div class="setpnt-div">
+						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
+				</div>
+			</div>
+			<div class="row valign-wrapper sched-sec">
+				<div class="col stq"><a class="btn-floating btn waves-effect waves-light"><i class="material-icons">add</i></a></div>
+				<div class="col s10-5"><div class="sched-slider" id="sun-slider"></div></div>
+				<div class="col stq"><a class="btn-floating btn waves-effect waves-light red"><i class="material-icons">clear</i></a></div>
+			</div>
+		</div>
+		<div class="section center-align">
+			<div class="row valign-wrapper sched-sec">
+				<div class="col stq"><a class="btn-floating btn waves-effect waves-light"><i class="material-icons">add</i></a></div>
+				<div class="col s10-5"><div class="sched-slider" id="mon-slider"></div></div>
+				<div class="col stq"><a class="btn-floating btn waves-effect waves-light red"><i class="material-icons">clear</i></a></div>
 			</div>
 		</div>
 	</div>

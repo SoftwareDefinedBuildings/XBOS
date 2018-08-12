@@ -122,24 +122,24 @@ $(document).ready(function() {
 		s += "<h5 style='margin-top: 0;'>Simulation</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 id='z" + i + "hislam' class='zrow z" + i + "-val zone-his-val hislam grey-text left-align'>____</h5>";
-		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>λ</h5>";
+		s += "<h5 id='z" + i + "hislam' class='zrow zone-his-val hislam grey-text left-align'>____</h5>"; //z" + i + "-val
+		s += "<h5 class='center-align zcard-field'>λ</h5>";
 		s += "<h5 id='z" + i + "simlam' class='zrow right-align' >0.50</h5>";
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 id='z" + i + "hisdis' class='zrow z" + i + "-val zone-his-val hisdis grey-text left-align'>____</h5>";
-		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>Discomfort</h5>";
-		s += "<h5 id='z" + i + "simdis' class='zrow z" + i + "-val simdis purple-text right-align text-darken-5'>____</h5>";
+		s += "<h5 id='z" + i + "hisdis' class='zrow zone-his-val hisdis grey-text left-align'>____</h5>"; //z" + i + "-val
+		s += "<h5 class='center-align zcard-field'>Discomfort</h5>";
+		s += "<h5 id='z" + i + "simdis' class='zrow simdis purple-text right-align text-darken-5'>____</h5>"; //z" + i + "-val
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 id='z" + i + "hisdol' class='zrow z" + i + "-val zone-his-val hisdol grey-text left-align'>____</h5>";
-		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>$ Saved</h5>";
-		s += "<h5 id='z" + i + "simdol' class='zrow z" + i + "-val simdol green-text right-align text-darken-1'>____</h5>";
+		s += "<h5 id='z" + i + "hisdol' class='zrow zone-his-val hisdol grey-text left-align'>____</h5>"; //z" + i + "-val
+		s += "<h5 class='center-align zcard-field'>$ Saved</h5>";
+		s += "<h5 id='z" + i + "simdol' class='zrow simdol green-text right-align text-darken-1'>____</h5>"; //z" + i + "-val
 		s += "</div>";
 		s += "<div style='display: flex;'>";
-		s += "<h5 id='z" + i + "hiskWH' class='zrow z" + i + "-val zone-his-val hiskWH grey-text left-align'>____</h5>";
-		s += "<h5 class='center-align' style='width: 50%; margin-top: 0;'>kWH Saved</h5>";
-		s += "<h5 id='z" + i + "simkWH' class='zrow z" + i + "-val simkWH orange-text right-align text-darken-1'>____</h5>";
+		s += "<h5 id='z" + i + "hiskWH' class='zrow zone-his-val hiskWH grey-text left-align'>____</h5>"; //z" + i + "-val
+		s += "<h5 class='center-align zcard-field'>kWH Saved</h5>";
+		s += "<h5 id='z" + i + "simkWH' class='zrow simkWH orange-text right-align text-darken-1'>____</h5>"; //z" + i + "-val
 		s += "</div>";
 		s += "</div>";
 	}
@@ -187,7 +187,8 @@ $(document).ready(function() {
 		} else {
 			enableSwitches();
 			var toRet = [];
-			if (!simHisChecked) { x = "sim" + x; } else { x = "his" + x; }
+			if (x == "alph") { x = "banner"; }
+			else if (!simHisChecked) { x = "sim" + x; } else { x = "his" + x; }
 			for (var i = 0; i < l; i += 1) {
 				var toAdd = new Object();
 				toAdd.id = i;
@@ -246,7 +247,6 @@ $(document).ready(function() {
 		M.toast({html: 'Please allow the simulation a few minutes <button id="cancel-sim" class="btn-flat toast-action">Cancel</button>', displayLength: 60000});
 		$("#cancel-sim").click(function() {
 			postSim("zone");
-			// $(".znote").each(function() { $(this).html(""); });
 		});
 		var toRet = new Object();
 		toRet.isBuilding = false;

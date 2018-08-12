@@ -4,6 +4,19 @@
   line-height: 2.25;
 }
 
+.setpnt-div {
+  display: flex;
+}
+
+.setpnt-div input {
+  text-align: center;
+}
+
+.zcard-field {
+  width: 50%;
+  margin-top: 0;
+}
+
 .forecast-card {
   width: 18.5%;
 }
@@ -3549,11 +3562,41 @@ table span.badge {
   position: relative;
 }
 
+/*mine*/
+.row. .col.tiny {
+  width: 3%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+/*mine*/
+.row .col.stq {
+  width: 6.3333333333%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
 .row .col.s1 {
   width: 8.3333333333%;
   margin-left: auto;
   left: auto;
   right: auto;
+}
+
+.row .col.s1-5 {
+  width: 11%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+.row .col.s1-7 {
+  width: 13.6666666667%;
+  margin-left: auto;
+  left: auto;
+  right: auto; 
 }
 
 .row .col.s2 {
@@ -3573,6 +3616,14 @@ table span.badge {
 
 .row .col.s3 {
   width: 25%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+/*mine*/
+.row .col.s3-5 {
+  width: 27.5%;
   margin-left: auto;
   left: auto;
   right: auto;
@@ -3646,6 +3697,14 @@ table span.badge {
 
 .row .col.s10 {
   width: 83.3333333333%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+/*mine*/
+.row .col.s10-5 {
+  width: 87.3333333333%;
   margin-left: auto;
   left: auto;
   right: auto;

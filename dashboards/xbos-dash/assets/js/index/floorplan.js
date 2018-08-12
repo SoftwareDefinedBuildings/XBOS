@@ -28,7 +28,7 @@ $(document).ready(function() {
 		"complete": function(d) {
 			var zones = [];
 			var hvacs = [];
-
+			// TODO: fix this
 			var i = 1;
 			var z = $("#zone" + i);
 			var h = $("#HVAC-" + i);

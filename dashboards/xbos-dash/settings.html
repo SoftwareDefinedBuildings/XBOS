@@ -33,50 +33,35 @@
 		<span style="font-size: 36px;">Notifications</span>
 		<div id="notif-card" class="section z-depth-1">
 			<div class="row valign-wrapper">
-				<div class="col s2 pull-s4">
-					<div id="notif-div" class="switch">
-						<label id="notif-label" class="valign-wrapper" style="cursor: default;">
-							<span id="notif-off" class="grey-text" style="font-size: 28px; cursor: pointer;">off</span>
-							<input id="notif-checkbox" class="ogswitch" type="checkbox" />							
-							<span id="notif-lever" class="lever" style="cursor: pointer;"></span>
-							<span id="notif-on" style="font-size: 28px; cursor: pointer;">on</span>
-						</label>
-					</div>
-				</div>
-				<div class="col s2">
-					<a id="save-notifs" class="waves-effect waves-light btn my-blue">save<i class="material-icons right">save</i></a>
-				</div>
-			</div>
-			<div class="row">
 				<div class="col s4">
 					<label>
-						<input id="dayBefore" type="checkbox" class="filled-in ntin" disabled />
-						<span class="fi-text grey-text">alert me 1 day before confirmed events</span>
+						<input id="dayBefore" type="checkbox" class="filled-in" />
+						<span>1 day before confirmed events</span>
 					</label>
 				</div>
 				<div class="col s4">
 					<label>
-						<input id="5DFC" type="checkbox" class="filled-in ntin" disabled />
-						<span class="fi-text grey-text">send me 5-day forecasts</span>
+						<input id="5DFC" type="checkbox" class="filled-in" />
+						<span>5-day forecasts</span>
 					</label>
 				</div>
+				<div class="col s4 right-align">
+					<a id="save-notifs" class="waves-effect waves-light btn blue">save<i class="material-icons right">save</i></a>
+				</div>
 			</div>
-			<h6 class="grey-text fi-text" style="padding-left: 12px;">Enter a phone number and/or email address to receive SMS and/or email notifications. Standard SMS rates may apply.</h6>
+			<h6 style="padding-left: 12px;">Enter email addresses to subscribe to notifications. *Note: subscriptions must be confirmed.</h6>
 			<div class="row valign-wrapper">
-				<div class="input-field col s3">
-					<input class="ntin rfield validate" type="text" disabled>
-					<label>Recipient Name</label>
-				</div>
-				<div class="input-field col s3">
-					<input class="ntin rfield validate" type="tel" pattern='^[0-9-+s()]*$>'" disabled>
-					<label>Phone Number</label>
-				</div>
-				<div class="input-field col s4">
-					<input class="ntin rfield validate" type="email" disabled>
+				<div class="input-field col s5">
+					<input class="validate" type="email">
 					<label>Email Address</label>
 				</div>
-				<div class="col s2 center-align">
-					<a id="rbtn1" class="rbtn disabled waves-effect waves-light btn-small">add</a>
+				<div class="col tiny"></div>
+				<div class="input-field col s5">
+					<input class="validate" type="email">
+					<label>Email Address</label>
+				</div>
+				<div class="col s1-7 center-align">
+					<a id='add-emails' class="btn-floating waves-effect waves-light btn"><i class="material-icons">add</i></a>
 				</div>
 			</div>
 		</div>
