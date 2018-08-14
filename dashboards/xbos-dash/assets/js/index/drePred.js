@@ -2,36 +2,39 @@ $(document).ready(function() {
 	let dotw = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 	setTimeout(function() { $("#forecast-loader").hide(); $("#forecast-row").css("display", "flex").show(); }, 500);
 
-	function processResp() {
-		var i = 0;
-		var s = "";
-		var x;
-		d = {days: [{date: 1533324092, lvc: "unlikely"}, {date: 1533324092, lvc: "possible"}, {date: 1533324092, lvc: "likely"}, {date: 1533324092, lvc: "likely"}, {date: 1533324092, lvc: "certain"}]}
-		while (i < 5) {
-			x = d.days[i];
-			s += "<div class='z-depth-1 center-align hoverable forecast-card " + getColor(x.lvc) + "'>";
-			s += "<h6 id='date" + i + "'>" + getDate(x.date) + "</h6>";
-			s += "<h6 id='lvc" + i + "'>event " + x.lvc + "</h6>";
-			s += "</div>";
-			i += 1;
-		}
-		// s += "<div class='row'></div>";
-		// s += "<div class='row'></div>";
-		$("#forecast-row").html(s);
+	function setPred() {
+		$.ajax({
+			"url": "http://127.0.0.1:5000/api/prediction/dr",
+			"type": "GET",
+			"dataType": "json",
+			"success": function(d) {
+				days = d;
+			},
+			"error": function(d) {
+				d = { "days": [ { "date": 1533324092, "likelihood": "unlikely" }, { "date": 1533324092, "likelihood": "unlikely" }, { "date": 1533324092, "likelihood": "unlikely" }, { "date": 1533324092, "likelihood": "unlikely" }, { "date": 1535067166, "likelihood": "possible" }, ] };
+				var days = d.days;
+				var s = "";
+				days.forEach(function(elem) {
+					s += "<div class='z-depth-1 center-align forecast-card " + getColor(elem.likelihood) + "'><h6>" + getDate(elem.date) + "</h6><h6>event " + elem.likelihood + "</h6></div>";
+				});
+				$("#forecast-row").html(s);
+			}
+		});
 	}
-	processResp();
+	setPred();
 
 	function getColor(l) {
 		if (l == "unlikely") { return "blue-grey lighten-1"}
 		else if (l == "possible") { return "yellow"; }
 		else if (l == "likely") { return "orange"; }
-		else if (l == "certain") { return "red"; }
+		else if (l == "confirmed") { return "red"; }
 	}
 
 	function getDate(e) {
 		var d = new Date(0);
 		d.setUTCSeconds(e);
 		var x = d.toString().split(" ");
+		console.log(x);
 		return dotw[d.getDay()] + ", " + x[1] + " " + x[2];
 	}
 
