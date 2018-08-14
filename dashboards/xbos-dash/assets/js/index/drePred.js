@@ -8,15 +8,12 @@ $(document).ready(function() {
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {
-				days = d;
-			},
-			"error": function(d) {
-				d = { "days": [ { "date": 1533324092, "likelihood": "unlikely" }, { "date": 1533324092, "likelihood": "unlikely" }, { "date": 1533324092, "likelihood": "unlikely" }, { "date": 1533324092, "likelihood": "unlikely" }, { "date": 1535067166, "likelihood": "possible" }, ] };
 				var days = d.days;
 				var s = "";
 				days.forEach(function(elem) {
 					s += "<div class='z-depth-1 center-align forecast-card " + getColor(elem.likelihood) + "'><h6>" + getDate(elem.date) + "</h6><h6>event " + elem.likelihood + "</h6></div>";
 				});
+				$("#forecast-loader").hide();
 				$("#forecast-row").html(s);
 			}
 		});
@@ -34,7 +31,6 @@ $(document).ready(function() {
 		var d = new Date(0);
 		d.setUTCSeconds(e);
 		var x = d.toString().split(" ");
-		console.log(x);
 		return dotw[d.getDay()] + ", " + x[1] + " " + x[2];
 	}
 

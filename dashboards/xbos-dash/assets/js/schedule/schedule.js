@@ -15,14 +15,11 @@ $(document).ready(function() {
 	var counts; (counts = []).length = 7; counts.fill(5);
 
 	$(".sched-sec").each(function(i) {
-		// console.log(this);
 		var kids = $(this).children();
 		var addbtn = $(kids[0]).children();
 		var slider = $(kids[1]).children()[0];
-		// console.log(slider);
 		noUiSlider.create(slider, master)
 		var delbtn = $(kids[2]).children();
-		// console.log(i);
 
 		addbtn.click(function() {
 			var lst = slider.noUiSlider.get();
@@ -44,8 +41,6 @@ $(document).ready(function() {
 			console.log(i);
 			counts[i] = lst.length + 1;
 			setConnects();
-			console.log(counts);
-			// console.log(myfix(lst));
 		});
 
 		delbtn.click(function() {
@@ -60,17 +55,20 @@ $(document).ready(function() {
 			noUiSlider.create(slider, opts);
 			counts[i] = lst.length + 1;
 			setConnects();
-			console.log(counts);
 		});
 	});
 
 	function myfix(lst) { return lst.map(function(x) { return parseFloat(Math.floor(x)) + parseFloat(Math.floor(((x%1)+.25)/.5))*.5; }); }
 	function setConnects() {
-		$(".noUi-connect").each(function(i) { $(this).click(function() {
-			var c = 0; var sum = 0;
-			while (sum < i + 1) { sum += counts[c]; c += 1; }
-			console.log(c - 1);
-		});});
+		$(".noUi-connect").each(function(i) {
+			$(this).unbind();
+			$(this).click(function() {
+				var c = 0; var sum = 0;
+				while (sum < i + 1) { sum += counts[c]; c += 1; }
+				c -= 1;
+				if (c == 0) { console.log(i); } else { console.log(i - counts[c-1]); }
+			});
+		});
 	}
 	setConnects();
 
