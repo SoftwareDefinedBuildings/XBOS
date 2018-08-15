@@ -2,7 +2,7 @@ package main
 
 /*
  go build -o siemens_server
- ./siemens_server
+ ./drserver
 
  The Siemens server 1) registers with a Siemens server running REST Hooks
  then 2) listens for a price signal (OpenADR format) from the Siemens server.
@@ -41,7 +41,7 @@ import (
 var httpclient *http.Client
 
 // configuration file path and variable
-const confPath = "./config.json"
+const confPath = "./config/config.json"
 
 var config Config
 
@@ -357,7 +357,6 @@ func sendPOSTRequest(url string, header string, stream []byte) {
 	if config.Logging {
 		log.Println("POST request is: url:", url, " header", header, " stream", string(stream))
 	}
-	return
 	// POST the request
 	resp, err := httpclient.Post(url, header, bytes.NewReader(stream))
 	if err != nil {
