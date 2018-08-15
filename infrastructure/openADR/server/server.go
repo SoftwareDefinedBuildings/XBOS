@@ -1,360 +1,588 @@
 package main
 
 /*
- * go build -o drserver
- * ./drserver
- *
- * This is a server that 1) registers with a Siemens server running REST Hooks
- * then 2) listens for a price signal (DR-event) from the Siemens server
- * Once the signal is recieved, the pricing information is extracted and
- * published securely over BOSSWAVE, 3) the server then waits for energy
- * predictions (based on the published prices) to be generated, 4) once the
- * predictions are generated, the server forms an XML structure and sends
- * these predictions back to the Siemens server as a POST message
- */
+ go build -o siemens_server
+ ./siemens_server
+
+ The Siemens server 1) registers with a Siemens server running REST Hooks
+ then 2) listens for a price signal (OpenADR format) from the Siemens server.
+ Once the signal is recieved, the pricing information is extracted and
+ sent to an energy prediction module, 3) the server then waits for energy
+ predictions (based on the published prices) to be generated, 4) once the
+ predictions are generated, the server forms a JSON encapsulated XML structure
+ to send these predictions back to the Siemens server as a POST message
+*/
 
 import (
 	"bytes"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
+	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/jbowtie/gokogiri"
+	gokogirixml "github.com/jbowtie/gokogiri/xml"
 	"github.com/jbowtie/gokogiri/xpath"
-	"gopkg.in/immesys/bw2bind.v5"
 )
 
-// HTTP Client
-var client = &http.Client{Timeout: 10 * time.Second}
-var buildingID = "ciee"
+// override the default HTTP client
+var httpclient *http.Client
 
-// structure for parsing the price/demand signal
+// configuration file path and variable
+const confPath = "./config.json"
+
+var config Config
+
+var curEvtMod map[string]ModNumber
+
+// Config parameters
+type Config struct {
+	Logging          bool                //set to true for detailed logging
+	Registered       bool                //set to true if this server is already registered with Siemens
+	AddCert          bool                //set to true to add the Siemens certificates
+	LocalCertFile    string              //location of client certificate
+	LocalCertKey     string              //location of client key
+	LocalCACertFile  string              //location of server certificate
+	SiemensSubServer string              //address of Siemens subscription server
+	SiemensPubServer string              //address of Siemens publishing server
+	ServerName       string              //name of siemens server
+	AuthString       string              //authentication string for Siemens server
+	Loc_addr         string              //public address of this server
+	Loc_port         int                 //server port
+	BuildingTarrif   map[string][]string //Buildings in each tarrif
+}
+
+// OpenADR structure for parsing the price signal
 type OpenADR struct {
-	XMLName       xml.Name    `xml:"oadrPayload"`
-	StartDate     string      `xml:"oadrSignedObject>oadrDistributeEvent>oadrEvent>eiEvent>eiActivePeriod>properties>dtstart>date-time"` // SIGNAL start date/time
-	TotalDuration string      `xml:"oadrSignedObject>oadrDistributeEvent>oadrEvent>eiEvent>eiActivePeriod>properties>duration>duration"` // SIGNAL duration PT24=24hours etc.
-	Intervals     []Intervals `xml:"oadrSignedObject>oadrDistributeEvent>oadrEvent>eiEvent>eiEventSignals>eiEventSignal>intervals>interval"`
+	XMLName  xml.Name   `xml:"oadrPayload"`
+	EiEvents []EiEvents `xml:"oadrSignedObject>oadrDistributeEvent>oadrEvent>eiEvent"`
 }
 
-// structure for parsing interval price/demand
+type ModNumber struct {
+	CurrentMod int
+	RevisedMod int
+}
+
+type EiEvents struct {
+	XMLName            xml.Name    `xml:"eiEvent"`
+	EventStatus        string      `xml:"eventDescriptor>eventStatus"`
+	ModificationNumber int         `xml:"eventDescriptor>modificationNumber"`
+	EventID            string      `xml:"eventDescriptor>eventID"`
+	StartDate          string      `xml:"eiActivePeriod>properties>dtstart>date-time"` // SIGNAL start date/time
+	TotalDuration      string      `xml:"eiActivePeriod>properties>duration>duration"` // SIGNAL duration PT24=24hours etc.
+	GroupID            string      `xml:"eiTarget>groupID"`
+	TargetBuilding     string      `xml:"eiTarget>resourceID"`
+	ItemUnits          string      `xml:"eiEventSignals>eiEventSignal>currencyPerKWh>itemUnits"`
+	Intervals          []Intervals `xml:"eiEventSignals>eiEventSignal>intervals>interval"` // Intervals in a given Duration
+}
+
+// Interval structure for parsing the price and duration of each interval
 type Intervals struct {
-	XMLName  xml.Name `xml:"interval"`
-	Duration string   `xml:"duration>duration"` //PT1H=1hour, PT5H=5hours, etc.
-	Price    float64  `xml:"signalPayload>payloadFloat>value"`
+	XMLName   xml.Name `xml:"interval"`
+	StartDate string   `xml:"dtstart>date-time"` // Interval start time
+	Duration  string   `xml:"duration>duration"` // PT1H=1hour, PT5H=5hours, etc.
+	Order     int      `xml:"uid>text"`          // Interval order
+	Price     float64  `xml:"signalPayload>payloadFloat>value"`
 }
 
-// structure for sending the price signal over BOSSWAVE
+// Price structure for sending the price signal to the prediction module
 type Price struct {
 	Time     int64 // UTC seconds since epoch
 	Price    float64
-	Unit     string
-	Duration int64 // time in seconds
+	Currency string
+	Duration int64 // in seconds
 }
 
-// function to wrap XML demand message in Siemens JSON Format
-func XMLtoJSON(xmlbody []byte) []byte {
-	return []byte(strings.Replace("{\nXMLMessage : '"+strings.Replace(string(xmlbody), "\n", "", -1)+"'\n}", "\"", "\\\"", -1))
+// Siemens JSON structures for PRICE SIGNAL
+type SiemensJSON struct {
+	Data SiemensJSONFields `json:"data"`
 }
 
-// function to unwrap Seimens formatted JSON message to a proper XML PRICE SIGNAL
-func JSONtoXML(jsonbody []byte) []byte {
-	return []byte(strings.Replace(strings.Split(string(jsonbody), "'")[1], "\\\"", "\"", -1))
+type SiemensJSONFields struct {
+	Fields SiemensJSONPayload `json:"fields"`
 }
 
-// function to register with the Siemens REST Hooks server
-// Gets called only once unless the target for receiving price signal changes
+type SiemensJSONPayload struct {
+	Payload string `json:"payload"`
+}
+
+// registerServer register this server with the Siemens REST Hooks server
+// registerServer gets called only once unless the target/port for receiving price signal changes
 func registerServer(url string) bool {
-	// send GET request to the Siemens REST Hooks
-	resp, err := client.Get(url)
+	resp, err := httpclient.Get(url)
 	if err != nil {
-		panic(err)
+		log.Println("Error: failed to GET", err)
+		return false
 	}
 	defer resp.Body.Close()
-
-	// make sure response is 200 OK otherwise return false
-	log.Println(resp)
+	if config.Logging {
+		log.Println("Response for GET registerServer:", resp)
+	}
 	if resp.StatusCode != 200 {
-		panic(err)
+		log.Println("Error: GET status code is:", resp.StatusCode)
+		return false
 	}
 	return true
 }
 
-// function to parse PRICE SIGNAL XML from Siemens POST request
-// returns a Price array with the necessary PRICE SIGNAL information
-func parseXMLBody(body []byte) []Price {
+// parseJSONBody parses PRICE SIGNAL JSON from Siemens POST request
+// returns an XML string with the necessary PRICE SIGNAL information
+// follows 'json:"data>fields>payload"' where payload is the XML OpenADR signal
+func parseJSONBody(body []byte) ([]byte, error) {
+	jsonbody := SiemensJSON{}
+	err := json.Unmarshal(body, &jsonbody)
+	if err != nil {
+		log.Println("Error: Failed to unmarshal JSON")
+		return nil, err
+	}
+	if len(strings.TrimSpace(jsonbody.Data.Fields.Payload)) == 0 {
+		return nil, errors.New("Error: JSON payload is empty or does not exist")
+	}
+	return []byte(strings.Replace(jsonbody.Data.Fields.Payload, "\\\"", "\"", -1)), nil
+}
+
+// parseXMLBody parses PRICE SIGNAL XML from Siemens POST request
+// returns a Price slice with the necessary PRICE SIGNAL information
+func parseXMLBody(body []byte) ([]Price, EiEvents, error) {
+
 	xmlbody := OpenADR{}
-	xml.Unmarshal(body, &xmlbody)
-	var prices []Price
-	for i, _ := range xmlbody.Intervals {
-		var duration int64 // default is 1H (3600 seconds)
-		switch xmlbody.Intervals[i].Duration {
-		case "PT1H":
-			duration = 3600
-		case "PT2H":
-			duration = 3600 * 2
-		case "PT3H":
-			duration = 3600 * 3
-		case "PT4H":
-			duration = 3600 * 4
-		case "PT5H":
-			duration = 3600 * 5
-		case "PT6H":
-			duration = 3600 * 6
-		case "PT7H":
-			duration = 3600 * 7
-		case "PT8H":
-			duration = 3600 * 8
-		case "PT9H":
-			duration = 3600 * 9
-		case "PT10H":
-			duration = 3600 * 10
-		case "PT11H":
-			duration = 3600 * 11
-		case "PT12H":
-			duration = 3600 * 12
-		case "PT13H":
-			duration = 3600 * 13
-		case "PT14H":
-			duration = 3600 * 14
-		case "PT15H":
-			duration = 3600 * 15
-		case "PT16H":
-			duration = 3600 * 16
-		case "PT17H":
-			duration = 3600 * 17
-		case "PT18H":
-			duration = 3600 * 18
-		case "PT19H":
-			duration = 3600 * 19
-		case "PT20H":
-			duration = 3600 * 20
-		case "PT21H":
-			duration = 3600 * 21
-		case "PT22H":
-			duration = 3600 * 22
-		case "PT23H":
-			duration = 3600 * 23
-		case "PT24H":
-			duration = 3600 * 24
-		default:
-			duration = 3600
+	err := xml.Unmarshal(body, &xmlbody)
+	if err != nil {
+		log.Println("Error: Failed to unmarshal XML")
+		return nil, EiEvents{}, err
+	}
+
+	ectr := 0
+	for _, eiEvent := range xmlbody.EiEvents {
+		if eiEvent.EventStatus != "" {
+			ectr++
+			//if multiple events detected return an error
+			if ectr > 1 {
+				return nil, EiEvents{}, errors.New("Error: more than one event detected in payload")
+			}
+			intervalcount := len(eiEvent.Intervals)
+			if intervalcount <= 0 {
+				return nil, EiEvents{}, errors.New("Error: intervals are empty")
+			}
+			var prices []Price
+			// sort the intervals based on their uid ordering
+			sort.Slice(eiEvent.Intervals, func(i, j int) bool {
+				return eiEvent.Intervals[i].Order < eiEvent.Intervals[j].Order
+			})
+
+			start, err := parseTime(eiEvent.StartDate)
+			if err != nil {
+				return nil, EiEvents{}, err
+			}
+			for i, _ := range eiEvent.Intervals {
+				st, err := parseTime(eiEvent.Intervals[i].StartDate)
+				if err != nil {
+					return nil, EiEvents{}, err
+				}
+				// check total start date and duration start date match
+				if st != start {
+					log.Println("start", start, "st", st)
+					return nil, EiEvents{}, errors.New("Error: interval start date is incorrect")
+				}
+				d := parseDuration(eiEvent.Intervals[i].Duration)
+				prices = append(prices, Price{st.Unix(), eiEvent.Intervals[i].Price, eiEvent.ItemUnits, d})
+				start = start.Add(time.Duration(d) * time.Second)
+			}
+			// Check total duration equals sum of interval durations
+			// orig, err := parseTime(eiEvent.StartDate[dt_dur_ind])
+			orig, err := parseTime(eiEvent.StartDate)
+			if err != nil {
+				return nil, EiEvents{}, err
+			}
+			if start != orig.Add(time.Duration(parseDuration(eiEvent.TotalDuration))*time.Second) {
+				return nil, EiEvents{}, errors.New("Error: total duration does not equal some of individual durations")
+			}
+			if len(prices) != intervalcount {
+				return nil, EiEvents{}, errors.New("Error: total number of intervals does not match list of prices")
+			}
+			return prices, eiEvent, nil
 		}
-		prices = append(prices, Price{parse(xmlbody.StartDate, duration).Unix(), xmlbody.Intervals[i].Price, "$", duration})
 	}
-	return prices
+	return nil, EiEvents{}, errors.New("Error: no active period found in eiEvents")
 }
 
-// function to parse the time interval extracted from the XML
-func parse(s string, d int64) time.Time {
-	t, err := time.Parse("2006-01-02T15:04:05Z", s)
+// parseTime parses time from string in format (2006-01-02T15:04:05Z)
+func parseTime(t string) (time.Time, error) {
+	time, err := time.Parse("2006-01-02T15:04:05Z", t)
 	if err != nil {
-		panic(err)
+		log.Println("Error: Failed to parse time")
 	}
-	return t.Add(time.Duration(d) * time.Second)
+	return time, err
 }
 
-// function to recover from a paniced func parse or parseXMLBody
-func parseRecover(w http.ResponseWriter) {
-	if r := recover(); r != nil {
-		log.Println("Failed to parse XML price signal: ", r)
-		http.Error(w, r.(string), http.StatusInternalServerError)
+// parseDuration parses duration from string (PT1H ... PT24H)
+// default is 1H (3600)
+func parseDuration(d string) int64 {
+	s := strings.TrimPrefix(d, "PT")
+	if strings.HasSuffix(d, "H") {
+		s = strings.TrimSuffix(s, "H")
+		val, err := strconv.Atoi(s) // 1 ... 24 OR Error
+		if err == nil {
+			return 3600 * int64(val)
+		} else {
+			return 3600 // default
+		}
+	} else if strings.HasSuffix(d, "M") {
+		s = strings.TrimSuffix(s, "M")
+		val, err := strconv.Atoi(s) // 60, 120, 180, ..., 1440 OR Error
+		if err == nil {
+			return 60 * int64(val)
+		} else {
+			return 3600 // default
+		}
+	} else {
+		return 3600 //default
 	}
 }
 
-// function to publish the price signal securely over BOSSWAVE
-// TODO Modify this function to publish to individual buildings or add building ID
-func publishSignal(prices []Price) bool {
-	client := bw2bind.ConnectOrExit("")
-	client.OverrideAutoChainTo(true)
-	client.SetEntityFromEnvironOrExit()
-	service := client.RegisterService("xbos/events/dr", "s.dr")
-	iface := service.RegisterInterface("sdb", "i.xbos.dr_signal")
-	po, err := bw2bind.CreateMsgPackPayloadObject(bw2bind.FromDotForm("2.9.9.9"), prices)
+// createXMLResponse creates an XML response with predictions to send back to Siemens
+func createXMLResponse(demands []float64, body []byte, bldgID string, modNumber string) []byte {
+	doc, err := gokogiri.ParseXml(body)
 	if err != nil {
-		log.Println("Could not serialize object: ", err)
-		return false
+		log.Println("Error: failed to parse XML body using gokogiri")
+		return nil
 	}
-	err = iface.PublishSignal("signal", po)
-	if err != nil {
-		log.Println("Could not publish object: ", err)
-		return false
-	}
-	log.Println("Published!")
-	return true
-}
 
-// function to get predictions (eventually over BOSSWAVE)
-// TODO currently hardcoded update to contact Thanos's control
-func getPredictions() []float64 {
-	return []float64{23.5, 16.9, 12.9, 15.2, 20.7}
-	// return []float64{22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 45.2, 45.2, 45.2, 62.8, 12.1, 12.1, 12.2, 15.1, 15.1, 34.7, 34.7, 24.3, 24.3, 24.3}
-}
-
-// function to create XML response to send back to Siemens
-func createXMLResponse(demands []float64, body []byte) []byte {
-	doc, _ := gokogiri.ParseXml(body)
 	defer doc.Free()
-	//TODO read namespace from oadrPayload attributes instead of being hardcoded
 	xp := doc.DocXPathCtx()
-	xp.RegisterNamespace("xmlns", "http://www.w3.org/2000/09/xmldsig#")
-	xp.RegisterNamespace("ns2", "urn:ietf:params:xml:ns:icalendar-2.0")
-	xp.RegisterNamespace("ns3", "http://openadr.org/oadr-2.0b/2012/07")
-	xp.RegisterNamespace("ns4", "http://docs.oasis-open.org/ns/emix/2011/06/siscale")
-	xp.RegisterNamespace("ns5", "http://www.w3.org/2005/Atom")
-	xp.RegisterNamespace("ns6", "http://docs.oasis-open.org/ns/emix/2011/06/power")
-	xp.RegisterNamespace("ns7", "http://docs.oasis-open.org/ns/energyinterop/201110")
-	xp.RegisterNamespace("ns8", "http://www.opengis.net/gml/3.2")
-	xp.RegisterNamespace("ns9", "http://docs.oasis-open.org/ns/emix/2011/06")
-	xp.RegisterNamespace("ns11", "urn:ietf:params:xml:ns:icalendar-2.0:stream")
-	xp.RegisterNamespace("ns12", "http://docs.oasis-open.org/ns/energyinterop/201110/payloads")
-	xp.RegisterNamespace("ns13", "http://openadr.org/oadr-2.0b/2012/07/xmldsig-properties")
-	xp.RegisterNamespace("ns14", "urn:un:unece:uncefact:codelist:standard:5:ISO42173A:2010-04-07")
-
-	// set first requestID
-	x := xpath.Compile("/ns3:oadrPayload/ns3:oadrSignedObject/ns3:oadrDistributeEvent/ns7:eiResponse/ns12:requestID")
-	nodes, err := doc.Search(x)
-	if err != nil {
-		log.Println("cannot find first requestID in XML: ", err)
-		return nil
-	}
-	// TODO better way to set requestID
-	// create a random requestID
-	src := rand.NewSource(time.Now().UnixNano())
-	rnd := rand.New(src)
-	reqID := strconv.Itoa(rnd.Intn(10000))
-	for _, node := range nodes {
-		node.SetContent("VEN_REQUEST-" + reqID)
+	for _, ns := range doc.FirstChild().DeclaredNamespaces() {
+		xp.RegisterNamespace(ns.Prefix, ns.Uri)
 	}
 
-	// set second requestID
-	x = xpath.Compile("/ns3:oadrPayload/ns3:oadrSignedObject/ns3:oadrDistributeEvent/ns12:requestID")
-	nodes, err = doc.Search(x)
-	if err != nil {
-		log.Println("cannot find second requestID in XML: ", err)
-		return nil
-	}
-	for _, node := range nodes {
-		node.SetContent("VEN_REQUEST-" + reqID)
-	}
+	// set  requestID
+	// if !setXMLNode(doc, "/p2012-07:oadrPayload/p2012-07:oadrSignedObject/p2012-07:oadrDistributeEvent/payloads:requestID", "VEN_REQUEST-"+strconv.Itoa(config.ReqID)) {
+	// 	log.Println("Error: cannot find requestID in XML: ", err)
+	// 	return nil
+	// }
 
 	// set SIGNAL NAME
-	x = xpath.Compile("/ns3:oadrPayload/ns3:oadrSignedObject/ns3:oadrDistributeEvent/ns3:oadrEvent/ns7:eiEvent/ns7:eiEventSignals/ns7:eiEventSignal/ns7:signalName")
-	nodes, err = doc.Search(x)
-	if err != nil {
-		log.Println("cannot find signalName in XML: ", err)
+	if !setXMLNode(doc, "/p2012-07:oadrPayload/p2012-07:oadrSignedObject/p2012-07:oadrDistributeEvent/p2012-07:oadrEvent/p2012-07:eiEvent/energyinterop:eiEventSignals/energyinterop:eiEventSignal/energyinterop:signalName", "BID_LOAD") {
+		log.Println("Error: cannot find signalName in XML: ", err)
 		return nil
-	}
-	for _, node := range nodes {
-		node.SetContent("BID_LOAD")
 	}
 
 	// set SIGNAL TYPE
-	x = xpath.Compile("/ns3:oadrPayload/ns3:oadrSignedObject/ns3:oadrDistributeEvent/ns3:oadrEvent/ns7:eiEvent/ns7:eiEventSignals/ns7:eiEventSignal/ns7:signalType")
-	nodes, err = doc.Search(x)
-	if err != nil {
-		log.Println("cannot find signalType in XML: ", err)
+	if !setXMLNode(doc, "/p2012-07:oadrPayload/p2012-07:oadrSignedObject/p2012-07:oadrDistributeEvent/p2012-07:oadrEvent/p2012-07:eiEvent/energyinterop:eiEventSignals/energyinterop:eiEventSignal/energyinterop:signalType", "setpoint") {
+		log.Println("Error: cannot find signalType in XML: ", err)
 		return nil
-	}
-	for _, node := range nodes {
-		node.SetContent("setpoint")
 	}
 
 	// set TARGET (BuildingID)
-	x = xpath.Compile("/ns3:oadrPayload/ns3:oadrSignedObject/ns3:oadrDistributeEvent/ns3:oadrEvent/ns7:eiEvent/ns7:eiTarget/ns7:resourceID")
-	nodes, err = doc.Search(x)
-	if err != nil {
-		log.Println("cannot find resourceID in XML: ", err)
+	p := xpath.Compile("/p2012-07:oadrPayload/p2012-07:oadrSignedObject/p2012-07:oadrDistributeEvent/p2012-07:oadrEvent/p2012-07:eiEvent/energyinterop:eiTarget")
+	nodes, err := doc.Search(p)
+	if err != nil || len(nodes) == 0 {
+		log.Println("Error: cannot find eiTarget in XML: ", err)
 		return nil
 	}
 	for _, node := range nodes {
-		node.SetContent(buildingID)
+		node.AddChild("<energyinterop:resourceID>" + bldgID + "</energyinterop:resourceID>")
 	}
 
 	// set demands
-	// TODO what is the float format f.d? currently only one decimal
-	x = xpath.Compile("/ns3:oadrPayload/ns3:oadrSignedObject/ns3:oadrDistributeEvent/ns3:oadrEvent/ns7:eiEvent/ns7:eiEventSignals/ns7:eiEventSignal/ns11:intervals/ns7:interval/ns7:signalPayload/ns7:payloadFloat/ns7:value")
-	nodes, err = doc.Search(x)
-	if err != nil {
-		log.Println("cannot find value in XML: ", err)
+	uidpath := xpath.Compile("/p2012-07:oadrPayload/p2012-07:oadrSignedObject/p2012-07:oadrDistributeEvent/p2012-07:oadrEvent/p2012-07:eiEvent/energyinterop:eiEventSignals/energyinterop:eiEventSignal/energyinterop:intervals/icalendar-stream:interval/energyinterop:uid/icalendar:text")
+	var uid int
+	uidnodes, err := doc.Search(uidpath)
+	if err != nil || len(uidnodes) == 0 {
+		log.Println("Error: cannot find uid in XML: ", err)
 		return nil
 	}
-	for i, node := range nodes {
-		node.SetContent(strconv.FormatFloat(demands[i], 'f', 1, 64))
+	valpath := xpath.Compile("/p2012-07:oadrPayload/p2012-07:oadrSignedObject/p2012-07:oadrDistributeEvent/p2012-07:oadrEvent/p2012-07:eiEvent/energyinterop:eiEventSignals/energyinterop:eiEventSignal/energyinterop:intervals/icalendar-stream:interval/energyinterop:signalPayload/energyinterop:payloadFloat/energyinterop:value")
+	valnodes, err := doc.Search(valpath)
+	if err != nil || len(valnodes) == 0 {
+		log.Println("Error: cannot find value in XML: ", err)
+		return nil
 	}
+	for i, uidnode := range uidnodes {
+		uid, err = strconv.Atoi(uidnode.Content())
+		if err != nil {
+			log.Println("Error: failed to parse uid in XML:", err)
+			return nil
+		}
+		valnodes[i].SetContent(strconv.FormatFloat(demands[uid], 'f', 1, 64))
+	}
+
+	// increment reqID and save it
+	// config.ReqID++
+	// if !writeConfig() {
+	// 	log.Println("Error: failed to save current ReqID to config file")
+	// }
 	return doc.ToBuffer(nil)
 }
 
-// function to send a POST request to a server
+// setXMLNode sets one or multiple nodes defined by the path p using the content c in an XmlDocument
+func setXMLNode(doc *gokogirixml.XmlDocument, p string, c string) bool {
+	x := xpath.Compile(p)
+	nodes, err := doc.Search(x)
+	if err != nil || len(nodes) == 0 {
+		log.Println("Error: cannot find node with given p: ", p, " err:", err)
+		return false
+	}
+	for _, node := range nodes {
+		node.SetContent(c)
+	}
+	return true
+}
+
+// XMLtoJSON wraps the XML demand message to a Siemens JSON Format
+func XMLtoJSON(x []byte) []byte {
+	if x == nil {
+		return nil
+	}
+	return []byte(strings.Replace("{\nXMLMessage : '"+strings.Replace(string(x), "\n", "", -1)+"'\n}", "\"", "\\\"", -1))
+}
+
+// sendPOSTRequest sends a POST request to a server and prints response
 func sendPOSTRequest(url string, header string, stream []byte) {
 	if stream == nil || header == "" {
-		log.Fatal("Error empty stream or request header")
+		log.Println("Error: empty stream or request header")
+		return
+	}
+	if config.Logging {
+		log.Println("POST request is: url:", url, " header", header, " stream", string(stream))
+	}
+	return
+	// POST the request
+	resp, err := httpclient.Post(url, header, bytes.NewReader(stream))
+	if err != nil {
+		log.Println("Error: failed to post message to Siemens: ", err)
+	}
+	defer resp.Body.Close()
+	// print the response
+	if config.Logging {
+		log.Println(resp)
+	}
+}
+
+func main() {
+	// load server configuration
+	configure()
+	// serve requests
+	http.HandleFunc("/", serverRecover(handler))
+	go func() {
+		err := http.ListenAndServe("0.0.0.0:"+strconv.Itoa(config.Loc_port), nil)
+		if err != nil {
+			log.Fatal("ListenAndServe: ", err)
+		}
+	}()
+
+	// register this server with Siemens to recieve price signal
+	// only gets called once
+	if !config.Registered {
+		if !registerServer(config.SiemensSubServer + config.Loc_addr + "&essa=" + base64.StdEncoding.EncodeToString([]byte(config.AuthString))) {
+			log.Fatal(errors.New("Error: failed to register with the Siemens server"))
+		}
+		config.Registered = true
+		writeConfig()
+	}
+	x := make(chan bool)
+	<-x
+}
+
+// configure loads server configuration file
+func configure() {
+	f, err := os.Open(confPath)
+	if err != nil {
+		log.Fatal(errors.New("Error: failed to load configuration file (./config/config.json). " + err.Error()))
+		return
+	}
+	d := json.NewDecoder(f)
+	err = d.Decode(&config)
+	if err != nil {
+		log.Fatal(errors.New("Error: failed to configure server. " + err.Error()))
+		return
+	}
+	addCert()
+	curEvtMod = make(map[string]ModNumber)
+}
+
+// writeConfig saves current configuration to config file
+func writeConfig() bool {
+	b, _ := json.MarshalIndent(config, "", "\t")
+	b = bytes.Replace(b, []byte("\\u003c"), []byte("<"), -1)
+	b = bytes.Replace(b, []byte("\\u003e"), []byte(">"), -1)
+	b = bytes.Replace(b, []byte("\\u0026"), []byte("&"), -1)
+	err := ioutil.WriteFile(confPath, b, 0600)
+	if err != nil {
+		log.Println("Error: failed to write config file", err)
+		return false
+	}
+	return true
+}
+
+// addCert adds trusted client/server certificates from Siemens
+func addCert() {
+	if !config.AddCert {
+		httpclient = &http.Client{Timeout: 10 * time.Second}
 		return
 	}
 
-	// POST the request
-	resp, err := client.Post(url, header, bytes.NewReader(stream))
-	if err != nil {
-		log.Fatal("Failed to post message to Siemens: ", err)
+	// Get the SystemCertPool, continue with an empty pool on error
+	rootCAs, _ := x509.SystemCertPool()
+	if rootCAs == nil {
+		rootCAs = x509.NewCertPool()
 	}
-	defer resp.Body.Close()
 
-	// print the response
-	log.Println(resp)
+	// Read in the cert file
+	certs, err := ioutil.ReadFile(config.LocalCACertFile)
+	if err != nil {
+		log.Fatalf("Failed to append %q to RootCAs: %v", config.LocalCertFile, err)
+	}
+
+	// Append our cert to the system pool
+	if ok := rootCAs.AppendCertsFromPEM(certs); !ok {
+		log.Fatal("No certs appended")
+	}
+
+	cert, err := tls.LoadX509KeyPair(config.LocalCertFile, config.LocalCertKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Trust the augmented cert pool in our client
+	config := &tls.Config{
+		RootCAs:      rootCAs,
+		Certificates: []tls.Certificate{cert},
+		ServerName:   config.ServerName,
+	}
+	config.BuildNameToCertificate()
+	tr := &http.Transport{TLSClientConfig: config}
+	httpclient = &http.Client{Transport: tr,
+		Timeout: 10 * time.Second,
+	}
 }
 
-// function to handle POST requests from Siemens server
+// getPredictions gets energy predictions from the prediction module based on the published price signal
+// TODO update to use to energy predictions from Thanos's control prediction model
+func getPredictions(bldgID string, prices []Price) []float64 {
+	predictions := make([]float64, len(prices))
+	// currently hardcoded to return a random demand
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+	values := []float64{23.5, 16.9, 12.9, 15.2, 20.7}
+	for i, _ := range predictions {
+		predictions[i] = values[rnd.Intn(5)]
+	}
+	if config.Logging {
+		log.Println("Predictions for building:", bldgID, "are:", predictions)
+	}
+	return predictions
+}
+
+// handler handles POST requests from Siemens server
 func handler(w http.ResponseWriter, req *http.Request) {
 	// read signal
 	defer req.Body.Close()
 	body, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		log.Println("Could not read request body: ", err)
-		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
+	if body == nil || err != nil {
+		log.Println("Error: could not read request body or body is empty:", err)
+		http.Error(w, "Error: could not read request body or body is empty:"+err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
-	// unpack JSON to XML
-	body = JSONtoXML(body)
-	if body == nil {
-		log.Println("Could not parse JSON price signal body")
-		http.Error(w, "Could not parse JSON price signal body", http.StatusUnsupportedMediaType)
+	// log and unpack Seimens formatted JSON message to an XML PRICE SIGNAL
+	if config.Logging {
+		log.Println("Receieved POST request:", string(body))
+	}
+	xmlbody, err := parseJSONBody(body)
+	if xmlbody == nil || err != nil {
+		log.Println("Error: failed to parse JSON price signal, err:", err)
+		http.Error(w, "Error: failed to parse JSON price signal, err:"+err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
-	// parse signal to extract prices
-	defer parseRecover(w)
-	prices := parseXMLBody(body)
-	// if signal parsed properly return OK
-	if prices != nil {
-		w.WriteHeader(200)
-		w.Write([]byte("OK"))
-	} else {
-		log.Println("Failed to parse XML price signal")
-		http.Error(w, "Failed to parse XML price signal", http.StatusUnsupportedMediaType)
+	//log and unpack Siemens formatted XML message to a Price slice and an event
+	if config.Logging {
+		log.Println("XML Price Signal is: ", string(xmlbody))
+	}
+	prices, event, err := parseXMLBody(xmlbody)
+	if err != nil || prices == nil {
+		log.Println("Error: failed to parse XML price signal, err:", err)
+		http.Error(w, "Error: failed to parse XML price signal, err:"+err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
-	// publish prices securely over BOSSWAVE
-	publishSignal(prices)
+	if event.GroupID == "" && event.TargetBuilding == "" {
+		log.Println("Error: both target groupID and target building are empty")
+		http.Error(w, "Error: both target groupID and target building are empty", http.StatusUnsupportedMediaType)
+		return
+	}
 
-	// TODO subscribe to energy predictions and send to Siemens as an XML POST
-	// FOR NOW WE WILL SEND BACK A HARD CODED SIGNAL BUT WILL REPLACE IN THE
-	// FUTURE WITH DYNAMIC/ACCURATE PREDICTIONS
-	sendPOSTRequest("http://epicdr.org:9187/v1/messaging/publish/DEMAND-BAS", "application/json", XMLtoJSON(createXMLResponse(getPredictions(), body)))
+	if event.GroupID != "" {
+		_, ok := config.BuildingTarrif[event.GroupID]
+		if !ok {
+			log.Println("Error: invalid target groupID", event.GroupID)
+			http.Error(w, "Error: invalid target groupID", http.StatusUnsupportedMediaType)
+			return
+		}
+	}
+	// if signal parsed properly log extracted prices and return OK
+	if config.Logging {
+		log.Println("Prices are:", prices, "Target GroupID is:", event.GroupID, "Target BuildingID is:", event.TargetBuilding, "EventID", event.EventID, "Modification Number", event.ModificationNumber)
+	}
+	w.WriteHeader(200)
+	w.Write([]byte("OK"))
+
+	// only respond to far events (ignore active or completed events)
+	if event.EventStatus == "far" {
+		//TODO get and check Modification Number
+		modNumber := ""
+		if mod, ok := curEvtMod[event.EventID]; ok {
+			if mod.CurrentMod == event.ModificationNumber {
+				mod.RevisedMod += 10000
+				curEvtMod[event.EventID] = ModNumber{event.ModificationNumber, mod.RevisedMod}
+				modNumber = strconv.Itoa(mod.RevisedMod)
+			} else if mod.CurrentMod < event.ModificationNumber {
+				curEvtMod[event.EventID] = ModNumber{event.ModificationNumber, event.ModificationNumber}
+				modNumber = strconv.Itoa(event.ModificationNumber)
+			} else {
+				log.Println("Error: invalid event ModificationNumber")
+				return
+			}
+		} else { //this is the first mod for this event
+			curEvtMod[event.EventID] = ModNumber{event.ModificationNumber, event.ModificationNumber}
+			modNumber = strconv.Itoa(event.ModificationNumber)
+		}
+		if config.Logging {
+			log.Println("current events and modification", curEvtMod)
+		}
+		// send energy predictions to Siemens as an XML POST
+		if event.TargetBuilding != "" {
+			sendPOSTRequest(config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(event.TargetBuilding, prices), xmlbody, event.TargetBuilding, modNumber)))
+		} else {
+			// if EPRI then don't return predictions (ignore)
+			if event.GroupID == "DLAP_PGAE-APND" || event.GroupID == "DLAP_SCE-APND" {
+				return
+			}
+			bldgs, _ := config.BuildingTarrif[event.GroupID]
+			for _, bldg := range bldgs {
+				sendPOSTRequest(config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(bldg, prices), xmlbody, bldg, modNumber)))
+			}
+		}
+	}
 }
 
-func main() {
-	loc_addr := "http://localhost"
-	loc_port := ":8080"
-	if !registerServer("http://epicdr.org:9187/v1/messaging/subscribe?event=PRICE-BAS&target=" + loc_addr + loc_port) {
-		panic("Error failed to register with the Siemens server")
-	}
-
-	http.HandleFunc("/", handler)
-	err := http.ListenAndServe(loc_port, nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+// serverRecover recovers from a paniced server
+func serverRecover(f func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Println("Panic recovered! err:", r)
+				http.Error(w, r.(runtime.Error).Error(), http.StatusInternalServerError)
+			}
+		}()
+		f(w, r)
 	}
 }
