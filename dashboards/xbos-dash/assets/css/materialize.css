@@ -3717,6 +3717,14 @@ table span.badge {
   right: auto;
 }
 
+/*mine*/
+.row .col.s11-5 {
+  width: 93.6666666667%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
 .row .col.s12 {
   width: 100%;
   margin-left: auto;

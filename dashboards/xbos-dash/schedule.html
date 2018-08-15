@@ -96,60 +96,95 @@
 				<a class="col s1 waves-effect waves-light btn">copy</a>
 			</div>
 		</div> -->
-		<div class="section center-align">
-			<div class="row valign-wrapper">
-				<div style="margin-left:0" class="col s1-5">
-					<h6 style="margin-top: 0;">Zone name</h6>
-					<div class="setpnt-div">
-						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
-						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
-					</div>
-					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
-				</div>
-				<div class="col s1-5">
-					<h6 style="margin-top: 0;">Zone name</h6>
-					<div class="setpnt-div">
-						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
-						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
-					</div>
-					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
-				</div>
-				<div class="col s1-5">
-					<h6 style="margin-top: 0;">Zone name</h6>
-					<div class="setpnt-div">
-						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
-						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
-					</div>
-					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
-				</div>
-				<div class="col s1-5">
-					<h6 style="margin-top: 0;">Zone name</h6>
-					<div class="setpnt-div">
-						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
-						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
-					</div>
-					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
-				</div>
-				<div class="col s1-5">
-					<h6 style="margin-top: 0;">Zone name</h6>
-					<div class="setpnt-div">
-						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
-						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
-					</div>
-					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
-				</div>
-			</div>
-			<div class="row valign-wrapper sched-sec">
-				<div class="col stq"><a class="btn-floating btn waves-effect waves-light"><i class="material-icons">add</i></a></div>
-				<div class="col s10-5"><div class="sched-slider" id="sun-slider"></div></div>
-				<div class="col stq"><a class="btn-floating btn waves-effect waves-light red"><i class="material-icons">clear</i></a></div>
-			</div>
+		<div class="fixed-action-btn">
+			<a id="sched-btn" class="btn-floating btn-large red waves-effect waves-light scale-transition">
+				<i class="large material-icons">edit</i>
+			</a>
 		</div>
 		<div class="section center-align">
+			<div id="sun-set" class="row valign-wrapper">
+				<div class="col s1-5">
+					<h6 style="margin-top: 0;">Epoch</h6>
+					<div class="setpnt-div">
+						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
+				</div>
+				<div class="col s1-5">
+					<h6 style="margin-top: 0;">Epoch</h6>
+					<div class="setpnt-div">
+						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
+				</div>
+				<div class="col s1-5">
+					<h6 style="margin-top: 0;">Epoch</h6>
+					<div class="setpnt-div">
+						<input class="red lighten-2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch"><label class="valign-wrapper"><span style="font-size: 16px; margin: 0;">off</span><input class="ogswitch" type="checkbox"><span class="lever"></span></label></div>
+				</div>
+			</div>
 			<div class="row valign-wrapper sched-sec">
-				<div class="col stq"><a class="btn-floating btn waves-effect waves-light"><i class="material-icons">add</i></a></div>
-				<div class="col s10-5"><div class="sched-slider" id="mon-slider"></div></div>
-				<div class="col stq"><a class="btn-floating btn waves-effect waves-light red"><i class="material-icons">clear</i></a></div>
+				<div class="col stq"><h5 style="padding-bottom: 12px;">Sun</h5></div>
+				<div class="col s11-5"><div class="sched-slider" id="sun-slider"></div></div>
+			</div>
+		</div>
+		<div class="row"></div>
+		<div class="section center-align">
+			<div id="mon-set" class="row valign-wrapper">
+			</div>
+			<div class="row valign-wrapper sched-sec">
+				<div class="col stq"><h5 style="padding-bottom: 12px;">Mon</h5></div>
+				<div class="col s11-5"><div class="sched-slider" id="mon-slider"></div></div>
+			</div>
+		</div>
+		<div class="row"></div>
+		<div class="section center-align">
+			<div id="tue-set" class="row valign-wrapper">
+			</div>
+			<div class="row valign-wrapper sched-sec">
+				<div class="col stq"><h5 style="padding-bottom: 12px;">Tue</h5></div>
+				<div class="col s11-5"><div class="sched-slider" id="tue-slider"></div></div>
+			</div>
+		</div>
+		<div class="row"></div>
+		<div class="section center-align">
+			<div id="wed-set" class="row valign-wrapper">
+			</div>
+			<div class="row valign-wrapper sched-sec">
+				<div class="col stq"><h5 style="padding-bottom: 12px;">Wed</h5></div>
+				<div class="col s11-5"><div class="sched-slider" id="wed-slider"></div></div>
+			</div>
+		</div>
+		<div class="row"></div>
+		<div class="section center-align">
+			<div id="thu-set" class="row valign-wrapper">
+			</div>
+			<div class="row valign-wrapper sched-sec">
+				<div class="col stq"><h5 style="padding-bottom: 12px;">Thu</h5></div>
+				<div class="col s11-5"><div class="sched-slider" id="thu-slider"></div></div>
+			</div>
+		</div>
+		<div class="row"></div>
+		<div class="section center-align">
+			<div id="fri-set" class="row valign-wrapper">
+			</div>
+			<div class="row valign-wrapper sched-sec">
+				<div class="col stq"><h5 style="padding-bottom: 12px;">Fri</h5></div>
+				<div class="col s11-5"><div class="sched-slider" id="fri-slider"></div></div>
+			</div>
+		</div>
+		<div class="row"></div>
+		<div class="section center-align">
+			<div id="sat-set" class="row valign-wrapper">
+			</div>
+			<div class="row valign-wrapper sched-sec">
+				<div class="col stq"><h5 style="padding-bottom: 12px;">Sat</h5></div>
+				<div class="col s11-5"><div class="sched-slider" id="sat-slider"></div></div>
 			</div>
 		</div>
 	</div>

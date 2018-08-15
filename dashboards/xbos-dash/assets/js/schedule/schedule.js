@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	M.AutoInit();
 	let c = ["pink", "deep-orange", "green", "teal", "blue", "deep-purple", "tp-blue"];
 	var pips = {
 		mode: "count",
@@ -6,89 +7,111 @@ $(document).ready(function() {
 		density: 2
 	}
 	var master = {
-		start: [1.0, 8.0, 18.0, 23.0],
-		connect: [true, true, true, true, true],
+		start: [8.0, 18.0],
+		connect: [true, true, true],
 		range: {'min': 0, 'max': 24},
-		behaviour: "none",
+		behaviour: "tap-drag",
 		pips: pips
 	}
-	var counts; (counts = []).length = 7; counts.fill(5);
+	var counts; (counts = []).length = 7; counts.fill(3);
+	var sliders = [];
+	var edit = false;
 
 	$(".sched-sec").each(function(i) {
 		var kids = $(this).children();
-		var addbtn = $(kids[0]).children();
 		var slider = $(kids[1]).children()[0];
 		noUiSlider.create(slider, master)
-		var delbtn = $(kids[2]).children();
-
-		addbtn.click(function() {
-			var lst = slider.noUiSlider.get();
-			var ind;
-			if (!$.isArray(lst)) { lst = $.merge([lst], [24.0]); }
-			else {
-				lst = lst.map(function(x) { return parseFloat(x); });
-				if (lst.length == 2) { ind = (lst[0] + lst[1])/2.0; } else if (lst.length >= 6) { return; }
-				else { ind = (lst[Math.floor(lst.length/2)] + lst[Math.floor(lst.length/2) + 1])/2.0; }
-				lst.push(ind);
-				lst.sort(function(a, b) { return a - b; });
-			}
-			// https://stackoverflow.com/questions/18307253/how-to-sort-an-array-of-floats-in-javascript
-			var opts = master;
-			opts.start = lst;
-			var ts; (ts = []).length = lst.length + 1; ts.fill(true); opts.connect = ts;
-			slider.noUiSlider.destroy();
-			noUiSlider.create(slider, opts);
-			console.log(i);
-			counts[i] = lst.length + 1;
-			setConnects();
-		});
-
-		delbtn.click(function() {
-			var lst = slider.noUiSlider.get();
-			if (!$.isArray(lst)) { return; }
-			// https://davidwalsh.name/remove-item-array-javascript
-			else { lst.splice(Math.floor(lst.length/2), 1); }
-			var opts = master;
-			opts.start = lst;
-			var ts; (ts = []).length = lst.length + 1; ts.fill(true); opts.connect = ts;
-			slider.noUiSlider.destroy();
-			noUiSlider.create(slider, opts);
-			counts[i] = lst.length + 1;
-			setConnects();
-		});
+		sliders.push(slider);
 	});
 
-	function myfix(lst) { return lst.map(function(x) { return parseFloat(Math.floor(x)) + parseFloat(Math.floor(((x%1)+.25)/.5))*.5; }); }
+	$("#sched-btn").click(function() {
+		var x = $(this);
+		x.removeClass("scale-in");
+		x.addClass("scale-out");
+		edit = !edit;
+		if (edit) {
+			var s = "save";
+			sliders.forEach(function(elem) { elem.setAttribute("disabled", true); });
+		} else {
+			var s = "edit";
+			sliders.forEach(function(elem) { elem.removeAttribute("disabled"); });
+		}
+		setTimeout(function() {
+			x.html("<i class='large material-icons'>" + s + "</i>");
+			x.removeClass("scale-out");
+			x.addClass("scale-in");
+			clearTimeout(this);
+		}, 250);
+	});
+
+	function myfix(lst) {
+		return lst.map(function(x) {
+			return parseFloat(Math.floor(x)) + parseFloat(Math.floor(((x%1)+.13)/.25))*.25;
+		});
+	}
+
 	function setConnects() {
 		$(".noUi-connect").each(function(i) {
 			$(this).unbind();
 			$(this).click(function() {
-				var c = 0; var sum = 0;
-				while (sum < i + 1) { sum += counts[c]; c += 1; }
-				c -= 1;
-				if (c == 0) { console.log(i); } else { console.log(i - counts[c-1]); }
+				if (!edit) { return; }
+				var row = 0; var sum = 0;
+				while (sum < i + 1) { sum += counts[row]; row += 1; } row -= 1;
+				if (row == 0) { var col = i; } else { var col = i - sum + counts[row]; }
+				var s = sliders[row];
+				var l = s.noUiSlider.get();
+				if (!$.isArray(l)) { l = [l]; }
+				else if (l.length == 6) { return; }
+				l = myfix(l);
+				var last = counts[row] - 1;
+				if (col == 0) {
+					if (l[0] <= 2.5) { l.splice(0, 0, 0.0); }
+					else { l.splice(0, 0, (l[0]/2.0)); }
+				} else if (col == last) {
+					if (l[last - 1] >= 22.5) { l.push(24.0); }
+					else { l.push((24.0 + l[last - 1])/2.0); }
+				} else {
+					// https://stackoverflow.com/questions/586182/how-to-insert-an-item-into-an-array-at-a-specific-index
+					l.splice(col, 0, (l[col] + l[col - 1])/2.0);
+				}
+				l = l.map(function(x) { return x.toString(); });
+				var opts = getOpts();
+				opts.start = l;
+				var ts; (ts = []).length = l.length + 1; ts.fill(true); opts.connect = ts;
+				s.noUiSlider.destroy();
+				noUiSlider.create(s, opts);
+				counts[row] += 1;
+				setConnects();
+				setHandles();
 			});
 		});
-	}
-	setConnects();
+	} setConnects();
 
-	// $(".sched-slider").each(function() { noUiSlider.create(this, monopts); });
+	function setHandles() {
+		$(".noUi-handle").each(function(i) {
+			$(this).unbind();
+			$(this).click(function() {
+				if (!edit) { return; }
+				var row = 0; var sum = 0;
+				while (sum < i + 1) { sum += counts[row] - 1; row += 1; } row -= 1;
+				if (row == 0) { var col = i; } else { var col = i - sum + counts[row] - 1; }
+				var s = sliders[row];
+				var l = s.noUiSlider.get();
+				if (!$.isArray(l)) { return; }
+				// https://davidwalsh.name/remove-item-array-javascript
+				l.splice(col, 1);
+				var opts = getOpts();
+				opts.start = l;
+				var ts; (ts = []).length = l.length + 1; ts.fill(true); opts.connect = ts;
+				s.noUiSlider.destroy();
+				noUiSlider.create(s, opts);
+				counts[row] -= 1;
+				setConnects();
+				setHandles();
+			});
+		});
+	} setHandles();
 
-	// noUiSlider.create(sunslider, monopts);
-	// noUiSlider.create(monslider)
-	// monlist = s.noUiSlider.get();
-	// $("#mon-add").click(function() {
-	// 	monlist = s.noUiSlider.get().map(
-	// 		function(item) {
-	// 			return parseFloat(item);
-	// 		}
-	// 	);
-	// 	monlist = $.merge([0], monlist);
-	// 	console.log(monlist);
-	// 	s.noUiSlider.destroy();
-	// 	monopts.start = monlist;
-	// 	noUiSlider.create(s, monopts);
-	// 	console.log(monopts);
-	// });
+	function getOpts() { return {range: {'min': 0, 'max': 24}, behaviour: "none", pips: pips}; }
 	
 });
