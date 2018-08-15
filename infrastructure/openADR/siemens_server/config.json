@@ -1,6 +1,7 @@
 {
 	"Logging": true,
 	"Registered": true,
+	"IgnoreEpri": false,
 	"AddCert": true,
 	"LocalCertFile": "./client.cer",
 	"LocalCertKey": "./client.key",

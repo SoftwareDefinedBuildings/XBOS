@@ -51,6 +51,7 @@ var curEvtMod map[string]ModNumber
 type Config struct {
 	Logging          bool                //set to true for detailed logging
 	Registered       bool                //set to true if this server is already registered with Siemens
+	IgnoreEpri       bool                //set to true to ignore EPRI signal (consume but don't return predictions)
 	AddCert          bool                //set to true to add the Siemens certificates
 	LocalCertFile    string              //location of client certificate
 	LocalCertKey     string              //location of client key
@@ -562,8 +563,10 @@ func handler(w http.ResponseWriter, req *http.Request) {
 			sendPOSTRequest(config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(event.TargetBuilding, prices), xmlbody, event.TargetBuilding, modNumber)))
 		} else {
 			// if EPRI then don't return predictions (ignore)
-			if event.GroupID == "DLAP_PGAE-APND" || event.GroupID == "DLAP_SCE-APND" {
-				return
+			if config.IgnoreEpri {
+				if event.GroupID == "DLAP_PGAE-APND" || event.GroupID == "DLAP_SCE-APND" {
+					return
+				}
 			}
 			bldgs, _ := config.BuildingTarrif[event.GroupID]
 			for _, bldg := range bldgs {
