@@ -134,7 +134,10 @@ class MDALClient(object):
                         break
                     df = pd.DataFrame(index=pd.to_datetime(times, unit='ns', utc=False))
                     for idx, s in enumerate(data.streams):
-                        df[uuids[idx]] = s.values
+                        if len(s.values) == 0:
+                            df[uuids[idx]] = None
+                        else:
+                            df[uuids[idx]] = s.values
                     df.index = df.index.tz_localize(pytz.utc).tz_convert(tz)
                     response['df'] = df
                     got_response = True
