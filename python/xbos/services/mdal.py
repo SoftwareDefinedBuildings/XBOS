@@ -154,7 +154,7 @@ class MDALClient(object):
                     got_response = True
             df = response.get('df')
             if df is not None:
-                response['df'] = df[~df.index.duplicated(keep='first')]
+                response['df'] = df#[df.index.duplicated(keep='first')]
             if got_response:
                 ev.set()
         h = self.c.subscribe("{0}/s.mdal/_/i.mdal/signal/{1}".format(self.url, self.vk[:-1]), _handleresult)
