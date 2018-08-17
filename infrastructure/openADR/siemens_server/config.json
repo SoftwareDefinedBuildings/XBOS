@@ -1,7 +1,8 @@
 {
 	"Logging": true,
 	"Registered": true,
-	"IgnoreEpri": false,
+	"IgnoreEpri": true,
+	"ClientTimeout": 30,
 	"AddCert": true,
 	"LocalCertFile": "./client.cer",
 	"LocalCertKey": "./client.key",
@@ -10,8 +11,8 @@
 	"SiemensPubServer": "https://",
 	"ServerName": "",
 	"AuthString": "",
-	"Loc_addr": "",
-	"Loc_port": ,
+	"Loc_addr": "https://",
+	"Loc_port": 9673,
 	"BuildingTarrif": {
 		"DLAP_PGAE-APND": [
 			"LBNL",
