@@ -134,7 +134,10 @@ class MDALClient(object):
                         break
                     df = pd.DataFrame(index=pd.to_datetime(times, unit='ns', utc=False))
                     for idx, s in enumerate(data.streams):
-                        df[uuids[idx]] = s.values
+                        if len(s.values) == 0:
+                            df[uuids[idx]] = None
+                        else:
+                            df[uuids[idx]] = s.values
                     df.index = df.index.tz_localize(pytz.utc).tz_convert(tz)
                     response['df'] = df
                     got_response = True
@@ -151,7 +154,7 @@ class MDALClient(object):
                     got_response = True
             df = response.get('df')
             if df is not None:
-                response['df'] = df[~df.index.duplicated(keep='first')]
+                response['df'] = df#[df.index.duplicated(keep='first')]
             if got_response:
                 ev.set()
         h = self.c.subscribe("{0}/s.mdal/_/i.mdal/signal/{1}".format(self.url, self.vk[:-1]), _handleresult)
