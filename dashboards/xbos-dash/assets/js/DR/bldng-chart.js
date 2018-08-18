@@ -175,7 +175,7 @@ $(document).ready(function() {
 				"id": "myXAxis",
 				"type": "category",
 				"plotBands": {
-					"color": "#eeeeee",
+					"color": "#F7B4B6",
 					"from": 14,
 					"to": 18
 				}

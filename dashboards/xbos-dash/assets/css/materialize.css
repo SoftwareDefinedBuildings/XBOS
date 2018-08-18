@@ -4,6 +4,20 @@
   line-height: 2.25;
 }
 
+.mode-card {
+  padding: 14px 0 !important;
+  border-radius: 10px;
+}
+
+.sli-day {
+  font-size: 22px;
+}
+
+.swi-text {
+  font-size: 14px;
+  color: black;
+}
+
 .setpnt-div {
   display: flex;
 }
@@ -698,6 +712,10 @@ body {
 
 .tp-blue {
   background-color: #3B7EA1 !important;
+}
+
+.tp-yellow {
+  background-color: #FDB515 !important; 
 }
 
 .blue {
@@ -3586,7 +3604,7 @@ table span.badge {
 }
 
 .row .col.s1-5 {
-  width: 11%;
+  width: 15%;
   margin-left: auto;
   left: auto;
   right: auto;
