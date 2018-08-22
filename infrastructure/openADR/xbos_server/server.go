@@ -1,10 +1,19 @@
+/*
+ go build -o xbos_price_server
+ ./xbos_price_server
+
+ This server 1) listens for a price signal (in an OpenADR format).
+ 2) Once the signal is recieved, the pricing information for
+ a target tariff is extracted.
+ 3) The pricing information are published to the corresponding utility topic
+*/
+
 package main
 
 import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -21,16 +30,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/sns"
 	"gopkg.in/immesys/bw2bind.v5"
 )
-
-/*
- go build -o xbos_price_server
- ./xbos_price_server
-
- This server 1) listens for a price signal (in an OpenADR format).
- 2) Once the signal is recieved, the pricing information for
- a target tariff is extracted.
- 3) The pricing information are published to the corresponding utility topic
-*/
 
 // configuration file path and variable
 const confPath = "./config.json"
@@ -50,45 +49,57 @@ type Config struct {
 	DisableBW           bool   //set to true to disable publishing to BW
 	Devtopic            string //AWS developer SNS topic
 	Devtopicregion      string //AWS developer SNS topic region
-
 }
 
 // OpenADR structure for parsing the price signal
 type OpenADR struct {
-	XMLName   xml.Name   `xml:"oadrPayload"`
-	RequestID string     `xml:"oadrSignedObject>oadrDistributeEvent>requestID"`
-	EiEvents  []EiEvents `xml:"oadrSignedObject>oadrDistributeEvent>oadrEvent>eiEvent"`
+	XMLName  xml.Name   `xml:"oadrPayload"`
+	EiEvents []EiEvents `xml:"oadrSignedObject>oadrDistributeEvent>oadrEvent>eiEvent"`
 }
 
 // EiEvents structure for parsing the events in a price signal
 type EiEvents struct {
-	XMLName            xml.Name    `xml:"eiEvent"`
-	EventStatus        string      `xml:"eventDescriptor>eventStatus"`
-	ModificationNumber int         `xml:"eventDescriptor>modificationNumber"`
-	EventID            string      `xml:"eventDescriptor>eventID"`
-	StartDate          string      `xml:"eiActivePeriod>properties>dtstart>date-time"` // SIGNAL start date/time
-	TotalDuration      string      `xml:"eiActivePeriod>properties>duration>duration"` // SIGNAL duration PT24=24hours etc.
-	GroupID            string      `xml:"eiTarget>groupID"`
-	SignalName         string      `xml:"eiEventSignals>eiEventSignal>signalName"`
-	ItemUnits          string      `xml:"eiEventSignals>eiEventSignal>currencyPerKWh>itemUnits"`
-	Intervals          []Intervals `xml:"eiEventSignals>eiEventSignal>intervals>interval"` // Intervals in a given Duration
+	XMLName            xml.Name       `xml:"eiEvent"`
+	EventID            string         `xml:"eventDescriptor>eventID"`                         // ID of incoming event
+	ModificationNumber int            `xml:"eventDescriptor>modificationNumber"`              // modification to an existing event
+	EventStatus        string         `xml:"eventDescriptor>eventStatus"`                     // far (future), active (current), complete (past)
+	GroupID            string         `xml:"eiTarget>groupID"`                                // tariff
+	StartDate          string         `xml:"eiActivePeriod>properties>dtstart>date-time"`     // start date/time for entire event
+	TotalDuration      string         `xml:"eiActivePeriod>properties>duration>duration"`     // duration for entire event (PT24=24hours, etc.)
+	SignalName         string         `xml:"eiEventSignals>eiEventSignal>signalName"`         // ENERGY_PRICE or DEMAND_PRICE
+	CurrencyPerKWh     CurrencyPerKWh `xml:"eiEventSignals>eiEventSignal>currencyPerKWh"`     // currency for energy
+	CurrencyPerKW      CurrencyPerKW  `xml:"eiEventSignals>eiEventSignal>currencyPerKW"`      // currency for demand
+	Intervals          []Intervals    `xml:"eiEventSignals>eiEventSignal>intervals>interval"` // Intervals in a given Duration
+}
+
+// CurrencyPerKWh structure for parsing energy price currency
+type CurrencyPerKWh struct {
+	XMLName   xml.Name `xml:"currencyPerKWh"`
+	ItemUnits string   `xml:"itemUnits"`
+}
+
+// CurrencyPerKW structure for parsing demand price currency
+type CurrencyPerKW struct {
+	XMLName   xml.Name `xml:"currencyPerKW"`
+	ItemUnits string   `xml:"itemUnits"`
 }
 
 // Interval structure for parsing the price and duration of each interval
 type Intervals struct {
 	XMLName   xml.Name `xml:"interval"`
-	StartDate string   `xml:"dtstart>date-time"` // Interval start time
-	Duration  string   `xml:"duration>duration"` // PT1H=1hour, PT5H=5hours, etc.
-	Order     int      `xml:"uid>text"`          // Interval order
-	Price     float64  `xml:"signalPayload>payloadFloat>value"`
+	StartDate string   `xml:"dtstart>date-time"`                // Interval start time
+	Duration  string   `xml:"duration>duration"`                // PT1H=1hour, PT5H=5hours, etc.
+	Order     int      `xml:"uid>text"`                         // Interval order
+	Price     float64  `xml:"signalPayload>payloadFloat>value"` // Price for interval
 }
 
 // Price structure for sending the price signal to the a given topic
 type Price struct {
-	Time     int64 // UTC seconds since epoch
-	Duration int64 // in seconds
-	Price    float64
-	Currency int
+	StartTime int64 // UTC seconds since epoch
+	Duration  int64 // in seconds
+	Price     float64
+	Currency  int
+	Time      int64 // UTC seconds since epoch
 }
 
 func main() {
@@ -127,14 +138,14 @@ func configure() {
 	}
 }
 
-// handler handles incoming POST requests from Siemens server
+// handler handles incoming POST requests from Pricing server
 func handler(w http.ResponseWriter, req *http.Request) {
 	// read signal
 	defer req.Body.Close()
 	xmlbody, err := ioutil.ReadAll(req.Body)
 	if xmlbody == nil || err != nil {
 		log.Println("Error: could not read request body or body is empty:", err)
-		http.Error(w, "Error: could not read request body or body is empty:"+err.Error(), http.StatusUnsupportedMediaType)
+		http.Error(w, "Error: could not read request body or body is empty:"+err.Error(), http.StatusBadRequest)
 		notify("XBOS PRICE SERVER - Error: could not read request body or body is empty: "+err.Error(), config.Devtopic, config.Devtopicregion)
 		return
 	}
@@ -144,17 +155,17 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	prices, event, err := parseXMLBody(xmlbody)
-	// if failed to parseXMLBody return an error to Siemens
+	// if failed to parseXMLBody return an error to Pricing
 	if err != nil || prices == nil {
 		log.Println("Error: failed to parse XML price signal, err:", err)
-		http.Error(w, "Error: failed to parse XML price signal, err:"+err.Error(), http.StatusUnsupportedMediaType)
+		http.Error(w, "Error: failed to parse XML price signal, err:"+err.Error(), http.StatusBadRequest)
 		notify("XBOS PRICE SERVER - Error: failed to parse XML price signal, err:"+err.Error(), config.Devtopic, config.Devtopicregion)
 		return
 	}
-	// if the signal doesn't have a tariff or a buildingID return an error to Siemens
+	// if the signal doesn't have a tariff or a buildingID return an error to Pricing Server
 	if event.GroupID == "" {
 		log.Println("Error: target groupID is empty")
-		http.Error(w, "Error: target groupID is empty", http.StatusUnsupportedMediaType)
+		http.Error(w, "Error: target groupID is empty", http.StatusBadRequest)
 		notify("XBOS PRICE SERVER - Error: target groupID is empty", config.Devtopic, config.Devtopicregion)
 		return
 	}
@@ -178,12 +189,10 @@ func handler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	// if signal parsed properly log extracted prices and return OK
-	if config.Logging {
+	// if signal parsed properly log extracted prices
+	if !config.Logging {
 		log.Println("Prices are:", prices, "Target GroupID is:", event.GroupID, "EventID", event.EventID, "Modification Number", event.ModificationNumber)
 	}
-	w.WriteHeader(200)
-	w.Write([]byte("OK"))
 
 	// only publish to far events (ignore active or completed events)
 	if event.EventStatus == "far" {
@@ -193,12 +202,14 @@ func handler(w http.ResponseWriter, req *http.Request) {
 		} else {
 			t += "demand"
 		}
-		if !config.DisableBW {
-			//TODO might change this to publish in a separate goroutine
-			// go subPrices()
-			publishPrices(t, prices)
+		if !publishPrices(t, prices) {
+			http.Error(w, "Error: failed to publish prices to BOSSWAVE", http.StatusInternalServerError)
+			return
 		}
 	}
+	// if signal published properly log extracted prices and return OK
+	w.WriteHeader(200)
+	w.Write([]byte("OK"))
 }
 
 // serverRecover recovers from a paniced server
@@ -215,7 +226,7 @@ func serverRecover(f func(w http.ResponseWriter, r *http.Request)) http.HandlerF
 	}
 }
 
-// parseXMLBody parses PRICE SIGNAL XML from Siemens POST request
+// parseXMLBody parses PRICE SIGNAL XML from Pricing Server POST request
 // returns a Price slice with the necessary PRICE SIGNAL information, a requestID, and event information
 func parseXMLBody(body []byte) ([]Price, EiEvents, error) {
 	xmlbody := OpenADR{}
@@ -256,15 +267,23 @@ func parseXMLBody(body []byte) ([]Price, EiEvents, error) {
 					log.Println("start", start, "st", st)
 					return nil, EiEvents{}, errors.New("Error: interval start date is incorrect")
 				}
-				d := parseDuration(eiEvent.Intervals[i].Duration)
-
-				//TODO Parse ItemUnits properly - waiting on Anand
-				// ItemUnits will be empty if this is a DEMAND_PRICE signal
-				if eiEvent.ItemUnits == "" {
-					eiEvent.ItemUnits = "USD"
+				duration := parseDuration(eiEvent.Intervals[i].Duration)
+				if duration <= 0 {
+					log.Println("duration", duration)
+					return nil, EiEvents{}, errors.New("Error: invalid interval duration")
 				}
-				prices = append(prices, Price{st.UnixNano(), d, eiEvent.Intervals[i].Price, parseCurrency(eiEvent.ItemUnits)})
-				start = start.Add(time.Duration(d) * time.Second)
+				// ItemUnits will be empty if this is a DEMAND_PRICE signal
+				var unit int //default is 0 (not configured)
+				if eiEvent.CurrencyPerKWh.ItemUnits == "" {
+					if eiEvent.CurrencyPerKW.ItemUnits != "" {
+						unit = parseCurrency(eiEvent.CurrencyPerKW.ItemUnits)
+					}
+				} else {
+					unit = parseCurrency(eiEvent.CurrencyPerKWh.ItemUnits)
+				}
+
+				prices = append(prices, Price{st.UnixNano(), duration, eiEvent.Intervals[i].Price, unit, time.Now().UnixNano()})
+				start = start.Add(time.Duration(duration) * time.Second)
 			}
 			// Check total duration equals sum of interval durations
 			// orig, err := parseTime(eiEvent.StartDate[dt_dur_ind])
@@ -293,8 +312,8 @@ func parseTime(t string) (time.Time, error) {
 	return time, err
 }
 
-// parseDuration parses duration from string (PT1H ... PT24H)
-// default is 1H (3600)
+// parseDuration parses duration from string (PT1H ... PT24H) or (PT60M ... PT1440M)
+// returns -1 if not specified
 func parseDuration(d string) int64 {
 	s := strings.TrimPrefix(d, "PT")
 	if strings.HasSuffix(d, "H") {
@@ -303,7 +322,7 @@ func parseDuration(d string) int64 {
 		if err == nil {
 			return 3600 * int64(val)
 		} else {
-			return 3600 // default
+			return -1 // error
 		}
 	} else if strings.HasSuffix(d, "M") {
 		s = strings.TrimSuffix(s, "M")
@@ -311,21 +330,31 @@ func parseDuration(d string) int64 {
 		if err == nil {
 			return 60 * int64(val)
 		} else {
-			return 3600 // default
+			return -1 // error
 		}
 	} else {
-		return 3600 //default
+		return -1 // error
 	}
 }
 
+// parseCurrency parses the currency and returns corresponding value as defined in xbos_pricing interface
 func parseCurrency(d string) int {
+	// 		- value: 0
+	// 			description: Not configured
+	// 		- value: 1
+	// 			description: USD
 	if d == "USD" {
 		return 1
 	} else {
 		return 0
 	}
 }
-func publishPrices(tariff string, prices []Price) {
+
+// publishPrices publishes the prices for a given tariff on the corresponding topic
+func publishPrices(tariff string, prices []Price) bool {
+	if config.DisableBW {
+		return true
+	}
 	// pge/confirmed/pricing/tariff/s.pricing/PGEA01/energy/i.xbos.pricing/signal/info/
 	// sce/confirmed/pricing/tariff/s.pricing/SCE08B/demand/i.xbos.pricing/signal/info/
 	topic := ""
@@ -343,7 +372,7 @@ func publishPrices(tariff string, prices []Price) {
 	if err != nil {
 		log.Println("Error: could not serialize object: ", err)
 		notify("XBOS PRICE SERVER - Error: could not serialize object, err:"+err.Error(), config.Devtopic, config.Devtopicregion)
-		return
+		return false
 	}
 	err = bw2client.Publish(&bw2bind.PublishParams{
 		URI:            iface.SignalURI("info"),
@@ -352,9 +381,13 @@ func publishPrices(tariff string, prices []Price) {
 	})
 	if err != nil {
 		log.Println("Could not publish object: ", err)
-		notify("XBOS PRICE SERVER - Error: ould not publish object, err:"+err.Error(), config.Devtopic, config.Devtopicregion)
-		return
+		notify("XBOS PRICE SERVER - Error: could not publish object, err:"+err.Error(), config.Devtopic, config.Devtopicregion)
+		return false
 	}
+	if config.Logging {
+		log.Println("published prices to BW topic", topic+tariff)
+	}
+	return true
 }
 
 // notify notifies developer when something goes wrong using AWS SNS
@@ -374,25 +407,5 @@ func notify(msg string, topic string, region string) {
 	_, err := svc.Publish(params)
 	if err != nil {
 		log.Println("failed to send SNS", err)
-	}
-}
-
-func subPrices() {
-	c, err := bw2client.Subscribe(&bw2bind.SubscribeParams{
-		URI: "pge/confirmed/pricing/tariff/s.pricing/PGEA01/energy/i.xbos.pricing/signal/info",
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	for msg := range c {
-		var current_state []Price
-		po := msg.GetOnePODF("2.1.1.3/32")
-		err := po.(bw2bind.MsgPackPayloadObject).ValueInto(&current_state)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println(current_state)
-		}
 	}
 }
