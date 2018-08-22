@@ -88,7 +88,7 @@ type Price struct {
 	Time     int64 // UTC seconds since epoch
 	Duration int64 // in seconds
 	Price    float64
-	Currency string
+	Currency int
 }
 
 func main() {
@@ -263,7 +263,7 @@ func parseXMLBody(body []byte) ([]Price, EiEvents, error) {
 				if eiEvent.ItemUnits == "" {
 					eiEvent.ItemUnits = "USD"
 				}
-				prices = append(prices, Price{st.UnixNano(), d, eiEvent.Intervals[i].Price, eiEvent.ItemUnits})
+				prices = append(prices, Price{st.UnixNano(), d, eiEvent.Intervals[i].Price, parseCurrency(eiEvent.ItemUnits)})
 				start = start.Add(time.Duration(d) * time.Second)
 			}
 			// Check total duration equals sum of interval durations
@@ -318,6 +318,13 @@ func parseDuration(d string) int64 {
 	}
 }
 
+func parseCurrency(d string) int {
+	if d == "USD" {
+		return 1
+	} else {
+		return 0
+	}
+}
 func publishPrices(tariff string, prices []Price) {
 	// pge/confirmed/pricing/tariff/s.pricing/PGEA01/energy/i.xbos.pricing/signal/info/
 	// sce/confirmed/pricing/tariff/s.pricing/SCE08B/demand/i.xbos.pricing/signal/info/
