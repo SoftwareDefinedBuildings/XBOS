@@ -4,12 +4,13 @@ Utility Pricing:
     interface: i.xbos.pricing
     signals:
         info:
-            - time
+            - start_time
             - duration
             - price
             - price_unit
+            - time
     properties:
-        time:
+        start_time:
             type: integer
             description: start time for the given price in nanoseconds since the Unix epoch
             required: true
@@ -34,3 +35,8 @@ Utility Pricing:
                   description: Not configured
                 - value: 1
                   description: USD
+        time:
+            type: integer
+            description: time in nanoseconds since the Unix epoch
+            required: false
+            units: ns
