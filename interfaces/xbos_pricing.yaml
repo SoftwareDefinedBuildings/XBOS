@@ -1,6 +1,6 @@
 Utility Pricing:
     ponum: 2.1.1.3
-    description: Standard XBOS utility pricing interface
+    description: Standard XBOS utility pricing interface - this is an array of the following inputs for a given interval (e.g., 24 hours)
     interface: i.xbos.pricing
     signals:
         info:
