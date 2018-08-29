@@ -196,6 +196,7 @@ func parseRows(z *html.Tokenizer) {
 				return
 			}
 			if len(s) > 0 {
+
 				// if one event only and event is today then try again later in case of a consecutive event getting announced later
 				if len(s) == 4 && s[0] == time.Now().Format(layout) {
 					notified = false

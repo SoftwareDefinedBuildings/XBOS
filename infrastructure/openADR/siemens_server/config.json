@@ -1,0 +1,100 @@
+{
+	"Logging": true,
+	"Registered": true,
+	"IgnoreEpri": true,
+	"ClientTimeout": 30,
+	"AddCert": true,
+	"LocalCertFile": "./client.cer",
+	"LocalCertKey": "./client.key",
+	"LocalCACertFile": "./ca.cer",
+	"SiemensSubServer": "https://",
+	"SiemensPubServer": "https://",
+	"ServerName": "",
+	"AuthString": "",
+	"Loc_addr": "https://",
+	"Loc_port": 9673,
+	"BuildingTarrif": {
+		"DLAP_PGAE-APND": [
+			"LBNL",
+			"AAS",
+			"AVH",
+			"ARC",
+			"APWD",
+			"SBSC",
+			"CIEE",
+			"WFCC",
+			"HFS8",
+			"BC",
+			"OCC",
+			"OL",
+			"HFS1",
+			"NBSC",
+			"BCY",
+			"LBS",
+			"AMT",
+			"RFS",
+			"GSH",
+			"SDH"
+		],
+		"DLAP_SCE-APND": [
+			"CSUDH",
+			"JTFCC"
+		],
+		"FLAT06": [
+			"LBNL"
+		],
+		"PGEA01": [
+			"AAS",
+			"AVH",
+			"ARC",
+			"APWD",
+			"SBSC",
+			"CIEE",
+			"WFCC"
+		],
+		"PGEA06": [
+			"HFS8",
+			"BC"
+		],
+		"PGEA10": [
+			"OCC",
+			"OL",
+			"HFS1",
+			"NBSC",
+			"BCY"
+		],
+		"PGEE19": [
+			"LBS",
+			"AMT",
+			"RFS",
+			"GSH"
+		],
+		"PGEE20": [
+			"SDH"
+		],
+		"PGEPDP": [
+			"CIEE",
+			"OL",
+			"OCC",
+			"HFS1",
+			"AVH",
+			"APWD",
+			"AAS",
+			"AMT",
+			"ARC",
+			"SBSC",
+			"NBSC",
+			"WFCC"
+		],
+		"SCE08B": [
+			"CSUDH"
+		],
+		"SCETGS3": [
+			"JTFCC"
+		],
+		"SCEPDP": [
+			"CSUDH",
+			"JTFCC"
+		]
+	}
+}
