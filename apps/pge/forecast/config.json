@@ -1,9 +1,12 @@
 {
+  "Logging": false,
   "Usrtopic" : "arn:aws:sns:us-west-2:459826155428:PGEFORCAST",
   "Usrtopicregion":"us-west-2",
   "Devtopic" : "arn:aws:sns:us-west-2:459826155428:DEV-PGESCE",
   "Devtopicregion":"us-west-2",
-  "Disablenotification": false,
+  "Disablenotification": true,
+  "DisableBWPublish": false,
+  "BWPubtopic"  : "pge/forecast/demand_response",
   "Period": 24,
   "Forecastdays": 5,
   "Pgeurl"  : "https://www.pge.com/resources/csvdb/data/fivedayforecast/SAF_temps1.csv",
