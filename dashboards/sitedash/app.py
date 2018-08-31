@@ -362,10 +362,10 @@ def serve_historipcal_hvac(bucketsize):
 def serve_prediction_hvac(bucketsize):
     return jsonify(hvactest.get_hvac_streams_per_zone(bucketsize))
 
-@app.route('/api/prediction/dr')
+@app.route('/api/prediction/dr/<provider>')
 @crossdomain(origin="*")
-def serve_prediction_dr():
-    return jsonify(drprediction.get_prediction())
+def serve_prediction_dr(provider):
+    return jsonify(drprediction.get_prediction(provider))
 
 @app.route('/api/occupancy/<last>/in/<bucketsize>')
 @crossdomain(origin="*")

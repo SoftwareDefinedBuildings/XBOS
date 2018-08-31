@@ -17,9 +17,11 @@ You either need a BOSSWAVE agent running on your machine, or you can run a ragen
 
 ### DR Endpoints
 
-- `/api/prediction/dr`
+- `/api/prediction/dr/<provider>`
+    - Parameter:
+        - `provider`: one of `pge`, `sce` depending on the site
     - Returns: list of (usually 3) upcoming days and the likelihood of a DR event on those days.
-      The `likelihood` value takes on one of `unlikely`, `possible`, `likely`, `confirmed`.
+      The `likelihood` value takes on one of `no event`, `unlikely`, `possible`, `likely`, or `confirmed`.
         ```json
         {
             "days": [
