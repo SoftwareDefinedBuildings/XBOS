@@ -2,7 +2,7 @@
  go build -o sceforecast
  ./sceforecast
 
- The program runs once every a predefined hour period and checks the likelyhood of
+ The program runs once every a predefined hour period and checks the likelihood of
  an event in the next predefined number of days (MAX forecast is 5 days)
  (e.g., runs once every 24 hours and checks the forecast for the next 5 days)
 
@@ -58,7 +58,7 @@ type Config struct {
 
 // Event structure for publishing to the SCE Forecast DR topic
 type Event struct {
-	Event_likelyhood int64
+	Event_likelihood int64
 	Date             int64
 	Time             int64
 }

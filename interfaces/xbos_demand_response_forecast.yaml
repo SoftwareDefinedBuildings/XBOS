@@ -4,15 +4,15 @@ Demand Response Forecast:
     interface: i.xbos.demand_response_forecast
     signals:
         info:
-            - event_likelyhood
+            - event_likelihood
             - date
             - time
     properties:
-        event_likelyhood:
+        event_likelihood:
             type: integer
-            description: The likelyhood of a DR event
+            description: The likelihood of a DR event
             required: true
-            units: event_likelyhood
+            units: event_likelihood
             enum:
                 - value: 0
                   description: Unlikely event
