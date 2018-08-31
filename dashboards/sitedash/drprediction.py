@@ -31,7 +31,8 @@ def get_prediction(provider):
     forecasts = msgpack.unpackb(pos[0].content)
     for forecast in forecasts:
         day = datetime.fromtimestamp(forecast.get('Date') / 1e9)
-        likelihood = ['unlikely','possible','likely','confirmed'][forecast.get('Event_likelyhood')]
+        print(forecast)
+        likelihood = ['unlikely','possible','likely','confirmed'][forecast.get('Event_likelihood')]
         print('DR event?',day,'=>',likelihood)
         days.append({'date': int(forecast.get('Date')/1e9), 'likelihood': likelihood})
 
