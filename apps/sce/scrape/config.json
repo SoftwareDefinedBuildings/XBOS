@@ -7,6 +7,7 @@
   "DisableBWPublish": false,
   "BWPubtopic"  : "sce/confirmed/demand_response",
   "Sceurl": "https://www.sce.openadr.com/dr.website/scepr-event-status.jsf",
+  "StartTime": "09:30",
   "Period": 24,
   "RetriesPerPeriod": 4,
   "RetryInterval": 2

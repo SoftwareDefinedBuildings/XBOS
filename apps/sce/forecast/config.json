@@ -6,6 +6,7 @@
   "Disablenotification": true,
   "DisableBWPublish": false,
   "BWPubtopic"  : "sce/forecast/demand_response",
+  "RunOnce": true,
   "Period": 24,
   "Forecastdays": 5,
   "Sceurl": "https://www.sce.openadr.com/dr.website/scepr-event-status.jsf"

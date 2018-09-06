@@ -52,6 +52,7 @@ type Config struct {
 	Disablenotification bool   //set true to disable SNS notification
 	DisableBWPublish    bool   //set to true to disable publishing events to BW
 	BWPubtopic          string //BOSSWAVE PGE topic (e.g.,pge/confirmed/demand_response/)
+	RunOnce             bool   //set to true for run this program once otherwise run every Period
 	Period              int    //Overall period in hours to repeat notification (e.g., 24 hours)
 	Forecastdays        int    //Number of days to get the forecast for MAX = 7
 	Pgeurl              string //URL for PG&E temperature forecast
@@ -153,6 +154,10 @@ Main:
 			time.Sleep(500 * time.Millisecond)
 		}
 		publishEvent(events)
+		// if configured to run once then break main otherwise sleep
+		if config.RunOnce {
+			break Main
+		}
 		// run this code once every Period hours (e.g., 24 hours)
 		elapsed := time.Since(start)
 		time.Sleep(time.Duration(config.Period)*time.Hour - elapsed)

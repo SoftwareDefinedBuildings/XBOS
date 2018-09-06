@@ -62,6 +62,7 @@ type Config struct {
 	DisableBWPublish    bool   //set to true to disable publishing events to BW
 	BWPubtopic          string //BOSSWAVE PGE topic (e.g.,pge/confirmed/demand_response/)
 	Sceurl              string //URL for SCE CPP website
+	StartTime           string //Start time for this program in HH:MM format
 	Period              int    //Overall period in hours to repeat notification (e.g., 24 hours)
 	RetriesPerPeriod    int    //Max number of retries per period
 	RetryInterval       int    //Wait time in hours between retries
@@ -77,6 +78,21 @@ type Event struct {
 func main() {
 	httpclient := &http.Client{Timeout: 10 * time.Second}
 	configure()
+	// start this program at the start time
+	ct, err := time.Parse("15:04", config.StartTime)
+	if err != nil {
+		notify("Error: failed to parse config.StartTime. "+err.Error(), config.Devtopic, config.Devtopicregion)
+		log.Fatal(errors.New("Error: failed to parse config.StartTime. " + err.Error()))
+	}
+	ct = time.Date(0, 0, 0, ct.Hour(), ct.Minute(), 0, 0, time.Local)
+	pt := time.Date(0, 0, 0, time.Now().Hour(), time.Now().Minute(), 0, 0, time.Local)
+	if pt.Before(ct) {
+		log.Println("sleeping for:", ct.Sub(pt))
+		time.Sleep(ct.Sub(pt))
+	} else if pt.After(ct) {
+		log.Println("sleeping for:", (time.Duration(config.Period)*time.Hour)-pt.Sub(ct))
+		time.Sleep((time.Duration(config.Period) * time.Hour) - pt.Sub(ct))
+	}
 Main:
 	for {
 		//reload config file in case settings changed
@@ -196,7 +212,6 @@ func parseRows(z *html.Tokenizer) {
 				return
 			}
 			if len(s) > 0 {
-
 				// if one event only and event is today then try again later in case of a consecutive event getting announced later
 				if len(s) == 4 && s[0] == time.Now().Format(layout) {
 					notified = false

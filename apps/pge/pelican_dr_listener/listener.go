@@ -63,6 +63,7 @@ type Config struct {
 	BWPubtopic          string //BOSSWAVE PGE topic (e.g.,pge/confirmed/demand_response/)
 	BTtopicmaxwait      int    //Max wait time in seconds for a message on a topic
 	BTtopictimeoutcount int    //Max number of consecutive timeouts before notifying developer
+	StartTime           string //Start time for this program in HH:MM format
 	Period              int    //Overall period in hours to repeat notification (e.g., 24 hours)
 	RetriesPerPeriod    int    //Max number of retries per period minimum is 1
 	RetryInterval       int    //Wait time in hours between retries
@@ -87,6 +88,21 @@ type Event struct {
 func main() {
 	var timeoutcount int
 	configure()
+	// start this program at the start time
+	ct, err := time.Parse("15:04", config.StartTime)
+	if err != nil {
+		notify("Error: failed to parse config.StartTime. "+err.Error(), config.Devtopic, config.Devtopicregion)
+		log.Fatal(errors.New("Error: failed to parse config.StartTime. " + err.Error()))
+	}
+	ct = time.Date(0, 0, 0, ct.Hour(), ct.Minute(), 0, 0, time.Local)
+	pt := time.Date(0, 0, 0, time.Now().Hour(), time.Now().Minute(), 0, 0, time.Local)
+	if pt.Before(ct) {
+		log.Println("sleeping for:", ct.Sub(pt))
+		time.Sleep(ct.Sub(pt))
+	} else if pt.After(ct) {
+		log.Println("sleeping for:", (time.Duration(config.Period)*time.Hour)-pt.Sub(ct))
+		time.Sleep((time.Duration(config.Period) * time.Hour) - pt.Sub(ct))
+	}
 Main:
 	for {
 		//reload config file in case settings changed

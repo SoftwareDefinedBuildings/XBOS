@@ -1,5 +1,6 @@
 {
   "Logging": false,
+  "RunOnce": true,
   "Usrtopic" : "arn:aws:sns:us-west-2:459826155428:PGEFORCAST",
   "Usrtopicregion":"us-west-2",
   "Devtopic" : "arn:aws:sns:us-west-2:459826155428:DEV-PGESCE",

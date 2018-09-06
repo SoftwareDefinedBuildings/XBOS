@@ -51,6 +51,7 @@ type Config struct {
 	Disablenotification bool   //set true to disable SNS notification
 	DisableBWPublish    bool   //set to true to disable publishing events to BW
 	BWPubtopic          string //BOSSWAVE PGE topic (e.g.,pge/confirmed/demand_response/)
+	RunOnce             bool   //set to true for run this program once otherwise run every Period
 	Period              int    //Overall period in hours to repeat notification (e.g., 24 hours)
 	Forecastdays        int    //Number of days to get the forecast for MAX = 6
 	Sceurl              string //URL for SCE  forecast
@@ -100,6 +101,10 @@ Main:
 					}
 				}
 			}
+		}
+		// if configured to run once then break main otherwise sleep
+		if config.RunOnce {
+			break Main
 		}
 		// run this code once every Period hours (e.g., 24 hours)
 		elapsed := time.Since(start)
