@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	M.AutoInit();
 	let numz = 9;
 	var i = 0;
 	while (i < numz) {

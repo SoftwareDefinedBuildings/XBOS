@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>XBOS Dashboard</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel='shortcut icon' type='image/png' href='./assets/img/favicon2.png'/>
+	<link rel='stylesheet' href='./assets/css/materialize.css'>
+	<link rel='stylesheet' href='./assets/css/nouislider.css'>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+<body id="body" class="">
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper tp-blue">
+				<a href="#" class="brand-logo" style="padding-left: 15px;">XBOS-DR</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="index.html">Home</a></li>
+					<li class="active"><a href="#">Schedule</a></li>
+					<li><a href="report.html">Report</a></li>
+					<li><a href="DR.html">DR</a></li>
+					<li><a href="settings.html">Settings</a></li>
+					<li><a id="weatherLI">73</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper materialize-red lighten-2">
+				<div class="col s12">
+					<a href="schedule-groupings.html" class="breadcrumb" style="padding-left: 15px;">Groupings</a>
+					<a href="schedule-modes.html" class="breadcrumb">Modes</a>
+					<a href="#!" class="breadcrumb">Epochs</a>
+				</div>
+			</div>
+		</nav>
+	</div>
+
+	<div id="DRBG" class="row center-align z-depth-1 scale-transition pulse scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
+
+	<div class="container">
+		<div class="fixed-action-btn" style="left: 23px; right: auto;">
+			<a href="schedule-modes.html" class="btn-floating tooltipped btn-large blue" data-position="top" data-tooltip="Modes">
+				<i class="large material-icons">arrow_back</i>
+			</a>
+		</div>
+		<div class="fixed-action-btn">
+			<a id="sched-btn" class="btn-floating btn-large red waves-effect waves-light scale-transition">
+				<i class="large material-icons">edit</i>
+			</a>
+		</div>
+		<div class="row"></div>
+		<div class="row"></div>
+		<div class="row"></div>
+		<div class="row">
+			<div class="valign-wrapper" style="padding-top: 40px;">
+				<div class="col s1 center-align"><span class="sli-day">Sun</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 center-align"><span class="sli-day">Mon</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 center-align"><span class="sli-day">Tue</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 center-align"><span class="sli-day">Wed</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 center-align"><span class="sli-day">Thu</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 center-align"><span class="sli-day">Fri</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 center-align"><span class="sli-day">Sat</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="assets/js/lib/materialize.js"></script>
+<script type="text/javascript" src="assets/js/lib/jquery.js"></script>
+<script type="text/javascript" src="assets/js/script.js"></script>
+<script type="text/javascript" src="assets/js/lib/nouislider.js"></script>
+<script type="text/javascript" src="assets/js/schedule/schedule-epochs.js"></script>
+
+</html>
