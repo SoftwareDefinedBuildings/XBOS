@@ -150,7 +150,7 @@ func parseTable(z *html.Tokenizer) {
 							if s == "EXTREMELY HOT SUMMER WEEKDAY" {
 								events = append(events, Event{2, evt.UnixNano(), time.Now().UnixNano()})
 								notify("SCE CPP DR Event likely to happen on: "+t.Data+" from: 2:00 pm to 6:00 pm", config.Usrtopic, config.Usrtopicregion)
-							} else if s == "HOT SUMMER WEEKDAY" || s ="VERY HOT SUMMER WEEKDAY" {
+							} else if s == "HOT SUMMER WEEKDAY" || s == "VERY HOT SUMMER WEEKDAY" {
 								events = append(events, Event{1, evt.UnixNano(), time.Now().UnixNano()})
 							} else {
 								events = append(events, Event{0, evt.UnixNano(), time.Now().UnixNano()})
