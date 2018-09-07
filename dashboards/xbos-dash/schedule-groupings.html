@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>XBOS Dashboard</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel='shortcut icon' type='image/png' href='./assets/img/favicon2.png'/>
+	<link rel='stylesheet' href='./assets/css/materialize.css'>
+	<link rel='stylesheet' href='./assets/css/nouislider.css'>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+<body id="body" class="">
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper tp-blue">
+				<a href="#" class="brand-logo" style="padding-left: 15px;">XBOS-DR</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="index.html">Home</a></li>
+					<li class="active"><a href="#">Schedule</a></li>
+					<li><a href="report.html">Report</a></li>
+					<li><a href="DR.html">DR</a></li>
+					<li><a href="settings.html">Settings</a></li>
+					<li><a id="weatherLI">73</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper materialize-red lighten-2">
+				<div class="col s12">
+					<a href="#!" class="active breadcrumb">Groupings</a>
+					<a href="#!" class="breadcrumb">Modes</a>
+					<a href="#!" class="breadcrumb">Epochs</a>
+				</div>
+			</div>
+		</nav>
+	</div>
+
+	<div id="DRBG" class="row center-align z-depth-1 scale-transition pulse scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
+
+	<div id="container" class="container">
+		<div class="row center-align">
+			<div class="col s6 push-s2">
+				<a id="add-group" class="waves-effect waves-light btn">add group</a>
+			</div>
+			<div class="col s6 pull-s2">
+				<a id="del-group" class="waves-effect waves-light btn red">remove group</a>
+			</div>
+		</div>
+		<div class="row"></div>
+	</div>
+</body>
+
+<script type="text/javascript" src="assets/js/lib/materialize.js"></script>
+<script type="text/javascript" src="assets/js/lib/jquery.js"></script>
+<script type="text/javascript" src="assets/js/script.js"></script>
+<script type="text/javascript" src="assets/js/lib/nouislider.js"></script>
+<script type="text/javascript" src="assets/js/schedule/schedule-groupings.js"></script>
+
+</html>

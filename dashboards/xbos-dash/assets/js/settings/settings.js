@@ -5,7 +5,7 @@ $(document).ready(function() {
 	function addEntry() {
 		if (rows >= 20) { M.toast({ html: 'You can only subscribe 40 users at once.', classes: 'red', displayLength: 3000 }); return; }
 		rows += 1;
-		$("#notif-card").append("<div id='emails-" + emnum + "' class='row valign-wrapper'><div class='input-field col s5'><input class='validate' type='email'></div><div class='col tiny'></div><div class='input-field col s5'><input class='validate' type='email'></div><div class='col s1-7 center-align'><a id='emails-" + emnum + "-del' class='btn-floating waves-effect waves-light red btn'><i class='material-icons'>clear</i></a></div></div>");
+		$("#notif-card").append("<div id='emails-" + emnum + "' class='row valign-wrapper'><div class='input-field col s5'><input class='validate' type='email'><label>Email Address</label></div><div class='col tiny'></div><div class='input-field col s5'><input class='validate' type='email'><label>Email Address</label></div><div class='col s1-7 center-align'><a id='emails-" + emnum + "-del' class='btn-floating waves-effect waves-light red btn'><i class='material-icons'>clear</i></a></div></div>");
 		$("#emails-" + emnum + "-del").click(function() { rows -= 1; $("#" + this.id.replace("-del", "")).remove(); });
 		emnum += 1;
 	}
