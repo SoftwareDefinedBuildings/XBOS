@@ -171,8 +171,16 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	}
 	// write XML to file
 	if config.SaveXML {
-		dir := filepath.Join(config.XMLDir, event.GroupID)
-		file := filepath.Join(dir, event.EventID+"_"+strconv.Itoa(time.Now().Nanosecond())+".xml")
+		d := "PGE"
+		if strings.HasPrefix(event.GroupID, "SCE") {
+			d = "SCE"
+		}
+		t := "demand"
+		if event.SignalName == "ENERGY_PRICE" {
+			t = "energy"
+		}
+		dir := filepath.Join(config.XMLDir, d, event.GroupID)
+		file := filepath.Join(dir, strconv.Itoa(time.Now().Nanosecond())+"_"+event.EventID+"_"+strconv.Itoa(event.ModificationNumber)+"_"+t+".xml")
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
 			err = os.MkdirAll(dir, 0755)
 			if err != nil {
@@ -190,7 +198,7 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// if signal parsed properly log extracted prices
-	if !config.Logging {
+	if config.Logging {
 		log.Println("Prices are:", prices, "Target GroupID is:", event.GroupID, "EventID", event.EventID, "Modification Number", event.ModificationNumber)
 	}
 
@@ -384,9 +392,7 @@ func publishPrices(tariff string, prices []Price) bool {
 		notify("XBOS PRICE SERVER - Error: could not publish object, err:"+err.Error(), config.Devtopic, config.Devtopicregion)
 		return false
 	}
-	if config.Logging {
-		log.Println("published prices to BW topic", topic+tariff)
-	}
+	log.Println("published prices: ", prices, "to BW topic:", topic+tariff)
 	return true
 }
 

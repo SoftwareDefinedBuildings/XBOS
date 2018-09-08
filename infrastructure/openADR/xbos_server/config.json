@@ -2,9 +2,9 @@
 	"Logging": false,
 	"Devtopic" : "arn:aws:sns:us-west-2:459826155428:DEV-XBOSPRICE",
   "Devtopicregion":"us-west-2",
-  "DisableNotification": true,
+  "DisableNotification": false,
 	"DisableBW": false,
 	"SaveXML": true,
 	"XMLDir":"./xml",
-	"Loc_port": 9673
+	"Loc_port": 9674
 }

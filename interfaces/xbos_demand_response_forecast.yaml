@@ -1,0 +1,32 @@
+Demand Response Forecast:
+    ponum: 2.1.1.11
+    description: Standard XBOS demand response forecast interface - this is an array of the following inputs for a given number of days (e.g., 5 days)
+    interface: i.xbos.demand_response_forecast
+    signals:
+        info:
+            - event_likelihood
+            - date
+            - time
+    properties:
+        event_likelihood:
+            type: integer
+            description: The likelihood of a DR event
+            required: true
+            units: event_likelihood
+            enum:
+                - value: 0
+                  description: Unlikely event
+                - value: 1
+                  description: Possible event
+                - value: 2
+                  description: Likely event
+        date:
+            type: integer
+            description: nanoseconds since the Unix epoch for a given day (at midnight local time)
+            required: true
+            units: ns
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
+            units: ns

@@ -3,10 +3,12 @@
   "Usrtopicregion":"us-west-2",
   "Devtopic": "arn:aws:sns:us-west-2:459826155428:DEV-PGESCE",
   "Devtopicregion":"us-west-2",
-  "Disablenotification": false,
+  "Disablenotification": true,
+  "DisableBWPublish": false,
+  "BWPubtopic"  : "sce/confirmed/demand_response",
   "Sceurl": "https://www.sce.openadr.com/dr.website/scepr-event-status.jsf",
+  "StartTime": "09:30",
   "Period": 24,
-  "RetriesPerPeriod": 3,
+  "RetriesPerPeriod": 4,
   "RetryInterval": 2
-
 }
