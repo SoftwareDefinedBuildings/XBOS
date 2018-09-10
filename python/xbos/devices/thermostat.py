@@ -12,6 +12,8 @@ class Thermostat(object):
         self._uri = uri.rstrip('/')
         self._state = {
          "cooling_setpoint": None,
+         "enabled_cool_stages": None,
+         "enabled_heat_stages": None,
          "fan_mode": None,
          "fan_state": None,
          "heating_setpoint": None,
@@ -44,6 +46,14 @@ class Thermostat(object):
     @property
     def cooling_setpoint(self, timeout=30):
         return read_self_timeout(self, 'cooling_setpoint', timeout)
+
+    @property
+    def enabled_cool_stages(self, timeout=30):
+        return read_self_timeout(self, 'enabled_cool_stages', timeout)
+
+    @property
+    def enabled_heat_stages(self, timeout=30):
+        return read_self_timeout(self, 'enabled_heat_stages', timeout)
 
     @property
     def fan_mode(self, timeout=30):
