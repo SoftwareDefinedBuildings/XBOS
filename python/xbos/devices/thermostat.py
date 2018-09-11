@@ -107,3 +107,9 @@ class Thermostat(object):
     def set_fan_mode(self, value):
         self.write({'fan_mode': value})
 
+    def set_enabled_heat_stages(self, value):
+        self.write({'enabled_heat_stages': value})
+
+    def set_enabled_cool_stages(self, value):
+        self.write({'enabled_cool_stages': value})
+
