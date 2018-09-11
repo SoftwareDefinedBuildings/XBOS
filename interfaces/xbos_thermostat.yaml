@@ -26,6 +26,8 @@ Thermostat:
             - override
             - mode
             - fan_mode
+            - enabled_heat_stages
+            - enabled_cool_stages
         stages:
             - enabled_heat_stages
             - enabled_cool_stages
