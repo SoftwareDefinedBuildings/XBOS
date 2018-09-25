@@ -97,8 +97,9 @@ Main:
 	for {
 		//reload config file in case settings changed
 		loadConfigFile()
+		start := time.Now()
 		for i := 0; i < config.RetriesPerPeriod; i++ {
-			start := time.Now()
+			start = time.Now()
 			// request and parse the front page
 			resp, err := httpclient.Get(config.Sceurl)
 			if err != nil {
@@ -134,13 +135,13 @@ Main:
 				time.Sleep(time.Duration(config.Period-(i*config.RetryInterval))*time.Hour - elapsed)
 				continue Main
 			}
-			// nothing is confirmed for tomorrow publish no event and try again later
-			evt := time.Date(start.Year(), start.Month(), start.Day()+1, 0, 0, 0, 0, time.Local)
-			publishEvent(Event{0, evt.UnixNano(), time.Now().UnixNano()})
-
+			// nothing is confirmed for tomorrow try again later
 			// run this code RetriesPerPeriod times at RetryInterval hour intervals (e.g., 9:30am, 11:30am, and 1:30pm) if needed
 			time.Sleep(time.Duration(config.RetryInterval)*time.Hour - elapsed)
 		}
+		// nothing is confirmed for tomorrow publish no event
+		evt := time.Date(start.Year(), start.Month(), start.Day()+1, 0, 0, 0, 0, time.Local)
+		publishEvent(Event{0, evt.UnixNano(), time.Now().UnixNano()})
 		// repeat the next day
 		time.Sleep(time.Duration(config.Period-(config.RetryInterval*config.RetriesPerPeriod)) * time.Hour)
 	}
