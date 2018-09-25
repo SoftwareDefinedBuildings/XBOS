@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+//This is designed to be included by the main xbos proto file and includes the
+//definitions for the Hamilton project
+//
+//Version 1.0
+package xbospb;
+
+//Data emitted from Hamilton Sensors
+//Maintainer: Michael Andersen
+message HamiltonData {
+  uint32 serial = 1;
+  string model = 2;
+  uint64 time = 3;
+  Hamilton3C h3c = 4;
+}
+
+//Data specific to a Hamilton 3C/7C sensor
+//Maintainer: Michael Andersen
+message Hamilton3C {
+  uint64 uptime = 1;
+  uint32 flags = 2;
+  double acc_x = 3;
+  double acc_y = 4;
+  double acc_z = 5;
+  double mag_x = 6;
+  double mag_y = 7;
+  double mag_z = 8;
+  double tmp_die = 9;
+  double tmp_voltage = 10;
+  double air_temp = 11;
+  double air_hum = 12;
+  double air_rh = 13;
+  double light_lux = 14;
+  uint32 buttons = 15;
+  double occupancy = 16;
+}

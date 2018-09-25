@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+// This defines the protocol buffers used by XBOS with WaveMQ. The schema for
+// a wavemq xbos proto message is:
+//   xbosproto/RootMessageType
+//
+// Version 1.0
+package xbospb;
+
+
+// Hamilton Project definitions
+import "hamilton.proto";
