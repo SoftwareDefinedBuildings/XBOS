@@ -35,3 +35,50 @@ message Hamilton3C {
   uint32 buttons = 15;
   double occupancy = 16;
 }
+
+//Data specific to a Hamilton 330/370 sensor
+//Maintainer: Michael Andersen
+message Hamilton330 {
+  uint64 uptime = 1;
+  uint32 flags = 2;
+  double acc_x = 3;
+  double acc_y = 4;
+  double acc_z = 5;
+  double mag_x = 6;
+  double mag_y = 7;
+  double mag_z = 8;
+  double tmp_die = 9;
+  double tmp_voltage = 10;
+  double air_temp = 11;
+  double air_hum = 12;
+  double air_rh = 13;
+  double light_lux = 14;
+  uint32 buttons = 15;
+  double occupancy = 16;
+}
+
+//Published by Hamilton Border routers periodically
+message HamiltonBRLinkStats {
+  uint64 BadFrames = 1;
+  uint64 LostFrames = 2;
+  uint64 DropNotConnected = 3;
+  uint64 SumSerialReceived = 4;
+  uint64 SumDomainForwarded = 5;
+  uint64 SumDropNotConnected = 6;
+  uint64 SumDomainReceived = 7;
+  uint64 SumSerialForwarded = 8;
+  uint64 PublishOkay = 9;
+  uint64 PublishError = 10;
+}
+
+//Published by Hamilton Border routers for each message
+message HamiltonBRMessage {
+  string SrcMAC = 1;
+  string SrcIP = 2;
+  string PopID = 3;
+  int64 PopTime = 4;
+  int64 BRTime = 5;
+  int32 RSSI = 6;
+  int32 LQI = 7;
+  bytes Payload = 8;
+}

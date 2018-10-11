@@ -10,3 +10,15 @@ package xbospb;
 
 // Hamilton Project definitions
 import "hamilton.proto";
+
+
+
+// Root union type
+// We reserve 50 fields per imported file
+message XBOS {
+
+  //Hamilton Fields
+  HamiltonData HamiltonData = 50;
+  HamiltonBRLinkStats HamiltonBRLinkStats = 51;
+  HamiltonBRMessage HamiltonBRMessage = 52;
+}
