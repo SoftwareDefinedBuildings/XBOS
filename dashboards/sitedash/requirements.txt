@@ -1,6 +1,6 @@
 xbos>=0.0.28
 pycapnp>=0.6.2
-Flask==0.12.2
+flask>=0.12.3
 gwd>=1.3.0
 msgpack-python>=0.4.8
 Flask-BasicAuth>=0.2.0
