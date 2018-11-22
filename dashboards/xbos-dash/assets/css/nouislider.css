@@ -109,7 +109,8 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   border-radius: 3px;
 }
 .noUi-connect {
-  background: #3FB8AF;
+  background: #DDD;
+  cursor: pointer !important;
 }
 
 /* Handles and cursors;
@@ -158,14 +159,20 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 }
 /* Disabled state;
  */
-/*[disabled] .noUi-connect {
-  background: #B8B8B8;
-}*/
+[disabled] .noUi-connect {
+  /*background: #B8B8B8;*/
+  cursor: pointer;
+}
+
+[disabled] .noUi-handle {
+  cursor: pointer;
+}
+
 [disabled] .noUi-target,
-[disabled] .noUi-handle,
 [disabled] .noUi-draggable,
 [disabled] .noUi-vertical .noUi-draggable {
-  cursor: default;
+  cursor: pointer;
+  /*background: #B8B8B8;*/
 }
 /* Base;
  *

@@ -1,40 +1,39 @@
 $(document).ready(function() {
 	M.AutoInit();
-	let numz = 9;
-	var i = 0;
-	while (i < numz) {
-		$("#container").append("<div class='row valign-wrapper center-align sel-col'></div>");
-		i += 1;
+	var zoneSel = 0;
+	var zoneArr = [];
+	$(".filled-in").each(function() {
+		$(this).click(function() {
+			var t = $(this).find("span").prevObject["0"]["labels"][0]["innerText"];
+			if ($(this).prop("checked")) {
+				zoneSel += 1;
+				zoneArr.push(t);
+				console.log(zoneArr);
+			} else {
+				zoneSel -= 1;
+				zoneArr.splice($.inArray(t, zoneArr), 1);
+				console.log(zoneArr);
+			}
+			setGB();
+		});
+	});
+
+	function setGB() {
+		$("#group-btn").html("Group Selected (" + zoneSel + ")");
 	}
 
-	var numg = 9;
-	var x;
-	$(".sel-col").each(function(i) {
-		i += 1;
-		x = 0;
-		$(this).append("<div style='margin-left: 0;' class='col s2-7'><h6>Zone " + i + "</h6></div>");
-		while (x < numg) {
-			$(this).append("<div class='col tiny-2'><label><input class='with-gap' name='group" + i + "' type='radio' /><span></span></label></div>");
-			x += 1;
+	$("#group-btn").click(function() {
+		if (zoneSel == 0) {
+			$("#modal-continue").addClass("disabled");
+			$("#modal-header").html("Select at least one zone to form a group");
+			$("#modal-text").html("");
+		} else {
+			$("#modal-continue").removeClass("disabled");
+			var s = "Form a group with the following ";
+			if (zoneSel == 1) { s += "zone:"; } else { s += zoneSel + " zones:"; }
+			$("#modal-header").html(s);
+			$("#modal-text").html(zoneArr.join("<br>"));
 		}
 	});
 
-	$("#add-group").click(function() {
-		numg += 1;
-		if (numg > 17) { numg = 17; return; }
-		$(".sel-col").each(function(i) {
-			i += 1;
-			$(this).append("<div class='col tiny-2'><label><input class='with-gap' name='group" + i + "' type='radio' /><span></span></label></div>");
-		});
-	});
-
-
-	$("#del-group").click(function() {
-		numg -=1;
-		if (numg < 1) { numg = 1; return; }
-		$(".sel-col").each(function() {
-			// https://stackoverflow.com/questions/30492918/
-			$(this).children().last().remove();
-		});
-	});
 });

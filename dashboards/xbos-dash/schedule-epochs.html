@@ -33,8 +33,7 @@
 			<div class="nav-wrapper materialize-red lighten-2">
 				<div class="col s12">
 					<a href="schedule-groupings.html" class="breadcrumb" style="padding-left: 15px;">Groupings</a>
-					<a href="schedule-modes.html" class="breadcrumb">Modes</a>
-					<a href="#!" class="breadcrumb">Epochs</a>
+					<a href="#" class="breadcrumb">Modes</a>
 				</div>
 			</div>
 		</nav>
@@ -42,47 +41,252 @@
 
 	<div id="DRBG" class="row center-align z-depth-1 scale-transition pulse scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
 
-	<div class="container">
+	<div class="container" style="padding-bottom: 100px;">
+		<!-- <div class="row valign-wrapper"> -->
+			<!-- <div class="col s1-7"> -->
+				<!-- <a class="waves-effect waves-light btn">Apply To</a> -->
+			<!-- </div> -->
+			<!-- <div class="col s10-3"> -->
+		<!-- <div class="row valign-wrapper"> -->
+			<!-- <div class="col s11"> -->
+		<h4 id="location" style="margin: 0 0 0 35px;">Modes for </h4>
+			<!-- </div> -->
+			<!-- <div class="col s1"> -->
+				<!-- <a id="save-modes" class="waves-effect waves-light btn btn-large">Apply</a> -->
+			<!-- </div> -->
+		<!-- </div> -->
+		<h5 style="margin: 0 0 0 35px;">Customize modes and asdfas fasd f adsf asdf dsa fa sf asdf select one. a nob to remove it or cas df saf asdf asd fasdfasf asfasdfsafsdafas df asf asdf fsdlick </h5>
+			<!-- </div> -->
+		<!-- </div> -->
 		<div class="fixed-action-btn" style="left: 23px; right: auto;">
-			<a href="schedule-modes.html" class="btn-floating tooltipped btn-large blue" data-position="top" data-tooltip="Modes">
+			<a href="schedule-groupings.html" class="btn-floating tooltipped btn-large blue" data-position="top" data-tooltip="Modes">
 				<i class="large material-icons">arrow_back</i>
 			</a>
 		</div>
 		<div class="fixed-action-btn">
-			<a id="sched-btn" class="btn-floating btn-large red waves-effect waves-light scale-transition">
-				<i class="large material-icons">edit</i>
+			<a id="apply-modes" class="btn-floating btn-large waves-effect waves-light scale-transition">
+				<i class="large material-icons">save</i>
 			</a>
 		</div>
-		<div class="row"></div>
-		<div class="row"></div>
-		<div class="row"></div>
+		<!-- <div class="section">
+			<div id="mode-dels" class="row valign-wrapper center-align">
+				<div class="col s2">
+					<i class="material-icons">clear</i>
+				</div>
+				
+				<div class="col s2">
+					<label>
+						<input class="with-gap" name="group1" type="radio" />
+						<span></span>
+					</label>
+				</div>
+				
+				<div class="col s2">
+					<label>
+						<input class="with-gap" name="group1" type="radio" />
+						<span></span>
+					</label>
+				</div>
+
+				<div id="mode-stq" class="col stq"></div>
+			</div>
+		</div> -->
+		<div class="section">
+			<div id="mode-div" class="row center-align valign-wrapper">
+				<!-- <div id="first-mode" class="col s2 z-depth-1 tp-blue mode-card"> -->
+				<div class="col s2 z-depth-1 tp-blue mode-card">
+<!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
+						<i style="cursor: pointer;" class="material-icons">clear</i>
+					</div> -->
+					<input style="padding: 12px 0 10px 0;" id="mode0" type="text" maxlength="10" value="Closed" class="my-input mode-title" />
+					<div class="setpnt-div" style="padding-top: 8px;">
+						<input class="red lighten-2 spl" maxlength="2" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2 spr" maxlength="2" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch">
+						<label>
+							<!-- <span class="swi-text">off</span> -->
+							<input class="ogswitch" type="checkbox">
+							<span class="lever"></span>
+							<!-- <span class="swi-text">on</span> -->
+						</label>
+					</div>
+				</div>
+				<div class="col s2 z-depth-1 tp-yellow mode-card">
+<!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
+						<i style="cursor: pointer;" class="material-icons">clear</i>
+					</div> -->
+					<input style="padding: 12px 0 10px 0;" id="mode1" type="text" maxlength="10" value="Open" class="my-input mode-title" />
+					<div class="setpnt-div" style="padding-top: 8px;">
+						<input class="red lighten-2 spl" maxlength="2" value=70 type="number" max="72" min="35" />
+						<input class="blue lighten-2 spr" maxlength="2" value=75 type="number" max="90" min="74" />
+					</div>
+					<div class="switch">
+						<label>
+							<!-- <span class="swi-text">off</span> -->
+							<input class="ogswitch" type="checkbox">
+							<span class="lever"></span>
+							<!-- <span class="swi-text">on</span> -->
+						</label>
+					</div>
+				</div>
+				<div style="background-color: #cab2d6;" class="col s2 z-depth-1 mode-card">
+<!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
+						<i style="cursor: pointer;" class="material-icons">clear</i>
+					</div> -->
+					<input style="padding: 12px 0 10px 0;" id="mode2" type="text" maxlength="10" value="Other" class="my-input mode-title" />
+					<div class="setpnt-div" style="padding-top: 8px;">
+						<input class="red lighten-2 spl  maxlength="2"right maxlength="2"-align" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2 spr" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch">
+						<label>
+							<!-- <span class="swi-text">off</span> -->
+							<input class="ogswitch" type="checkbox">
+							<span class="lever"></span>
+							<!-- <span class="swi-text">on</span> -->
+						</label>
+					</div>
+				</div>
+
+				<div style="background-color: #fccde5;" class="col s2 z-depth-1 mode-card">
+<!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
+						<i style="cursor: pointer;" class="material-icons">clear</i>
+					</div> -->
+					<input style="padding: 12px 0 10px 0;" id="mode2" type="text" maxlength="10" value="Other" class="my-input mode-title" />
+					<div class="setpnt-div" style="padding-top: 8px;">
+						<input class="red lighten-2 spl  maxlength="2"right maxlength="2"-align" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2 spr" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch">
+						<label>
+							<!-- <span class="swi-text">off</span> -->
+							<input class="ogswitch" type="checkbox">
+							<span class="lever"></span>
+							<!-- <span class="swi-text">on</span> -->
+						</label>
+					</div>
+				</div>
+
+				<div style="background-color: #b2df8a;" class="col s2 z-depth-1 mode-card">
+<!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
+						<i style="cursor: pointer;" class="material-icons">clear</i>
+					</div> -->
+					<input style="padding: 12px 0 10px 0;" id="mode2" type="text" maxlength="10" value="Other" class="my-input mode-title" />
+					<div class="setpnt-div" style="padding-top: 8px;">
+						<input class="red lighten-2 spl  maxlength="2"right maxlength="2"-align" value=55 type="number" max="72" min="35" />
+						<input class="blue lighten-2 spr" value=85 type="number" max="90" min="74" />
+					</div>
+					<div class="switch">
+						<label>
+							<!-- <span class="swi-text">off</span> -->
+							<input class="ogswitch" type="checkbox">
+							<span class="lever"></span>
+							<!-- <span class="swi-text">on</span> -->
+						</label>
+					</div>
+				</div>
+
+<!-- 				<div class="col stq">
+					<a id="save-modes" class="btn btn-floating waves-effect waves-light">
+						<i class="large material-icons">save</i>
+					</a>
+				</div> -->
+
+
+				<!-- <div id="mode-btn-div" class="col stq">
+					<a id="mode-btn" class="btn btn-floating waves-effect waves-light">
+						<i class="large material-icons">add</i>
+					</a>
+					<div class="row"></div>
+					<a id="mode-edit" class="btn btn-floating waves-effect blue waves-light scale-transition">
+						<i class="large material-icons">edit</i>
+					</a>
+				</div> -->
+			</div>
+			<div id="mode-radios" class="row valign-wrapper center-align">
+				<!-- <div id="first-radio" class="col s2"> -->
+				<div class="col s2">
+					<label>
+						<input id="mc0" class="with-gap" name="group1" type="radio" checked/>
+						<span style="margin-left: 6px;"></span>
+					</label>
+				</div>
+				
+				<div class="col s2">
+					<label>
+						<input id="mc1" class="with-gap" name="group1" type="radio" />
+						<span style="margin-left: 6px;"></span>
+					</label>
+				</div>
+				
+				<div class="col s2">
+					<label>
+						<input id="mc2" class="with-gap" name="group1" type="radio" />
+						<span style="margin-left: 6px;"></span>
+					</label>
+				</div>
+				<div class="col s2">
+					<label>
+						<input id="mc3" class="with-gap" name="group1" type="radio" />
+						<span style="margin-left: 6px;"></span>
+					</label>
+				</div>
+				<div class="col s2">
+					<label>
+						<input id="mc4" class="with-gap" name="group1" type="radio" />
+						<span style="margin-left: 6px;"></span>
+					</label>
+				</div>
+
+				<!-- <div id="mode-stq" class="col stq"></div> -->
+			</div>
+		</div>
+		<!-- <div class="row"></div> -->
+<!-- 		<div class="row">
+			<div class="col s11 push-s1">
+				<span style="font-size: 20px;">Press the edit button to modify the schedule. Click a slider to add a nob and click a nob to remove it. Press the save button when finished.</span>
+			</div>
+		</div> -->
+		<!-- <div class="row"></div> -->
+		<div class="row valign-wrapper right-align">
+			<div class="col s10-3">
+				<h5>When editing, click a nob to remove it and click between epochs to add a nob.</h5>
+			</div>
+			<div class="col s1-5">
+				<a id="sched-btn" class="btn waves-effect waves-light scale-transition">
+					<i class="large material-icons right">edit</i>edit
+				</a>
+			</div>
+		</div>
+
 		<div class="row">
 			<div class="valign-wrapper" style="padding-top: 40px;">
-				<div class="col s1 center-align"><span class="sli-day">Sun</span></div>
+				<div class="col s1 right-align"><span class="sli-day">Sun</span></div>
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 			<div class="valign-wrapper">
-				<div class="col s1 center-align"><span class="sli-day">Mon</span></div>
+				<div class="col s1 right-align"><span class="sli-day">Mon</span></div>
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 			<div class="valign-wrapper">
-				<div class="col s1 center-align"><span class="sli-day">Tue</span></div>
+				<div class="col s1 right-align"><span class="sli-day">Tue</span></div>
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 			<div class="valign-wrapper">
-				<div class="col s1 center-align"><span class="sli-day">Wed</span></div>
+				<div class="col s1 right-align"><span class="sli-day">Wed</span></div>
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 			<div class="valign-wrapper">
-				<div class="col s1 center-align"><span class="sli-day">Thu</span></div>
+				<div class="col s1 right-align"><span class="sli-day">Thu</span></div>
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 			<div class="valign-wrapper">
-				<div class="col s1 center-align"><span class="sli-day">Fri</span></div>
+				<div class="col s1 right-align"><span class="sli-day">Fri</span></div>
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 			<div class="valign-wrapper">
-				<div class="col s1 center-align"><span class="sli-day">Sat</span></div>
+				<div class="col s1 right-align"><span class="sli-day">Sat</span></div>
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 		</div>

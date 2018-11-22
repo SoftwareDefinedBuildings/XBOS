@@ -112,9 +112,10 @@ $(document).ready(function() {
 	let l = 17;
 	var s = "";
 	s += "<div class='row' style='display: flex; flex-wrap: wrap; justify-content: space-between;'>";
+	// s += "<div class='col s12 red'></div>";
 	for (var i = 0; i < l; i += 1) {
 		s += "<div id='z" + i + "card' class='col s5-5 zone-card z-depth-1 hoverable lighten-5' style='order: " + i + ";'>";
-		s += "<h6 id='z" + i + "note' class='znote' style='margin: 0;'></h6>";
+		s += "<h6 id='z" + i + "note' class='znote' style='margin-bottom: 0;'></h6>";
 		s += "<h4 class='center-align' style='margin-bottom: 0;' id='z" + i + "banner'>Zone " + i + "</h4>";
 		s += "<p class='range-field'><input id='z" + i + "range' class='simrange center-align' type='range' min='0' max='1' value='0.50' step='0.01'/></p>";
 		s += "<div style='display: flex; justify-content: space-between;'>";

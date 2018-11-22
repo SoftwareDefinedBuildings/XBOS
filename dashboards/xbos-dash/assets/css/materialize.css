@@ -4,6 +4,10 @@
   line-height: 2.25;
 }
 
+.cb-col {
+  padding-bottom: 15px !important;
+}
+
 .mode-title {
   text-align: center;
   font-size: 1.15rem !important;
@@ -12,8 +16,20 @@
 }
 
 .mode-card {
-  padding: 14px 0 !important;
-  border-radius: 10px;
+  padding: 0 0 14px !important;
+  border-radius: 12px;
+}
+
+.spl {
+  width: 35% !important;
+  margin-left: 15% !important;
+  border-radius: 7px 0px 0px 7px !important;
+}
+
+.spr {
+  width: 35% !important;
+  margin-right: 15% !important;
+  border-radius: 0px 7px 7px 0px !important;
 }
 
 .sli-day {
@@ -43,9 +59,15 @@
 }
 
 .zone-card {
-  padding: 16px 30px 18px !important;
+  padding: 0 30px 18px !important;
   margin: 0 !important;
   margin-bottom: 40px !important;
+}
+
+.group-card {
+  margin: 0 1.6% !important;
+  padding: 0 !important;
+  /*margin-bottom: 40px !important;*/
 }
 
 .zrow {
@@ -3671,6 +3693,14 @@ table span.badge {
   right: auto;
 }
 
+/*mine*/
+.row .col.s3-3 {
+  width: 30%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
 .row .col.s4 {
   width: 33.3333333333%;
   margin-left: auto;
@@ -3742,6 +3772,14 @@ table span.badge {
   margin-left: auto;
   left: auto;
   right: auto;
+}
+
+/*mine*/
+.row .col.s10-3 {
+  width: 85%;
+  margin-left: auto;
+  left: auto;
+  right: auto;  
 }
 
 /*mine*/
