@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
@@ -27,7 +28,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"runtime"
@@ -36,37 +36,70 @@ import (
 	"strings"
 	"time"
 
+	pb "github.com/moustafa-a/openADR/siemens/demand_forecast"
+	"google.golang.org/grpc"
+
 	"github.com/jbowtie/gokogiri"
 	gokogirixml "github.com/jbowtie/gokogiri/xml"
 	"github.com/jbowtie/gokogiri/xpath"
 )
 
 // configuration file path and variable
-const confPath = "./config.json"
+const confPath = "../config/config.json"
 
 var config Config
 
+// gRPC params
+var conn *grpc.ClientConn
+var stub pb.DemandForecastClient
+
+//TODO update empty building mapping
+var BuildingMapping = map[string]string{
+	"LBNL":  "",
+	"AAS":   "avenal-animal-shelter",
+	"AVH":   "avenal-veterans-hall",
+	"ARC":   "avenal-recreation-center",
+	"APWD":  "avenal-public-works-yard",
+	"SBSC":  "south-berkeley-senior-center",
+	"CIEE":  "ciee",
+	"WFCC":  "word-of-faith-cc",
+	"HFS8":  "hayward-station-8",
+	"BC":    "",
+	"OCC":   "orinda-community-center",
+	"OL":    "orinda-public-library",
+	"HFS1":  "hayward-station-1",
+	"NBSC":  "north-berkeley-senior-center",
+	"BCY":   "berkeley-corporation-yard",
+	"LBS":   "local-butcher-shop",
+	"AMT":   "avenal-movie-theatre",
+	"RFS":   "rfs",
+	"GSH":   "",
+	"SDH":   "",
+	"CSUDH": "csu-dominguez-hills",
+	"JTFCC": "jesse-turner-center",
+}
+
 // Config parameters
 type Config struct {
-	Logging          bool                //set to true for detailed logging
-	Registered       bool                //set to true if this server is already registered with Siemens
-	IgnoreEpri       bool                //set to true to ignore EPRI signal (consume but don't return predictions)
-	ClientTimeout    int                 //timeout in seconds for a http client
-	AddCert          bool                //set to true to add the Siemens certificates
-	LocalCertFile    string              //location of client certificate
-	LocalCertKey     string              //location of client key
-	LocalCACertFile  string              //location of server certificate
-	SiemensSubServer string              //address of Siemens subscription server
-	SiemensPubServer string              //address of Siemens publishing server
-	ServerName       string              //name of siemens server
-	AuthString       string              //authentication string for Siemens server
-	Loc_addr         string              //public address of this server
-	Loc_port         int                 //server port
-	BuildingTarrif   map[string][]string //Buildings in each tarrif
+	Logging              bool                //set to true for detailed logging
+	Registered           bool                //set to true if this server is already registered with Siemens
+	IgnoreEpri           bool                //set to true to ignore EPRI signal (consume but don't return predictions)
+	ClientTimeout        int                 //timeout in seconds for a http client
+	AddCert              bool                //set to true to add the Siemens certificates
+	LocalCertFile        string              //location of client certificate
+	LocalCertKey         string              //location of client key
+	LocalCACertFile      string              //location of server certificate
+	SiemensSubServer     string              //address of Siemens subscription server
+	SiemensPubServer     string              //address of Siemens publishing server
+	ServerName           string              //name of siemens server
+	AuthString           string              //authentication string for Siemens server
+	Loc_addr             string              //public address of this server
+	Loc_port             int                 //server port
+	DemandForecastServer string              //address and port of demand forecast grpc server
+	BuildingTarrif       map[string][]string //Buildings in each tarrif
 }
 
 // server internal state variables
-// var reqID string                   //the current requestID being used for a response message
 var curEvtMod map[string]ModNumber //map of current input/output modificationNumber for an eventID-GroupID
 
 // ModNumber structure to keep the current input/output modificationNumber
@@ -155,6 +188,7 @@ func main() {
 
 	x := make(chan bool)
 	<-x
+	defer conn.Close()
 }
 
 // configure loads server configuration from config file
@@ -162,13 +196,24 @@ func configure() {
 	f, err := os.Open(confPath)
 	if err != nil {
 		log.Fatal(errors.New("Error: failed to load configuration file (./config/config.json). " + err.Error()))
-		return
 	}
 	d := json.NewDecoder(f)
 	err = d.Decode(&config)
 	if err != nil {
 		log.Fatal(errors.New("Error: failed to configure server. " + err.Error()))
 	}
+	//setup grpc connection (one per request)
+	var opts []grpc.DialOption
+	opts = append(opts,
+		grpc.WithBlock(),
+		grpc.FailOnNonTempDialError(true),
+		grpc.WithInsecure(),
+	)
+	conn, err = grpc.Dial(config.DemandForecastServer, opts...)
+	if err != nil {
+		log.Fatal(errors.New("Error: failed to connect to DemandForecastServer. " + err.Error()))
+	}
+	stub = pb.NewDemandForecastClient(conn)
 }
 
 // writeConfig saves current server configuration to config file
@@ -249,7 +294,7 @@ func getHTTPClient() *http.Client {
 // handler handles incoming POST requests from Siemens server
 func handler(w http.ResponseWriter, req *http.Request) {
 	// read signal
-	defer req.Body.Close()
+	// defer req.Body.Close()
 	body, err := ioutil.ReadAll(req.Body)
 	if body == nil || err != nil {
 		log.Println("Error: could not read request body or body is empty:", err)
@@ -293,12 +338,13 @@ func handler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 	// if signal parsed properly log extracted prices and return OK
-	if config.Logging {
-		log.Println("Prices are:", prices, "Target GroupID is:", event.GroupID, "Target BuildingID is:", event.TargetBuilding, "EventID", event.EventID, "Modification Number", event.ModificationNumber)
-	}
+	log.Println("Prices are:", prices, "Target GroupID is:", event.GroupID, "Target BuildingID is:", event.TargetBuilding, "EventID", event.EventID, "Modification Number", event.ModificationNumber)
 	w.WriteHeader(200)
 	w.Write([]byte("OK"))
+	go replyToSiemens(event, prices, reqID, xmlbody)
+}
 
+func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte) {
 	// only respond to far events (ignore active or completed events)
 	if event.EventStatus == "far" {
 		//create an output modificationNumber based on the current state and input modificationNumber
@@ -320,14 +366,20 @@ func handler(w http.ResponseWriter, req *http.Request) {
 			curEvtMod[key] = ModNumber{event.ModificationNumber, event.ModificationNumber}
 			modNumber = strconv.Itoa(event.ModificationNumber)
 		}
+
+		if len(prices) == 0 {
+			return
+		}
+
 		if config.Logging {
 			log.Println("current events and modification", curEvtMod)
 		}
+		// Contact the server and print out its response.
 
 		// send energy predictions to Siemens as an XML POST
 		if event.TargetBuilding != "" {
 			str := strconv.Itoa(1) + " for eventID: " + "VEN_REQUEST-" + event.TargetBuilding + "-" + reqID + "-" + modNumber + " modificationNumber: " + modNumber + " resourceID: " + event.TargetBuilding
-			go sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(event.TargetBuilding, prices), xmlbody, event.TargetBuilding, modNumber, reqID)))
+			sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(event.TargetBuilding, prices), xmlbody, event.TargetBuilding, modNumber, reqID)))
 		} else {
 			// Ignore EPRI GROUP signal if the server configuration is set true (don't return predictions)
 			if config.IgnoreEpri {
@@ -339,10 +391,11 @@ func handler(w http.ResponseWriter, req *http.Request) {
 			bldgs, _ := config.BuildingTarrif[event.GroupID]
 			for i, bldg := range bldgs {
 				str := strconv.Itoa(i+1) + " for groupID: " + event.GroupID + " eventID: " + "VEN_REQUEST-" + bldg + "-" + reqID + "-" + modNumber + " modificationNumber: " + modNumber + " resourceID: " + bldg
-				go sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(bldg, prices), xmlbody, bldg, modNumber, reqID)))
+				sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(bldg, prices), xmlbody, bldg, modNumber, reqID)))
 			}
 		}
 	}
+
 }
 
 // serverRecover recovers from a paniced server
@@ -416,7 +469,7 @@ func parseXMLBody(body []byte) ([]Price, string, EiEvents, error) {
 					return nil, "", EiEvents{}, errors.New("Error: interval start date is incorrect")
 				}
 				d := parseDuration(eiEvent.Intervals[i].Duration)
-				prices = append(prices, Price{st.Unix(), eiEvent.Intervals[i].Price, eiEvent.ItemUnits, d})
+				prices = append(prices, Price{st.UnixNano(), eiEvent.Intervals[i].Price, eiEvent.ItemUnits, d})
 				start = start.Add(time.Duration(d) * time.Second)
 			}
 			// Check total duration equals sum of interval durations
@@ -472,23 +525,35 @@ func parseDuration(d string) int64 {
 }
 
 // getPredictions gets energy predictions from the prediction module based on the published price signal for a given building
-// TODO update to use to energy predictions from Thanos's control prediction model
 func getPredictions(bldgID string, prices []Price) []float64 {
 	predictions := make([]float64, len(prices))
-	// currently hardcoded to return a random demand
-	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
-	values := []float64{23.5, 16.9, 12.9, 15.2, 20.7}
-	for i, _ := range predictions {
-		predictions[i] = values[rnd.Intn(5)]
+	pricepoints := make([]*pb.PricePoint, len(prices))
+	log.Println("getting predictions for: ", bldgID, " start time: ", time.Unix(0, prices[0].Time).String(), " end time: ", time.Unix(0, prices[len(prices)-1].Time).String())
+	for i, price := range prices {
+		pricepoints[i] = &pb.PricePoint{Time: price.Time, Duration: strconv.FormatInt(price.Duration, 10) + "s", Price: price.Price, Unit: price.Currency}
 	}
-	if config.Logging {
-		log.Println("Predictions for building:", bldgID, "are:", predictions)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	r, err := stub.GetDemandForecast(ctx, &pb.DemandForecastRequest{Building: BuildingMapping[bldgID], Start: prices[0].Time, End: prices[len(prices)-1].Time + prices[len(prices)-1].Duration*1e9, Prices: pricepoints})
+	if err != nil {
+		log.Printf("could not get price: %v", err)
+		return nil
 	}
+	if len(r.Demands) == len(predictions) {
+		for i, demand := range r.Demands {
+			predictions[i] = demand.Demand
+		}
+	}
+
+	log.Println("Predictions for building:", bldgID, "are:", predictions)
 	return predictions
 }
 
 // createXMLResponse creates an XML response with predictions to send back to Siemens
 func createXMLResponse(demands []float64, body []byte, bldgID string, modNumber string, reqID string) []byte {
+	if demands == nil {
+		return nil
+	}
 	doc, err := gokogiri.ParseXml(body)
 	if err != nil {
 		log.Println("Error: failed to parse XML body using gokogiri")
