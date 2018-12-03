@@ -36,7 +36,6 @@ import (
 	"strings"
 	"time"
 
-	pb "github.com/moustafa-a/openADR/siemens/demand_forecast"
 	"google.golang.org/grpc"
 
 	"github.com/jbowtie/gokogiri"
@@ -50,10 +49,10 @@ const confPath = "../config/config.json"
 var config Config
 
 // gRPC params
-var conn *grpc.ClientConn
-var stub pb.DemandForecastClient
+// var conn *grpc.ClientConn
+// var stub DemandForecastClient
 
-//TODO update empty building mapping
+//TODO BuildingMapping update empty
 var BuildingMapping = map[string]string{
 	"LBNL":  "",
 	"AAS":   "avenal-animal-shelter",
@@ -93,8 +92,8 @@ type Config struct {
 	SiemensPubServer     string              //address of Siemens publishing server
 	ServerName           string              //name of siemens server
 	AuthString           string              //authentication string for Siemens server
-	Loc_addr             string              //public address of this server
-	Loc_port             int                 //server port
+	LocalAddress         string              //public address of this server
+	LocalPort            int                 //server port
 	DemandForecastServer string              //address and port of demand forecast grpc server
 	BuildingTarrif       map[string][]string //Buildings in each tarrif
 }
@@ -169,7 +168,7 @@ func main() {
 	// register this server with Siemens to recieve price signal
 	// only gets called once unless the port or local address changes
 	if !config.Registered {
-		if !registerServer(config.SiemensSubServer + config.Loc_addr + "&essa=" + base64.StdEncoding.EncodeToString([]byte(config.AuthString))) {
+		if !registerServer(config.SiemensSubServer + config.LocalAddress + "&essa=" + base64.StdEncoding.EncodeToString([]byte(config.AuthString))) {
 			log.Fatal(errors.New("Error: failed to register with the Siemens server"))
 		}
 		config.Registered = true
@@ -180,7 +179,7 @@ func main() {
 	// serve requests
 	http.HandleFunc("/", serverRecover(handler))
 	go func() {
-		err := http.ListenAndServe("0.0.0.0:"+strconv.Itoa(config.Loc_port), nil)
+		err := http.ListenAndServe("0.0.0.0:"+strconv.Itoa(config.LocalPort), nil)
 		if err != nil {
 			log.Fatal("ListenAndServe: ", err)
 		}
@@ -188,7 +187,6 @@ func main() {
 
 	x := make(chan bool)
 	<-x
-	defer conn.Close()
 }
 
 // configure loads server configuration from config file
@@ -202,18 +200,6 @@ func configure() {
 	if err != nil {
 		log.Fatal(errors.New("Error: failed to configure server. " + err.Error()))
 	}
-	//setup grpc connection (one per request)
-	var opts []grpc.DialOption
-	opts = append(opts,
-		grpc.WithBlock(),
-		grpc.FailOnNonTempDialError(true),
-		grpc.WithInsecure(),
-	)
-	conn, err = grpc.Dial(config.DemandForecastServer, opts...)
-	if err != nil {
-		log.Fatal(errors.New("Error: failed to connect to DemandForecastServer. " + err.Error()))
-	}
-	stub = pb.NewDemandForecastClient(conn)
 }
 
 // writeConfig saves current server configuration to config file
@@ -347,6 +333,20 @@ func handler(w http.ResponseWriter, req *http.Request) {
 func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte) {
 	// only respond to far events (ignore active or completed events)
 	if event.EventStatus == "far" {
+		//setup grpc connection (one per request)
+		var opts []grpc.DialOption
+		opts = append(opts,
+			grpc.WithBlock(),
+			grpc.FailOnNonTempDialError(true),
+			grpc.WithInsecure(),
+		)
+		conn, err := grpc.Dial(config.DemandForecastServer, opts...)
+		defer conn.Close()
+		if err != nil {
+			log.Println(errors.New("Error: failed to connect to DemandForecastServer. " + err.Error()))
+		}
+		stub := NewDemandForecastClient(conn)
+
 		//create an output modificationNumber based on the current state and input modificationNumber
 		modNumber := ""
 		key := event.EventID + event.GroupID
@@ -379,7 +379,7 @@ func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte
 		// send energy predictions to Siemens as an XML POST
 		if event.TargetBuilding != "" {
 			str := strconv.Itoa(1) + " for eventID: " + "VEN_REQUEST-" + event.TargetBuilding + "-" + reqID + "-" + modNumber + " modificationNumber: " + modNumber + " resourceID: " + event.TargetBuilding
-			sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(event.TargetBuilding, prices), xmlbody, event.TargetBuilding, modNumber, reqID)))
+			sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(stub, event.TargetBuilding, prices), xmlbody, event.TargetBuilding, modNumber, reqID)))
 		} else {
 			// Ignore EPRI GROUP signal if the server configuration is set true (don't return predictions)
 			if config.IgnoreEpri {
@@ -391,7 +391,7 @@ func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte
 			bldgs, _ := config.BuildingTarrif[event.GroupID]
 			for i, bldg := range bldgs {
 				str := strconv.Itoa(i+1) + " for groupID: " + event.GroupID + " eventID: " + "VEN_REQUEST-" + bldg + "-" + reqID + "-" + modNumber + " modificationNumber: " + modNumber + " resourceID: " + bldg
-				sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(bldg, prices), xmlbody, bldg, modNumber, reqID)))
+				sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(stub, bldg, prices), xmlbody, bldg, modNumber, reqID)))
 			}
 		}
 	}
@@ -525,18 +525,18 @@ func parseDuration(d string) int64 {
 }
 
 // getPredictions gets energy predictions from the prediction module based on the published price signal for a given building
-func getPredictions(bldgID string, prices []Price) []float64 {
+func getPredictions(stub DemandForecastClient, bldgID string, prices []Price) []float64 {
 	predictions := make([]float64, len(prices))
-	pricepoints := make([]*pb.PricePoint, len(prices))
+	pricepoints := make([]*PricePoint, len(prices))
 	log.Println("getting predictions for: ", bldgID, " start time: ", time.Unix(0, prices[0].Time).String(), " end time: ", time.Unix(0, prices[len(prices)-1].Time).String())
 	for i, price := range prices {
-		pricepoints[i] = &pb.PricePoint{Time: price.Time, Duration: strconv.FormatInt(price.Duration, 10) + "s", Price: price.Price, Unit: price.Currency}
+		pricepoints[i] = &PricePoint{Time: price.Time, Duration: strconv.FormatInt(price.Duration, 10) + "s", Price: price.Price, Unit: price.Currency}
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
-	r, err := stub.GetDemandForecast(ctx, &pb.DemandForecastRequest{Building: BuildingMapping[bldgID], Start: prices[0].Time, End: prices[len(prices)-1].Time + prices[len(prices)-1].Duration*1e9, Prices: pricepoints})
+	r, err := stub.GetDemandForecast(ctx, &DemandForecastRequest{Building: BuildingMapping[bldgID], Start: prices[0].Time, End: prices[len(prices)-1].Time + prices[len(prices)-1].Duration*1e9, Prices: pricepoints})
 	if err != nil {
-		log.Printf("could not get price: %v", err)
+		log.Printf("could not get price: %v", err.Error())
 		return nil
 	}
 	if len(r.Demands) == len(predictions) {
