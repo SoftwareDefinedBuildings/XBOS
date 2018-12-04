@@ -52,7 +52,7 @@ var config Config
 // var conn *grpc.ClientConn
 // var stub DemandForecastClient
 
-//TODO BuildingMapping update empty
+// BuildingMapping TODO: update empty
 var BuildingMapping = map[string]string{
 	"LBNL":  "",
 	"AAS":   "avenal-animal-shelter",
@@ -128,7 +128,7 @@ type EiEvents struct {
 	Intervals          []Intervals `xml:"eiEventSignals>eiEventSignal>intervals>interval"` // Intervals in a given Duration
 }
 
-// Interval structure for parsing the price and duration of each interval
+// Intervals structure for parsing the price and duration of each interval
 type Intervals struct {
 	XMLName   xml.Name `xml:"interval"`
 	StartDate string   `xml:"dtstart>date-time"` // Interval start time
@@ -280,13 +280,21 @@ func getHTTPClient() *http.Client {
 // handler handles incoming POST requests from Siemens server
 func handler(w http.ResponseWriter, req *http.Request) {
 	// read signal
-	// defer req.Body.Close()
 	body, err := ioutil.ReadAll(req.Body)
 	if body == nil || err != nil {
 		log.Println("Error: could not read request body or body is empty:", err)
 		http.Error(w, "Error: could not read request body or body is empty:"+err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
+
+	//TODO remove this if unnecessary
+	err = ioutil.WriteFile("requests/"+strconv.Itoa(time.Now().Nanosecond())+".json", body, 0600)
+	if err != nil {
+		log.Println("Error: failed to write incoming POST request to file", err)
+		http.Error(w, "Error: failed to write incoming POST request to file, err: "+err.Error(), http.StatusUnsupportedMediaType)
+		return
+	}
+
 	// log and unpack Seimens formatted JSON message to an XML PRICE SIGNAL
 	if config.Logging {
 		log.Println("Receieved POST request:", string(body))
@@ -344,6 +352,7 @@ func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte
 		defer conn.Close()
 		if err != nil {
 			log.Println(errors.New("Error: failed to connect to DemandForecastServer. " + err.Error()))
+			return
 		}
 		stub := NewDemandForecastClient(conn)
 
@@ -458,10 +467,10 @@ func parseXMLBody(body []byte) ([]Price, string, EiEvents, error) {
 			if err != nil {
 				return nil, "", EiEvents{}, err
 			}
-			for i, _ := range eiEvent.Intervals {
-				st, err := parseTime(eiEvent.Intervals[i].StartDate)
-				if err != nil {
-					return nil, "", EiEvents{}, err
+			for i := range eiEvent.Intervals {
+				st, e := parseTime(eiEvent.Intervals[i].StartDate)
+				if e != nil {
+					return nil, "", EiEvents{}, e
 				}
 				// check total start date and duration start date match
 				if st != start {
@@ -508,20 +517,15 @@ func parseDuration(d string) int64 {
 		val, err := strconv.Atoi(s) // 1 ... 24 OR Error
 		if err == nil {
 			return 3600 * int64(val)
-		} else {
-			return 3600 // default
 		}
 	} else if strings.HasSuffix(d, "M") {
 		s = strings.TrimSuffix(s, "M")
 		val, err := strconv.Atoi(s) // 60, 120, 180, ..., 1440 OR Error
 		if err == nil {
 			return 60 * int64(val)
-		} else {
-			return 3600 // default
 		}
-	} else {
-		return 3600 //default
 	}
+	return 3600 //default
 }
 
 // getPredictions gets energy predictions from the prediction module based on the published price signal for a given building
