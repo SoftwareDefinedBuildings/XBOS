@@ -179,7 +179,7 @@ func main() {
 	// serve requests
 	http.HandleFunc("/", serverRecover(handler))
 	go func() {
-		err := http.ListenAndServe("0.0.0.0:"+strconv.Itoa(config.LocalPort), nil)
+		err := http.ListenAndServe(":"+strconv.Itoa(config.LocalPort), nil)
 		if err != nil {
 			log.Fatal("ListenAndServe: ", err)
 		}
@@ -339,6 +339,7 @@ func handler(w http.ResponseWriter, req *http.Request) {
 }
 
 func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte) {
+	time.Sleep(1 * time.Second)
 	// only respond to far events (ignore active or completed events)
 	if event.EventStatus == "far" {
 		//setup grpc connection (one per request)
@@ -349,11 +350,11 @@ func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte
 			grpc.WithInsecure(),
 		)
 		conn, err := grpc.Dial(config.DemandForecastServer, opts...)
-		defer conn.Close()
 		if err != nil {
-			log.Println(errors.New("Error: failed to connect to DemandForecastServer. " + err.Error()))
+			log.Println(errors.New("Error: failed to connect to DemandForecastServer on: " + config.DemandForecastServer + ". Error: " + err.Error()))
 			return
 		}
+		defer conn.Close()
 		stub := NewDemandForecastClient(conn)
 
 		//create an output modificationNumber based on the current state and input modificationNumber
