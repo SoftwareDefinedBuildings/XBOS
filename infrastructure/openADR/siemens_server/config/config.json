@@ -11,8 +11,8 @@
 	"SiemensPubServer": "https://epicdr.org:9187/v1/messaging/publish/DEMAND-BAS",
 	"ServerName": "",
 	"AuthString": "",
-	"Loc_addr": "",
-	"Loc_port": 9673,
+	"LocalAddress": "",
+	"LocalPort": 9673,
 	"DemandForecastServer":"",
 	"BuildingTarrif": {
 		"DLAP_PGAE-APND": [

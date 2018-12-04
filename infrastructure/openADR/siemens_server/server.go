@@ -44,7 +44,7 @@ import (
 )
 
 // configuration file path and variable
-const confPath = "../config/config.json"
+const confPath = "./config/config.json"
 
 var config Config
 
