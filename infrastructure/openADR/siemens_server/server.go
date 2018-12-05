@@ -49,8 +49,8 @@ const confPath = "./config/config.json"
 var config Config
 
 // gRPC params
-// var conn *grpc.ClientConn
-// var stub DemandForecastClient
+var conn *grpc.ClientConn
+var stub DemandForecastClient
 
 // BuildingMapping TODO: update empty
 var BuildingMapping = map[string]string{
@@ -187,6 +187,8 @@ func main() {
 
 	x := make(chan bool)
 	<-x
+	defer conn.Close()
+
 }
 
 // configure loads server configuration from config file
@@ -200,6 +202,18 @@ func configure() {
 	if err != nil {
 		log.Fatal(errors.New("Error: failed to configure server. " + err.Error()))
 	}
+	//setup grpc connection
+	opts := []grpc.DialOption{
+		grpc.WithBlock(),
+		grpc.FailOnNonTempDialError(true),
+		grpc.WithInsecure(),
+		grpc.WithTimeout(5 * time.Second),
+	}
+	conn, err = grpc.Dial(config.DemandForecastServer, opts...)
+	if err != nil {
+		log.Fatal(errors.New("Error: failed to connect to DemandForecastServer on: " + config.DemandForecastServer + ". Error: " + err.Error()))
+	}
+	stub = NewDemandForecastClient(conn)
 }
 
 // writeConfig saves current server configuration to config file
@@ -342,21 +356,6 @@ func handler(w http.ResponseWriter, req *http.Request) {
 func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte) {
 	// only respond to far events (ignore active or completed events)
 	if event.EventStatus == "far" {
-		//setup grpc connection (one per request)
-		var opts []grpc.DialOption
-		opts = append(opts,
-			grpc.WithBlock(),
-			grpc.FailOnNonTempDialError(true),
-			grpc.WithInsecure(),
-		)
-		conn, err := grpc.Dial(config.DemandForecastServer, opts...)
-		if err != nil {
-			log.Println(errors.New("Error: failed to connect to DemandForecastServer on: " + config.DemandForecastServer + ". Error: " + err.Error()))
-			return
-		}
-		defer conn.Close()
-		stub := NewDemandForecastClient(conn)
-
 		//create an output modificationNumber based on the current state and input modificationNumber
 		modNumber := ""
 		key := event.EventID + event.GroupID
