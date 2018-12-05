@@ -279,6 +279,7 @@ func getHTTPClient() *http.Client {
 
 // handler handles incoming POST requests from Siemens server
 func handler(w http.ResponseWriter, req *http.Request) {
+	log.Println(req.Header)
 	// read signal
 	body, err := ioutil.ReadAll(req.Body)
 	if body == nil || err != nil {
@@ -339,7 +340,6 @@ func handler(w http.ResponseWriter, req *http.Request) {
 }
 
 func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte) {
-	time.Sleep(1 * time.Second)
 	// only respond to far events (ignore active or completed events)
 	if event.EventStatus == "far" {
 		//setup grpc connection (one per request)
