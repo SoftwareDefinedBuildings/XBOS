@@ -4,15 +4,14 @@ package main
  go build -o siemens_server
  ./siemens_server
 
- This server 1) registers with a Siemens server running REST Hooks
+ This server 1) registers (once) with a Siemens server running REST Hooks
  2) listens for a price signal (in a slightly modified OpenADR format).
  3) Once the signal is recieved from the Siemens server, the pricing information
  and target building or tariff is extracted.
  4) For each building or group of buildings that fall under the given tariff,
- the prices along with the building ID are sent to an energy prediction module
- 5) The external energy prediction module generates a demand forecast based on
- given price
- 6) Once the predictions are generated, the server creates a JSON encapsulated
+ the prices along with the building ID are sent to a demand forecast server (using gRPC)
+ 5) The demand forecast server generates and returns a demand forecast based on the given price
+ 6) Once the predictions are generated, this server creates a JSON encapsulated
  XML structure (in the same format as the received price signal)
  7) The server sends these predictions back to the Siemens server as a POST message
 */
@@ -52,32 +51,6 @@ var config Config
 var conn *grpc.ClientConn
 var stub DemandForecastClient
 
-// BuildingMapping TODO: update empty
-var BuildingMapping = map[string]string{
-	"LBNL":  "",
-	"AAS":   "avenal-animal-shelter",
-	"AVH":   "avenal-veterans-hall",
-	"ARC":   "avenal-recreation-center",
-	"APWD":  "avenal-public-works-yard",
-	"SBSC":  "south-berkeley-senior-center",
-	"CIEE":  "ciee",
-	"WFCC":  "word-of-faith-cc",
-	"HFS8":  "hayward-station-8",
-	"BC":    "",
-	"OCC":   "orinda-community-center",
-	"OL":    "orinda-public-library",
-	"HFS1":  "hayward-station-1",
-	"NBSC":  "north-berkeley-senior-center",
-	"BCY":   "berkeley-corporation-yard",
-	"LBS":   "local-butcher-shop",
-	"AMT":   "avenal-movie-theatre",
-	"RFS":   "rfs",
-	"GSH":   "",
-	"SDH":   "",
-	"CSUDH": "csu-dominguez-hills",
-	"JTFCC": "jesse-turner-center",
-}
-
 // Config parameters
 type Config struct {
 	Logging              bool                //set to true for detailed logging
@@ -95,6 +68,7 @@ type Config struct {
 	LocalAddress         string              //public address of this server
 	LocalPort            int                 //server port
 	DemandForecastServer string              //address and port of demand forecast grpc server
+	BuildingMapping      map[string]string   //Mapping between building name in Siemens and XBOS
 	BuildingTarrif       map[string][]string //Buildings in each tarrif
 }
 
@@ -188,7 +162,6 @@ func main() {
 	x := make(chan bool)
 	<-x
 	defer conn.Close()
-
 }
 
 // configure loads server configuration from config file
@@ -293,7 +266,6 @@ func getHTTPClient() *http.Client {
 
 // handler handles incoming POST requests from Siemens server
 func handler(w http.ResponseWriter, req *http.Request) {
-	log.Println(req.Header)
 	// read signal
 	body, err := ioutil.ReadAll(req.Body)
 	if body == nil || err != nil {
@@ -302,7 +274,7 @@ func handler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//TODO remove this if unnecessary
+	//store siemens request to requests folder
 	err = ioutil.WriteFile("requests/"+strconv.Itoa(time.Now().Nanosecond())+".json", body, 0600)
 	if err != nil {
 		log.Println("Error: failed to write incoming POST request to file", err)
@@ -310,10 +282,8 @@ func handler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// log and unpack Seimens formatted JSON message to an XML PRICE SIGNAL
-	if config.Logging {
-		log.Println("Receieved POST request:", string(body))
-	}
+	// unpack Seimens formatted JSON message to an XML PRICE SIGNAL
+	log.Println("Receieved POST request")
 	xmlbody, err := parseJSONBody(body)
 	if xmlbody == nil || err != nil {
 		log.Println("Error: failed to parse JSON price signal, err:", err)
@@ -339,15 +309,14 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	}
 	// if the target tariff is invalid return an error to Siemens to Siemens
 	if event.GroupID != "" {
-		_, ok := config.BuildingTarrif[event.GroupID]
-		if !ok {
+		if _, ok := config.BuildingTarrif[event.GroupID]; !ok {
 			log.Println("Error: invalid target groupID", event.GroupID)
 			http.Error(w, "Error: invalid target groupID", http.StatusUnsupportedMediaType)
 			return
 		}
 	}
 	// if signal parsed properly log extracted prices and return OK
-	log.Println("Prices are:", prices, "Target GroupID is:", event.GroupID, "Target BuildingID is:", event.TargetBuilding, "EventID", event.EventID, "Modification Number", event.ModificationNumber)
+	log.Println("Prices are:", prices, "EventStatus is:", event.EventStatus, "Target GroupID is:", event.GroupID, "Target BuildingID is:", event.TargetBuilding, "EventID", event.EventID, "Modification Number", event.ModificationNumber)
 	w.WriteHeader(200)
 	w.Write([]byte("OK"))
 	go replyToSiemens(event, prices, reqID, xmlbody)
@@ -388,7 +357,7 @@ func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte
 		// send energy predictions to Siemens as an XML POST
 		if event.TargetBuilding != "" {
 			str := strconv.Itoa(1) + " for eventID: " + "VEN_REQUEST-" + event.TargetBuilding + "-" + reqID + "-" + modNumber + " modificationNumber: " + modNumber + " resourceID: " + event.TargetBuilding
-			sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(stub, event.TargetBuilding, prices), xmlbody, event.TargetBuilding, modNumber, reqID)))
+			sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(event.TargetBuilding, prices), xmlbody, event.TargetBuilding, modNumber, reqID)))
 		} else {
 			// Ignore EPRI GROUP signal if the server configuration is set true (don't return predictions)
 			if config.IgnoreEpri {
@@ -400,11 +369,10 @@ func replyToSiemens(event EiEvents, prices []Price, reqID string, xmlbody []byte
 			bldgs, _ := config.BuildingTarrif[event.GroupID]
 			for i, bldg := range bldgs {
 				str := strconv.Itoa(i+1) + " for groupID: " + event.GroupID + " eventID: " + "VEN_REQUEST-" + bldg + "-" + reqID + "-" + modNumber + " modificationNumber: " + modNumber + " resourceID: " + bldg
-				sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(stub, bldg, prices), xmlbody, bldg, modNumber, reqID)))
+				sendPOSTRequest(str, config.SiemensPubServer, "application/json", XMLtoJSON(createXMLResponse(getPredictions(bldg, prices), xmlbody, bldg, modNumber, reqID)))
 			}
 		}
 	}
-
 }
 
 // serverRecover recovers from a paniced server
@@ -529,16 +497,15 @@ func parseDuration(d string) int64 {
 }
 
 // getPredictions gets energy predictions from the prediction module based on the published price signal for a given building
-func getPredictions(stub DemandForecastClient, bldgID string, prices []Price) []float64 {
+func getPredictions(bldgID string, prices []Price) []float64 {
 	predictions := make([]float64, len(prices))
 	pricepoints := make([]*PricePoint, len(prices))
 	log.Println("getting predictions for: ", bldgID, " start time: ", time.Unix(0, prices[0].Time).String(), " end time: ", time.Unix(0, prices[len(prices)-1].Time).String())
 	for i, price := range prices {
 		pricepoints[i] = &PricePoint{Time: price.Time, Duration: strconv.FormatInt(price.Duration, 10) + "s", Price: price.Price, Unit: price.Currency}
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
-	defer cancel()
-	r, err := stub.GetDemandForecast(ctx, &DemandForecastRequest{Building: BuildingMapping[bldgID], Start: prices[0].Time, End: prices[len(prices)-1].Time + prices[len(prices)-1].Duration*1e9, Prices: pricepoints})
+
+	r, err := stub.GetDemandForecast(context.Background(), &DemandForecastRequest{Building: config.BuildingMapping[bldgID], Start: prices[0].Time, End: prices[len(prices)-1].Time + prices[len(prices)-1].Duration*1e9, Prices: pricepoints})
 	if err != nil {
 		log.Printf("could not get price: %v", err.Error())
 		return nil
@@ -548,7 +515,6 @@ func getPredictions(stub DemandForecastClient, bldgID string, prices []Price) []
 			predictions[i] = demand.Demand
 		}
 	}
-
 	log.Println("Predictions for building:", bldgID, "are:", predictions)
 	return predictions
 }
