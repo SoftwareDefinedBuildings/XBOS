@@ -182,6 +182,7 @@ case $selection in
         if [ $? -eq 0 ]; then 
             if [ ! -f "$params_file" ]; then
                 cp bw2-contrib/driver/$driver/params.yml $params_file
+                sed -i '' -e "s/svc_base_uri:\(.*\)/svc_base_uri: $BW2_NAMESPACE\/devices/g" $params_file
             fi
             $EDITOR $params_file
         fi
@@ -211,6 +212,7 @@ case $selection in
         if [ $? -eq 0 ]; then 
             if [ ! -f "$deploy_file" ]; then
                 cp bw2-contrib/driver/$driver/deploy.yml $deploy_file
+                sed -i '' -e "s/bw2Entity:\(.*\)/bw2Entity: $entity_file/g" $deploy_file
             fi
             $EDITOR $deploy_file
         fi
@@ -219,6 +221,8 @@ case $selection in
         if [ $? -eq 0 ]; then 
             if [ ! -f "$archive_file" ]; then
                 cp bw2-contrib/driver/$driver/archive.yml $archive_file
+                sed -i '' -e "s/Prefix:\(.*\)/Prefix: $BW2_NAMESPACE\/devices\//g" $archive_file
+                sed -i '' -e "s/URIReplace: <namespace>\(.*\)/URIReplace: $BW2_NAMESPACE\1/g" $archive_file
             fi
             $EDITOR $archive_file
         fi
