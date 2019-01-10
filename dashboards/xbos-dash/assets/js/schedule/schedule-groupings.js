@@ -36,4 +36,9 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#modal-continue").click(function() {
+		sessionStorage.setItem("modesToGroup", "areh");
+		location.href = "schedule-epochs.html";
+	});
+
 });

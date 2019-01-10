@@ -49,7 +49,11 @@
 			<!-- <div class="col s10-3"> -->
 		<!-- <div class="row valign-wrapper"> -->
 			<!-- <div class="col s11"> -->
-		<h4 id="location" style="margin: 0 0 0 35px;">Modes for </h4>
+		<div class="row valign-wrapper">
+			<h4 id="location" class="col s2-5 left" style="margin: 0;">Grouping:</h4>
+		<!-- <n4 id="groupName" class="left"> -->
+			<input style="padding: 0;" class="col s9-5" id="groupName" type="text" maxlength="25" value="ABCDEFGAS" class="my-input mode-title" />
+		</div>
 			<!-- </div> -->
 			<!-- <div class="col s1"> -->
 				<!-- <a id="save-modes" class="waves-effect waves-light btn btn-large">Apply</a> -->
@@ -94,21 +98,21 @@
 		<div class="section">
 			<div id="mode-div" class="row center-align valign-wrapper">
 				<!-- <div id="first-mode" class="col s2 z-depth-1 tp-blue mode-card"> -->
-				<div class="col s2 z-depth-1 tp-blue mode-card">
+				<div class="col s2 z-depth-1 mode-card ot-blue">
 <!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
 						<i style="cursor: pointer;" class="material-icons">clear</i>
 					</div> -->
-					<input style="padding: 12px 0 10px 0;" id="mode0" type="text" maxlength="10" value="Closed" class="my-input mode-title" />
+					<h4 style="padding: 12px 0 0 0;" id="mode0" class="mode-title">Closed</h4>
 					<div class="setpnt-div" style="padding-top: 8px;">
 						<input class="red lighten-2 spl" maxlength="2" value=55 type="number" max="72" min="35" />
 						<input class="blue lighten-2 spr" maxlength="2" value=85 type="number" max="90" min="74" />
 					</div>
 					<div class="switch">
 						<label>
-							<!-- <span class="swi-text">off</span> -->
+							<span class="swi-text">off</span>
 							<input class="ogswitch" type="checkbox">
 							<span class="lever"></span>
-							<!-- <span class="swi-text">on</span> -->
+							<span class="swi-text">on</span>
 						</label>
 					</div>
 				</div>
@@ -116,17 +120,17 @@
 <!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
 						<i style="cursor: pointer;" class="material-icons">clear</i>
 					</div> -->
-					<input style="padding: 12px 0 10px 0;" id="mode1" type="text" maxlength="10" value="Open" class="my-input mode-title" />
+					<h4 style="padding: 12px 0 0 0;" id="mode1" class="mode-title">Open</h4>
 					<div class="setpnt-div" style="padding-top: 8px;">
 						<input class="red lighten-2 spl" maxlength="2" value=70 type="number" max="72" min="35" />
 						<input class="blue lighten-2 spr" maxlength="2" value=75 type="number" max="90" min="74" />
 					</div>
-					<div class="switch">
+					<div class="switch disabled">
 						<label>
-							<!-- <span class="swi-text">off</span> -->
+							<span class="swi-text">off</span>
 							<input class="ogswitch" type="checkbox">
 							<span class="lever"></span>
-							<!-- <span class="swi-text">on</span> -->
+							<span class="swi-text">on</span>
 						</label>
 					</div>
 				</div>
@@ -134,17 +138,17 @@
 <!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
 						<i style="cursor: pointer;" class="material-icons">clear</i>
 					</div> -->
-					<input style="padding: 12px 0 10px 0;" id="mode2" type="text" maxlength="10" value="Other" class="my-input mode-title" />
+					<h4 style="padding: 12px 0 0 0;" id="mode2" class="mode-title">Other</h4>
 					<div class="setpnt-div" style="padding-top: 8px;">
 						<input class="red lighten-2 spl  maxlength="2"right maxlength="2"-align" value=55 type="number" max="72" min="35" />
 						<input class="blue lighten-2 spr" value=85 type="number" max="90" min="74" />
 					</div>
-					<div class="switch">
+					<div class="switch disabled">
 						<label>
-							<!-- <span class="swi-text">off</span> -->
+							<span class="swi-text">off</span>
 							<input class="ogswitch" type="checkbox">
 							<span class="lever"></span>
-							<!-- <span class="swi-text">on</span> -->
+							<span class="swi-text">on</span>
 						</label>
 					</div>
 				</div>
@@ -153,17 +157,17 @@
 <!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
 						<i style="cursor: pointer;" class="material-icons">clear</i>
 					</div> -->
-					<input style="padding: 12px 0 10px 0;" id="mode2" type="text" maxlength="10" value="Other" class="my-input mode-title" />
+					<h4 style="padding: 12px 0 0 0;" id="mode2" class="mode-title">Other</h4>
 					<div class="setpnt-div" style="padding-top: 8px;">
 						<input class="red lighten-2 spl  maxlength="2"right maxlength="2"-align" value=55 type="number" max="72" min="35" />
 						<input class="blue lighten-2 spr" value=85 type="number" max="90" min="74" />
 					</div>
-					<div class="switch">
+					<div class="switch disabled">
 						<label>
-							<!-- <span class="swi-text">off</span> -->
+							<span class="swi-text">off</span>
 							<input class="ogswitch" type="checkbox">
 							<span class="lever"></span>
-							<!-- <span class="swi-text">on</span> -->
+							<span class="swi-text">on</span>
 						</label>
 					</div>
 				</div>
@@ -172,17 +176,17 @@
 <!-- 					<div class="left-align" style="margin: 5px 0 0 5px;">
 						<i style="cursor: pointer;" class="material-icons">clear</i>
 					</div> -->
-					<input style="padding: 12px 0 10px 0;" id="mode2" type="text" maxlength="10" value="Other" class="my-input mode-title" />
+					<h4 style="padding: 12px 0 0 0;" id="mode2" class="mode-title">Other</h4>
 					<div class="setpnt-div" style="padding-top: 8px;">
 						<input class="red lighten-2 spl  maxlength="2"right maxlength="2"-align" value=55 type="number" max="72" min="35" />
 						<input class="blue lighten-2 spr" value=85 type="number" max="90" min="74" />
 					</div>
-					<div class="switch">
+					<div class="switch disabled">
 						<label>
-							<!-- <span class="swi-text">off</span> -->
+							<span class="swi-text">off</span>
 							<input class="ogswitch" type="checkbox">
 							<span class="lever"></span>
-							<!-- <span class="swi-text">on</span> -->
+							<span class="swi-text">on</span>
 						</label>
 					</div>
 				</div>
@@ -249,9 +253,9 @@
 			</div>
 		</div> -->
 		<!-- <div class="row"></div> -->
-		<div class="row valign-wrapper right-align">
-			<div class="col s10-3">
-				<h5>When editing, click a nob to remove it and click between epochs to add a nob.</h5>
+		<div class="row valign-wrapper center-align">
+			<div class="col s10-5">
+				<h5>When editing, click a nob to remove it and click an epoch to add a nob.</h5>
 			</div>
 			<div class="col s1-5">
 				<a id="sched-btn" class="btn waves-effect waves-light scale-transition">

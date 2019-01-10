@@ -1,5 +1,6 @@
 $(document).ready(function() {
 	M.AutoInit();
+	console.log(sessionStorage.getItem("modesToGroup"));
 	let c = ["pink", "deep-orange", "green", "teal", "blue", "deep-purple", "tp-blue"];
 	let pipvals = ["12am", "2am", "4am", "6am", "8am", "10am", "12pm", "2pm", "4pm", "6pm", "8pm", "10pm", "12am"];
 	let piprev = ["12am", "10pm", "8pm", "6pm", "4pm", "2pm", "12pm", "10am", "8am", "6am", "4am", "2am", "12am"];
@@ -120,13 +121,13 @@ $(document).ready(function() {
 
 	var location;
 	function readIn() {
-		location = "Basketball Courts";
+		// location = "Basketball Courts";
 		$("#location").append(location);
 	} readIn();
 
 	function readOut() {
 		var obj = new Object();
-		obj.name = location;
+		// obj.name = location;
 		obj.zones = [1, 3, 5, 7];
 		obj.modes = [];
 		$(".mode-card").each(function(i) {
