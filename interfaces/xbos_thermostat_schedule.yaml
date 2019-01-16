@@ -1,0 +1,12 @@
+Thermostat Schedule:
+    ponum: 2.1.2.2
+    description: Standard XBOS thermostat schedule interface
+    interface: i.xbos.thermostat_schedule
+    signals:
+        info:
+            - day_schedules
+    properties:
+        day_schedules:
+            type: map
+            description: Dictionary mapping a day of week to its specific schedule
+            required: true
