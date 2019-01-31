@@ -2,3 +2,5 @@ cloud_server.ini
 influx_config.yaml
 .ipynb_checkpoints/
 __pycache__/
+#ignore all .pyc files
+*.pyc
