@@ -1,0 +1,112 @@
+{
+    "4c95836f-6bdb-3adc-ac5e-4c787ae027c7": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-10",
+                  "distrib_level_of_interest":"Secondary",
+                  "phasewing":null,
+                  "tou":true},
+    "4d95d5ce-de62-3449-bd58-4dcad75b526d":  { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-1 Small General Service",  
+                  "distrib_level_of_interest":null,
+                  "phasewing":"Single",
+                  "tou":true},
+    "d2ad6682-8e44-374b-8bfe-9e25960a9be0": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-1 Small General Service",  
+                  "distrib_level_of_interest":null,
+                  "phasewing":"Single",
+                  "tou":true},
+    "e9c51ce5-4aa1-399c-8172-92073e273a0b": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-6",
+                  "distrib_level_of_interest":null, 
+                  "phasewing":null, 
+                  "tou":true,
+                  "option_exclusion": ["(X}", "(W}", "Poly"]}, 
+    "68e04192-e924-36b8-9c5e-f072bd93ed07": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "E-19",
+                  "distrib_level_of_interest":"Secondary",
+                  "phasewing":null,
+                  "tou":true,
+                  "option_exclusion": ["Option R", "Voluntary"]
+                },
+    "849cae1e-5714-34e1-8a4e-ec72ca71b0ab": { 
+          "utility_id": "14328",
+          "sector": "Commercial",
+          "tariff_rate_of_interest": "A-1 Small General Service", 
+          "distrib_level_of_interest":null,
+          "phasewing":"Single",
+          "tou":true},
+    "a373b62e-04f3-3c1e-b27d-279f792f4b18": { 
+                  "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-10",
+                  "distrib_level_of_interest":"Secondary",
+                  "phasewing":null,
+                  "tou":true},
+    "a22be94b-c525-3442-88d3-936dc58de0be": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-1 Small General Service",  
+                  "distrib_level_of_interest":null,
+                  "phasewing":"Single",
+                  "tou":true},
+    "8a2f69f5-38f7-3e39-90bd-370a3aa38b77": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-1 Small General Service",  
+                  "distrib_level_of_interest":null,
+                  "phasewing":"Single",
+                  "tou":true},
+    "f9ba6d7e-d730-31d7-95fb-d7ec0e4ab765": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-1 Small General Service",  
+                  "distrib_level_of_interest":null,
+                  "phasewing":"Single",
+                  "tou":true},
+    "b31a38a5-659b-35e0-ad67-6ab8253da49a": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-10",
+                  "distrib_level_of_interest":"Secondary",
+                  "phasewing":null,
+                  "tou":true},
+    "83146bd5-7893-3497-a0b8-cfe1af8d9f0f": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-10",
+                  "distrib_level_of_interest":"Secondary",
+                  "phasewing":null,
+                  "tou":true},
+    "d3489cfa-93a5-37e7-a274-0f35cf17b782": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-1 Small General Service",  
+                  "distrib_level_of_interest":null,
+                  "phasewing":"Single",
+                  "tou":true},
+    
+  "d3e66c59-5daf-3702-8c66-174c7acea506": { 
+    "utility_id": "14328",
+    "sector": "Commercial",
+    "tariff_rate_of_interest": "A-1 Small General Service",  
+    "distrib_level_of_interest":null,
+    "phasewing":"Single",
+    "tou":true},
+    
+    "c1da7e5f-3e37-3d71-b2ab-c3c5519905dc": { 
+    "utility_id": "14328",
+                  "sector": "Commercial",
+                  "tariff_rate_of_interest": "A-1 Small General Service",  
+                  "distrib_level_of_interest":null,
+                  "phasewing":"Single",
+                  "tou":true}
+}

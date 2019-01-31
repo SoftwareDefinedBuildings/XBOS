@@ -1,0 +1,16 @@
+meter_id,distrib_level_of_interest,option_exclusion,phasewing,sector,tariff_rate_of_interest,tou,utility_id
+4c95836f-6bdb-3adc-ac5e-4c787ae027c7,Secondary,,,Commercial,A-10,TRUE,14328
+4d95d5ce-de62-3449-bd58-4dcad75b526d,,,Single,Commercial,A-1 Small General Service,TRUE,14328
+d2ad6682-8e44-374b-8bfe-9e25960a9be0,,,Single,Commercial,A-1 Small General Service,TRUE,14328
+e9c51ce5-4aa1-399c-8172-92073e273a0b,,"['(X}', '(W}', 'Poly']",,Commercial,A-6,TRUE,14328
+68e04192-e924-36b8-9c5e-f072bd93ed07,Secondary,"['Option R', 'Voluntary']",,Commercial,E-19,TRUE,14328
+849cae1e-5714-34e1-8a4e-ec72ca71b0ab,,,Single,Commercial,A-1 Small General Service,TRUE,14328
+a373b62e-04f3-3c1e-b27d-279f792f4b18,Secondary,,,Commercial,A-10,TRUE,14328
+a22be94b-c525-3442-88d3-936dc58de0be,,,Single,Commercial,A-1 Small General Service,TRUE,14328
+8a2f69f5-38f7-3e39-90bd-370a3aa38b77,,,Single,Commercial,A-1 Small General Service,TRUE,14328
+f9ba6d7e-d730-31d7-95fb-d7ec0e4ab765,,,Single,Commercial,A-1 Small General Service,TRUE,14328
+b31a38a5-659b-35e0-ad67-6ab8253da49a,Secondary,,,Commercial,A-10,TRUE,14328
+83146bd5-7893-3497-a0b8-cfe1af8d9f0f,Secondary,,,Commercial,A-10,TRUE,14328
+d3489cfa-93a5-37e7-a274-0f35cf17b782,,,Single,Commercial,A-1 Small General Service,TRUE,14328
+d3e66c59-5daf-3702-8c66-174c7acea506,,,Single,Commercial,A-1 Small General Service,TRUE,14328
+c1da7e5f-3e37-3d71-b2ab-c3c5519905dc,,,Single,Commercial,A-1 Small General Service,TRUE,14328
