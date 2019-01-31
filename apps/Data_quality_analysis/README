@@ -1,0 +1,5 @@
+XBOS Data Quality Analysis tool
+Authors: @callieclark @phgupta @marcopritoni
+
+Main file: Data_Analysis_MDAL.ipynb 
+All other files are called from the main file
