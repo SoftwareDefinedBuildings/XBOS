@@ -106,7 +106,7 @@ def fillPelicanHole(site, username, password, tstat_name, start_time, end_time):
         if blocks is None:
             return None
         history_blocks.extend(blocks)
-        start += timedelta(days=30)
+        start += timedelta(days=30, minutes=1)
 
     output_rows = []
     for block in history_blocks:
