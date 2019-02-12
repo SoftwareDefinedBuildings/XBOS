@@ -2,4 +2,5 @@
 .ipynb_checkpoints
 
 services/config/
+!services/config/__init__.py
 services/**/*.pyc
