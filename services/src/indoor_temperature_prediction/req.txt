@@ -1,0 +1,7 @@
+grpcio==1.16.1
+grpcio-tools==1.16.1
+pandas==0.24.0
+PyYAML==3.13
+xbos_services_utils3 <= 0.0.10dev
+xbos_services_getter <= 0.0.10dev
+pytz == 2018.9

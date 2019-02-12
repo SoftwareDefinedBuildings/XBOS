@@ -1,0 +1,55 @@
+// python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. price.proto
+
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package price;
+
+// The price service definition.
+service Price {
+  // A simple RPC.
+  //
+  // Sends a price for a utility, tariff, type, duration (start, end), and window
+  // A PriceReply with an empty name is returned if there are no prices for the given request
+  rpc GetPrice (PriceRequest) returns (PriceReply) {}
+}
+
+// PricePoints are represented as a float per unit (e.g., 0.14 $/kWh) starting at a given time
+message PricePoint {
+  int64 time = 1;
+  double price = 2;
+  string unit = 3;
+  string window = 4;
+}
+
+// The request message containing the requested pricing information.
+message PriceRequest {
+  // The name of the electric utility (e.g., PGE or SCE)
+  string utility = 1;
+
+  // The utility tariff
+  // PGE {FLAT06,PGEA01,PGEA06,PGEA10,PGEE19,PGEE20}
+  // SCE {SCE08B,SCETGS3}
+  string tariff = 2;
+
+  // The price type (e.g., ENERGY or DEMAND)
+  string price_type = 3;
+
+  // The start time in Unixnanoseconds
+  int64 start = 4;
+
+  // The end time in Unixnanoseconds
+  int64 end = 5;
+
+  // The frequency/duration window (e.g., 10s, 15m, 1h)
+  // Supported units are: h,m,s
+  // max is 1 hour (1h, 60m, 3600s)
+  string window = 6;
+}
+
+// The response message containing the prices
+message PriceReply {
+  repeated PricePoint prices = 1;
+}

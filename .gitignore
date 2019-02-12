@@ -1,2 +1,5 @@
 .DS_Store
 .ipynb_checkpoints
+
+services/config/
+services/**/*.pyc

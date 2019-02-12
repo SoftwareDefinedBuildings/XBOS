@@ -1,0 +1,47 @@
+// python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. occupancy.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package occupancy_historical;
+
+// The temperature service definition.
+service Occupancy {
+  // A simple RPC.
+  //
+  // Sends the historic occupancy for a given building and zone within a duration (start, end), and a requested window
+  // An error  is returned if there are no temperature for the given request
+  rpc GetOccupancy (Request) returns (OccupancyReply) {}
+}
+
+// The request message containing the requested information.
+message Request {
+  // The name of the building
+  string building = 1;
+  string zone = 2;
+
+  // The start time in Unixnanoseconds
+  int64 start = 3;
+
+  // The end time in Unixnanosecondsf
+  int64 end = 4;
+
+  // The frequency/duration window (e.g., 10s, 15m, 1h)
+  // Supported units are: d,h,m,s
+  string window = 5;
+}
+
+
+// OccupancyPoint are represented as a float (e.g., 0.3) starting at a given time
+message OccupancyPoint {
+  int64 time = 1;
+  double occupancy = 2;
+}
+
+
+// The response message containing the temperatures
+message OccupancyReply {
+  repeated OccupancyPoint occupancies = 1;
+}
+

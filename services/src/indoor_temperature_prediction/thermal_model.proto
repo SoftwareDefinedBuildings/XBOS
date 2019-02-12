@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package thermal_model;
+
+// The temperature service definition.
+service ThermalModel {
+  // A simple RPC.
+  //
+  // Predicts indoor temperatures.
+  rpc GetPrediction (PredictionRequest) returns (PredictedTemperatureReply) {}
+}
+
+// The request message containing the requested information.
+message PredictionRequest {
+  // The name of the building
+  string building = 1;
+  string zone = 2;
+
+  // The start time in Unixnanoseconds
+  int64 current_time = 3;
+
+  int64 action = 4;
+
+  double indoor_temperature = 5;
+  double outside_temperature = 6;
+  map<string, double> other_zone_temperatures = 7;
+
+  string temperature_unit = 8;
+
+  int64 occupancy = 9;
+}
+
+
+// TemperaturePoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
+message PredictedTemperatureReply {
+  int64 time = 1;
+  double temperature = 2;
+  string unit = 3;
+}
+
