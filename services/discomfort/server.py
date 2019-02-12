@@ -3,15 +3,16 @@ import grpc
 import discomfort_pb2
 import discomfort_pb2_grpc
 import time
+import os
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
+HOST_ADDRESS = os.environ["DISCOMFORT_HOST_ADDRESS"]
 
 
 def get_linear_discomfort(request):
     """Returns linear discomfort (float) or None if Error encountered."""
 
     print("received request:", request.building, request.temperature, request.temperature_low, request.temperature_high, request.occupancy, request.unit)
-
 
     if request.unit != "F":
         return None, "not implemented, unit conversion is not implemented yet. Only Fahrenheit is supported."
@@ -51,7 +52,7 @@ class DiscomfortServicer(discomfort_pb2_grpc.DiscomfortServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     discomfort_pb2_grpc.add_DiscomfortServicer_to_server(DiscomfortServicer(), server)
-    server.add_insecure_port('[::]:50057')
+    server.add_insecure_port(HOST_ADDRESS)
     server.start()
     try:
         while True:
@@ -62,7 +63,3 @@ def serve():
 
 if __name__ == '__main__':
     serve()
-
-
-
-
