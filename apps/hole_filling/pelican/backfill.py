@@ -132,4 +132,6 @@ def fillPelicanHole(site, username, password, tstat_name, start_time, end_time):
             "state": _state_mappings.get(runStatus, 0),
             "time": timestamp,
         })
-    return pd.DataFrame(output_rows)
+    df = pd.DataFrame(output_rows)
+    df.drop_duplicates(subset="time", keep="first", inplace=True)
+    return df
