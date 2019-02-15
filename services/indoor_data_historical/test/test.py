@@ -4,6 +4,9 @@ from __future__ import print_function
 import grpc
 import time
 import datetime
+
+import sys
+sys.path.append("../")
 import indoor_temperature_action_pb2
 import indoor_temperature_action_pb2_grpc
 
@@ -14,52 +17,28 @@ def run():
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    # with grpc.insecure_channel('localhost:50051') as channel:
-    #     stub = indoor_temperature_action_pb2_grpc.IndoorTemperatureActionStub(channel)
-    #     try:
-    #         start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9) # TODO is this in UTC? Why are we printing in PST
-    #         end =  int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
-    #         response = stub.GetRawTemperatures(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Northzone", start=start,end=end,window="1m"))
-    #         for temperature in response.temperatures:
-    #             print("Temp at: %s is: %.2f %s" % (time.ctime(int(temperature.time/1000000000.0)) + ' PST', temperature.temperature, temperature.unit))
-    #     except grpc.RpcError as e:
-    #         print(e)
-    #
-    #
-    # with grpc.insecure_channel('localhost:50051') as channel:
-    #     stub = indoor_temperature_action_pb2_grpc.IndoorTemperatureActionStub(channel)
-    #     try:
-    #         start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1000000000)
-    #         end =  int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1000000000)
-    #         response = stub.GetRawActions(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Northzone", start=start,end=end,window="1m"))
-    #         for action in response.actions:
-    #             print("Action at: %s is: %f" % (time.ctime(int(action.time/1000000000.0)) + ' PST', action.action))
-    #     except grpc.RpcError as e:
-    #         print(e)
+    with grpc.insecure_channel('localhost:50060') as channel:
+        stub = indoor_temperature_action_pb2_grpc.IndoorTemperatureActionStub(channel)
+        try:
+            start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+            end =  int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+            response = stub.GetRawTemperatures(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Northzone", start=start,end=end,window="1m"))
+            for temperature in response.temperatures:
+                print("Temp at: %s is: %.2f %s" % (time.ctime(int(temperature.time/1000000000.0)) + ' PST', temperature.temperature, temperature.unit))
+        except grpc.RpcError as e:
+            print(e)
 
     with grpc.insecure_channel('localhost:50060') as channel:
         stub = indoor_temperature_action_pb2_grpc.IndoorTemperatureActionStub(channel)
         try:
-
-            bldg = "ciee"
-
-            d_start = pytz.utc.localize(datetime.datetime(2018, 1, 1, minute=2))
-            d_end = d_start + datetime.timedelta(days=2)
-
-            start = int(calendar.timegm(d_start.utctimetuple()) * 1e9)
-            end = int(calendar.timegm(d_end.utctimetuple()) * 1e9)
-
-            response = stub.GetProcessedTemperaturesActions(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Northzone", start=start,end=end,window="15m"))
-            for point in response.temperatures_actions:
-                print("Point at: %s is Action: %f, Last Action: %f, Action Duration: %s, dt: %s, start_temperature %f, end temperature %f with units: %s" % (time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(point.time/1000000000.0))) + ' UTC', point.action,
-                                                                                                        point.previous_action,
-                                                                                                         point.action_duration,
-                                                                                                        point.window,
-                                                                                                       point.temperature_start,
-                                                                                                       point.temperature_end,
-                                                                                                       point.temperature_unit))
+            start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+            end =  int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+            response = stub.GetRawActions(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Northzone", start=start,end=end,window="1m"))
+            for action in response.actions:
+                print("Action at: %s is: %f" % (time.ctime(int(action.time/1000000000.0)) + ' PST', action.action))
         except grpc.RpcError as e:
             print(e)
+
 
 if __name__ == '__main__':
     run()

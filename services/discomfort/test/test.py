@@ -2,6 +2,8 @@
 from __future__ import print_function
 
 import grpc
+import sys
+sys.path.append("../")
 import discomfort_pb2
 import discomfort_pb2_grpc
 
@@ -11,7 +13,7 @@ def run():
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
 
-    with grpc.insecure_channel('localhost:50057') as channel:
+    with grpc.insecure_channel('castle.cs.berkeley.edu:50060') as channel:
         stub = discomfort_pb2_grpc.DiscomfortStub(channel)
         try:
             discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(building="ciee", temperature=66,
