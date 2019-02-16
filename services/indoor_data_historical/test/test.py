@@ -21,8 +21,8 @@ def run():
         stub = indoor_temperature_action_pb2_grpc.IndoorTemperatureActionStub(channel)
         try:
             start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
-            end =  int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
-            response = stub.GetRawTemperatures(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Northzone", start=start,end=end,window="1m"))
+            end = int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+            response = stub.GetRawTemperatures(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Eastzone", start=start,end=end,window="1m"))
             for temperature in response.temperatures:
                 print("Temp at: %s is: %.2f %s" % (time.ctime(int(temperature.time/1000000000.0)) + ' PST', temperature.temperature, temperature.unit))
         except grpc.RpcError as e:
@@ -33,7 +33,7 @@ def run():
         try:
             start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
             end =  int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
-            response = stub.GetRawActions(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Northzone", start=start,end=end,window="1m"))
+            response = stub.GetRawActions(indoor_temperature_action_pb2.Request(building="ciee", zone="HVAC_Zone_Eastzone", start=start,end=end,window="1m"))
             for action in response.actions:
                 print("Action at: %s is: %f" % (time.ctime(int(action.time/1000000000.0)) + ' PST', action.action))
         except grpc.RpcError as e:

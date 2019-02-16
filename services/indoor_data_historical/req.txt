@@ -2,7 +2,7 @@ grpcio==1.12.1
 grpcio-tools==1.12.1
 PyYAML==3.12
 xbos_services_utils2 <= 0.0.10dev
-pytz == pytz == 2018.3
+pytz == 2018.3
 xbos==0.0.35
 bw2python==0.6.1
 
