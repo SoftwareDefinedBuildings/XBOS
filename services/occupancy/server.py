@@ -15,11 +15,12 @@ import pandas as pd
 import yaml
 
 DAYS_IN_WEEK = 7
-OCCUPANCY_PATH = os.environ["OCCUPANCY_PATH"]
+OCCUPANCY_DATA_PATH = os.environ["OCCUPANCY_DATA_PATH"]
+OCCUPANCY_HOST_ADDRESS = os.environ["OCCUPANCY_HOST_ADDRESS"]
 
 
 def _get_occupancy_config(building, zone):
-    occ_path = OCCUPANCY_PATH + "/" + building + "/" + zone + ".yml"
+    occ_path = OCCUPANCY_DATA_PATH + "/" + building + "/" + zone + ".yml"
 
     if os.path.exists(occ_path):
         with open(occ_path, "r") as f:
@@ -119,7 +120,7 @@ def get_all_occ(building, zone, start, end, interval):
 
         curr_data = first_seven_days[first_seven_days_start + datetime.timedelta(days=curr_offset):
                                      first_seven_days_start + datetime.timedelta(days=curr_offset + 1)][
-                    :24 * 60 * 60 / interval]
+                    :int(24 * 60 * 60 / interval)]
 
         curr_start_date = curr_time
         curr_end_date = curr_start_date + datetime.timedelta(days=1)
@@ -192,7 +193,7 @@ class OccupancyServicer(occupancy_pb2_grpc.OccupancyServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     occupancy_pb2_grpc.add_OccupancyServicer_to_server(OccupancyServicer(), server)
-    server.add_insecure_port('[::]:50054')
+    server.add_insecure_port(OCCUPANCY_HOST_ADDRESS)
     server.start()
     try:
         while True:

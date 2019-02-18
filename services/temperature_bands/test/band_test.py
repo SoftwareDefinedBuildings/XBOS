@@ -31,12 +31,18 @@ def run():
 
 
         comfortband_respones = stub.GetComfortband(schedules_pb2.Request(building="avenal-animal-shelter", zone="HVAC_Zone_Shelter_Corridor", start=int(start),end=int(end),window="15m", unit="F"))
-        # do_not_exceed_respones = stub.GetDoNotExceed(schedules_pb2.Request(building="avenal-animal-shelter", zone="HVAC_Zone_Shelter_Corridor", start=int(start),end=int(end),window="15m", unit="F"))
+        do_not_exceed_respones = stub.GetDoNotExceed(schedules_pb2.Request(building="avenal-animal-shelter", zone="HVAC_Zone_Shelter_Corridor", start=int(start),end=int(end),window="15m", unit="F"))
 
-        # for point in comfortband_respones.schedules:
-        #     print("Point at: %s is t_low: %f and t_high: %f" % (time.ctime(int(point.time/1000000000.0)) + ' PST',
-        #                                                                                             point.temperature_low,
-        #                                                         point.temperature_high))
+        for point in comfortband_respones.schedules:
+            print("Point at: %s is t_low: %f and t_high: %f" % (time.ctime(int(point.time/1000000000.0)) + ' PST',
+                                                                                                    point.temperature_low,
+                                                                point.temperature_high))
+
+        for point in do_not_exceed_respones.schedules:
+            print("Point at: %s is t_low: %f and t_high: %f" % (time.ctime(int(point.time/1000000000.0)) + ' PST',
+                                                                                                    point.temperature_low,
+                                                                point.temperature_high))
+            
     except grpc.RpcError as e:
         print(e)
 

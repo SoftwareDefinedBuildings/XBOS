@@ -9,6 +9,9 @@ from xbos.services import mdal
 import os, sys
 import xbos_services_utils2 as utils
 
+import os
+PRICE_HOST_ADDRESS = os.environ["PRICE_HOST_ADDRESS"]
+
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
@@ -287,7 +290,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     price_pb2_grpc.add_PriceServicer_to_server(PriceServicer(), server)
-    server.add_insecure_port('[::]:50051')
+    server.add_insecure_port(PRICE_HOST_ADDRESS)
     server.start()
     try:
         while True:
