@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	var dr = false;
-	var soon = true;
+	var soon = false;
 	if (dr) {
 		$("#DRROW").show();
 		$("#DRTXT").addClass("white-text");

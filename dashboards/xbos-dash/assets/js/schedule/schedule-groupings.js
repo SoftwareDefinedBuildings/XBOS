@@ -41,4 +41,20 @@ $(document).ready(function() {
 		location.href = "schedule-epochs.html";
 	});
 
+	$("#save-modes").click(function() {
+		var obj = new Object();
+		obj.modes = [];
+		$(".mode-card").each(function(i) {
+			var m = new Object();
+			m.id = i;
+			var inputs = $(this).find("input");
+			m.name = inputs[0].value;
+			m.heating = inputs[1].value;
+			m.cooling = inputs[2].value;
+			m.enabled = $(inputs[3]).prop("checked");
+			obj.modes.push(m);
+		});
+		M.toast({html: 'Current modes successfully updated.', classes:"rounded", displayLength: 2000});
+		console.log(obj);
+	});
 });

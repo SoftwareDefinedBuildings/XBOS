@@ -128,19 +128,18 @@ $(document).ready(function() {
 	function readOut() {
 		var obj = new Object();
 		// obj.name = location;
-		obj.zones = [1, 3, 5, 7];
-		obj.modes = [];
-		$(".mode-card").each(function(i) {
-			var m = new Object();
-			m.id = i;
-			var inputs = $(this).find("input");
-			m.name = inputs[0].value;
-			m.heating = inputs[1].value;
-			m.cooling = inputs[2].value;
-			m.enabled = $(inputs[3]).prop("checked");
-			obj.modes.push(m);
-		});
-		var sched = new Object();
+		// obj.zones = [1, 3, 5, 7];
+		// obj.modes = [];
+		// $(".mode-card").each(function(i) {
+		// 	var m = new Object();
+		// 	m.id = i;
+		// 	var inputs = $(this).find("input");
+		// 	m.name = inputs[0].value;
+		// 	m.heating = inputs[1].value;
+		// 	m.cooling = inputs[2].value;
+		// 	m.enabled = $(inputs[3]).prop("checked");
+		// 	obj.modes.push(m);
+		// });
 		var t = new Object();
 		t.sun = $.extend([], sliders[0].noUiSlider.get());
 		t.mon = $.extend([], sliders[1].noUiSlider.get());
@@ -149,7 +148,7 @@ $(document).ready(function() {
 		t.thu = $.extend([], sliders[4].noUiSlider.get());
 		t.fri = $.extend([], sliders[5].noUiSlider.get());
 		t.sat = $.extend([], sliders[6].noUiSlider.get());
-		sched.times = t;
+		obj.times = t;
 		var sets = new Object();
 		sets.sun = sliderModes[0];
 		sets.mon = sliderModes[1];
@@ -158,8 +157,7 @@ $(document).ready(function() {
 		sets.thu = sliderModes[4];
 		sets.fri = sliderModes[5];
 		sets.sat = sliderModes[6];
-		sched.settings = sets;
-		obj.schedule = sched;
+		obj.settings = sets;
 		console.log(obj);
 	}
 

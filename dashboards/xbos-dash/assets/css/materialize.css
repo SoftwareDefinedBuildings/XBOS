@@ -13,6 +13,7 @@
   font-size: 1.15rem !important;
   line-height: 110% !important;
   margin: 0 0 0.46rem 0 !important;
+  padding: 12px 0 0 0 !important;
 }
 
 .mode-card {
@@ -32,6 +33,12 @@
   border-radius: 0px 7px 7px 0px !important;
 }
 
+.etab {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 10px !important;
+}
+
 .sli-day {
   font-size: 22px;
 }
@@ -43,6 +50,7 @@
 
 .setpnt-div {
   display: flex;
+  padding-top: 8px;
 }
 
 .setpnt-div input {

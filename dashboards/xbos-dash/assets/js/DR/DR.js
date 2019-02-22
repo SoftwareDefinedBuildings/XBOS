@@ -307,10 +307,10 @@ $(document).ready(function() {
 		var dissum = disvals.reduce((pv, cv) => pv+cv, 0);
 		var dolsum = dolvals.reduce((pv, cv) => pv+cv, 0);
 		var kWHsum = kWHvals.reduce((pv, cv) => pv+cv, 0);
-		$("#" + s + "=lam-avg").html(lamsum/l);
-		$("#" + s + "=dis-avg").html(dissum/l);
-		$("#" + s + "=money-avg").html(dolsum/l);
-		$("#" + s + "=energy-avg").html(kWHsum/l);
+		$("#" + s + "-lam-avg").html(lamsum/l);
+		$("#" + s + "-dis-avg").html(dissum/l);
+		$("#" + s + "-money-avg").html(dolsum/l);
+		$("#" + s + "-energy-avg").html(kWHsum/l);
 	}
 
 	function setBldngData(d, b=false) {
