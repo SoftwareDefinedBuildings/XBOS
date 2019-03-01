@@ -8,6 +8,7 @@ import sys
 sys.path.append("..")
 from Energy_Analytics import Wrapper
 
+
 # Custom func
 def func(X, y):
     from sklearn.linear_model import LinearRegression

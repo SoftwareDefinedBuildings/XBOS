@@ -1,6 +1,6 @@
 """ This script contains functions for displaying various plots.
 
-Last modified: October 17 2018
+Last modified: Feb 4 2019
 
 Authors \n
 @author Pranav Gupta <phgupta@ucdavis.edu>
@@ -25,6 +25,7 @@ class Plot_Data:
 
     # Static variable to keep count of number of figures
     count = 1
+
 
     def __init__(self, figsize=(18,5)):
         """ Constructor.
@@ -140,11 +141,11 @@ class Plot_Data:
                     Plot_Data.count += 1
                     return fig, project_df['y_true'], project_df['y_pred']
                 except:
-                    raise SystemError("If projecting into the future, please specify project_ind_col that has data available \
+                    raise TypeError("If projecting into the future, please specify project_ind_col that has data available \
                                         in the future time period requested.")
            
         return fig, None, None
-            
-if __name__ == '__main__':
 
+
+if __name__ == '__main__':
     obj = Plot_Data()

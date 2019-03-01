@@ -1,39 +1,46 @@
 """ This script is a wrapper class around all the other modules - importing, cleaning, preprocessing and modeling the data.
 
-Last modified: December 4 2018
-
 Note
 ----
+Last modified: Feb 4 2019
+
 1. For MAPE, all rows with 0 are dropped in baseline_out.
 2. df.loc[(slice(None, None, None)), ...] is equivalent to "df.loc[:,...]"
 3. df.resample(freq='h').mean() drops all non-float/non-int columns
 4. os._exit(1) exits the program without calling cleanup handlers.
+5. Add sys.path.append("..") in Jupyter notebooks for all the imports to work.
 
-To Do \n
-1. Import \n
-    \t 1. Check if file_name or folder_name is of type unicode -> convert to string.
-2. Clean \n
-    \t 1. Clean each column differently.
-3. Model \n
-    \t 1. Add param_dict parameter.
-    \t 2. For baseline/projection period, if no start/end date, use first/last row.
-    \t 3. Change SystemError to specific errors.
-4. Wrapper \n
-    \t 1. Give user the option to run specific models.
-    \t 2. Change SystemError to specific errors.
-5. All \n
-    \t 2. Look into adding other plots.
-    \t 3. Write documentation from user's perspective.
-    \t 4. Add plot_data in documentation.
-    \t 5. Use environment markers to update requirements.txt (matplotlib 3.0.0 vs 2.2.3)
-6. Cleanup \n
-    \t 1. Documentation.
-    \t 2. Unit Tests.
-    \t 3. Docker.
-    \t 4. Ensure results are replicated in different systems.
 
-Authors \n
-@author Pranav Gupta <phgupta@ucdavis.edu>
+To Do
+-----
+1. Import
+    1. Check if file_name or folder_name is of type unicode -> convert to string.
+2. Clean
+    1. Clean each column differently.
+    2. Test all functions from TS_Util.py
+3. Model
+    1. Add param_dict parameter.
+    2. For baseline/projection period, if no start/end date, use first/last row.
+    3. Save best model.
+    4. Add SVR, ANN.
+4. Wrapper
+    1. Give user the option to run specific models.
+    2. Change search()
+5. All
+    1. Look into adding other plots.
+    2. Check if Python2.7 works.
+    3. Change conf.py's absolute path.
+6. Cleanup
+    1. Pylint.
+    2. Documentation.
+    3. Unit Tests.
+    4. Docker.
+    5. Update Energy_Analytics, XBOS_Data_Analytics, XBOS.
+
+
+Authors
+-------
+- Pranav Gupta <phgupta@ucdavis.edu>
 
 """
 
@@ -44,16 +51,14 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 from datetime import date
-# from Energy_Analytics import Import_Data
-# from Energy_Analytics import Clean_Data
-# from Energy_Analytics import Preprocess_Data
-# from Energy_Analytics import Model_Data
-# from Energy_Analytics import Plot_Data
-from Import_Data import *
-from Clean_Data import *
-from Preprocess_Data import *
-from Model_Data import *
-from Plot_Data import *
+
+
+
+from Import_Data import Import_Data, Import_MDAL
+from Clean_Data import Clean_Data
+from Preprocess_Data import Preprocess_Data
+from Model_Data import Model_Data
+from Plot_Data import Plot_Data
 
 
 class Wrapper:
@@ -124,7 +129,7 @@ class Wrapper:
 
 
     def add_comments(self, dic):
-        """ Add comments to results json file
+        """ Add comments to results json file.
 
         dic     : dict
             Dictionary of key,value pairs added to result
@@ -136,7 +141,7 @@ class Wrapper:
 
 
     def write_json(self):
-        """ Dump data into json file """
+        """ Dump data into json file. """
 
         with open(self.results_folder_name + '/results-' + str(self.get_global_count()) + '.json', 'a') as f:
             json.dump(self.result, f)
@@ -155,8 +160,7 @@ class Wrapper:
         """
 
         def count_number_of_days(site, end_date):
-            """
-            Counts the number of days between two dates.
+            """ Counts the number of days between two dates.
 
             Parameters
             ----------
@@ -250,12 +254,12 @@ class Wrapper:
         """
 
         if not file_name and not input_json or file_name and input_json:
-            raise SystemError('Provide either json file or json object to read.')
+            raise TypeError('Provide either json file or json object to read.')
         
         # Read json file
         if file_name:
             if not isinstance(file_name, str) or not file_name.endswith('.json') or not os.path.isfile('./'+file_name):
-                raise SystemError('File name should be a valid .json file residing in current directory.')
+                raise TypeError('File name should be a valid .json file residing in current directory.')
             else:
                 f = open(file_name)
                 input_json = json.load(f)
@@ -292,8 +296,6 @@ class Wrapper:
                                 baseline_period=model_json['Baseline Period'], projection_period=model_json['Projection Period'],
                                 exclude_time_period=model_json['Exclude Time Period'],
                                 alphas=model_json['Alphas'], cv=model_json['CV'], plot=model_json['Plot'], figsize=model_json['Fig Size'])
-
-        # self.write_json()
 
 
     # CHECK: Modify looping of time_freq
@@ -489,7 +491,7 @@ class Wrapper:
 
         # Check to ensure data is a pandas dataframe
         if not isinstance(data, pd.DataFrame):
-            raise SystemError('data has to be a pandas dataframe.')
+            raise TypeError('data has to be a pandas dataframe.')
         
         # Create instance and clean the data
         clean_data_obj = Clean_Data(data)
@@ -589,7 +591,7 @@ class Wrapper:
 
         # Check to ensure data is a pandas dataframe
         if not isinstance(data, pd.DataFrame):
-            raise SystemError('data has to be a pandas dataframe.')
+            raise TypeError('data has to be a pandas dataframe.')
         
         # Create instance
         preprocess_data_obj = Preprocess_Data(data)
@@ -679,7 +681,7 @@ class Wrapper:
 
         # Check to ensure data is a pandas dataframe
         if not isinstance(data, pd.DataFrame):
-            raise SystemError('data has to be a pandas dataframe.')
+            raise TypeError('data has to be a pandas dataframe.')
         
         # Create instance
         model_data_obj = Model_Data(data, ind_col, dep_col, alphas, cv, exclude_time_period, baseline_period, projection_period)
