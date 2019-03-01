@@ -1,10 +1,14 @@
 """ This script preprocesses a dataframe according to user specifications.
 
-Last modified: November 15 2018
+Note
+----
+Last modified: Feb 4 2019
 
-Authors \n
-@author Marco Pritoni <marco.pritoni@gmail.com>
-@author Pranav Gupta <phgupta@ucdavis.edu>
+
+Authors
+-------
+- Marco Pritoni <marco.pritoni@gmail.com>
+- Pranav Gupta <phgupta@ucdavis.edu>
 
 """
 
@@ -14,7 +18,7 @@ from sklearn import preprocessing
 
 class Preprocess_Data:
 
-    """ This class preprocesses a dataframe according to user specification """
+    """ This class preprocesses a dataframe according to user specification. """
 
     def __init__(self, df):
         """ Constructor.
@@ -172,16 +176,12 @@ class Preprocess_Data:
         # One-hot encode the time features
         for var in var_to_expand:
                 
-                add_var = pd.get_dummies(data[var], prefix=var)
+                add_var = pd.get_dummies(data[var], prefix=var, drop_first=True)
                 
                 # Add all the columns to the model data
                 data = data.join(add_var)
 
                 # Drop the original column that was expanded
                 data.drop(columns=[var], inplace=True)
-
-                # Drop last column to remove multi-collinearity
-                cols = [col for col in data.columns if var in col]
-                data.drop(columns=[cols[-1]], inplace=True)
 
         self.preprocessed_data = data

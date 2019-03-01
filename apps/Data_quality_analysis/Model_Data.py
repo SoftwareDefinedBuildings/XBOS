@@ -1,9 +1,13 @@
-""" This script splits the data into baseline and projection periods, runs models on them and displays metrics & plots.
+""" This script splits the data into baseline and projection periods, runs ML models on them and displays the metrics & plots.
 
-Last modified: October 30 2018
+Note
+----
+Last modified: Feb 4 2019
 
-Authors \n
-@author Pranav Gupta <phgupta@ucdavis.edu>
+
+Authors
+-------
+- Pranav Gupta <phgupta@ucdavis.edu>
 
 """
 
@@ -65,37 +69,41 @@ class Model_Data:
         self.original_data = df
         self.cv = cv
 
+        # Populate input columns (indepdent columns)
         if not input_col: # Using all columns except the last as input_col
             input_col = list(self.original_data.columns)
             input_col.remove(output_col)
             self.input_col = input_col
         elif not isinstance(list):
-            raise SystemError('Input column should be a list.')
+            raise TypeError('Input column should be a list.')
         else:
             self.input_col = input_col
 
+        # Populate output column (dependent column)
         if not output_col:
-            raise SystemError('Please provide the target column.')
+            raise TypeError('Please provide the target column.')
         elif not isinstance(output_col, str):
-            raise SystemError('Target column should be a string.')
+            raise TypeError('Target column should be a string.')
         else:
             self.output_col = output_col
 
+        # Validate the type of alphas
         if not isinstance(alphas, list) and not isinstance(alphas, np.ndarray):
-            raise SystemError('alphas should be a list of int\'s or numpy ndarray.')
+            raise TypeError('alphas should be a list of int\'s or numpy ndarray.')
         else:
             self.alphas = alphas
 
+        # Validate the type of baseline_period, projection_period & exclude_time_period
         if (len(baseline_period) % 2 != 0):
-            raise SystemError('baseline period needs to be a multiple of 2 (i.e. have a start and end date)')
+            raise ValueError('baseline period needs to be a multiple of 2 (i.e. have a start and end date)')
         else:
             self.baseline_period = baseline_period
         if exclude_time_period and (len(exclude_time_period) % 2 != 0):
-            raise SystemError('exclude time period needs to be a multiple of 2 (i.e. have a start and end date)')
+            raise ValueError('exclude time period needs to be a multiple of 2 (i.e. have a start and end date)')
         else:
             self.exclude_time_period = exclude_time_period
         if projection_period and (len(projection_period) % 2 != 0):
-            raise SystemError('projection period needs to be a multiple of 2 (i.e. have a start and end date)')
+            raise ValueError('projection period needs to be a multiple of 2 (i.e. have a start and end date)')
         else:
             self.projection_period = projection_period
 
@@ -115,7 +123,7 @@ class Model_Data:
 
 
     def split_data(self):
-        """ Split data according to baseline and projection time period values """
+        """ Split data according to baseline and projection time period values. """
 
         try:
             # Extract data ranging in time_period1
@@ -455,34 +463,6 @@ class Model_Data:
 
         """
 
-        # X_train, X_test, y_train, y_test = train_test_split(self.baseline_in, self.baseline_out, 
-        #                                                     test_size=0.30, random_state=42)
-
-        # self.best_model.fit(X_train, y_train)
-        # self.y_true = y_test                        # Pandas Series
-        # self.y_pred = self.best_model.predict(X_test)    # numpy.ndarray
-
-        # # Set all negative values to zero since energy > 0
-        # self.y_pred[self.y_pred < 0] = 0
-        
-        # # n and k values for adj r2 score
-        # self.n_test = X_test.shape[0]   # Number of points in data sample
-        # self.k_test = X_test.shape[1]   # Number of variables in model, excluding the constant
-
-        # # Store best model's metrics
-        # self.best_metrics['name']   = self.best_model_name
-        # self.best_metrics['r2']     = r2_score(self.y_true, self.y_pred)
-        # self.best_metrics['mse']    = mean_squared_error(self.y_true, self.y_pred)
-        # self.best_metrics['rmse']   = math.sqrt(self.best_metrics['mse'])
-        # self.best_metrics['adj_r2'] = self.adj_r2(self.best_metrics['r2'], self.n_test, self.k_test)
-
-        # # Normalized Mean Bias Error
-        # numerator = sum(self.y_true - self.y_pred)
-        # denominator = (self.n_test - self.k_test) * (sum(self.y_true) / len(self.y_true))
-        # self.best_metrics['nmbe'] = numerator / denominator
-
-        # return self.best_metrics
-
         self.best_model.fit(self.baseline_in, self.baseline_out)
 
         self.y_true = self.baseline_out                             # Pandas Series
@@ -506,7 +486,6 @@ class Model_Data:
         numerator = sum(self.y_true - self.y_pred)
         denominator = (self.n_test - self.k_test) * (sum(self.y_true) / len(self.y_true))
         self.best_metrics['nmbe']   = numerator / denominator
-
 
         # MAPE can't have 0 values in baseline_out -> divide by zero error
         self.baseline_out_copy  = self.baseline_out[self.baseline_out != 0]
