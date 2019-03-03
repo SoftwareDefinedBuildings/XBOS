@@ -2,25 +2,28 @@ $(document).ready(function() {
 	M.AutoInit();
 	var zoneSel = 0;
 	var zoneArr = [];
+
 	$(".filled-in").each(function() {
 		$(this).click(function() {
 			var t = $(this).find("span").prevObject["0"]["labels"][0]["innerText"];
 			if ($(this).prop("checked")) {
 				zoneSel += 1;
 				zoneArr.push(t);
-				console.log(zoneArr);
 			} else {
 				zoneSel -= 1;
 				zoneArr.splice($.inArray(t, zoneArr), 1);
-				console.log(zoneArr);
 			}
 			setGB();
 		});
+		var t = $(this).find("span").prevObject["0"]["labels"][0]["innerText"];
+		if ($(this).prop("checked")) {
+			zoneSel += 1;
+			zoneArr.push(t);
+		}
+		setGB();
 	});
 
-	function setGB() {
-		$("#group-btn").html("Group Selected (" + zoneSel + ")");
-	}
+	function setGB() { $("#group-btn").html("Group Selected (" + zoneSel + ")"); }
 
 	$("#group-btn").click(function() {
 		if (zoneSel == 0) {

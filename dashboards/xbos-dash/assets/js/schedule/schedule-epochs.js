@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	M.AutoInit();
-	console.log(sessionStorage.getItem("modesToGroup"));
+	$("#groupName").prop("value", sessionStorage.getItem("modesToGroup"));
 	let c = ["pink", "deep-orange", "green", "teal", "blue", "deep-purple", "tp-blue"];
 	let pipvals = ["12am", "2am", "4am", "6am", "8am", "10am", "12pm", "2pm", "4pm", "6pm", "8pm", "10pm", "12am"];
 	let piprev = ["12am", "10pm", "8pm", "6pm", "4pm", "2pm", "12pm", "10am", "8am", "6am", "4am", "2am", "12am"];
@@ -86,7 +86,7 @@ $(document).ready(function() {
 		});
 	}
 
-	var colors = ["#3B7EA1", "#FDB515", "#cab2d6", "#fccde5", "#b2df8a"];
+	var colors = ["#018AE0", "#FDB515", "#cab2d6", "#fccde5", "#b2df8a"];
 	var curMode = 0;
 	var curColor = colors[0];
 	$(".with-gap").each(function(i) {
@@ -112,9 +112,9 @@ $(document).ready(function() {
 						sliderColors[row][col] = curColor;
 						sliderModes[row][col] = curMode;
 					}
-					console.log(sliderColors);
+					// console.log(sliderColors);
 				}
-				console.log(row, col);
+				// console.log(row, col);
 			});
 		});
 	} getConnect();
@@ -187,7 +187,12 @@ $(document).ready(function() {
 				var l = s.noUiSlider.get();
 				if (!$.isArray(l)) { l = [l]; }
 				else if (l.length == 5) {
-					M.toast({html: "You must first press save", classes: "rounded", displayLength: 5000});
+					var toastElement = document.querySelector('.toast');
+					if (toastElement) {
+  						var toastInstance = M.Toast.getInstance(toastElement);
+						toastInstance.dismiss();
+					}
+					M.toast({html: "You cannot have more than 6 epochs", classes: "rounded", displayLength: 2500});
 					return;
 				}
 				l = l.map(function(x) { return parseFloat(x); });
@@ -270,8 +275,6 @@ $(document).ready(function() {
 
 	function getOpts() { return {range: {'min': 0.0, 'max': 24.0}, step: .25, behaviour: "tap-drag"}; }
 
-	// $($("#rando").parents()[2]).addClass("grey");
-
 	var mode = false;
 	function editModes(c=true) {
 		var x = $("#mode-edit");
@@ -299,38 +302,4 @@ $(document).ready(function() {
 	} $("#mode-edit").click(editModes);
 
 	function getEdit() { if (mode) { return "save"; } else { return "edit"; }}
-
-	// var modenum = 3;
-	// var colors = ["#3B7EA1", "#FDB515", "#cab2d6", "#fccde5", "#b2df8a"];
-	// var curColor = colors[0];
-	// $(".with-gap").each(function(i) {
-	// 	$(this).click(function() {
-	// 		curColor = colors[i];
-	// 	});
-	// });
-
-	// function addMode() {
-	// 	$("#mode-btn-div").remove();
-	// 	$("#mode-stq").remove();
-	// 	$("#mode-div").append("<div style='background-color:" + colors[modenum] + ";' class='col s2 z-depth-1 mode-card'><input style='padding: 12px 0 7px 0;' id='mode" + modenum + "' type='text' maxlength='10' placeholder='Mode Name' class='my-input mode-title' /><div class='setpnt-div'><input class='red lighten-2 spl' value=55 type='number' max='72' min='35' /><input class='blue lighten-2 spr' value=85 type='number' max='90' min='74' /></div><div class='switch'><label><input class='ogswitch' type='checkbox'><span class='lever'></span></label></div></div>");
-	// 	$("#mode-radios").append("<div class='col s2'><label><input class='with-gap' name='group1' type='radio' /><span style='margin-left: 5px;'></span></label></div>");
-	// 	modenum += 1;
-	// 	$("#mode-div").append("<div id='mode-btn-div' class='col stq'><a id='mode-btn' class='btn btn-floating waves-effect waves-light'><i class='large material-icons'>add</i></a><div class='row'></div><a id='mode-edit' class='btn btn-floating waves-effect waves-light blue scale-transition'><i class='large material-icons'>" + getEdit() + "</i></a></div>");
-	// 	$("#mode-radios").append("<div id='mode-stq' class='col stq'></div>");
-	// 	if (modenum == 5) { $("#mode-btn").addClass("disabled"); }
-	// 	$("#mode-edit").click(editModes);
-	// 	$("#mode-btn").click(addMode);
-	// 	// checkModes();
-	// } $("#mode-btn").click(addMode);
-
-	// function checkModes() {
-	// 	if (modenum > 3) {
-	// 		$("#first-mode").css("margin-left", "0");
-	// 		$("#first-radio").css("margin-left", "0");
-	// 	} else {
-	// 		$("#first-mode").css("margin-left", "auto");
-	// 		$("#first-radio").css("margin-left", "auto");
-	// 	}
-	// }
-
 });
