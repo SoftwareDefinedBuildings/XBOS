@@ -16,7 +16,7 @@ from numpy import nan
 import pytz
 
 # TODO Change this function to fit pymortar data instead of mdal
-def _preprocess_pymortar_outside_data(outside_data):
+def _preprocess_mdal_outside_data(outside_data):
     """
     Fixes mdal bug.
     Interpolating is justified by:
@@ -104,7 +104,7 @@ def _get_temperature(building, start, end, interval, pymortar_client):
     if raw_outside_data is None:
         return None, err
 
-    preprocessed_data, err = _preprocess_pymortar_outside_data(raw_outside_data)
+    preprocessed_data, err = _preprocess_mdal_outside_data(raw_outside_data)
 
     return preprocessed_data, err
 
