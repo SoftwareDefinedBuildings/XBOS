@@ -6,7 +6,6 @@ import grpc
 import pymortar
 import indoor_temperature_action_pb2
 import indoor_temperature_action_pb2_grpc
-from bw2python.client import Client
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
@@ -225,9 +224,6 @@ def get_window_in_sec(s):
 
 class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorTemperatureActionServicer):
     def __init__(self):
-        self.bw_client = Client()
-        self.bw_client.setEntityFromEnviron()
-        self.bw_client.overrideAutoChainTo(True)
         self.pymortar_client = pymortar.Client()
 
     def GetRawTemperatures(self, request, context):

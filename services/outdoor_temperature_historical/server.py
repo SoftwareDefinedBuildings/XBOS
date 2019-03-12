@@ -6,7 +6,6 @@ import grpc
 import pymortar
 import outdoor_temperature_historical_pb2
 import outdoor_temperature_historical_pb2_grpc
-from bw2python.client import Client
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
@@ -16,6 +15,7 @@ from rfc3339 import rfc3339
 from numpy import nan
 import pytz
 
+# TODO Change this function to fit pymortar data instead of mdal
 def _preprocess_pymortar_outside_data(outside_data):
     """
     Fixes mdal bug.
@@ -155,9 +155,6 @@ def get_window_in_sec(s):
 
 class OutdoorTemperatureServicer(outdoor_temperature_historical_pb2_grpc.OutdoorTemperatureServicer):
     def __init__(self):
-        self.bw_client = Client()
-        self.bw_client.setEntityFromEnviron()
-        self.bw_client.overrideAutoChainTo(True)
         self.pymortar_client = pymortar.Client()
 
     def GetTemperature(self, request, context):
