@@ -9,11 +9,11 @@ from xbos.services import mdal
 from bw2python.client import Client
 from xbos.services.hod import HodClient
 
+import os
+OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS = os.environ["OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS"]
+
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-
-# getting the utils file here
-import os, sys
 import xbos_services_utils2 as utils
 import datetime
 import pytz
@@ -149,7 +149,7 @@ class OutdoorTemperatureServicer(outdoor_temperature_historical_pb2_grpc.Outdoor
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     outdoor_temperature_historical_pb2_grpc.add_OutdoorTemperatureServicer_to_server(OutdoorTemperatureServicer(), server)
-    server.add_insecure_port('[::]:50058')
+    server.add_insecure_port(OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS)
     server.start()
     try:
         while True:

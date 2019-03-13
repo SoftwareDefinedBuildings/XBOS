@@ -35,12 +35,14 @@ def run():
         for zone in utils.get_zones(bldg):
             s_time = time.time()
             print("Zone: %s" % zone)
-
+            if "Shelter" not in zone:
+                print("BREAK")
+                break
             try:
 
-                end = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) + datetime.timedelta(days=1)
+                end = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) #+ datetime.timedelta(days=1)
                 end_unix = int(end.timestamp() * 1e9)
-                start = end - datetime.timedelta(days=7)
+                start = end - datetime.timedelta(days=1)
                 start_unix = int(start.timestamp() * 1e9)
 
                 window = "5m"

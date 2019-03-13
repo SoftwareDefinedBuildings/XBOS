@@ -32,7 +32,8 @@ def run():
         for zone in utils.get_zones(bldg):
             s_time = time.time()
             print("Zone: %s" % zone)
-
+            if not "word-of" in bldg:
+                continue
             try:
 
                 end = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) + datetime.timedelta(days=1)

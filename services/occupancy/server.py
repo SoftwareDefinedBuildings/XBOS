@@ -130,13 +130,13 @@ def get_all_occ(building, zone, start, end, interval):
         remaining_data.append(curr_data)
 
     occupancy_series = pd.concat([first_seven_days] + remaining_data)
-
+    
     return occupancy_series[start:end][:-1], None
 
 
 def get_occupancy(request):
     """Returns preprocessed thermal data for a given request or None."""
-
+    print("HEY")    
     print("received request:", request.building, request.zone, request.start, request.end, request.window)
     window_seconds = utils.get_window_in_sec(request.window)
 
