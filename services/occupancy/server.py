@@ -108,7 +108,7 @@ def get_all_occ(building, zone, start, end, interval):
     first_seven_days_end = first_seven_days_start + datetime.timedelta(days=DAYS_IN_WEEK)
 
     if end < first_seven_days_end:
-        return first_seven_days[start:end][:-1]
+        return first_seven_days[start:end][:-1], None
 
     # get occupancy for the remaining days.
     remaining_data = []
