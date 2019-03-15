@@ -1,6 +1,13 @@
 $(document).ready(function() {
 	M.AutoInit();
-	$("#groupName").prop("value", sessionStorage.getItem("modesToGroup"));
+	var passAlong = sessionStorage.getItem("modesToGroup");
+	var cname = $("#groupName").prop("value");
+	if (passAlong) {
+		$("#groupName").prop("value", passAlong);
+		if (cname != passAlong) {
+			sessionStorage.setItem("modesToGroup", "");
+		}
+	}
 	let c = ["pink", "deep-orange", "green", "teal", "blue", "deep-purple", "tp-blue"];
 	let pipvals = ["12am", "2am", "4am", "6am", "8am", "10am", "12pm", "2pm", "4pm", "6pm", "8pm", "10pm", "12am"];
 	let piprev = ["12am", "10pm", "8pm", "6pm", "4pm", "2pm", "12pm", "10am", "8am", "6am", "4am", "2am", "12am"];
@@ -21,20 +28,22 @@ $(document).ready(function() {
 		}
 	}
 
-	var counts; (counts = []).length = 7; counts.fill(3);
+	var counts; (counts = []).length = 9; counts.fill(3);
 	var sliders = [];
 	var sliderColors = [["#CCC", "#CCC", "#CCC"],["#CCC", "#CCC", "#CCC"],
 						["#CCC", "#CCC", "#CCC"],["#CCC", "#CCC", "#CCC"],
 						["#CCC", "#CCC", "#CCC"],["#CCC", "#CCC", "#CCC"],
+						["#CCC", "#CCC", "#CCC"],["#CCC", "#CCC", "#CCC"],
 						["#CCC", "#CCC", "#CCC"]];
-	var sliderModes = [[null, null, null],[null, null, null],
+	var sliderModes =  [[null, null, null],[null, null, null],
+						[null, null, null],[null, null, null],
 						[null, null, null],[null, null, null],
 						[null, null, null],[null, null, null],
 						[null, null, null]];
 
 	$(".sched-slider").each(function(i) {
 		var master = getMaster();
-		if (i == 0 || i == 6) { master.pips = pips; }
+		if (i == 0 || i == 8) { master.pips = pips; }
 		noUiSlider.create(this, master);
 		sliders.push(this);
 	});
@@ -148,6 +157,9 @@ $(document).ready(function() {
 		t.thu = $.extend([], sliders[4].noUiSlider.get());
 		t.fri = $.extend([], sliders[5].noUiSlider.get());
 		t.sat = $.extend([], sliders[6].noUiSlider.get());
+		t.dr = $.extend([], sliders[7].noUiSlider.get());
+		t.hol = $.extend([], sliders[8].noUiSlider.get());
+
 		obj.times = t;
 		var sets = new Object();
 		sets.sun = sliderModes[0];
@@ -157,6 +169,8 @@ $(document).ready(function() {
 		sets.thu = sliderModes[4];
 		sets.fri = sliderModes[5];
 		sets.sat = sliderModes[6];
+		sets.dr = sliderModes[7];
+		sets.hol = sliderModes[8];
 		obj.settings = sets;
 		console.log(obj);
 	}
@@ -217,7 +231,7 @@ $(document).ready(function() {
 				var opts = getMaster();
 				opts.start = l;
 				var ts; (ts = []).length = l.length + 1; ts.fill(true); opts.connect = ts;
-				if (row == 0 || row == 6) {
+				if (row == 0 || row == 8) {
 					opts.pips = pips;
 				}
 				s.noUiSlider.destroy();
@@ -256,7 +270,7 @@ $(document).ready(function() {
 				var opts = getMaster();
 				opts.start = l;
 				var ts; (ts = []).length = l.length + 1; ts.fill(true); opts.connect = ts;
-				if (row == 0 || row == 6) {
+				if (row == 0 || row == 8) {
 					opts.pips = pips;
 				}
 				s.noUiSlider.destroy();
