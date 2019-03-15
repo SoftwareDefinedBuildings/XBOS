@@ -62,12 +62,12 @@ def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
             thermostat_action_stream
         ],
         time=pymortar.TimeParams(
-            start=start,
-            end=end,
+            start=rfc3339(start),
+            end=rfc3339(end),
         )
     )
 
-    thermostat_action_data = pymortar_client.fetch(request)
+    thermostat_action_data = pymortar_client.fetch(request)["thermostat_action"]
 
     if thermostat_action_data is None:
         return None, "did not fetch data from pymortar with query: %s" % thermostat_action_query
@@ -121,12 +121,12 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
             temperature_stream
         ],
         time=pymortar.TimeParams(
-            start=start,
-            end=end,
+            start=rfc3339(start),
+            end=rfc3339(end),
         )
     )
 
-    temperature_data = pymortar_client.fetch(request)
+    temperature_data = pymortar_client.fetch(request)["temperature"]
 
     if temperature_data is None:
         return None, "did not fetch data from pymortar with query: %s" % temperature_query
@@ -155,10 +155,10 @@ def get_raw_indoor_temperatures(request, pymortar_client):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
 
-    start_datetime = rfc3339(datetime.utcfromtimestamp(
-                                                        float(request.start / 1e9)).replace(tzinfo=pytz.utc))
-    end_datetime = rfc3339(datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
-                                                        tzinfo=pytz.utc))
+    start_datetime = datetime.utcfromtimestamp(
+                                                        float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
+                                                        tzinfo=pytz.utc)
 
     raw_indoor_temperature_data, err = _get_raw_indoor_temperatures(request.building, request.zone, pymortar_client,
                                                     start_datetime,
@@ -194,9 +194,9 @@ def get_raw_actions(request, pymortar_client):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
 
-    start_datetime = rfc3339(datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc))
-    end_datetime = rfc3339(datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
-                                                        tzinfo=pytz.utc))
+    start_datetime = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
+                                                        tzinfo=pytz.utc)
 
 
     raw_action_data, err = _get_raw_actions(request.building, request.zone, pymortar_client,

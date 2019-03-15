@@ -16,12 +16,12 @@ from numpy import nan
 import pytz
 
 # TODO Change this function to fit pymortar data instead of mdal
-def _preprocess_mdal_outside_data(outside_data):
+def _preprocess_pymortar_outside_data(outside_data):
     """
-    Fixes mdal bug.
+    Fixes pymortar bug.
     Interpolating is justified by:
     - Introducing limited inaccuracies: Data contains at most a few hours of consecutive nan data.
-    - Is necessary: Due to MDAL, at a windowSize of less than 15 min, nan values appear between real values.
+    - Is necessary: Due to pymortar, at a windowSize of less than 15 min, nan values appear between real values.
     :param outside_data: pd.df with column for each weather station.
     :return: pd.Series
     """
@@ -75,8 +75,8 @@ def _get_pymortar_outside_data(building, start, end, interval, pymortar_client):
     )
 
     weather_stations_time_params = pymortar.TimeParams(
-        start=start,
-        end=end,
+        start=rfc3339(start),
+        end=rfc3339(end),
     )
 
     request = pymortar.FetchRequest(
@@ -90,8 +90,7 @@ def _get_pymortar_outside_data(building, start, end, interval, pymortar_client):
         time=weather_stations_time_params
     )
 
-    outside_temperature_data = pymortar_client.fetch(request)
-
+    outside_temperature_data = pymortar_client.fetch(request)['weather_stations']
     if outside_temperature_data is None:
         return None, "did not fetch data from pymortar with query: %s" % outside_temperature_query
 
@@ -104,7 +103,7 @@ def _get_temperature(building, start, end, interval, pymortar_client):
     if raw_outside_data is None:
         return None, err
 
-    preprocessed_data, err = _preprocess_mdal_outside_data(raw_outside_data)
+    preprocessed_data, err = _preprocess_pymortar_outside_data(raw_outside_data)
 
     return preprocessed_data, err
 
@@ -130,8 +129,8 @@ def get_temperature(request, pymortar_client):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
 
-    d_start = rfc3339(datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc))
-    d_end = rfc3339(datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc))
+    d_start = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    d_end = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
 
     final_data, err = _get_temperature(request.building, d_start, d_end, duration, pymortar_client)
     if final_data is None:
