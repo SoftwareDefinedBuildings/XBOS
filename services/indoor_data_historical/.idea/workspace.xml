@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9a9da0c8-f314-45d6-bff2-7c7951538275" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../discomfort/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../discomfort/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../discomfort/test/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../discomfort/test/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test.py" afterDir="false" />
-    </list>
+    <list default="true" id="9a9da0c8-f314-45d6-bff2-7c7951538275" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,6 +12,7 @@
     <session id="-503626438">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.opened" value="1" />
         </counts>

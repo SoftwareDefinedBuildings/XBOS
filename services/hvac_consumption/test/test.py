@@ -1,18 +1,23 @@
-
 from __future__ import print_function
 
 import grpc
 import time
 import datetime
+
+from pathlib import Path
+import sys
+sys.path.append(str(Path.cwd().parent))
 import hvac_consumption_pb2
 import hvac_consumption_pb2_grpc
 
 import calendar
 import pytz
 
-import sys
-sys.path.append("..")
-import utils
+import xbos_services_utils3 as utils
+
+import os
+HOST_ADDRESS = os.environ["HVAC_CONSUMPTION_HOST_ADDRESS"]
+
 
 def run():
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
@@ -21,7 +26,7 @@ def run():
 
     all_bldgs = utils.get_buildings()
 
-    channel = grpc.insecure_channel('localhost:50056')
+    channel = grpc.insecure_channel(HOST_ADDRESS)
     stub = hvac_consumption_pb2_grpc.ConsumptionHVACStub(channel)
 
     for bldg in all_bldgs:
@@ -31,14 +36,6 @@ def run():
             s_time = time.time()
             print("Zone: %s" % zone)
             try:
-                d_start = (datetime.datetime.utcnow().replace(tzinfo=pytz.utc) - datetime.timedelta(days=20))
-
-                # d_start = datetime.datetime(year=2018, month=9, day=8, hour=21, minute=31, second=10).replace(tzinfo=pytz.utc)
-                start = calendar.timegm(d_start.utctimetuple()) * 1e9
-
-                end = calendar.timegm((datetime.datetime.utcnow().replace(tzinfo=pytz.utc) - datetime.timedelta(
-                    days=15)).utctimetuple()) * 1e9
-
                 consumption_response = stub.GetConsumption(
                     hvac_consumption_pb2.Request(building=bldg, zone=zone))
 

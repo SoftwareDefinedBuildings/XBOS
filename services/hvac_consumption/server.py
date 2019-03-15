@@ -6,15 +6,16 @@ import hvac_consumption_pb2_grpc
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-import os
-HVAC_CONSUMPTION_PATH = os.environ["HVAC_CONSUMPTION_PATH"]
-
 import yaml
 import numpy as np
 
+import os
+HVAC_CONSUMPTION_DATA_PATH = os.environ["HVAC_CONSUMPTION_DATA_PATH"]
+HOST_ADDRESS = os.environ["HVAC_CONSUMPTION_HOST_ADDRESS"]
+
 
 def _get_hvac_consumption_config(building, zone):
-    consumption_path = HVAC_CONSUMPTION_PATH + "/" + building + "/" + zone + ".yml"
+    consumption_path = HVAC_CONSUMPTION_DATA_PATH + "/" + building + "/" + zone + ".yml"
 
     if os.path.exists(consumption_path):
         with open(consumption_path, "r") as f:
@@ -83,7 +84,7 @@ class ConsumptionHVACServicer(hvac_consumption_pb2_grpc.ConsumptionHVACServicer)
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     hvac_consumption_pb2_grpc.add_ConsumptionHVACServicer_to_server(ConsumptionHVACServicer(), server)
-    server.add_insecure_port('[::]:50056')
+    server.add_insecure_port(HOST_ADDRESS)
     server.start()
     try:
         while True:

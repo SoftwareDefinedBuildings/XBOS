@@ -1,17 +1,24 @@
-
 from __future__ import print_function
 
 import grpc
 import time
 import datetime
+
+from pathlib import Path
+import sys
+sys.path.append(str(Path.cwd().parent))
 import price_pb2
 import price_pb2_grpc
+
+
+import os
+PRICE_HOST_ADDRESS = os.environ["PRICE_HOST_ADDRESS"]
 
 def run():
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    with grpc.insecure_channel('localhost:50051') as channel:
+    with grpc.insecure_channel(PRICE_HOST_ADDRESS) as channel:
         stub = price_pb2_grpc.PriceStub(channel)
         try:
             # response = stub.GetPrice(price_pb2.PriceRequest(utility="PGE",tariff="PGEA10",price_type="energy",start=int((time.time())*1000000000.0),end=int((time.time()+3600*2)*1000000000.0),window="15m"))

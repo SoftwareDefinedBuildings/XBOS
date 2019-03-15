@@ -17,13 +17,16 @@ import pandas as pd
 import yaml
 import traceback
 
+from pathlib import Path
+
 DAYS_IN_WEEK = 7
 
-TEMPERATURE_BAND_PATH = os.environ["TEMPERATURE_BAND_PATH"]
+TEMPERATURE_BANDS_DATA_PATH = Path(os.environ["TEMPERATURE_BANDS_DATA_PATH"])
+TEMPERATURE_BANDS_HOST_ADDRESS = os.environ["TEMPERATURE_BANDS_HOST_ADDRESS"]
 
 
 def _get_temperature_band_config(building, zone):
-    band_path = TEMPERATURE_BAND_PATH + "/" + building + "/" + zone + ".yml"
+    band_path = str(TEMPERATURE_BANDS_DATA_PATH / building / (zone + ".yml"))
 
     if os.path.exists(band_path):
         with open(band_path, "r") as f:
@@ -159,7 +162,7 @@ def get_band(building, zone, start, end, interval, type_band):
     :param zone: string
     :param start: datetime. timezone aware
     :param end: datetime. timezone aware.
-    :param interval: int:seconds. 60*60 % interval == 0
+    :param interval: int:seconds. 24*60*60 % interval == 0
     :param type_band: string ["comfortband", "do_not_exceed"] decides which setpoints to get.
     :return:
 
@@ -193,7 +196,7 @@ def get_band(building, zone, start, end, interval, type_band):
         curr_time = first_seven_days_end + datetime.timedelta(days=i)
 
         curr_data = first_seven_days[first_seven_days_start + datetime.timedelta(days=curr_offset):
-                                     first_seven_days_start + datetime.timedelta(days=curr_offset + 1)][:24*60*60/interval]
+                                     first_seven_days_start + datetime.timedelta(days=curr_offset + 1)][:int(24*60*60/interval)]
 
         curr_start_date = curr_time
         curr_end_date = curr_start_date + datetime.timedelta(days=1)
@@ -220,9 +223,9 @@ def get_comfortband(request):
 
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
-    if request.end > int(time.time() * 1e9):
-        return None, "invalid request, end date is in the future. Now: %d and end: %d" % (
-        time.time() * 1e9, request.end)
+    # if request.end > int(time.time() * 1e9):
+    #     return None, "invalid request, end date is in the future. Now: %d and end: %d" % (
+    #     time.time() * 1e9, request.end)
     if request.start >= request.end:
         return None, "invalid request, start date is after end date."
     if request.start < 0 or request.end < 0:
@@ -264,7 +267,7 @@ def get_comfortband(request):
     return temperature_bands_pb2.ScheduleReply(schedules=grpc_comfortband), None
 
 
-def get_do_not_exceed(request, mdal_client, hod_client):
+def get_do_not_exceed(request):
     """Returns preprocessed thermal data for a given request or None."""
 
     print("received request:", request.building, request.zone, request.start, request.end, request.window, request.unit)
@@ -275,9 +278,9 @@ def get_do_not_exceed(request, mdal_client, hod_client):
 
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
-    if request.end > int(time.time() * 1e9):
-        return None, "invalid request, end date is in the future. Now: %d and end: %d" % (
-            time.time() * 1e9, request.end)
+    # if request.end > int(time.time() * 1e9):
+    #     return None, "invalid request, end date is in the future. Now: %d and end: %d" % (
+    #         time.time() * 1e9, request.end)
     if request.start >= request.end:
         return None, "invalid request, start date is after end date."
     if request.start < 0 or request.end < 0:
@@ -321,24 +324,13 @@ class SchedulesServicer(temperature_bands_pb2_grpc.SchedulesServicer):
         An error  is returned if there are no temperature for the given request
         """
 
-        try:
-            comfortband, error = get_comfortband(request)
-            if comfortband is None:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details(error)
-                return temperature_bands_pb2.ScheduleReply()
-            elif error is not None:
-                context.set_code(grpc.StatusCode.UNAVAILABLE)
-                context.set_details(error)
-                return comfortband
-            else:
-                return comfortband
-        except Exception as e:
-            traceback.print_exc()
-            context.set_code(grpc.StatusCode.UNKNOWN)
-            context.set_details('An exception with message "%s" was raised!' % e.message)
-            # If this is a response-unary method you'll have to return a value of the appropriate type:
+        comfortband, error = get_comfortband(request)
+        if comfortband is None:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details(error)
             return temperature_bands_pb2.ScheduleReply()
+        else:
+            return comfortband
 
     def GetDoNotExceed(self, request, context):
         """A simple RPC.
@@ -355,11 +347,10 @@ class SchedulesServicer(temperature_bands_pb2_grpc.SchedulesServicer):
             return do_not_exceed
 
 
-
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     temperature_bands_pb2_grpc.add_SchedulesServicer_to_server(SchedulesServicer(), server)
-    server.add_insecure_port('[::]:50055')
+    server.add_insecure_port(TEMPERATURE_BANDS_HOST_ADDRESS)
     server.start()
     try:
         while True:

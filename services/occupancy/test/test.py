@@ -1,68 +1,62 @@
-import xbos_services_utils3 as utils
+from __future__ import print_function
+
+import grpc
+import time
 import datetime
+
+from pathlib import Path
+import sys
+sys.path.append(str(Path.cwd().parent))
+import occupancy_pb2
+import occupancy_pb2_grpc
+
 import pytz
 
-import sys
-sys.path.append("/..")
-from server import *
+import xbos_services_utils3 as utils
+
+import os
+OCCUPANCY_HOST_ADDRESS = os.environ["OCCUPANCY_HOST_ADDRESS"]
 
 
-building = 'ciee'
-zone = "HVAC_Zone_Northzone"
+def run():
+    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
+    # used in circumstances in which the with statement does not fit the needs
+    # of the code.
 
-end = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-start = end - datetime.timedelta(hours=2)
+    all_bldgs = utils.get_buildings()
 
-all_bldgs = utils.get_buildings()
-
-
-s_time = time.time()
-
-
-date = pytz.timezone("America/Los_Angeles").localize(datetime.datetime(2017, 01, 01))
-utc_date = date.astimezone(pytz.utc)
-
-print(date)
-
-print(get_all_occ("ciee", "HVAC_Zone_Eastzone",
-                      date, date + datetime.timedelta(days=10), 60*15))
-
-print(get_all_occ("ciee", "HVAC_Zone_Eastzone",
-              utc_date, utc_date + datetime.timedelta(days=10), 60*15))
-
-print(_get_week_occupancy("ciee", "HVAC_Zone_Eastzone",
-                      date,60*60))
-
-print("")
+    channel = grpc.insecure_channel(OCCUPANCY_HOST_ADDRESS)
+    stub = occupancy_pb2_grpc.OccupancyStub(channel)
 
 
+    for bldg in all_bldgs:
+        # case 1, Test from now into future
+        print("Building: %s" % bldg)
+        for zone in utils.get_zones(bldg):
+            s_time = time.time()
+            print("Zone: %s" % zone)
+            if "Shelter" not in zone:
+                print("BREAK")
+                break
+            try:
 
-print(get_all_occ("ciee", "HVAC_Zone_Eastzone",
-                      utc_date, end  15*60))
+                end = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) #+ datetime.timedelta(days=1)
+                end_unix = int(end.timestamp() * 1e9)
+                start = end - datetime.timedelta(days=1)
+                start_unix = int(start.timestamp() * 1e9)
 
-print(utils.decrement_to_start_of_day(date, float(3/100.*60)))
+                window = "5m"
 
-
-print("Time", time.time() - s_time)
-
-for bldg in all_bldgs:
-# case 1, Test from now into future
-print("Building: %s" % bldg)
-for zone in utils.get_zones(bldg):
-    s_time = time.time()
-    print("Zone: %s" % zone)
-
-    # d_start = datetime.datetime(2018, 01, 01).replace(tzinfo=pytz.utc)
-    # end = d_start + datetime.timedelta(days=6)
-
-    print(get_all_occ(bldg, zone,
-                      date, date + datetime.timedelta(days=10), 60 * 15))
-
-    print(get_all_occ(bldg, zone,
-                      utc_date, utc_date + datetime.timedelta(days=10), 60 * 15))
+                response = stub.GetOccupancy(occupancy_pb2.Request(building=bldg, zone=zone, start=start_unix,end=end_unix,window=window))
+                # for point in response.occupancies:
+                #     print("Point at: %s is occupancy: %f." % (time.ctime(int(point.time/1000000000.0)) + ' PST',
+                #                                                                                             point.occupancy))
+            except grpc.RpcError as e:
+                       print(e)
+            print("Took: %f seconds" % (time.time() - s_time))
+        print("")
+    print("")
 
 
-    print("Took: %f seconds" % (time.time() - s_time))
-
-
-print("")
+if __name__ == '__main__':
+    run()

@@ -1,4 +1,3 @@
-
 from __future__ import print_function
 
 import grpc
@@ -11,7 +10,7 @@ def run():
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    with grpc.insecure_channel('localhost:50059') as channel:
+    with grpc.insecure_channel() as channel:
         stub = outdoor_temperature_prediction_pb2_grpc.OutdoorTemperatureStub(channel)
         try:
             # response = stub.GetPrice(price_pb2.PriceRequest(utility="PGE",tariff="PGEA10",price_type="energy",start=int((time.time())*1000000000.0),end=int((time.time()+3600*2)*1000000000.0),window="15m"))
