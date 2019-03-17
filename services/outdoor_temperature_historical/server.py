@@ -3,29 +3,27 @@
 from concurrent import futures
 import time
 import grpc
+import pymortar
 import outdoor_temperature_historical_pb2
 import outdoor_temperature_historical_pb2_grpc
-from xbos.services import mdal
-from bw2python.client import Client
-from xbos.services.hod import HodClient
 
 import os
 OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS = os.environ["OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS"]
-
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-import xbos_services_utils2 as utils
-import datetime
+import os, sys
+from datetime import datetime
+from rfc3339 import rfc3339
+from numpy import nan
 import pytz
-import numpy as np
 
-
-def _preprocess_mdal_outside_data(outside_data):
+# TODO Change this function to fit pymortar data instead of mdal
+def _preprocess_pymortar_outside_data(outside_data):
     """
-    Fixes mdal bug.
+    Fixes pymortar bug.
     Interpolating is justified by:
     - Introducing limited inaccuracies: Data contains at most a few hours of consecutive nan data.
-    - Is necessary: Due to MDAL, at a windowSize of less than 15 min, nan values appear between real values.
+    - Is necessary: Due to pymortar, at a windowSize of less than 15 min, nan values appear between real values.
     :param outside_data: pd.df with column for each weather station.
     :return: pd.Series
     """
@@ -35,7 +33,7 @@ def _preprocess_mdal_outside_data(outside_data):
         print("WARNING: Only one weather station for selected region. We need to replace 32 values with Nan due to "
               "past inconsistencies, but not enough data to compensate for the lost data by taking mean.")
     outside_data = outside_data.applymap(
-            lambda t: np.nan if t == 32 else t)  # TODO this only works for fahrenheit now.
+            lambda t: nan if t == 32 else t)  # TODO this only works for fahrenheit now.
 
     # Note: Assuming same index for all weather station data returned by mdal
     outside_data = outside_data.mean(axis=1)
@@ -45,59 +43,78 @@ def _preprocess_mdal_outside_data(outside_data):
     return outside_data, None
 
 
-def _get_mdal_outside_data(building, start, end, interval, mdal_client):
+def _get_pymortar_outside_data(building, start, end, interval, pymortar_client):
     """Get outside temperature.
-    :param start: datetime timezone aware
-    :param end: datetime timezone aware
-    :param interval: int:seconds. [Not used at the moment because of MDAL issue.]
-    :param mdal_client: Client to get data.
+    :param start: datetime, timezone aware, rfc3339
+    :param end: datetime, timezone aware, rfc3339
+    :param interval: int:seconds.
+    :param pymortar_client: Client to get data.
     :return ({uuid: (pd.df) (col: "t_out) outside_data})  outside temperature has freq of 15 min and
     pd.df columns["tin", "action"] has freq of window_size. """
 
-    outside_temperature_query = """SELECT ?uuid FROM %s WHERE {
-                                ?weather_station rdf:type brick:Weather_Temperature_Sensor.
-                                ?weather_station bf:uuid ?uuid.
-                                };""" % building
+    outside_temperature_query = """SELECT ?temp WHERE {
+        ?temp rdf:type brick:Weather_Temperature_Sensor .
+    };"""
 
-    # TODO for now taking all weather stations and preprocessing it. Should be determined based on metadata.
-    # Get data from MDAL
-    mdal_query = {
-        'Composition': ["weather_stations"],
-        'Selectors': [mdal.MEAN],
-        'Variables': [{"Name": "weather_stations",
-                       "Definition": outside_temperature_query,
-                       "Units": "F"},],
-        'Time': {'T0': utils.datetime_to_mdal_string(start),
-                   'T1': utils.datetime_to_mdal_string(end),
-                   'WindowSize': str(int(interval)) + 's',
-                   'Aligned': True}}
-    try:
-        mdal_outside_data = utils.get_mdal_data(mdal_client, mdal_query)
-    except:
-        return None, "could not fetch data from mdal with query: %s" % mdal_query
+    # resp = pymortar_client.qualify([outside_temperature_query]) Needed to get list of all sites
 
-    if mdal_outside_data is None:
-        return None, "did not fetch data from mdal with query: %s" % mdal_query
+    weather_stations_view = pymortar.View(
+        name="weather_stations_view",
+        sites=[building],
+        definition=outside_temperature_query,
+    )
 
-    return mdal_outside_data, None
+    weather_stations_stream = pymortar.DataFrame(
+        name="weather_stations",
+        aggregation=pymortar.MEAN,
+        window=str(int(interval)) + 's',
+        timeseries=[
+            pymortar.Timeseries(
+                view="weather_stations_view",
+                dataVars=["?temp"],
+            )
+        ]
+    )
+
+    weather_stations_time_params = pymortar.TimeParams(
+        start=rfc3339(start),
+        end=rfc3339(end),
+    )
+
+    request = pymortar.FetchRequest(
+        sites=[building],
+        views=[
+            weather_stations_view
+        ],
+        dataFrames=[
+            weather_stations_stream
+        ],
+        time=weather_stations_time_params
+    )
+
+    outside_temperature_data = pymortar_client.fetch(request)['weather_stations']
+    if outside_temperature_data is None:
+        return None, "did not fetch data from pymortar with query: %s" % outside_temperature_query
+
+    return outside_temperature_data, None
 
 
-def _get_temperature(building, start, end, interval, mdal_client):
+def _get_temperature(building, start, end, interval, pymortar_client):
 
-    raw_outside_data, err = _get_mdal_outside_data(building, start, end, interval, mdal_client)
+    raw_outside_data, err = _get_pymortar_outside_data(building, start, end, interval, pymortar_client)
     if raw_outside_data is None:
         return None, err
 
-    preprocessed_data, err = _preprocess_mdal_outside_data(raw_outside_data)
+    preprocessed_data, err = _preprocess_pymortar_outside_data(raw_outside_data)
 
     return preprocessed_data, err
 
 
-def get_temperature(request, mdal_client):
+def get_temperature(request, pymortar_client):
     """Returns temperatures for a given request or None.
     Guarantees that no Nan values in returned data exist."""
     print("received request:", request.building, request.start, request.end, request.window)
-    duration = utils.get_window_in_sec(request.window)
+    duration = get_window_in_sec(request.window)
 
     unit = "F" # we will keep the outside temperature in fahrenheit for now.
 
@@ -114,10 +131,10 @@ def get_temperature(request, mdal_client):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
 
-    d_start = datetime.datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
-    d_end = datetime.datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
+    d_start = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    d_end = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
 
-    final_data, err = _get_temperature(request.building, d_start, d_end, duration, mdal_client)
+    final_data, err = _get_temperature(request.building, d_start, d_end, duration, pymortar_client)
     if final_data is None:
         return None, err
 
@@ -128,16 +145,21 @@ def get_temperature(request, mdal_client):
 
     return outdoor_temperature_historical_pb2.TemperatureReply(temperatures=temperatures), None
 
+def get_window_in_sec(s):
+    """Returns number of seconds in a given duration or zero if it fails.
+       Supported durations are seconds (s), minutes (m), hours (h), and days(d)."""
+    seconds_per_unit = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+    try:
+        return int(float(s[:-1])) * seconds_per_unit[s[-1]]
+    except:
+        return 0
+
 class OutdoorTemperatureServicer(outdoor_temperature_historical_pb2_grpc.OutdoorTemperatureServicer):
     def __init__(self):
-        self.bw_client = Client()
-        self.bw_client.setEntityFromEnviron()
-        self.bw_client.overrideAutoChainTo(True)
-        self.hod_client = HodClient("xbos/hod", self.bw_client)
-        self.mdal_client = mdal.MDALClient("xbos/mdal")
+        self.pymortar_client = pymortar.Client()
 
     def GetTemperature(self, request, context):
-        temperatures,error = get_temperature(request, self.mdal_client)
+        temperatures,error = get_temperature(request, self.pymortar_client)
         if temperatures is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)

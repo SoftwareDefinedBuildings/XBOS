@@ -5,4 +5,6 @@ xbos_services_utils2 <= 0.0.10dev
 pytz == 2018.3
 xbos==0.0.35
 bw2python==0.6.1
+pymortar>=1.0.0
+rfc3339==6.0
 
