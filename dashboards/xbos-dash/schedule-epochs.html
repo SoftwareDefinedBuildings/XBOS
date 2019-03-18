@@ -43,11 +43,15 @@
 
 	<div class="container" style="padding-bottom: 100px;">
 		<div class="row valign-wrapper">
-			<h4 id="location" class="col s2-5 left" style="margin: 0;">Grouping:</h4>
-			<input style="padding: 0;" class="col s9-5" id="groupName" type="text" maxlength="25" value="" class="my-input mode-title" />
+			<div class="col s3 left-align">
+				<h4 id="location">Group Name:</h4>
+			</div>
+			<div class="col s11">
+				<input id="groupName" type="text" maxlength="25" value="" class="my-input mode-title" />
+			</div>
 		</div>
 		
-		<h5 style="margin: 0 0 0 35px;">Customize modes and...</h5>
+		<h5>Select a mode then click an epoch to assign the mode...</h5>
 		
 		<div class="fixed-action-btn" style="left: 23px; right: auto;">
 			<a href="schedule-groupings.html" class="btn-floating tooltipped btn-large blue" data-position="top" data-tooltip="Modes">
@@ -61,88 +65,96 @@
 			</a>
 		</div>
 		
-		<div class="section">
-			<div id="mode-div" class="row center-align valign-wrapper">
-				<div class="col s2 emode mode-card ot-blue">
-					<h4 id="mode0" class="mode-title mte">Closed</h4>
-					<div class="setpnt-div">
-						<div class="red lighten-2 spl etab">55</div>
-						<div class="blue lighten-2 spr etab">55</div>
-					</div>
-					<span class="swi-text">off</span>
-				</div>
-				<div class="col tiny"></div>
-				<div class="col s2 emode tp-yellow mode-card">
-					<h4 id="mode1" class="mode-title mte">Open</h4>
-					<div class="setpnt-div">
-						<div class="red lighten-2 spl etab">55</div>
-						<div class="blue lighten-2 spr etab">55</div>
-					</div>
-					<span class="swi-text">off</span>
-				</div>
-				<div class="col tiny"></div>
-				<div style="background-color: #cab2d6;" class="col s2 emode mode-card">
-					<h4 id="mode2" class="mode-title mte">Other</h4>
-					<div class="setpnt-div">
-						<div class="red lighten-2 spl etab">55</div>
-						<div class="blue lighten-2 spr etab">55</div>
-					</div>
-					<span class="swi-text">off</span>
-				</div>
-				<div class="col tiny"></div>
-				<div style="background-color: #fccde5;" class="col s2 emode mode-card">
-					<h4 id="mode2" class="mode-title mte">Other</h4>
-					<div class="setpnt-div">
-						<div class="red lighten-2 spl etab">55</div>
-						<div class="blue lighten-2 spr etab">55</div>
-					</div>
-					<span class="swi-text">off</span>
-				</div>
-				<div class="col tiny"></div>
-				<div style="background-color: #b2df8a;" class="col s2 emode mode-card">
-					<h4 id="mode2" class="mode-title mte">Other</h4>
-					<div class="setpnt-div">
-						<div class="red lighten-2 spl etab">55</div>
-						<div class="blue lighten-2 spr etab">55</div>
-					</div>
-					<span class="swi-text">off</span>
+		<div id="mode-div" class="row center-align valign-wrapper">
+			<div class="col s2 emode mode-card ot-blue">
+				<h4 id="mode0" class="mte">Closed</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
 				</div>
 			</div>
-			<div id="mode-radios" class="row valign-wrapper center-align">
-				<div class="col s2">
-					<label>
-						<input id="mc0" class="with-gap" name="group1" type="radio" checked/>
-						<span style="margin-left: 6px;"></span>
-					</label>
+			<div class="col sml"></div>
+			<div class="col s2 emode tp-yellow mode-card">
+				<h4 id="mode1" class="mte">Open</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
 				</div>
-				<div class="col tiny"></div>
-				<div class="col s2">
-					<label>
-						<input id="mc1" class="with-gap" name="group1" type="radio" />
-						<span style="margin-left: 6px;"></span>
-					</label>
+			</div>
+			<div class="col sml"></div>
+			<div style="background-color: #cab2d6;" class="col s2 emode mode-card">
+				<h4 id="mode2" class="mte">Other</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
 				</div>
-				<div class="col tiny"></div>
-				<div class="col s2">
-					<label>
-						<input id="mc2" class="with-gap" name="group1" type="radio" />
-						<span style="margin-left: 6px;"></span>
-					</label>
+			</div>
+			<div class="col sml"></div>
+			<div style="background-color: #fccde5;" class="col s2 emode mode-card">
+				<h4 id="mode2" class="mte">Other</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
 				</div>
-				<div class="col tiny"></div>
-				<div class="col s2">
-					<label>
-						<input id="mc3" class="with-gap" name="group1" type="radio" />
-						<span style="margin-left: 6px;"></span>
-					</label>
+			</div>
+			<div class="col sml"></div>
+			<div style="background-color: #b2df8a;" class="col s2 emode mode-card">
+				<h4 id="mode2" class="mte">Other</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
 				</div>
-				<div class="col tiny"></div>
-				<div class="col s2">
-					<label>
-						<input id="mc4" class="with-gap" name="group1" type="radio" />
-						<span style="margin-left: 6px;"></span>
-					</label>
+			</div>
+			<div class="col sml"></div>
+			<div style="background-color: #b2df8a;" class="col s2 emode mode-card">
+				<h4 id="mode2" class="mte">Other</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
 				</div>
+			</div>
+		</div>
+		<div id="mode-radios" class="row valign-wrapper center-align">
+			<div class="col s2">
+				<label>
+					<input id="mc0" class="with-gap" name="group1" type="radio" checked/>
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc1" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc2" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc3" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc4" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc4" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
 			</div>
 		</div>
 		<div class="row valign-wrapper center-align">
@@ -155,7 +167,6 @@
 				</a>
 			</div>
 		</div>
-
 		<div class="row">
 			<div class="valign-wrapper" style="padding-top: 40px;">
 				<div class="col s1 right-align"><span class="sli-day">Sun</span></div>
@@ -191,7 +202,7 @@
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 			<div class="valign-wrapper">
-				<div class="col s1 right-align"><span class="sli-day">Holiday</span></div>
+				<div class="col s1 right-align"><span class="sli-day">Hols</span></div>
 				<div class="col s11"><div class="sched-slider"></div></div>
 			</div>
 		</div>

@@ -11,17 +11,17 @@
 .mode-title {
   text-align: center;
   font-size: 1.15rem !important;
-  line-height: 110% !important;
-  margin: 0 0 0.46rem 0 !important;
-  padding: 12px 0 10px 0 !important;
+  margin: 12px 0 6px 0 !important;
 }
 
 .mte {
-  padding: 12px 0 0 0 !important; 
+  padding: 12px 0 0 0 !important;
+  font-size: 1.15rem !important;
+  margin: 0 !important;
 }
 
 .mode-card {
-  padding: 0 0 14px !important;
+  padding: 0 0 14px 0 !important;
   border-radius: 12px;
 }
 
@@ -3638,6 +3638,15 @@ table span.badge {
 }
 
 /*mine*/
+.row .col.sml {
+  width: 1.5%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+
+/*mine*/
 .row .col.tiny {
   width: 3%;
   margin-left: auto;
@@ -3774,6 +3783,14 @@ table span.badge {
 
 .row .col.s8 {
   width: 66.6666666667%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+/*mine*/
+.row .col.s8-5 {
+  width: 72.5%;
   margin-left: auto;
   left: auto;
   right: auto;

@@ -1,14 +1,17 @@
 $(document).ready(function() {
 	M.AutoInit();
 	var passAlong = sessionStorage.getItem("modesToGroup");
+	sessionStorage.setItem("modesToGroup", passAlong);
 	var cname = $("#groupName").prop("value");
 	if (passAlong) {
-		$("#groupName").prop("value", passAlong);
+		console.log(passAlong);
+		console.log(cname);
 		if (cname != passAlong) {
+			$("#groupName").prop("value", passAlong);
 			sessionStorage.setItem("modesToGroup", "");
 		}
 	}
-	let c = ["pink", "deep-orange", "green", "teal", "blue", "deep-purple", "tp-blue"];
+	// let c = ["pink", "deep-orange", "green", "teal", "blue", "deep-purple", "tp-blue"];
 	let pipvals = ["12am", "2am", "4am", "6am", "8am", "10am", "12pm", "2pm", "4pm", "6pm", "8pm", "10pm", "12am"];
 	let piprev = ["12am", "10pm", "8pm", "6pm", "4pm", "2pm", "12pm", "10am", "8am", "6am", "4am", "2am", "12am"];
 
@@ -64,7 +67,6 @@ $(document).ready(function() {
 		});
 	} setTop();
 
-	var dissed = false;
 	var edit = false;
 	function schedClick(c=true) {
 		var x = $("#sched-btn");
@@ -74,11 +76,9 @@ $(document).ready(function() {
 		if (edit) {
 			var s = "save";
 			if (c) { sliders.forEach(function(elem) { elem.setAttribute("disabled", true); });}
-			dissed = true;
 		} else {
 			var s = "edit";
 			if (c) { sliders.forEach(function(elem) { elem.removeAttribute("disabled"); });}
-			dissed = false;
 		}
 		setTimeout(function() {
 			x.html("<i class='large material-icons right'>" + s + "</i>" + s);
@@ -299,12 +299,10 @@ $(document).ready(function() {
 			$("#mode-radios").show();
 			if (c) { sliders.forEach(function(elem) { elem.setAttribute("disabled", true); });}
 			var s = "save";
-			dissed = true;
 		} else {
 			$("#mode-radios").hide();
 			if (c) { sliders.forEach(function(elem) { elem.removeAttribute("disabled"); });}
 			var s = "edit";
-			dissed = false;
 		}
 		setTimeout(function() {
 			x.html("<i class='large material-icons right'>" + s + "</i>" + s);
