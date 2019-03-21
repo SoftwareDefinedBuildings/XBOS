@@ -6,7 +6,8 @@ import time
 import datetime
 
 import sys
-sys.path.append("../")
+from pathlib import Path
+sys.path.append(str(Path.cwd().parent))
 import indoor_temperature_action_pb2
 import indoor_temperature_action_pb2_grpc
 
