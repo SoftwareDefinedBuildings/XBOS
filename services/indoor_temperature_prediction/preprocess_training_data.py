@@ -16,7 +16,6 @@ import pandas as pd
 # YES. And there should be an option to preprocess in inddoor data service with a trained thermal model.
 
 
-
 def get_training_data(building, zone, start, end, window, raw_data_granularity="1m"):
     """
     Get training data to use for indoor temperature prediction.
@@ -41,10 +40,8 @@ def get_training_data(building, zone, start, end, window, raw_data_granularity="
     all_other_zone_temperature_data = {}
     for iter_zone in all_zones:
         if iter_zone != zone:
-            other_zone_data = mw.get_indoor_temperature_historic(indoor_historic_stub,
+            all_other_zone_temperature_data[iter_zone] = mw.get_indoor_temperature_historic(indoor_historic_stub,
                                                                  building, iter_zone, start, end, window)
-
-            all_other_zone_temperature_data[iter_zone] = other_zone_data
 
     # Putting temperature and action data together.
     indoor_data = pd.concat([indoor_temperatures.to_frame(name="t_in"), indoor_actions.to_frame(name="action")], axis=1)
@@ -110,6 +107,14 @@ def add_feature_last_temperature(data):
     data["t_last"] = np.array(last_temps)
     return data
 
+def add_action_dummy_variable(data):
+    """
+    Converting the action categorical variable to dummy variables (one hot encoding). Takes into account for how
+    long the action has been going.
+    :param data:
+    :return:
+    """
+
 
 def indoor_data_cleaning(data, interval):
     """Fixes up the data. Makes sure we count two stage as single stage actions, don't count float actions,
@@ -151,7 +156,7 @@ def preprocess_indoor_data(indoor_data, interval):
     and knows what the last action was (last_action).
     :param zone_data: pd col=("action", "t_in"), Index needs to be continuous in time.
     :param interval: float:seconds The maximum length in seconds of a grouped data block.
-    :returns {zone: pd.df columns: 'time' (datetime), 't_in' (float), 't_next' (float),
+    :returns: {zone: pd.df columns: 'time' (datetime), 't_in' (float), 't_next' (float),
     'dt' (int), 'action' (float), 'last_action' (float), 'action_duration' (int)}
     No nan values except potentially in last_action column -- means that we don't know the last action.
     """
