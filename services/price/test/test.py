@@ -24,6 +24,9 @@ def run():
             # response = stub.GetPrice(price_pb2.PriceRequest(utility="PGE",tariff="PGEA10",price_type="energy",start=int((time.time())*1000000000.0),end=int((time.time()+3600*2)*1000000000.0),window="15m"))
             start = int(time.mktime(datetime.datetime.strptime("26/09/2018 6:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
             end =  int(time.mktime(datetime.datetime.strptime("26/09/2018 10:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+            #resp = stub.GetTariffAndUtility(price_pb2.BuildingRequest(building="lbnl"))
+            
+            #print(resp.tariff, resp.utility)
             response = stub.GetPrice(price_pb2.PriceRequest(utility="PGE",tariff="PGEA10",price_type="energy",start=start,end=end,window="29m"))
             for price in response.prices:
                 # print("Price at: %s is: %.2f %s" % (time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(price.time/1000000000.0))) + ' UTC', price.price, price.unit))

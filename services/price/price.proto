@@ -14,6 +14,8 @@ service Price {
   // Sends a price for a utility, tariff, type, duration (start, end), and window
   // A PriceReply with an empty name is returned if there are no prices for the given request
   rpc GetPrice (PriceRequest) returns (PriceReply) {}
+  // Sends a tariff and utility for the specified building name
+  rpc GetTariffAndUtility (BuildingRequest) returns (TariffUtilityReply) {}
 }
 
 // PricePoints are represented as a float per unit (e.g., 0.14 $/kWh) starting at a given time
@@ -24,6 +26,10 @@ message PricePoint {
   string window = 4;
 }
 
+//The request message containing the requested building name
+message BuildingRequest {
+  string building = 1;
+}
 // The request message containing the requested pricing information.
 message PriceRequest {
   // The name of the electric utility (e.g., PGE or SCE)
@@ -52,4 +58,10 @@ message PriceRequest {
 // The response message containing the prices
 message PriceReply {
   repeated PricePoint prices = 1;
+}
+
+//The response message containing the tariff and utility
+message TariffUtilityReply {
+  string utility = 1;
+  string tariff = 2;
 }

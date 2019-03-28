@@ -26,12 +26,12 @@ def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
     :param window_size: string with [s, m, h, d] classified in the end. e.g. "1s" for one second.
     :return:
     """
-    thermostat_action_query = """SELECT ?tstat ?zone ?status_point WHERE { 
+    thermostat_action_query = """SELECT ?tstat ?status_point WHERE { 
             ?tstat rdf:type brick:Thermostat .
-            ?tstat bf:controls/bf:feeds ?zone .
+            ?tstat bf:controls/bf:feeds <http://xbos.io/ontologies/%s#%s> .
             ?tstat bf:hasPoint ?status_point .
             ?status_point rdf:type brick:Thermostat_Status .
-        };"""
+        };""" % (building, zone)
 
     # resp = pymortar_client.qualify([thermostat_action_query]) Needed to get list of all sites
 
@@ -87,10 +87,10 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
     """
     temperature_query = """SELECT ?tstat ?temp WHERE {
                 ?tstat rdf:type brick:Thermostat .
-                ?tstat bf:controls/bf:feeds %s .
+                ?tstat bf:controls/bf:feeds <http://xbos.io/ontologies/%s#%s> .
                 ?tstat bf:hasPoint ?temp .
                 ?temp  rdf:type brick:Temperature_Sensor  .
-            };""" % zone
+            };""" % (building, zone)
 
     # resp = pymortar_client.qualify([temperature_query]) Needed to get list of all sites
 
@@ -155,7 +155,8 @@ def get_raw_indoor_temperatures(request, pymortar_client):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
 
-    start_datetime = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    start_datetime = datetime.utcfromtimestamp(
+                                                        float(request.start / 1e9)).replace(tzinfo=pytz.utc)
     end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
                                                         tzinfo=pytz.utc)
 
