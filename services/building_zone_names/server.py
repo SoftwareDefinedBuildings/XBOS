@@ -19,7 +19,7 @@ def _get_buildings():
     building_path = NAMES_DATA_PATH / "all_buildings.yml"
 
     if os.path.exists(building_path):
-        with open(building_path, "r") as f:
+        with open(str(building_path), "r") as f:
             try:
                 building_file = yaml.load(f)
             except yaml.YAMLError:
@@ -34,7 +34,7 @@ def _get_zones(building):
     zone_path = NAMES_DATA_PATH / "all_zones.yml"
 
     if os.path.exists(zone_path):
-        with open(zone_path, "r") as f:
+        with open(str(zone_path), "r") as f:
             try:
                 zone_file = yaml.load(f)
             except yaml.YAMLError:
