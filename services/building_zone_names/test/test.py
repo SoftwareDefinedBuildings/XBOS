@@ -1,19 +1,12 @@
 from __future__ import print_function
 
 import grpc
-import time
-import datetime
 
 from pathlib import Path
 import sys
 sys.path.append(str(Path.cwd().parent))
 import building_zone_names_pb2
 import building_zone_names_pb2_grpc
-
-import calendar
-import pytz
-
-import xbos_services_utils3 as utils
 
 import os
 HOST_ADDRESS = os.environ["BUILDING_ZONE_NAMES_HOST_ADDRESS"]
