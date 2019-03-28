@@ -137,7 +137,7 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
 # TODO Make sure we don't include NONE values in the returned points.
 def get_raw_indoor_temperatures(request, pymortar_client):
     """Returns temperatures for the given request or None."""
-    print("received request:", request.building, request.zone, request.start, request.end, request.window)
+    print("received temperature request:", request.building, request.zone, request.start, request.end, request.window)
     duration = get_window_in_sec(request.window)
 
     unit = "F" # we will keep the outside temperature in fahrenheit for now.
@@ -177,7 +177,7 @@ def get_raw_indoor_temperatures(request, pymortar_client):
 
 def get_raw_actions(request, pymortar_client):
     """Returns actions for the given request or None."""
-    print("received request:", request.building, request.zone, request.start, request.end, request.window)
+    print("received action request:", request.building, request.zone, request.start, request.end, request.window)
     duration = get_window_in_sec(request.window)
 
     request_length = [len(request.building), len(request.zone), request.start, request.end,

@@ -50,6 +50,7 @@ def _get_zones(building):
 
 def get_buildings():
     """Returns preprocessed thermal data for a given request or None."""
+    print("received building request.")
 
     buildings, err = _get_buildings()
     if err is not None:
@@ -65,6 +66,8 @@ def get_buildings():
 
 def get_zones(request):
     """Returns preprocessed thermal data for a given request or None."""
+
+    print("received zone request:", request.building)
 
     zones, err = _get_zones(request.building)
     if err is not None:
