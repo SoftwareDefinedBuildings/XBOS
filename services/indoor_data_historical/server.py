@@ -226,6 +226,7 @@ class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorT
     def __init__(self):
         self.pymortar_client = pymortar.Client()
 
+
     def GetRawTemperatures(self, request, context):
         """A simple RPC.
 
@@ -239,6 +240,7 @@ class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorT
             return indoor_temperature_action_pb2.RawTemperatureReply()
         else:
             return raw_temperatures
+
 
     def GetRawActions(self, request, context):
         """A simple RPC.
