@@ -1,0 +1,11 @@
+avenal-veterans-hall: [HVAC_Zone_AC-6, HVAC_Zone_AC-5, HVAC_Zone_AC-4, HVAC_Zone_AC-3,
+  HVAC_Zone_AC-2, HVAC_Zone_AC-1]
+csu-dominguez-hills: [HVAC_Zone_Sac_2_Corridor, HVAC_Zone_SAC-2106, HVAC_Zone_SAC-2104,
+  HVAC_Zone_SAC-2102]
+hayward-station-1: [HVAC_Zone_AC-7, HVAC_Zone_AC-6, HVAC_Zone_AC-5, HVAC_bZone_AC-4,
+  HVAC_Zone_AC-3, HVAC_Zone_AC-2, HVAC_Zone_AC-1]
+hayward-station-8: [HVAC_Zone_F-2, HVAC_Zone_F-3, HVAC_Zone_F-1]
+north-berkeley-senior-center: [HVAC_Zone_AC-5, HVAC_Zone_AC-3, HVAC_Zone_AC-1]
+orinda-community-center: [HVAC_Zone_AC-8, HVAC_Zone_AC-7, HVAC_Zone_AC-6, HVAC_Zone_AC-5,
+  HVAC_Zone_AC-4, HVAC_Zone_AC-3, HVAC_Zone_AC-2, HVAC_Zone_AC-1]
+south-berkeley-senior-center: [HVAC_Zone_AC-3, HVAC_Zone_AC-2]

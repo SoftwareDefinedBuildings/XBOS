@@ -72,11 +72,12 @@ def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
     if thermostat_action_data is None:
         return None, "did not fetch data from pymortar with query: %s" % thermostat_action_query
 
+    thermostat_action_data = thermostat_action_data.dropna()
+
     return thermostat_action_data, None
 
 def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, window_size):
     """
-
     :param building:
     :param zone:
     :param pymortar_client:
@@ -92,7 +93,7 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
                 ?temp  rdf:type brick:Temperature_Sensor  .
             };""" % (building, zone)
 
-    # resp = pymortar_client.qualify([temperature_query]) Needed to get list of all sites
+    #resp = pymortar_client.qualify([temperature_query]) Need to get list of all sites
 
     temperature_view = pymortar.View(
         name="temperature_view",
@@ -130,6 +131,8 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
 
     if temperature_data is None:
         return None, "did not fetch data from pymortar with query: %s" % temperature_query
+
+    temperature_data = temperature_data.dropna()
 
     return temperature_data, None
 
@@ -169,7 +172,7 @@ def get_raw_indoor_temperatures(request, pymortar_client):
     if raw_indoor_temperature_data is None:
         return None, "No data received from database."
 
-    for index, temp in raw_indoor_temperature_data.iteritems():
+    for index, temp in raw_indoor_temperature_data.iterrows():
         temperatures.append(indoor_temperature_action_pb2.TemperaturePoint(time=int(index.timestamp() * 1e9), temperature=temp, unit=unit))
 
     return indoor_temperature_action_pb2.RawTemperatureReply(temperatures=temperatures), None
@@ -203,12 +206,13 @@ def get_raw_actions(request, pymortar_client):
                                                     start_datetime,
                                                     end_datetime,
                                                     request.window)
+
     actions = []
 
     if raw_action_data is None:
         return None, "No data received from database."
 
-    for index, action in raw_action_data.iteritems():
+    for index, action in raw_action_data.iterrows():
         actions.append(indoor_temperature_action_pb2.ActionPoint(time=int(index.timestamp() * 1e9), action=action)) # TOOD action being int will be a problem.
 
     return indoor_temperature_action_pb2.RawActionReply(actions=actions), None
