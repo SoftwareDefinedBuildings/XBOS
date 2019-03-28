@@ -52,7 +52,7 @@ def get_price_for_interval(df,t,uuid,duration):
                     price_duration_list.append((t,row[uuid],int(index.timestamp())+3600-t))
                     return price_duration_list
                 else:
-                    next_index,next_row = row_iterator.next()
+                    next_index,next_row = next(row_iterator)
                     if index.timestamp()+3600 == next_index.timestamp():
                         price_duration_list.append((t,row[uuid],int(next_index.timestamp())-t))
                         price_duration_list.append((int(next_index.timestamp()),next_row[uuid],int(t +duration-next_index.timestamp())))
@@ -150,14 +150,15 @@ def get_price(request, pymortar_client):
         end=rfc3339(int(end/1e9)),
     )
 
-    request = pymortar.FetchRequest(
+    price_request = pymortar.FetchRequest(
+        sites=[""],
         dataFrames=[
             price_stream
         ],
         time=price_time_params
     )
 
-    df = pymortar_client.fetch(request)["price_data"]
+    df = pymortar_client.fetch(price_request)["price_data"]
 
     if df is None:
         return price_pb2.PriceReply(prices=[]), "did not fetch data from pymortar"
