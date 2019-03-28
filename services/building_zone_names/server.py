@@ -16,10 +16,10 @@ NAMES_DATA_PATH = Path(os.environ["BUILDING_ZONE_NAMES_DATA_PATH"])
 NAMES_HOST_ADDRESS = os.environ["BUILDING_ZONE_NAMES_HOST_ADDRESS"]
 
 def _get_buildings():
-    building_path = NAMES_DATA_PATH / "all_buildings.yml"
+    building_path = str(NAMES_DATA_PATH / "all_buildings.yml")
 
     if os.path.exists(building_path):
-        with open(str(building_path), "r") as f:
+        with open(building_path, "r") as f:
             try:
                 building_file = yaml.load(f)
             except yaml.YAMLError:
@@ -31,10 +31,10 @@ def _get_buildings():
 
 
 def _get_zones(building):
-    zone_path = NAMES_DATA_PATH / "all_zones.yml"
+    zone_path = str(NAMES_DATA_PATH / "all_zones.yml")
 
     if os.path.exists(zone_path):
-        with open(str(zone_path), "r") as f:
+        with open(zone_path, "r") as f:
             try:
                 zone_file = yaml.load(f)
             except yaml.YAMLError:
