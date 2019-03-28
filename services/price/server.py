@@ -3,18 +3,14 @@ import time
 import grpc
 import price_pb2
 import price_pb2_grpc
-from xbos.services import mdal
-
-# getting the utils file here
+import pandas as pd
+import pymortar
+from rfc3339 import rfc3339
 import os, sys
-import xbos_services_utils2 as utils
 
-import os
 PRICE_HOST_ADDRESS = os.environ["PRICE_HOST_ADDRESS"]
 
-
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-
 UUID = {
     "PGE_FLAT06_ENERGY":"5f8add28-9d7f-3e02-b428-bb32f241090d",
     "PGE_PGEA01_ENERGY":"6ec2b69f-ed98-3b58-b664-fedc3e0ebc3a",
@@ -33,6 +29,7 @@ UUID = {
     "SCE_SCE08B_DEMAND" :"6ffda3c2-710c-3962-ac13-912d10e95bc0",
     "SCE_SCETGS3_DEMAND":"31e3e0e4-f319-390d-a015-cdd2bde0e8d0"
 }
+
 def get_price_for_interval(df,t,uuid,duration):
     """Returns a price array for a time stamp within a duration or None if not found"""
     price_duration_list = []
@@ -78,7 +75,29 @@ def get_window_in_string(seconds):
         return str(int(seconds/60)) +'m'
     return str(int(seconds))+'s'
 
-def get_price(request,mdal_client):
+def get_tariff_and_utility(request):
+    """Returns tariff and utility for the specified building""" 
+    df = pd.read_csv("price-mapping.csv")
+
+    building_df = df.loc[df["Building"] == request.building]
+
+    if building_df.empty:
+        return price_pb2.TariffUtilityReply(tariff="", utility=""), "empty data frame"
+    
+    utility, tariff = building_df["Utility"].item(), building_df["Tariff"].item()
+
+    return price_pb2.TariffUtilityReply(tariff=tariff, utility=utility), None
+
+def get_window_in_sec(s):
+    """Returns number of seconds in a given duration or zero if it fails.
+       Supported durations are seconds (s), minutes (m), hours (h), and days(d)."""
+    seconds_per_unit = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+    try:
+        return int(float(s[:-1])) * seconds_per_unit[s[-1]]
+    except:
+        return 0
+
+def get_price(request, pymortar_client):
     """Returns prices for a given request or None."""
     print("received request:",request.utility,request.tariff,request.price_type,request.start,request.end,request.window)
     if request.price_type.upper() == "ENERGY":
@@ -87,7 +106,7 @@ def get_price(request,mdal_client):
         unit = "$/kW"
     else:
         return None, "invalid request, invalid price_type"
-    duration = utils.get_window_in_sec(request.window)
+    duration = get_window_in_sec(request.window)
     request_length = [len(request.utility),len(request.tariff),request.start,request.end,duration]
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
@@ -119,25 +138,54 @@ def get_price(request,mdal_client):
         elif request.end/1e9%3600!=0:
             end = request.end + 36e11
     #Aligned returns invalid (next) price (we request the equivalent of RAW)
-    query = {
-        "Composition": [uuid],
-        "Selectors": [mdal.MEAN], #mdal.{MAX, MIN, COUNT, MEAN, RAW} . Define one for each of the variables above
-        "Time": {
-            'T0': time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(request.start/1e9- request.start/1e9%3600)))+ ' UTC',
-            'T1': time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(end/1e9))) + ' UTC',
-            "WindowSize": '1h',
-            "Aligned": True,
-            },
-    }
-    resp = mdal_client.do_query(query,timeout=300)
-    if resp.get('error') is not None:
-        return price_pb2.PriceReply(prices=[]),resp.get('error')
-    df = resp['df']
+    price_stream = pymortar.DataFrame(
+        name="price_data",
+        uuids=[uuid],
+        aggregation=pymortar.MEAN,
+        window="1h"
+    )
+
+    price_time_params = pymortar.TimeParams(
+        start=rfc3339(int(request.start/1e9- request.start/1e9%3600)),
+        end=rfc3339(int(end/1e9)),
+    )
+
+    request = pymortar.FetchRequest(
+        dataFrames=[
+            price_stream
+        ],
+        time=price_time_params
+    )
+
+    df = pymortar_client.fetch(request)["price_data"]
+
+    if df is None:
+        return price_pb2.PriceReply(prices=[]), "did not fetch data from pymortar"
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
     df = df.dropna()
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
+    
+#    query = {
+#         "Composition": [uuid],
+#         "Selectors": [mdal.MEAN], #mdal.{MAX, MIN, COUNT, MEAN, RAW} . Define one for each of the variables above
+#         "Time": {
+#             'T0': time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(request.start/1e9- request.start/1e9%3600)))+ ' UTC',
+#             'T1': time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(end/1e9))) + ' UTC',
+#             "WindowSize": '1h',
+#             "Aligned": True,
+#             },
+#     }
+    #resp = mdal_client.do_query(query,timeout=300)
+    # if resp.get('error') is not None:
+    #     return price_pb2.PriceReply(prices=[]),resp.get('error')
+    # df = resp['df']
+    # if df.empty:
+    #     return price_pb2.PriceReply(prices=[]), "empty data frame"
+    # df = df.dropna()
+    # if df.empty:
+    #     return price_pb2.PriceReply(prices=[]), "empty data frame"
 
     prices = []
     # if request starts on the hour
@@ -271,10 +319,10 @@ def get_price(request,mdal_client):
 
 class PriceServicer(price_pb2_grpc.PriceServicer):
     def __init__(self):
-        self.mdal_client = mdal.MDALClient("xbos/mdal")
+        self.pymortar_client = pymortar.Client()
 
     def GetPrice(self, request, context):
-        prices,error = get_price(request,self.mdal_client)
+        prices,error = get_price(request,self.pymortar_client)
         if prices is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
@@ -283,8 +331,21 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
             return prices
-        else:
-            return prices
+        
+        return prices
+    
+    def GetTariffAndUtility(self, request, context):
+        tariff_utility_reply,error = get_tariff_and_utility(request)
+        if tariff_utility_reply is None:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details(error)
+            return price_pb2.TariffUtilityReply()
+        elif error is not None:
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(error)
+            return tariff_utility_reply
+
+        return tariff_utility_reply
 
 
 def serve():

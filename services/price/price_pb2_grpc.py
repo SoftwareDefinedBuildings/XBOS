@@ -19,6 +19,11 @@ class PriceStub(object):
         request_serializer=price__pb2.PriceRequest.SerializeToString,
         response_deserializer=price__pb2.PriceReply.FromString,
         )
+    self.GetTariffAndUtility = channel.unary_unary(
+        '/price.Price/GetTariffAndUtility',
+        request_serializer=price__pb2.BuildingRequest.SerializeToString,
+        response_deserializer=price__pb2.TariffUtilityReply.FromString,
+        )
 
 
 class PriceServicer(object):
@@ -35,6 +40,13 @@ class PriceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetTariffAndUtility(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_PriceServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -42,6 +54,11 @@ def add_PriceServicer_to_server(servicer, server):
           servicer.GetPrice,
           request_deserializer=price__pb2.PriceRequest.FromString,
           response_serializer=price__pb2.PriceReply.SerializeToString,
+      ),
+      'GetTariffAndUtility': grpc.unary_unary_rpc_method_handler(
+          servicer.GetTariffAndUtility,
+          request_deserializer=price__pb2.BuildingRequest.FromString,
+          response_serializer=price__pb2.TariffUtilityReply.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
