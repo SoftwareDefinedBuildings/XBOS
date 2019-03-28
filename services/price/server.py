@@ -167,26 +167,6 @@ def get_price(request, pymortar_client):
     df = df.dropna()
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
-    
-#    query = {
-#         "Composition": [uuid],
-#         "Selectors": [mdal.MEAN], #mdal.{MAX, MIN, COUNT, MEAN, RAW} . Define one for each of the variables above
-#         "Time": {
-#             'T0': time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(request.start/1e9- request.start/1e9%3600)))+ ' UTC',
-#             'T1': time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(end/1e9))) + ' UTC',
-#             "WindowSize": '1h',
-#             "Aligned": True,
-#             },
-#     }
-    #resp = mdal_client.do_query(query,timeout=300)
-    # if resp.get('error') is not None:
-    #     return price_pb2.PriceReply(prices=[]),resp.get('error')
-    # df = resp['df']
-    # if df.empty:
-    #     return price_pb2.PriceReply(prices=[]), "empty data frame"
-    # df = df.dropna()
-    # if df.empty:
-    #     return price_pb2.PriceReply(prices=[]), "empty data frame"
 
     prices = []
     # if request starts on the hour
