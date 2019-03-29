@@ -14,6 +14,8 @@ from datetime import datetime
 from rfc3339 import rfc3339
 import pytz
 
+HOST_ADDRESS = os.environ["INDOOR_DATA_HISTORICAL_HOST_ADDRESS"]
+
 def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
     """
     TODO how to deal with windows in which two different actions are performed in given zone.
@@ -264,7 +266,7 @@ class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorT
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     indoor_temperature_action_pb2_grpc.add_IndoorTemperatureActionServicer_to_server(IndoorTemperatureActionServicer(), server)
-    server.add_insecure_port('[::]:50060')
+    server.add_insecure_port(HOST_ADDRESS)
     server.start()
     try:
         while True:
