@@ -2,7 +2,6 @@ grpcio==1.12.1
 grpcio-tools==1.12.1
 PyYAML==3.12
 pytz==2018.3
-xbos==0.0.35pi
 pymortar>=1.0.0
 rfc3339==6.0
 
