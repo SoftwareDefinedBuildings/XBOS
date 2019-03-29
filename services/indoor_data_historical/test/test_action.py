@@ -84,7 +84,10 @@ class TestActionData(unittest.TestCase):
                    
 
 if __name__ == '__main__':
-    with grpc.insecure_channel('localhost:50060') as channel:
+    import os
+    HOST_ADDRESS = os.environ["INDOOR_DATA_HISTORICAL_HOST_ADDRESS"]
+
+    with grpc.insecure_channel(HOST_ADDRESS) as channel:
         stub = indoor_temperature_action_pb2_grpc.IndoorTemperatureActionStub(channel)
 
         test_loader = unittest.TestLoader()
