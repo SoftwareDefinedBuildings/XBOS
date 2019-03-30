@@ -2,3 +2,4 @@
 .ipynb_checkpoints
 *.pyc
 services_data/
+model_results/
