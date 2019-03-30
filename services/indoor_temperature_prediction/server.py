@@ -1,15 +1,12 @@
-#python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. indoor_temperature.proto
+#python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. indoor_temperature_prediction.proto
 
 # getting the utils file here
 import os, sys
-import xbos_services_utils3 as utils
 
 import datetime
 import pytz
 import pandas as pd
-sys.path.append("./ThermalModels")
 
-from ThermalModel import ThermalModel
 
 from concurrent import futures
 import time
@@ -18,7 +15,7 @@ import grpc
 import thermal_model_pb2
 import thermal_model_pb2_grpc
 
-import preprocess_training_data as td
+import process_indoor_data as pid
 
 _INTERVAL = "5m" # minutes # TODO allow for getting multiples of 5. Prediction horizon.
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
@@ -44,7 +41,6 @@ THERMAL_MODELS = {
 
 END = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) # TODO how to make environ var. 
 START = END - datetime.timedelta(days=120)
-
 
 def check_thermal_model(building, zone):
     if building not in THERMAL_MODELS or zone not in THERMAL_MODELS[building]:
@@ -151,7 +147,6 @@ def serve():
             time.sleep(_ONE_DAY_IN_SECONDS)
     except KeyboardInterrupt:
         server.stop(0)
-
 
 if __name__ == '__main__':
     serve()
