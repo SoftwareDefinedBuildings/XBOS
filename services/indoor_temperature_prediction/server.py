@@ -41,7 +41,7 @@ THERMAL_MODELS = {
 "csu-dominguez-hills": {} }
 
 END = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) # TODO how to make environ var. 
-START = END - datetime.timedelta(days=10)
+START = END - datetime.timedelta(days=130)
 
 
 def get_window_in_sec(s):
