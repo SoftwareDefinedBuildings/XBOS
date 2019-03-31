@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='thermal_model',
   syntax='proto3',
   serialized_options=_b('P\001'),
-  serialized_pb=_b('\n#indoor_temperature_prediction.proto\x12\rthermal_model\"\x96\x03\n\x1cSecondOrderPredictionRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\x0c\n\x04zone\x18\x02 \x01(\t\x12\x14\n\x0c\x63urrent_time\x18\x03 \x01(\x03\x12\x0e\n\x06\x61\x63tion\x18\x04 \x01(\x03\x12\x1a\n\x12indoor_temperature\x18\x05 \x01(\x01\x12#\n\x1bprevious_indoor_temperature\x18\x06 \x01(\x01\x12\x1b\n\x13outside_temperature\x18\x07 \x01(\x01\x12g\n\x17other_zone_temperatures\x18\x08 \x03(\x0b\x32\x46.thermal_model.SecondOrderPredictionRequest.OtherZoneTemperaturesEntry\x12\x18\n\x10temperature_unit\x18\t \x01(\t\x12\x11\n\toccupancy\x18\n \x01(\x03\x1a<\n\x1aOtherZoneTemperaturesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"L\n\x19PredictedTemperatureReply\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x13\n\x0btemperature\x18\x02 \x03(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t2\x83\x01\n\x0cThermalModel\x12s\n\x18GetSecondOrderPrediction\x12+.thermal_model.SecondOrderPredictionRequest\x1a(.thermal_model.PredictedTemperatureReply\"\x00\x42\x02P\x01\x62\x06proto3')
+  serialized_pb=_b('\n#indoor_temperature_prediction.proto\x12\rthermal_model\"\x83\x03\n\x1cSecondOrderPredictionRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\x0c\n\x04zone\x18\x02 \x01(\t\x12\x14\n\x0c\x63urrent_time\x18\x03 \x01(\x03\x12\x0e\n\x06\x61\x63tion\x18\x04 \x01(\x03\x12\x1a\n\x12indoor_temperature\x18\x05 \x01(\x01\x12#\n\x1bprevious_indoor_temperature\x18\x06 \x01(\x01\x12\x1b\n\x13outside_temperature\x18\x07 \x01(\x01\x12g\n\x17other_zone_temperatures\x18\x08 \x03(\x0b\x32\x46.thermal_model.SecondOrderPredictionRequest.OtherZoneTemperaturesEntry\x12\x18\n\x10temperature_unit\x18\t \x01(\t\x1a<\n\x1aOtherZoneTemperaturesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"L\n\x19PredictedTemperatureReply\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x13\n\x0btemperature\x18\x02 \x01(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t2\x92\x01\n\x1bIndoorTemperaturePrediction\x12s\n\x18GetSecondOrderPrediction\x12+.thermal_model.SecondOrderPredictionRequest\x1a(.thermal_model.PredictedTemperatureReply\"\x00\x42\x02P\x01\x62\x06proto3')
 )
 
 
@@ -58,8 +58,8 @@ _SECONDORDERPREDICTIONREQUEST_OTHERZONETEMPERATURESENTRY = _descriptor.Descripto
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=401,
-  serialized_end=461,
+  serialized_start=382,
+  serialized_end=442,
 )
 
 _SECONDORDERPREDICTIONREQUEST = _descriptor.Descriptor(
@@ -132,13 +132,6 @@ _SECONDORDERPREDICTIONREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='occupancy', full_name='thermal_model.SecondOrderPredictionRequest.occupancy', index=9,
-      number=10, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -152,7 +145,7 @@ _SECONDORDERPREDICTIONREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=55,
-  serialized_end=461,
+  serialized_end=442,
 )
 
 
@@ -172,8 +165,8 @@ _PREDICTEDTEMPERATUREREPLY = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='temperature', full_name='thermal_model.PredictedTemperatureReply.temperature', index=1,
-      number=2, type=1, cpp_type=5, label=3,
-      has_default_value=False, default_value=[],
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -196,8 +189,8 @@ _PREDICTEDTEMPERATUREREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=463,
-  serialized_end=539,
+  serialized_start=444,
+  serialized_end=520,
 )
 
 _SECONDORDERPREDICTIONREQUEST_OTHERZONETEMPERATURESENTRY.containing_type = _SECONDORDERPREDICTIONREQUEST
@@ -232,18 +225,18 @@ _sym_db.RegisterMessage(PredictedTemperatureReply)
 DESCRIPTOR._options = None
 _SECONDORDERPREDICTIONREQUEST_OTHERZONETEMPERATURESENTRY._options = None
 
-_THERMALMODEL = _descriptor.ServiceDescriptor(
-  name='ThermalModel',
-  full_name='thermal_model.ThermalModel',
+_INDOORTEMPERATUREPREDICTION = _descriptor.ServiceDescriptor(
+  name='IndoorTemperaturePrediction',
+  full_name='thermal_model.IndoorTemperaturePrediction',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=542,
-  serialized_end=673,
+  serialized_start=523,
+  serialized_end=669,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetSecondOrderPrediction',
-    full_name='thermal_model.ThermalModel.GetSecondOrderPrediction',
+    full_name='thermal_model.IndoorTemperaturePrediction.GetSecondOrderPrediction',
     index=0,
     containing_service=None,
     input_type=_SECONDORDERPREDICTIONREQUEST,
@@ -251,8 +244,8 @@ _THERMALMODEL = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
 ])
-_sym_db.RegisterServiceDescriptor(_THERMALMODEL)
+_sym_db.RegisterServiceDescriptor(_INDOORTEMPERATUREPREDICTION)
 
-DESCRIPTOR.services_by_name['ThermalModel'] = _THERMALMODEL
+DESCRIPTOR.services_by_name['IndoorTemperaturePrediction'] = _INDOORTEMPERATUREPREDICTION
 
 # @@protoc_insertion_point(module_scope)

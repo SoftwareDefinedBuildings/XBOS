@@ -42,6 +42,7 @@ def load_data(building, zone):
 
 
 def create_model(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
+                 use_occupancy,
                  curr_action_timesteps, prev_action_timesteps, method):
     """Creates a model with the given specifications.
 
@@ -54,7 +55,8 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
     :param train_ratio: (float) in (0, 1). the ratio in which to split train and test set from the given dataset. The train set comes before test set in time.
     :param is_second_order: (bool) Whether we are using second order in temperature.
     :param curr_action_timesteps: (int) The order of the current action. Set 0 if there should only be one action.
-    :param prev_action_timesteps: (int) The order of the previous action. Set 0 if it should not be used at all.
+    :param prev_action_timesteps: (int) The order of the previous action. Set 0 if there should only be one prev action.
+        Set -1 if it should not be used at all.
     :param method: (str) ["OLS", "random_forest", "LSTM"] are the available methods so far
     :param rmse_series: np.array the rmse of the forecasting procedure.
     :param num_forecasts: (int) The number of forecasts which contributed to the RMSE.
@@ -96,8 +98,10 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
     columns_to_drop = ["dt", "action_duration"]
     if curr_action_timesteps != 0:
         columns_to_drop.append("action")
-    if prev_action_timesteps != 0:
+    if prev_action_timesteps != 0 or prev_action_timesteps == -1:
         columns_to_drop.append("action_prev") # TODO we might want to use this as a feature. so don't set to -1...
+    if not use_occupancy:
+        columns_to_drop.append("occ")
 
     # train data
     train_data = train_data[train_data["dt"] == seconds_prediction_window]
@@ -115,4 +119,5 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
 
     # Make OLS model
     reg = LinearRegression().fit(train_X, train_y)
-    return reg, processed_data, test_X, test_y
+    return reg, test_X.columns
+

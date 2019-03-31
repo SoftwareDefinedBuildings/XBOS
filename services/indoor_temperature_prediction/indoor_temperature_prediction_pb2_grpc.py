@@ -4,7 +4,7 @@ import grpc
 import indoor_temperature_prediction_pb2 as indoor__temperature__prediction__pb2
 
 
-class ThermalModelStub(object):
+class IndoorTemperaturePredictionStub(object):
   """The temperature service definition.
   """
 
@@ -15,13 +15,13 @@ class ThermalModelStub(object):
       channel: A grpc.Channel.
     """
     self.GetSecondOrderPrediction = channel.unary_unary(
-        '/thermal_model.ThermalModel/GetSecondOrderPrediction',
+        '/thermal_model.IndoorTemperaturePrediction/GetSecondOrderPrediction',
         request_serializer=indoor__temperature__prediction__pb2.SecondOrderPredictionRequest.SerializeToString,
         response_deserializer=indoor__temperature__prediction__pb2.PredictedTemperatureReply.FromString,
         )
 
 
-class ThermalModelServicer(object):
+class IndoorTemperaturePredictionServicer(object):
   """The temperature service definition.
   """
 
@@ -35,7 +35,7 @@ class ThermalModelServicer(object):
     raise NotImplementedError('Method not implemented!')
 
 
-def add_ThermalModelServicer_to_server(servicer, server):
+def add_IndoorTemperaturePredictionServicer_to_server(servicer, server):
   rpc_method_handlers = {
       'GetSecondOrderPrediction': grpc.unary_unary_rpc_method_handler(
           servicer.GetSecondOrderPrediction,
@@ -44,5 +44,5 @@ def add_ThermalModelServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'thermal_model.ThermalModel', rpc_method_handlers)
+      'thermal_model.IndoorTemperaturePrediction', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

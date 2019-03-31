@@ -5,7 +5,7 @@ option java_multiple_files = true;
 package thermal_model;
 
 // The temperature service definition.
-service ThermalModel {
+service IndoorTemperaturePrediction {
   // A simple RPC.
   //
   // Predicts indoor temperatures.
@@ -29,15 +29,13 @@ message SecondOrderPredictionRequest {
   map<string, double> other_zone_temperatures = 8;
 
   string temperature_unit = 9;
-
-  int64 occupancy = 10;
 }
 
 
 // TemperaturePoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
 message PredictedTemperatureReply {
   int64 time = 1;
-  repeated double temperature = 2;
+  double temperature = 2;
   string unit = 3;
 }
 
