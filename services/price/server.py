@@ -82,7 +82,6 @@ def get_tariff_and_utility(request):
 
     price_data_path = Path(PRICE_DATA_PATH)
     df = pd.read_csv(str(price_data_path / "price-mapping.csv"))
-    print(df)
 
     building_df = df.loc[df["Building"] == request.building]
 
