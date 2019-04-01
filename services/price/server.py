@@ -7,7 +7,9 @@ import pandas as pd
 import pymortar
 from rfc3339 import rfc3339
 import os, sys
+from pathlib import Path
 
+PRICE_MAPPING_DATA_PATH = os.environ["PRICE_MAPPING_DATA_PATH"]
 PRICE_HOST_ADDRESS = os.environ["PRICE_HOST_ADDRESS"]
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
@@ -76,8 +78,10 @@ def get_window_in_string(seconds):
     return str(int(seconds))+'s'
 
 def get_tariff_and_utility(request):
-    """Returns tariff and utility for the specified building""" 
-    df = pd.read_csv("price-mapping.csv")
+    """Returns tariff and utility for the specified building"""
+
+    price_mapping_path = Path(PRICE_MAPPING_DATA_PATH)
+    df = pd.read_csv(str(price_mapping_path / "price-mapping.csv"))
 
     building_df = df.loc[df["Building"] == request.building]
 
