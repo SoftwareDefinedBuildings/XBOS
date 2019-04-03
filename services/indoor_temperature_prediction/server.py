@@ -88,7 +88,7 @@ def training(building, zone, start, end):
                                          prev_action_timesteps=-1,
                                          method="OLS")
     except:
-        return None, "Could not get Model"
+        return None, None, "Could not get Model"
 
     return model, column_order, None
 

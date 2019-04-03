@@ -80,7 +80,7 @@ def _get_week_comfortband(building, zone, date, interval):
 
             if t_low is None or t_low == "None":
                 interval_safety = df_do_not_exceed[start-datetime.timedelta(seconds=interval):start]
-                t_low = interval_safety["t_low"].mean()
+                t_low = interval_safety["t_low"].mean() # TODO We want mean weighter by duration. Fine approximation for now
 
             if t_high is None or t_high == "None":
                 interval_safety = df_do_not_exceed[start-datetime.timedelta(seconds=interval):start]
