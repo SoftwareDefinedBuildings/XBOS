@@ -74,21 +74,19 @@ def training(building, zone, start, end):
     :param end: (datetime timezone aware)
     :return: Trained thermal model object.
     """
-    try:
-        model, column_order = ctm.create_model(building=building,
-                                         zone=zone,
-                                         start=start,
-                                         end=end,
-                                         prediction_window=_INTERVAL,
-                                         raw_data_granularity="1m",
-                                         train_ratio=1,
-                                         is_second_order=True,
-                                         use_occupancy=False,
-                                         curr_action_timesteps=0,
-                                         prev_action_timesteps=-1,
-                                         method="OLS")
-    except:
-        return None, None, "Could not get Model"
+    model, column_order = ctm.create_model(building=building,
+                                     zone=zone,
+                                     start=start,
+                                     end=end,
+                                     prediction_window=_INTERVAL,
+                                     raw_data_granularity="1m",
+                                     train_ratio=1,
+                                     is_second_order=True,
+                                     use_occupancy=False,
+                                     curr_action_timesteps=0,
+                                     prev_action_timesteps=-1,
+                                     method="OLS")
+
 
     return model, column_order, None
 
