@@ -80,11 +80,11 @@ def _get_week_comfortband(building, zone, date, interval):
 
             if t_low is None or t_low == "None":
                 interval_safety = df_do_not_exceed[start-datetime.timedelta(seconds=interval):start]
-                t_low = interval_safety["t_low"][-1]
+                t_low = interval_safety["t_low"].mean()
 
             if t_high is None or t_high == "None":
                 interval_safety = df_do_not_exceed[start-datetime.timedelta(seconds=interval):start]
-                t_high = interval_safety["t_high"][-1]
+                t_high = interval_safety["t_high"].mean()
 
 
             curr_idx.append(start)
