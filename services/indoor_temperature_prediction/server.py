@@ -16,13 +16,14 @@ import indoor_temperature_prediction_pb2_grpc
 
 import create_test_models as ctm
 
+import xbos_services_getter as xsg
+
 HOST_ADDRESS = os.environ["INDOOR_TEMPERATURE_PREDICTION_HOST_ADDRESS"]
 
 _INTERVAL = "5m" # minutes # TODO allow for getting multiples of 5. Prediction horizon.
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 THERMAL_MODELS = {
-"orinda-public-library": {},
 "orinda-community-center": {},
 "hayward-station-1": {},
 "hayward-station-8": {},
@@ -41,7 +42,7 @@ THERMAL_MODELS = {
 "csu-dominguez-hills": {} }
 
 END = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) # TODO how to make environ var. 
-START = END - datetime.timedelta(days=130)
+START = END - datetime.timedelta(days=10) # TODO Put back to 130
 
 
 def get_window_in_sec(s):
@@ -89,6 +90,17 @@ def training(building, zone, start, end):
 
 
     return model, column_order, None
+
+
+def initizalize():
+    building_zone_names_stub = xsg.get_building_zone_names_stub()
+    all_building_zone_names = xsg.get_all_buildings_zones(building_zone_names_stub)
+    for building in all_building_zone_names.keys():
+        print("Initizalizing building:", building)
+        for zone in all_building_zone_names[building]:
+            print("Zone:", zone)
+            check_thermal_model(building, zone)
+        print("")
 
 
 def prediction(request):
@@ -171,7 +183,8 @@ def serve():
         server.stop(0)
 
 if __name__ == '__main__':
-    serve()
+    initizalize()
+    # serve()
     #
     # building = 'ciee'
     # zone = "HVAC_Zone_Northzone"
