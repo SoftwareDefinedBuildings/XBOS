@@ -15,37 +15,42 @@ _ONE_DAY_IN_SECONDS = 24 * 60 * 60
 NAMES_DATA_PATH = Path(os.environ["BUILDING_ZONE_NAMES_DATA_PATH"])
 NAMES_HOST_ADDRESS = os.environ["BUILDING_ZONE_NAMES_HOST_ADDRESS"]
 
+
 def _get_buildings():
-    building_path = str(NAMES_DATA_PATH / "all_buildings.yml")
+    """Gets all buildings that work with services.
+
+    :return: List (str) building names.
+    """
+    building_path = str(NAMES_DATA_PATH / "all_building_zone_names.yml")
 
     if os.path.exists(building_path):
         with open(building_path, "r") as f:
             try:
-                building_file = yaml.load(f)
+                name_file = yaml.load(f)
             except yaml.YAMLError:
                 return None, "yaml could not read file at: %s" % building_path
     else:
-        return None, "occupancy file could not be found. path: %s." % building_path
+        return None, "Building file could not be found. path: %s." % building_path
 
-    return building_file, None
+    return list(name_file.keys()), None
 
 
 def _get_zones(building):
-    zone_path = str(NAMES_DATA_PATH / "all_zones.yml")
+    zone_path = str(NAMES_DATA_PATH / "all_building_zone_names.yml")
 
     if os.path.exists(zone_path):
         with open(zone_path, "r") as f:
             try:
-                zone_file = yaml.load(f)
+                name_file = yaml.load(f)
             except yaml.YAMLError:
                 return None, "yaml could not read file at: %s" % zone_path
     else:
-        return None, "occupancy file could not be found. path: %s." % zone_path
+        return None, "Zone file could not be found. path: %s." % zone_path
 
-    if building not in zone_file:
+    if building not in name_file:
         return None, "Zones for given building could not be found."
 
-    return zone_file[building], None
+    return name_file[building], None
 
 
 def get_buildings():
