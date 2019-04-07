@@ -1,9 +1,6 @@
-<<<<<<< .merge_file_rchVSh
 .DS_Store
 .ipynb_checkpoints
 *.pyc
 services_data/
 model_results/
-=======
 *.bw2bind.log
->>>>>>> .merge_file_s9DSkM
