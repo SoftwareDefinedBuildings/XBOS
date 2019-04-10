@@ -9,6 +9,7 @@ import sys
 import yaml
 import math
 import pandas as pd
+import numpy as np
 from pathlib import Path
 sys.path.append(str(Path.cwd().parent))
 import unittest
@@ -23,6 +24,7 @@ class TestHelper(unittest.TestCase):
         self.buildings = xbos.get_buildings(building_zone_names_stub)
         self.zones = xbos.get_all_buildings_zones(building_zone_names_stub)
         self.yaml_file_name = "no-data.yml"
+        self.window = "1h"
 
     def get_response(self, building="ciee", zone="HVAC_Zone_Eastzone", window="1h", start=-1, end=-1):
         try:
@@ -59,30 +61,12 @@ class TestHelper(unittest.TestCase):
             self.assertEqual(time_diff, time_delta)
 
         return cur_time
-    
-    def window_to_timedelta(self, window):
-        unit = window[-1]
-        time = float(window[:-1])
-
-        if unit == 'h':
-            return datetime.timedelta(hours=time)
-        elif unit == 'm':
-            return datetime.timedelta(minutes=time)
-        elif unit == 's':
-            return datetime.timedelta(seconds=time)
-        elif unit == 'd':
-            return datetime.timedelta(days=time)
-        elif unit == 'y':
-            return datetime.timedelta(weeks=time*52)
-        elif unit == 'w':
-            return datetime.timedelta(weeks=time)
         
-    def test_all_buildings_and_zones(self):
+    def all_buildings_test(self):
         no_data = {}
-        window = "1h"
         for building in self.buildings:
             for zone in self.zones[building]:
-                response = self.get_response(building=building, zone=zone, window=window)
+                response = self.get_response(building=building, zone=zone, window=self.window)
 
                 if response is None:
                     if building in no_data:
@@ -92,10 +76,88 @@ class TestHelper(unittest.TestCase):
                 else:
                     print(building, zone)
                     self.response_exists(response)
-                    self.valid_data_exists(response, window)
+                    self.valid_data_exists(response, self.window)
 
         self.generate_yaml_file(self.yaml_file_name, no_data)
+    
+    def window_to_timedelta(self, window):
+        unit = window[-1]
+        time = float(window[:-1])
+
+        units = {
+            "h": datetime.timedelta(hours=time),
+            "m": datetime.timedelta(minutes=time),
+            "s": datetime.timedelta(seconds=time),
+            "d": datetime.timedelta(days=time),
+            "w": datetime.timedelta(weeks=time),
+            "y": datetime.timedelta(weeks=time*52)
+        }
+
+        return units[unit]
+
+    def random_test_all_buildings(self, num_iterations=1):
+        
+        for i in range(num_iterations):
+            window = self.generate_random_window('h')
+            start, end = self.generate_random_time_interval()
+            no_data = { window: window, start: start, end: end }
+            for building in self.buildings:
+                for zone in self.zones[building]:
+                    response = self.get_response(building=building, zone=zone, window=window, start=start, end=end)
+
+                    if response is None:
+                        if building in no_data:
+                            no_data[building].append(zone)
+                        else:
+                            no_data[building] = [zone]
+                    else:
+                        print(building, zone)
+                        self.response_exists(response)
+                        self.valid_data_exists(response, window)
+
+            self.generate_yaml_file("failed_tests/" + self.yaml_file_name + str(i + 1) + ".yml", no_data)
+        
+    def random_test_single_building(self, building='ciee', zone='HVAC_Zone_Northzone', window_unit="h"):
+        window = self.generate_random_window(window_unit)
+        start, end = self.generate_random_time_interval()
+        response = self.get_response(building=building, zone=zone, window=window, start=start, end=end)
+        self.response_exists(response)
+        self.valid_data_exists(response, window)
 
     def generate_yaml_file(self, file_path, data):
         with open(file_path, 'w') as outfile:
             yaml.dump(data, outfile)
+    
+    def generate_random_time_interval(self, start=-1, end=-1, max_interval_days=-1):
+        """ Generates a time interval between 3 years ago and now """
+        if start == -1 or end == -1:
+            num_years_ago = np.float32(self.random_float(0.5, 3)).item()
+            end = datetime.datetime.now().replace(tzinfo=pytz.utc)
+            start = end - datetime.timedelta(weeks=52 * num_years_ago)
+        
+        if max_interval_days != -1:
+            end = start + datetime.timedelta(days=max_interval_days)
+
+        end = start + datetime.timedelta(minutes=np.uint32(self.random_int(10, int((end - start).total_seconds() / 60))).item())
+
+        return start, end
+
+    def generate_random_window(self, unit="h", minimum=1):
+        units = {
+            "h": lambda : self.random_int(0 + minimum, 24),
+            "m": lambda : self.random_int(0 + minimum, 60),
+            "s": lambda : self.random_int(30 + minimum, 3600),
+            "d": lambda : self.random_int(0 + minimum, 30),
+            "w": lambda : self.random_int(0 + minimum, 20),
+            "y": lambda : self.random_int(0 + minimum, 3)
+        }
+
+        return str(units[unit]()) + unit
+
+    def random_float(self, minimum, maximum):
+        """ Minimum and maximum are inclusive """
+        return np.random.uniform(minimum, maximum)
+
+    def random_int(self, minimum, maximum):
+        """ Minimum and maximum are inclusive """
+        return np.random.randint(low=minimum, high=maximum + 1, size=1)[0]
