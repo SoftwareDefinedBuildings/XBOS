@@ -133,7 +133,7 @@ def get_temperature(request, pymortar_client):
 
     d_start = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
     d_end = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
-
+        
     final_data, err = _get_temperature(request.building, d_start, d_end, duration, pymortar_client)
     if final_data is None:
         return None, err

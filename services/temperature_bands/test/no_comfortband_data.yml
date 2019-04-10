@@ -1,0 +1,34 @@
+avenal-animal-shelter: [HVAC_Zone_Shelter_Corridor]
+avenal-movie-theatre: [HVAC_Zone_Lobby, HVAC_Zone_Main_Hallway, HVAC_Zone_Back_Hallway,
+  HVAC_Zone_Room_A, HVAC_Zone_Theater_1, HVAC_Zone_Theater_2, HVAC_Zone_Room_D, HVAC_Zone_Pegasus_Hall]
+avenal-public-works-yard: [HVAC_Zone_Public_Works_Office]
+avenal-recreation-center: [HVAC_Zone_Large_Room, HVAC_Zone_Tech_Center]
+avenal-veterans-hall: [HVAC_Zone_AC_3, HVAC_Zone_AC_5, HVAC_Zone_AC_1, HVAC_Zone_AC_4,
+  HVAC_Zone_AC_2, HVAC_Zone_AC_6]
+berkeley-corporate-yard: [HVAC_Zone_ElectricalShop, HVAC_Zone_Fac_Main_Dept, HVAC_Zone_Green_Room,
+  HVAC_Zone_Parks_Assembly, HVAC_Zone_RadioShop, HVAC_Zone_S_and_U_Open_Office, HVAC_Zone_Scott_Britt_RM,
+  HVAC_Zone_CS_Open_Office]
+ciee: [HVAC_Zone_Northzone, HVAC_Zone_Eastzone, HVAC_Zone_Southzone, HVAC_Zone_Centralzone]
+csu-dominguez-hills: [HVAC_Zone_Sac_2113, HVAC_Zone_Sac_2149, HVAC_Zone_Sac_2103,
+  HVAC_Zone_Sac_2106, HVAC_Zone_Sac_2107, HVAC_Zone_Sac_2105, HVAC_Zone_Sac_2150,
+  HVAC_Zone_Sac_2126, HVAC_Zone_Sac_2_Corridor, HVAC_Zone_Sac_2102, HVAC_Zone_Sac_2129,
+  HVAC_Zone_Sac_2101, HVAC_Zone_Sac_2114, HVAC_Zone_Sac_2144, HVAC_Zone_Sac_2113A,
+  HVAC_Zone_Sac_2134, HVAC_Zone_Sac_2104]
+hayward-station-1: [HVAC_Zone_AC_3, HVAC_Zone_AC_4, HVAC_Zone_AC_5, HVAC_Zone_AC_6,
+  HVAC_Zone_AC_7, HVAC_Zone_AC_1, HVAC_Zone_AC_2]
+hayward-station-8: [HVAC_Zone_F-1, HVAC_Zone_F-2, HVAC_Zone_F-3]
+jesse-turner-center: [HVAC_Zone_Meeting_Room_122, HVAC_Zone_ASSEMBLY_112, HVAC_Zone_Class_131,
+  HVAC_Zone_Dance_Room_109, HVAC_Zone_Class_132, HVAC_Zone_Control_Desk, HVAC_Zone_Basketball_Court_6,
+  HVAC_Zone_ASSEMBLY_113, HVAC_Zone_Kitchen, HVAC_Zone_Basketball_Court_3, HVAC_Zone_Basketball_Court_4,
+  HVAC_Zone_Basketball_Court_2, HVAC_Zone_Basketball_Court_1, HVAC_Zone_Resource_Center,
+  HVAC_Zone_ASSEMBLY_111, HVAC_Zone_Multi_Purpose_147, HVAC_Zone_Back_Stage, HVAC_Zone_Foyer_Gallery,
+  HVAC_Zone_Fitness_Room_138, HVAC_Zone_Lobby, HVAC_Zone_Basketball_Court_5, HVAC_Zone_Electrical_Room123,
+  HVAC_Zone_Office_Room_148, HVAC_Zone_Front_Entrance]
+local-butcher-shop: [HVAC_Zone_Retail_Space]
+north-berkeley-senior-center: [HVAC_Zone_AC_5, HVAC_Zone_AC_1, HVAC_Zone_AC_3]
+orinda-community-center: [HVAC_Zone_AC_8, HVAC_Zone_AC_5, HVAC_Zone_AC_3, HVAC_Zone_AC_4,
+  HVAC_Zone_AC_7, HVAC_Zone_RM2, HVAC_Zone_AC_2, HVAC_Zone_FRONT_OFFICE, HVAC_Zone_AC_6,
+  HVAC_Zone_RM7, HVAC_Zone_Kinder_GYM, HVAC_Zone_RM1, HVAC_Zone_AC_1, HVAC_Zone_RM6]
+south-berkeley-senior-center: [HVAC_Zone_AC_3, HVAC_Zone_AC_2, HVAC_Zone_Front_Office]
+word-of-faith-cc: [HVAC_Zone_Hospitality, HVAC_Zone_School_Age_Rm, HVAC_Zone_Sanctuary_Rf_2,
+  HVAC_Zone_Pre_K_Classroom, HVAC_Zone_Sanctuary_Lb_2, HVAC_Zone_Lobby, HVAC_Zone_Fellowship_Hall]

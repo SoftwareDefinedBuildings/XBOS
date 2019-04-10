@@ -18,7 +18,6 @@ DAYS_IN_WEEK = 7
 OCCUPANCY_DATA_PATH = os.environ["OCCUPANCY_DATA_PATH"]
 OCCUPANCY_HOST_ADDRESS = os.environ["OCCUPANCY_HOST_ADDRESS"]
 
-
 def _get_occupancy_config(building, zone):
     occ_path = OCCUPANCY_DATA_PATH + "/" + building + "/" + zone + ".yml"
 

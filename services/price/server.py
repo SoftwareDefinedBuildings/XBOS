@@ -137,7 +137,7 @@ def get_price(request, pymortar_client):
         # e.g., asking for 4:10 returns up to 3:00, then ask for 5:00 to force it to return 4:00
         elif request.end/1e9%3600!=0:
             end = request.end + 36e11
-    #Aligned returns invalid (next) price (we request the equivalent of RAW)
+    #Aligned returns invalid (next) price (we request the equivalent of RAW)    
     price_stream = pymortar.DataFrame(
         name="price_data",
         uuids=[uuid],
@@ -160,11 +160,15 @@ def get_price(request, pymortar_client):
 
     df = pymortar_client.fetch(price_request)["price_data"]
 
+    print(df)
+    print(df.empty)
+
     if df is None:
         return price_pb2.PriceReply(prices=[]), "did not fetch data from pymortar"
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
     df = df.dropna()
+    print(df.empty)
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
 
@@ -332,7 +336,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     price_pb2_grpc.add_PriceServicer_to_server(PriceServicer(), server)
-    server.add_insecure_port(PRICE_HOST_ADDRESS)
+    server.add_insecure_port('localhost:50060')
     server.start()
     try:
         while True:

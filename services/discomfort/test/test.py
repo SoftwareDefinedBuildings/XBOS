@@ -1,111 +1,58 @@
-
 from __future__ import print_function
 
 import grpc
-
+import time
+import datetime
+import calendar
+import pytz
 import sys
-sys.path.append("../")
-import discomfort_pb2
-import discomfort_pb2_grpc
+import yaml
+import pandas as pd
+from pathlib import Path
+sys.path.append(str(Path.cwd().parent))
+import unittest
+import xbos_services_getter as xbos
+from test_helper import TestHelper
 
+class TestDiscomfort(TestHelper):   
 
-def run():
-    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
-    # used in circumstances in which the with statement does not fit the needs
-    # of the code.
+    def __init__(self, test_name):
+        TestHelper.__init__(self, test_name)
+        self.stub = xbos.get_discomfort_stub()
+        self.yaml_file_name = "no_discomfort_data.yml"
 
-    with grpc.insecure_channel('localhost:50060') as channel:
-        stub = discomfort_pb2_grpc.DiscomfortStub(channel)
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(building="ciee", temperature=66,
-                                                                                    temperature_low=65,
-                                                                                    temperature_high=69,
-                                                                                    unit="F",
-                                                                                    occupancy=1))
-            print("Cost: %f" % discomfort_response.cost)
+    def get_response(self, building="ciee", temperature=65.2, temperature_low=45.3, temperature_high=95.6, occupancy=0.6):
+        try:            
+            return xbos.get_discomfort(self.stub, building=building, temperature=temperature, temperature_low=temperature_low, temperature_high=temperature_high, occupancy=occupancy)
         except grpc.RpcError as e:
             print(e)
-
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(temperature=1234,
-                                                                                    temperature_low=12,
-                                                                                    temperature_high=234,
-                                                                                    unit="F",
-                                                                                    occupancy=0.2))
-            print("Cost: %f" % discomfort_response.cost)
-        except grpc.RpcError as e:
-            print(e)
-
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(temperature=68,
-                                                                                    temperature_low=70,
-                                                                                    temperature_high=69,
-                                                                                    unit="F",
-                                                                                    occupancy=1))
-            print("Cost: %f" % discomfort_response.cost)
-        except grpc.RpcError as e:
-            print(e)
-
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(temperature=70,
-                                                                                    temperature_low=68,
-                                                                                    temperature_high=69,
-                                                                                    unit="C",
-                                                                                    occupancy=1))
-            print("Cost: %f" % discomfort_response.cost)
-        except grpc.RpcError as e:
-            print(e)
-
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(temperature=70,
-                                                                                    temperature_low=68,
-                                                                                    temperature_high=68,
-                                                                                    unit="F",
-                                                                                    occupancy=1))
-            print("Cost: %f" % discomfort_response.cost)
-        except grpc.RpcError as e:
-            print(e)
-
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(temperature=70,
-                                                                                    temperature_low=68,
-                                                                                    temperature_high=69,
-                                                                                    unit="F",
-                                                                                    occupancy=1))
-            print("Cost: %f" % discomfort_response.cost)
-        except grpc.RpcError as e:
-            print(e)
-
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(temperature=68,
-                                                                                    temperature_low=68,
-                                                                                    temperature_high=68,
-                                                                                    unit="F",
-                                                                                    occupancy=1))
-            print("Cost: %f" % discomfort_response.cost)
-        except grpc.RpcError as e:
-            print(e)
-
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(temperature=-12,
-                                                                                    temperature_low=-200,
-                                                                                    temperature_high=-1,
-                                                                                    unit="F",
-                                                                                    occupancy=1))
-            print("Cost: %f" % discomfort_response.cost)
-        except grpc.RpcError as e:
-            print(e)
-
-        try:
-            discomfort_response = stub.GetLinearDiscomfort(discomfort_pb2.Request(temperature=-210,
-                                                                                    temperature_low=-200,
-                                                                                    temperature_high=-1,
-                                                                                    unit="F",
-                                                                                    occupancy=1))
-            print("Cost: %f" % discomfort_response.cost)
-        except grpc.RpcError as e:
-            print(e)
-
-
+    
+    def valid_data_exists(self, response):
+        self.assertIsInstance(obj=response, cls=float)
+        self.assertTrue(response >= 0)
+    
+    def test_all_buildings_and_zones(self):
+        no_data = []
+        for building in self.buildings:
+            response = self.get_response(building=building)
+            if response is None:
+                if building not in no_data:
+                    no_data.append(building)
+            else:
+                print(building)
+                self.response_exists(response)
+                self.valid_data_exists(response)
+        
+        self.generate_yaml_file(self.yaml_file_name, no_data)
+            
 if __name__ == '__main__':
-    run()
+    test_loader = unittest.TestLoader()
+    test_names = test_loader.getTestCaseNames(TestDiscomfort)
+
+    suite = unittest.TestSuite()
+    for test_name in test_names:
+        suite.addTest(TestDiscomfort(test_name))
+
+    result = unittest.TextTestRunner().run(suite)
+
+    sys.exit(not result.wasSuccessful())

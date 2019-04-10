@@ -3,60 +3,48 @@ from __future__ import print_function
 import grpc
 import time
 import datetime
-
-from pathlib import Path
-import sys
-sys.path.append(str(Path.cwd().parent))
-import occupancy_pb2
-import occupancy_pb2_grpc
-
+import calendar
 import pytz
-
-import xbos_services_utils3 as utils
-
+import sys
+import yaml
+import math
+import pandas as pd
+from pathlib import Path
+sys.path.append(str(Path.cwd().parent))
+import unittest
+import xbos_services_getter as xbos
 import os
-OCCUPANCY_HOST_ADDRESS = os.environ["OCCUPANCY_HOST_ADDRESS"]
+print(Path.parent)
+sys.path.append(str(Path.parent))
+from test_helper import TestHelper
 
+class TestOccupancyData(TestHelper):   
 
-def run():
-    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
-    # used in circumstances in which the with statement does not fit the needs
-    # of the code.
+    def __init__(self, test_name):
+        TestHelper.__init__(self, test_name)
+        self.stub = xbos.get_occupancy_stub()
+        self.yaml_file_name = "no_occupancy_data.yml"
 
-    all_bldgs = utils.get_buildings()
-
-    channel = grpc.insecure_channel(OCCUPANCY_HOST_ADDRESS)
-    stub = occupancy_pb2_grpc.OccupancyStub(channel)
-
-
-    for bldg in all_bldgs:
-        # case 1, Test from now into future
-        print("Building: %s" % bldg)
-        for zone in utils.get_zones(bldg):
-            s_time = time.time()
-            print("Zone: %s" % zone)
-            if "Shelter" not in zone:
-                print("BREAK")
-                break
-            try:
-
-                end = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) #+ datetime.timedelta(days=1)
-                end_unix = int(end.timestamp() * 1e9)
-                start = end - datetime.timedelta(days=1)
-                start_unix = int(start.timestamp() * 1e9)
-
-                window = "5m"
-
-                response = stub.GetOccupancy(occupancy_pb2.Request(building=bldg, zone=zone, start=start_unix,end=end_unix,window=window))
-                # for point in response.occupancies:
-                #     print("Point at: %s is occupancy: %f." % (time.ctime(int(point.time/1000000000.0)) + ' PST',
-                #                                                                                             point.occupancy))
-            except grpc.RpcError as e:
-                       print(e)
-            print("Took: %f seconds" % (time.time() - s_time))
-        print("")
-    print("")
-
-
+    def get_response(self, building="ciee", zone="HVAC_Zone_Eastzone", window="1h", start=-1, end=-1):
+        try:
+            if start == -1 or end == -1:
+                end = datetime.datetime.now().replace(tzinfo=pytz.utc) - datetime.timedelta(weeks=52)
+                start = end - datetime.timedelta(days=10)
+                # alternate start and end times below
+                # start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+                # end = int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+            return xbos.get_occupancy(self.stub, building=building, zone=zone, start=start,end=end,window=window)
+        except grpc.RpcError as e:
+            print(e)
+            
 if __name__ == '__main__':
-    run()
+    test_loader = unittest.TestLoader()
+    test_names = test_loader.getTestCaseNames(TestOccupancyData)
+
+    suite = unittest.TestSuite()
+    for test_name in test_names:
+        suite.addTest(TestOccupancyData(test_name))
+
+    result = unittest.TextTestRunner().run(suite)
+
+    sys.exit(not result.wasSuccessful())
