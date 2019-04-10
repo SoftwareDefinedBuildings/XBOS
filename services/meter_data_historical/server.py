@@ -58,7 +58,8 @@ class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistor
 
         return meter_data_historical_pb2.Reply(point=result)
 
-    def MeterDataHistoricalServicer(self, request, context):
+
+    def GetMeterDataHistorical(self, request, context):
         """
 
         Parameters
