@@ -5,8 +5,8 @@ import sys
 sys.path.append(str(Path.cwd().parent))
 import os
 
-import MeterData_pb2
-import MeterData_pb2_grpc
+import meter_data_historical_pb2
+import meter_data_historical_pb2_grpc
 
 METER_DATA_HOST_ADDRESS = os.environ["METER_DATA_HISTORICAL_HOST_ADDRESS"]
 
@@ -18,7 +18,7 @@ def run():
     # of the code.
     with grpc.insecure_channel(METER_DATA_HOST_ADDRESS) as channel:
 
-        stub = MeterData_pb2_grpc.MeterDataStub(channel)
+        stub = meter_data_historical_pb2_grpc.MeterDataHistoricalStub(channel)
 
         try:
 
@@ -33,7 +33,7 @@ def run():
             bldg = ["ciee"]
 
             # Create gRPC request object
-            request = MeterData_pb2.Request(
+            request = meter_data_historical_pb2.Request(
                 buildings=bldg,
                 start=start,
                 end=end,
@@ -42,7 +42,7 @@ def run():
                 window=window
             )
 
-            response = stub.GetMeterData(request)
+            response = stub.GetMeterDataHistorical(request)
 
             df = pd.DataFrame()
             for point in response.point:
