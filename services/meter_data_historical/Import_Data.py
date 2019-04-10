@@ -89,6 +89,7 @@ class Import_Data():
             'SUM': pymortar.SUM,
             'RAW': pymortar.RAW
         }
+
         agg = switcher.get(agg)
 
         # Convert time to UTC

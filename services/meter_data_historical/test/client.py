@@ -3,11 +3,12 @@ import pandas as pd
 from pathlib import Path
 import sys
 sys.path.append(str(Path.cwd().parent))
+import os
 
 import MeterData_pb2
 import MeterData_pb2_grpc
 
-METER_DATA_HOST_ADDRESS = 'localhost:1234'
+METER_DATA_HOST_ADDRESS = os.environ["METER_DATA_HISTORICAL_HOST_ADDRESS"]
 
 
 def run():

@@ -14,14 +14,15 @@ sys.path.append(str(Path.cwd().parent))
 import unittest
 import xbos_services_getter as xbos
 
-class TestActionData(unittest.TestCase):   
+class TestHelper(unittest.TestCase):   
 
     def __init__(self, test_name):
-        super(TestActionData, self).__init__(test_name)
-        self.stub = xbos.get_indoor_historic_stub()
+        super(TestHelper, self).__init__(test_name)
+        self.stub = xbos.get_indoor_historic_stub() #Default
         building_zone_names_stub = xbos.get_building_zone_names_stub()
         self.buildings = xbos.get_buildings(building_zone_names_stub)
         self.zones = xbos.get_all_buildings_zones(building_zone_names_stub)
+        self.yaml_file_name = "no-data.yml"
 
     def get_response(self, building="ciee", zone="HVAC_Zone_Eastzone", window="1h", start=-1, end=-1):
         try:
@@ -31,7 +32,7 @@ class TestActionData(unittest.TestCase):
                 # alternate start and end times below
                 # start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
                 # end = int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
-            return xbos.get_actions_historic(self.stub, building=building, zone=zone, start=start,end=end,window=window)
+            return xbos.get_indoor_temperature_historic(self.stub, building=building, zone=zone, start=start,end=end,window=window)
         except grpc.RpcError as e:
             print(e)
     
@@ -42,12 +43,12 @@ class TestActionData(unittest.TestCase):
         last_time = None
         num_items = response.count()
         i = 1
-        for time, action in response.iteritems():
+        for time, val in response.iteritems():
             if i < num_items - 1:
-                self.assertIsNotNone(action)
+                self.assertIsNotNone(val)
                 self.assertIsNotNone(time)
                 self.assertIsInstance(obj=time, cls=pd.Timestamp)
-                self.assertIsInstance(obj=action, cls=float)
+                self.assertIsInstance(obj=val, cls=float)
                 last_time = self.window_is_accurate(last_time, time.to_pydatetime(), window)
             i += 1
     
@@ -92,19 +93,9 @@ class TestActionData(unittest.TestCase):
                     print(building, zone)
                     self.response_exists(response)
                     self.valid_data_exists(response, window)
-        
-        with open('no_action_data.yml', 'w') as outfile:
-            yaml.dump(no_data, outfile)
-                   
 
-if __name__ == '__main__':
-    test_loader = unittest.TestLoader()
-    test_names = test_loader.getTestCaseNames(TestActionData)
+        self.generate_yaml_file(self.yaml_file_name, no_data)
 
-    suite = unittest.TestSuite()
-    for test_name in test_names:
-        suite.addTest(TestActionData(test_name))
-
-    result = unittest.TextTestRunner().run(suite)
-
-    sys.exit(not result.wasSuccessful())
+    def generate_yaml_file(self, file_path, data):
+        with open(file_path, 'w') as outfile:
+            yaml.dump(data, outfile)
