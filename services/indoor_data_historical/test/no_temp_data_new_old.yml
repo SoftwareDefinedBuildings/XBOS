@@ -1,0 +1,21 @@
+avenal-movie-theatre: [HVAC_Zone_Lobby]
+avenal-veterans-hall: [HVAC_Zone_Ac_3, HVAC_Zone_Ac_5, HVAC_Zone_Ac_1, HVAC_Zone_Ac_4,
+  HVAC_Zone_Ac_2, HVAC_Zone_Ac_6]
+berkeley-corporate-yard: [HVAC_Zone_RadioShop]
+csu-dominguez-hills: [HVAC_Zone_Sac_2113, HVAC_Zone_Sac_2149, HVAC_Zone_Sac_2103,
+  HVAC_Zone_Sac_2106, HVAC_Zone_Sac_2107, HVAC_Zone_Sac_2105, HVAC_Zone_Sac_2150,
+  HVAC_Zone_Sac_2126, HVAC_Zone_Sac_2_Corridor, HVAC_Zone_Sac_2102, HVAC_Zone_Sac_2129,
+  HVAC_Zone_Sac_2101, HVAC_Zone_Sac_2114, HVAC_Zone_Sac_2144, HVAC_Zone_Sac_2113A,
+  HVAC_Zone_Sac_2134, HVAC_Zone_Sac_2104]
+hayward-station-1: [HVAC_Zone_AC_4, HVAC_Zone_AC_5]
+hayward-station-8: [HVAC_Zone_F-1, HVAC_Zone_F-2, HVAC_Zone_F-3]
+jesse-turner-center: [HVAC_Zone_Basketball_Court_3, HVAC_Zone_Basketball_Court_2,
+  HVAC_Zone_Basketball_Court_1, HVAC_Zone_Resource_Center, HVAC_Zone_Basketball_Court_5,
+  HVAC_Zone_Office_Room_148]
+local-butcher-shop: [HVAC_Zone_Retail_Space]
+north-berkeley-senior-center: [HVAC_Zone_Ac_5, HVAC_Zone_Ac_1, HVAC_Zone_Ac_3]
+orinda-community-center: [HVAC_Zone_AC-8, HVAC_Zone_AC-5, HVAC_Zone_AC-3, HVAC_Zone_AC-4,
+  HVAC_Zone_AC-7, HVAC_Zone_AC-2, HVAC_Zone_FRONT_OFFICE, HVAC_Zone_AC-6, HVAC_Zone_RM7,
+  HVAC_Zone_RM1, HVAC_Zone_AC-1]
+south-berkeley-senior-center: [HVAC_Zone_Ac_3, HVAC_Zone_Ac_2]
+word-of-faith-cc: [HVAC_Zone_School_Age_Rm, HVAC_Zone_Fellowship_Hall]
