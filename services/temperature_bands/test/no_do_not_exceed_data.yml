@@ -1,0 +1,6 @@
+avenal-veterans-hall: [HVAC_Zone_AC_3, HVAC_Zone_AC_5, HVAC_Zone_AC_1, HVAC_Zone_AC_4,
+  HVAC_Zone_AC_2, HVAC_Zone_AC_6]
+north-berkeley-senior-center: [HVAC_Zone_AC_5, HVAC_Zone_AC_1, HVAC_Zone_AC_3]
+orinda-community-center: [HVAC_Zone_AC_8, HVAC_Zone_AC_5, HVAC_Zone_AC_3, HVAC_Zone_AC_4,
+  HVAC_Zone_AC_7, HVAC_Zone_AC_2, HVAC_Zone_AC_6, HVAC_Zone_AC_1]
+south-berkeley-senior-center: [HVAC_Zone_AC_3, HVAC_Zone_AC_2]

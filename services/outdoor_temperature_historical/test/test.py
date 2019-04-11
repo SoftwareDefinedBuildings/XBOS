@@ -3,61 +3,58 @@ from __future__ import print_function
 import grpc
 import time
 import datetime
-
-from pathlib import Path
-import sys
-sys.path.append(str(Path.cwd().parent))
-import outdoor_temperature_historical_pb2
-import outdoor_temperature_historical_pb2_grpc
-
-import xbos_services_utils2 as utils
-
-import pytz
-
 import calendar
+import pytz
+import sys
+from pathlib import Path
+sys.path.append(str(Path.cwd().parent))
+import unittest
+import xbos_services_getter as xbos
+from test_helper import TestHelper
 
-import os
-OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS = os.environ["OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS"]
+class TestTemperatureData(TestHelper):   
+ 
+    def __init__(self, test_name):
+        TestHelper.__init__(self, test_name)
+        self.stub = xbos.get_outdoor_historic_stub()
+        self.yaml_file_name = "no_temp_data.yml"
 
+    def get_response(self, building="ciee", window="1h", start=-1, end=-1):
+        try:
+            if start == -1 or end == -1:
+                end = datetime.datetime.now().replace(tzinfo=pytz.utc) - datetime.timedelta(weeks=52)
+                start = end - datetime.timedelta(days=10)
+                # alternate start and end times below
+                # start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+                # end = int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
+            return xbos.get_outdoor_temperature_historic(self.stub, building=building, start=start,end=end,window=window)
+        except grpc.RpcError as e:
+            print(e)
+    
+    def test_all_buildings_and_zones(self):
+        no_data = []
+        window = "1h"
+        for building in self.buildings:
+            response = self.get_response(building=building, window=window)
 
-
-_EPOCH = datetime.datetime(1970, 1, 1, tzinfo=pytz.utc)
-
-def timestamp(self):
-        "Return POSIX timestamp as float"
-        if self.tzinfo is None:
-            return time.mktime((self.year, self.month, self.day,
-                                 self.hour, self.minute, self.second,
-                                 -1, -1, -1)) + self.microsecond / 1e6
-        else:
-            return (self - _EPOCH).total_seconds()
-
-def run():
-    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
-    # used in circumstances in which the with statement does not fit the needs
-    # of the code.
-    with grpc.insecure_channel(OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS) as channel:
-        stub = outdoor_temperature_historical_pb2_grpc.OutdoorTemperatureStub(channel)
-        for bldg in utils.get_buildings():
-            try:
-
-                print("Building: %s" % bldg)
-                d_start = pytz.utc.localize(datetime.datetime(2018, 1, 1, minute=2))
-                d_end = d_start + datetime.timedelta(days=2)
-
-                start = int(calendar.timegm(d_start.utctimetuple()) * 1e9)
-                end = int(calendar.timegm(d_end.utctimetuple()) * 1e9)
-
-
-                response = stub.GetTemperature(outdoor_temperature_historical_pb2.TemperatureRequest(building=bldg,start=start,end=end,window="15m"))
-                for temperature in response.temperatures:
-                    print("Temp at: %s is: %.2f %s" % (time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(temperature.time/1000000000.0))) + ' UTC', temperature.temperature, temperature.unit))
-
-            except grpc.RpcError as e:
-                print(e)
-
-            print("\n")
-
+            if response is None:
+                if building not in no_data:
+                    no_data.append(building)
+            else:
+                print(building)
+                self.response_exists(response)
+                self.valid_data_exists(response, window)
+        
+        self.generate_yaml_file(self.yaml_file_name, no_data)
 
 if __name__ == '__main__':
-    run()
+    test_loader = unittest.TestLoader()
+    test_names = test_loader.getTestCaseNames(TestTemperatureData)
+
+    suite = unittest.TestSuite()
+    for test_name in test_names:
+        suite.addTest(TestTemperatureData(test_name))
+
+    result = unittest.TextTestRunner().run(suite)
+
+    sys.exit(not result.wasSuccessful())

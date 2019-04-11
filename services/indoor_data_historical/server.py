@@ -74,8 +74,6 @@ def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
     if thermostat_action_data is None:
         return None, "did not fetch data from pymortar with query: %s" % thermostat_action_query
 
-    thermostat_action_data = thermostat_action_data.dropna()
-
     return thermostat_action_data, None
 
 def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, window_size):
@@ -133,8 +131,6 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
 
     if temperature_data is None:
         return None, "did not fetch data from pymortar with query: %s" % temperature_query
-
-    temperature_data = temperature_data.dropna()
 
     return temperature_data, None
 

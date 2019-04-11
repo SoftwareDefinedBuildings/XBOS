@@ -61,21 +61,6 @@ class TestHelper(unittest.TestCase):
             self.assertEqual(time_diff, time_delta)
 
         return cur_time
-    
-    def window_to_timedelta(self, window):
-        unit = window[-1]
-        time = float(window[:-1])
-
-        units = {
-            "h": datetime.timedelta(hours=time),
-            "m": datetime.timedelta(minutes=time),
-            "s": datetime.timedelta(seconds=time),
-            "d": datetime.timedelta(days=time),
-            "w": datetime.timedelta(weeks=time),
-            "y": datetime.timedelta(weeks=time*52)
-        }
-
-        return units[unit]
         
     def all_buildings_test(self):
         no_data = {}
@@ -94,11 +79,26 @@ class TestHelper(unittest.TestCase):
                     self.valid_data_exists(response, self.window)
 
         self.generate_yaml_file(self.yaml_file_name, no_data)
+    
+    def window_to_timedelta(self, window):
+        unit = window[-1]
+        time = float(window[:-1])
+
+        units = {
+            "h": datetime.timedelta(hours=time),
+            "m": datetime.timedelta(minutes=time),
+            "s": datetime.timedelta(seconds=time),
+            "d": datetime.timedelta(days=time),
+            "w": datetime.timedelta(weeks=time),
+            "y": datetime.timedelta(weeks=time*52)
+        }
+
+        return units[unit]
 
     def random_test_all_buildings(self, num_iterations=1):
         
         for i in range(num_iterations):
-            window = "1h"#self.generate_random_window('h')
+            window = self.generate_random_window('h')
             start, end = self.generate_random_time_interval()
             no_data = { window: window, start: start, end: end }
             for building in self.buildings:

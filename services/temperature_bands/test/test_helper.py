@@ -9,8 +9,8 @@ import sys
 import yaml
 import math
 import pandas as pd
-import numpy as np
 from pathlib import Path
+import numpy as np
 sys.path.append(str(Path.cwd().parent))
 import unittest
 import xbos_services_getter as xbos
@@ -23,8 +23,8 @@ class TestHelper(unittest.TestCase):
         building_zone_names_stub = xbos.get_building_zone_names_stub()
         self.buildings = xbos.get_buildings(building_zone_names_stub)
         self.zones = xbos.get_all_buildings_zones(building_zone_names_stub)
-        self.yaml_file_name = "no-data.yml"
         self.window = "1h"
+        self.yaml_file_name = "no-data.yml"
 
     def get_response(self, building="ciee", zone="HVAC_Zone_Eastzone", window="1h", start=-1, end=-1):
         try:
@@ -43,9 +43,9 @@ class TestHelper(unittest.TestCase):
     
     def valid_data_exists(self, response, window):
         last_time = None
-        num_items = response.count()
+        num_items = response.shape[0]
         i = 1
-        for time, val in response.iteritems():
+        for time, val in response.iterrows():
             if i < num_items - 1:
                 self.assertIsNotNone(val)
                 self.assertIsNotNone(time)
@@ -128,31 +128,26 @@ class TestHelper(unittest.TestCase):
         with open(file_path, 'w') as outfile:
             yaml.dump(data, outfile)
     
-    def generate_random_time_interval(self, start=-1, end=-1, max_interval_days=-1):
+    def generate_random_time_interval(self):
         """ Generates a time interval between 3 years ago and now """
-        if start == -1 or end == -1:
-            num_years_ago = np.float32(self.random_float(0.5, 3)).item()
-            end = datetime.datetime.now().replace(tzinfo=pytz.utc)
-            start = end - datetime.timedelta(weeks=52 * num_years_ago)
-        
-        if max_interval_days != -1:
-            end = start + datetime.timedelta(days=max_interval_days)
-
+        num_years_ago = np.float32(self.random_float(0.5, 3)).item()
+        end = datetime.datetime.now().replace(tzinfo=pytz.utc)
+        start = end - datetime.timedelta(weeks=52 * num_years_ago)
         end = start + datetime.timedelta(minutes=np.uint32(self.random_int(10, int((end - start).total_seconds() / 60))).item())
-
+        
         return start, end
 
-    def generate_random_window(self, unit="h", minimum=1):
+    def generate_random_window(self, unit="h"):
         units = {
-            "h": lambda : self.random_int(0 + minimum, 24),
-            "m": lambda : self.random_int(0 + minimum, 60),
-            "s": lambda : self.random_int(30 + minimum, 3600),
-            "d": lambda : self.random_int(0 + minimum, 30),
-            "w": lambda : self.random_int(0 + minimum, 20),
-            "y": lambda : self.random_int(0 + minimum, 3)
+            "h": self.random_int(1, 24),
+            "m": self.random_int(1, 60),
+            "s": self.random_int(30, 3600),
+            "d": self.random_int(1, 30),
+            "w": self.random_int(1, 20),
+            "y": self.random_int(1, 3)
         }
 
-        return str(units[unit]()) + unit
+        return str(units[unit]) + unit
 
     def random_float(self, minimum, maximum):
         """ Minimum and maximum are inclusive """
@@ -161,3 +156,6 @@ class TestHelper(unittest.TestCase):
     def random_int(self, minimum, maximum):
         """ Minimum and maximum are inclusive """
         return np.random.randint(low=minimum, high=maximum + 1, size=1)[0]
+
+
+

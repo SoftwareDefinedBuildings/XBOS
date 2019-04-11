@@ -38,7 +38,7 @@ print("")
 
 
 print(get_all_occ("ciee", "HVAC_Zone_Eastzone",
-                      utc_date, end  15*60))
+                      utc_date, end, 15*60))
 
 print(utils.decrement_to_start_of_day(date, float(3/100.*60)))
 

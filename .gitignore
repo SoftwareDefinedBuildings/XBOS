@@ -5,3 +5,6 @@ services_data/
 model_results/
 
 *.bw2bind.log
+.pyc
+.pymortartoken.json
+__pycache__
