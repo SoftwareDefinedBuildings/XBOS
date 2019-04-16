@@ -26,7 +26,7 @@ THERMAL_MODELS = {}
 
 END = datetime.datetime(year=2019, month=4, day=1).replace(
     tzinfo=pytz.utc)  # datetime.datetime.utcnow().replace(tzinfo=pytz.utc) # TODO make environ var.
-START = END - datetime.timedelta(days=130)  # TODO Put back to 130
+START = END - datetime.timedelta(days=120)  # TODO Put back to 120
 
 
 def get_window_in_sec(s):
