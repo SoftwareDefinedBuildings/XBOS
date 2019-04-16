@@ -26,7 +26,7 @@ THERMAL_MODELS = {}
 
 END = datetime.datetime(year=2019, month=4, day=1).replace(
     tzinfo=pytz.utc)  # datetime.datetime.utcnow().replace(tzinfo=pytz.utc) # TODO make environ var.
-START = END - datetime.timedelta(days=10)  # TODO Put back to 130
+START = END - datetime.timedelta(days=130)  # TODO Put back to 130
 
 
 def get_window_in_sec(s):
@@ -87,7 +87,7 @@ def training(building, zone, start, end):
                                                 curr_action_timesteps=0,
                                                 prev_action_timesteps=-1,
                                                 method="OLS",
-                                                check_data=False)  # change this as needed.
+                                                check_data=True)  # change this as needed.
     if err is not None:
         return None, None, err
     return model, column_order, None
