@@ -178,7 +178,7 @@ def serve():
 
 if __name__ == '__main__':
     initizalize()
-    # serve()
+    serve()
     #
     # building = 'ciee'
     # zone = "HVAC_Zone_Northzone"
