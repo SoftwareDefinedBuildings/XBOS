@@ -18,22 +18,22 @@ import process_indoor_data as pid
 
 
 def store_data(data, building, zone):
-    data_dir = Path.cwd() / "services_data"
+    data_dir = Path.cwd() / "services_data" / "preprocessed_data_cache" / building
     if not os.path.isdir(data_dir):
         os.makedirs(data_dir)
 
-    file_path = data_dir / (building + "_" + zone + ".pkl")
+    file_path = data_dir / (zone + ".pkl")
 
     with open(str(file_path), "wb") as f:
         pickle.dump(data, f)
 
 
 def load_data(building, zone):
-    data_dir = Path.cwd() / "services_data"
+    data_dir = Path.cwd() / "services_data" / "preprocessed_data_cache" /building
     if not os.path.isdir(data_dir):
         return None
 
-    file_path = data_dir / (building + "_" + zone + ".pkl")
+    file_path = data_dir / (zone + ".pkl")
     if not os.path.isfile(file_path):
         return None
 
@@ -43,7 +43,7 @@ def load_data(building, zone):
 
 def create_model(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
                  use_occupancy,
-                 curr_action_timesteps, prev_action_timesteps, method):
+                 curr_action_timesteps, prev_action_timesteps, method, check_data=True):
     """Creates a model with the given specifications.
 
     :param building: (string) building name
@@ -61,6 +61,9 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
     :param rmse_series: np.array the rmse of the forecasting procedure.
     :param num_forecasts: (int) The number of forecasts which contributed to the RMSE.
     :param forecasting_horizon: (int seconds) The horizon used when forecasting.
+    :param check_data: If True (default), will enforce that training data has the right start/end times (recommended).
+    If False, the times may be different (allows model to be created faster by using previously prepocessed data)
+        – useful when prototyping since the preprocessing does not have to be repeated.
     :return: trained sklearn.LinearRegression object.
 
     """
@@ -74,8 +77,11 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
     # TODO add check that the data we have stored is at least as long and has right prediction_window
     # TODO Fix how we deal with nan's. some zone temperatures might get set to -1.
     loaded_data = load_data(building, zone)
-    if loaded_data is None:
-        processed_data = pid.get_preprocessed_data(building, zone, start, end, prediction_window, raw_data_granularity)
+    err = xsg.check_data(loaded_data, start, end, prediction_window, check_nan=True)
+    if (loaded_data is None) or ((err is not None) and check_data):
+        processed_data, err = pid.get_preprocessed_data(building, zone, start, end, prediction_window, raw_data_granularity)
+        if err is not None:
+            return None, None, err
         store_data(processed_data, building, zone)
     else:
         processed_data = loaded_data
@@ -99,25 +105,31 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
     if curr_action_timesteps != 0:
         columns_to_drop.append("action")
     if prev_action_timesteps != 0 or prev_action_timesteps == -1:
-        columns_to_drop.append("action_prev") # TODO we might want to use this as a feature. so don't set to -1...
+        columns_to_drop.append("action_prev")  # TODO we might want to use this as a feature. so don't set to -1...
     if not use_occupancy:
         columns_to_drop.append("occ")
 
     # train data
     train_data = train_data[train_data["dt"] == seconds_prediction_window]
     train_data = train_data.drop(columns_to_drop, axis=1)
+    if train_data.isna().values.any():
+        return None, None, "Nan values detected in training data."
 
-    train_y = train_data["t_next"].interpolate(method="time")
-    train_X = train_data.drop(["t_next"], axis=1).interpolate(method="time")
+    train_y = train_data["t_next"] #.interpolate(method="time") Note: We now assume that there are no Nan values in data.
+    train_X = train_data.drop(["t_next"], axis=1) #.interpolate(method="time")
 
     # test data
+    if test_data.isna().values.any():
+        return None, None, "Nan values detected in test data."
     test_data = test_data[test_data["dt"] == seconds_prediction_window]
     test_data = test_data.drop(columns_to_drop, axis=1)
 
-    test_y = test_data["t_next"].interpolate(method="time")
-    test_X = test_data.drop(["t_next"], axis=1).interpolate(method="time")
+    test_y = test_data["t_next"] #.interpolate(method="time")
+    test_X = test_data.drop(["t_next"], axis=1) #.interpolate(method="time")
 
+    if  train_X.shape[0] == 0:
+        return None, None, "Not enough data to train the model."
     # Make OLS model
     reg = LinearRegression().fit(train_X, train_y)
-    return reg, test_X.columns
+    return reg, test_X.columns, None
 

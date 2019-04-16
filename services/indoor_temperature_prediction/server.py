@@ -1,11 +1,10 @@
-#python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. indoor_temperature_prediction.proto
+# python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. indoor_temperature_prediction.proto
 
 import os, sys
 
 import datetime
 import pytz
 import pandas as pd
-
 
 from concurrent import futures
 import time
@@ -14,35 +13,20 @@ import grpc
 import indoor_temperature_prediction_pb2
 import indoor_temperature_prediction_pb2_grpc
 
-import create_test_models as ctm
+import create_models as ctm
 
 import xbos_services_getter as xsg
 
 HOST_ADDRESS = os.environ["INDOOR_TEMPERATURE_PREDICTION_HOST_ADDRESS"]
 
-_INTERVAL = "5m" # minutes # TODO allow for getting multiples of 5. Prediction horizon.
+_INTERVAL = "5m"  # minutes # TODO allow for getting multiples of 5. Prediction horizon.
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-THERMAL_MODELS = {
-"orinda-community-center": {},
-"hayward-station-1": {},
-"hayward-station-8": {},
-"avenal-animal-shelter": {},
-"avenal-movie-theatre": {},
-"avenal-public-works-yard": {},
-"avenal-recreation-center": {},
-"avenal-veterans-hall": {},
-"south-berkeley-senior-center": {},
-"north-berkeley-senior-center": {},
-"berkeley-corporation-yard": {},
-"word-of-faith-cc": {},
-"local-butcher-shop": {},
-"jesse-turner-center": {},
-"ciee": {},
-"csu-dominguez-hills": {} }
+THERMAL_MODELS = {}
 
-END = datetime.datetime.utcnow().replace(tzinfo=pytz.utc) # TODO how to make environ var. 
-START = END - datetime.timedelta(days=10) # TODO Put back to 130
+END = datetime.datetime(year=2019, month=4, day=1).replace(
+    tzinfo=pytz.utc)  # datetime.datetime.utcnow().replace(tzinfo=pytz.utc) # TODO make environ var.
+START = END - datetime.timedelta(days=10)  # TODO Put back to 130
 
 
 def get_window_in_sec(s):
@@ -55,12 +39,27 @@ def get_window_in_sec(s):
         return 0
 
 
+def initizalize():
+    building_zone_names_stub = xsg.get_building_zone_names_stub()
+    all_building_zone_names = xsg.get_all_buildings_zones(building_zone_names_stub)
+    for building in all_building_zone_names.keys():
+        print("Initizalizing building:", building)
+        for zone in all_building_zone_names[building]:
+            print("Zone:", zone)
+            _, err = check_thermal_model(building, zone)
+            if err is not None:
+                print("Error: " + err)
+        print("")
+
+
 def check_thermal_model(building, zone):
     if building not in THERMAL_MODELS or zone not in THERMAL_MODELS[building]:
         # TODO ERROR CHECK.
         thermal_model, column_order, err = training(building, zone, START, END)
-        if thermal_model is None:
+        if err is not None:
             return None, err
+        if building not in THERMAL_MODELS:
+            THERMAL_MODELS[building] = {}
         THERMAL_MODELS[building][zone] = (thermal_model, column_order)
 
     return None, None
@@ -75,32 +74,23 @@ def training(building, zone, start, end):
     :param end: (datetime timezone aware)
     :return: Trained thermal model object.
     """
-    model, column_order = ctm.create_model(building=building,
-                                     zone=zone,
-                                     start=start,
-                                     end=end,
-                                     prediction_window=_INTERVAL,
-                                     raw_data_granularity="1m",
-                                     train_ratio=1,
-                                     is_second_order=True,
-                                     use_occupancy=False,
-                                     curr_action_timesteps=0,
-                                     prev_action_timesteps=-1,
-                                     method="OLS")
-
-
+    # TODO add more error checking here goddamn
+    model, column_order, err = ctm.create_model(building=building,
+                                                zone=zone,
+                                                start=start,
+                                                end=end,
+                                                prediction_window=_INTERVAL,
+                                                raw_data_granularity="1m",
+                                                train_ratio=1,
+                                                is_second_order=True,
+                                                use_occupancy=False,
+                                                curr_action_timesteps=0,
+                                                prev_action_timesteps=-1,
+                                                method="OLS",
+                                                check_data=False)  # change this as needed.
+    if err is not None:
+        return None, None, err
     return model, column_order, None
-
-
-def initizalize():
-    building_zone_names_stub = xsg.get_building_zone_names_stub()
-    all_building_zone_names = xsg.get_all_buildings_zones(building_zone_names_stub)
-    for building in all_building_zone_names.keys():
-        print("Initizalizing building:", building)
-        for zone in all_building_zone_names[building]:
-            print("Zone:", zone)
-            check_thermal_model(building, zone)
-        print("")
 
 
 def prediction(request):
@@ -111,24 +101,25 @@ def prediction(request):
           request.temperature_unit)
 
     request_length = [len(request.building), len(request.zone), request.current_time,
-          request.indoor_temperature, request.outside_temperature, request.other_zone_temperatures, len(request.temperature_unit)]
+                      request.indoor_temperature, request.outside_temperature, request.other_zone_temperatures,
+                      len(request.temperature_unit)]
 
     unit = "F"  # fahrenheit for now .
 
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
-    if not (0 <= request.action <=2):
+    if not (0 <= request.action <= 2):
         return None, "Action is not between 0 and 2."
 
     # TODO Check if valid building/zone/temperature unit/zone, outside and indoor temperature (not none)
 
     current_time = datetime.datetime.utcfromtimestamp(float(request.current_time / 1e9)).replace(
-                                                        tzinfo=pytz.utc)
+        tzinfo=pytz.utc)
 
     # checking if we have a thermal model, and training if necessary.
     _, err = check_thermal_model(request.building, request.zone)
     if err is not None:
-        return None, err
+        return None, "No valid Thermal Model. (" + err + ")"
     thermal_model, column_order = THERMAL_MODELS[request.building][request.zone]
     data_point = {
         "t_in": request.indoor_temperature,
@@ -146,9 +137,10 @@ def prediction(request):
 
     prediction = thermal_model.predict(data_point)
 
-    prediction_reply = indoor_temperature_prediction_pb2.PredictedTemperatureReply(time=int(request.current_time + get_window_in_sec(_INTERVAL) * 1e9),
-                                                                temperature=prediction[0],
-                                                                 unit=unit)
+    prediction_reply = indoor_temperature_prediction_pb2.PredictedTemperatureReply(
+        time=int(request.current_time + get_window_in_sec(_INTERVAL) * 1e9),
+        temperature=prediction[0],
+        unit=unit)
     return prediction_reply, None
 
 
@@ -173,7 +165,8 @@ class IndoorTemperaturePredictionServicer(indoor_temperature_prediction_pb2_grpc
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    indoor_temperature_prediction_pb2_grpc.add_IndoorTemperaturePredictionServicer_to_server(IndoorTemperaturePredictionServicer(), server)
+    indoor_temperature_prediction_pb2_grpc.add_IndoorTemperaturePredictionServicer_to_server(
+        IndoorTemperaturePredictionServicer(), server)
     server.add_insecure_port(HOST_ADDRESS)
     server.start()
     try:
@@ -181,6 +174,7 @@ def serve():
             time.sleep(_ONE_DAY_IN_SECONDS)
     except KeyboardInterrupt:
         server.stop(0)
+
 
 if __name__ == '__main__':
     initizalize()

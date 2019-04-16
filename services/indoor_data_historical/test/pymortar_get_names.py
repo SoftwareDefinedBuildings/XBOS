@@ -12,8 +12,14 @@ pymortar_client = pymortar.Client()
 def get_zone_names():
 
     zones_query = """SELECT ?zone WHERE {
+            ?tstat rdf:type brick:Thermostat .
+            ?tstat bf:controls/bf:feeds ?zone .
             ?zone rdf:type brick:HVAC_Zone
             };"""
+
+    # zones_query = """SELECT ?zone WHERE {
+    #         ?zone rdf:type brick:HVAC_Zone
+    #         };"""
 
     resp = pymortar_client.qualify([zones_query])
 
@@ -49,7 +55,8 @@ query = zones_data.query("select * from zones_view where zone like '%HVAC%'")
 
 data = {}
 
-for link, building in query:
+# print (query)
+for _,link, building in query:
     print(link)
     hashIndex = link.index("#")
     zone_name = link[hashIndex + 1:]
@@ -87,7 +94,6 @@ generate_yaml_file("all_zones.yml", data)
 #                     no_view[building].append(zone)
 #                 else:
 #                     no_view[building] = [zone]
-    
+
 #     generate_yaml_file("no_view.yml", no_view)
 #     generate_yaml_file("no_data.yml", no_data)
-

@@ -7,12 +7,62 @@ import pytz
 import numpy as np
 import pandas as pd
 import itertools
+from pathlib import Path
+import pickle
 
 # UNRELATED THOUGHTS: Should any preprocessing happen in outdoor temperatures microservice?
 # YES. And there should be an option to preprocess in inddoor data service with a trained thermal model.
 
 HEATING_ACTION = 1
 COOLING_ACTION = 2
+
+
+def store_data(data, building, zone, cache_name):
+    data_dir = Path.cwd() / "services_data" / cache_name / building
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir)
+
+    file_path = data_dir / (zone + ".pkl")
+
+    with open(str(file_path), "wb") as f:
+        pickle.dump(data, f)
+
+
+def load_data(building, zone, cache_name):
+    data_dir = Path.cwd() / "services_data" / cache_name / building
+    if not os.path.isdir(data_dir):
+        return None
+
+    file_path = data_dir / (zone + ".pkl")
+    if not os.path.isfile(file_path):
+        return None
+
+    with open(str(file_path), "rb") as f:
+        return pickle.load(f)
+
+
+def _get_indoor_temperature_historic(stub, building, zone, start, end, window):
+    loaded_data = load_data(building, zone, "indoor_temperature_historic_cache")
+    err = xsg.check_data(loaded_data, start, end, window)
+    if (loaded_data is not None) and (err is None):
+        return loaded_data
+
+    indoor_temperature = xsg.get_indoor_temperature_historic(stub, building, zone, start, end,
+                                                             window)
+    store_data(indoor_temperature, building, zone, "indoor_temperature_historic_cache")
+    return indoor_temperature
+
+
+def _get_action_historic(stub, building, zone, start, end, window):
+    loaded_data = load_data(building, zone, "action_historic_cache")
+    err = xsg.check_data(loaded_data, start, end, window)
+    if (loaded_data is not None) and (err is not None):
+        return loaded_data
+
+    action_historic = xsg.get_actions_historic(stub, building, zone, start, end,
+                                                             window)
+    store_data(action_historic, building, zone, "action_historic_cache")
+    return action_historic
 
 
 def get_preprocessed_data(building, zone, start, end, window, raw_data_granularity="1m"):
@@ -32,9 +82,9 @@ def get_preprocessed_data(building, zone, start, end, window, raw_data_granulari
 
     # get indoor temperature and action for current zone
     indoor_historic_stub = xsg.get_indoor_historic_stub()
-    indoor_temperatures = xsg.get_indoor_temperature_historic(indoor_historic_stub, building, zone, start, end,
+    indoor_temperatures = _get_indoor_temperature_historic(indoor_historic_stub, building, zone, start, end,
                                                              raw_data_granularity)
-    indoor_actions = xsg.get_actions_historic(indoor_historic_stub, building, zone, start, end, raw_data_granularity)
+    indoor_actions = _get_action_historic(indoor_historic_stub, building, zone, start, end, raw_data_granularity)
 
     # get indoor temperature for other zones.
     building_zone_names_stub = xsg.get_building_zone_names_stub()
@@ -42,17 +92,20 @@ def get_preprocessed_data(building, zone, start, end, window, raw_data_granulari
     all_other_zone_temperature_data = {}
     for iter_zone in all_zones:
         if iter_zone != zone:
-            all_other_zone_temperature_data[iter_zone] = xsg.get_indoor_temperature_historic(indoor_historic_stub,
+            all_other_zone_temperature_data[iter_zone] = _get_indoor_temperature_historic(indoor_historic_stub,
                                                                  building, iter_zone, start, end, window)
 
-    # Putting temperature and action data together.
+    # Preprocessing indoor data putting temperature and action data together.
     indoor_data = pd.concat([indoor_temperatures.to_frame(name="t_in"), indoor_actions.to_frame(name="action")], axis=1)
     preprocessed_data = preprocess_indoor_data(indoor_data, xsg.get_window_in_sec(window))
+    if preprocessed_data is None:
+        return None, "No data left after preprocessing."
 
     # get historic outdoor temperatures
     outdoor_historic_stub = xsg.get_outdoor_historic_stub()
     outdoor_historic_temperatures = xsg.get_outdoor_temperature_historic(outdoor_historic_stub, building, start, end, window)
 
+    # getting occupancy
     # get occupancy
     occupancy_stub = xsg.get_occupancy_stub()
     occupancy = xsg.get_occupancy(occupancy_stub, building, zone, start, end, window)
@@ -71,7 +124,10 @@ def get_preprocessed_data(building, zone, start, end, window, raw_data_granulari
             iter_data.loc[idx: idx + datetime.timedelta(seconds=xsg.get_window_in_sec(window))].mean() for idx in
             preprocessed_data.index]
 
-    return preprocessed_data
+    # TODO check if we should drop nan values... or at least where they are coming from
+    preprocessed_data = preprocessed_data.dropna(axis=0)
+
+    return preprocessed_data, None
 
 
 def convert_categorical_action(data, num_start, num_end, interval_thermal):
