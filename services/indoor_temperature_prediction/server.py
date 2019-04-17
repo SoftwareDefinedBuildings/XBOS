@@ -87,7 +87,7 @@ def training(building, zone, start, end):
                                                 curr_action_timesteps=0,
                                                 prev_action_timesteps=-1,
                                                 method="OLS",
-                                                check_data=True)  # change this as needed.
+                                                check_data=False)  # change this as needed.
     if err is not None:
         return None, None, err
     return model, column_order, None
