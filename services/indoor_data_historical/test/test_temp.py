@@ -20,7 +20,7 @@ class TestTemperatureData(TestHelper):
     def __init__(self, test_name):
         TestHelper.__init__(self, test_name)
         self.stub = xbos.get_indoor_historic_stub()
-        self.yaml_file_name = "no_temp_data.yml"
+        self.yaml_file_name = "no_temp_data"
 
     def get_response(self, building="ciee", zone="HVAC_Zone_Eastzone", window="1h", start=-1, end=-1):
         try:
@@ -35,8 +35,8 @@ class TestTemperatureData(TestHelper):
         except grpc.RpcError as e:
             print(e)
     
-    def test_all_buildings(self):
-        self.all_buildings_test()
+    # def test_all_buildings(self):
+    #     self.all_buildings_test()
 
     def test_random_all_buildings(self):
         self.random_test_all_buildings(num_iterations=2)

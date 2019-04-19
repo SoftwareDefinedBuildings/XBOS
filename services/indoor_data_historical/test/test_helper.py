@@ -23,7 +23,7 @@ class TestHelper(unittest.TestCase):
         building_zone_names_stub = xbos.get_building_zone_names_stub()
         self.buildings = xbos.get_buildings(building_zone_names_stub)
         self.zones = xbos.get_all_buildings_zones(building_zone_names_stub)
-        self.yaml_file_name = "no-data.yml"
+        self.yaml_file_name = "no_sdata"
         self.window = "1h"
 
     def get_response(self, building="ciee", zone="HVAC_Zone_Eastzone", window="1h", start=-1, end=-1):
@@ -66,6 +66,8 @@ class TestHelper(unittest.TestCase):
         no_data = {}
         for building in self.buildings:
             for zone in self.zones[building]:
+                print(building, zone)
+
                 response = self.get_response(building=building, zone=zone, window=self.window)
 
                 if response is None:
@@ -78,7 +80,7 @@ class TestHelper(unittest.TestCase):
                     self.response_exists(response)
                     self.valid_data_exists(response, self.window)
 
-        self.generate_yaml_file(self.yaml_file_name, no_data)
+        self.generate_yaml_file(self.yaml_file_name + ".yml", no_data)
     
     def window_to_timedelta(self, window):
         unit = window[-1]
@@ -95,12 +97,12 @@ class TestHelper(unittest.TestCase):
 
         return units[unit]
 
-    def random_test_all_buildings(self, num_iterations=1):
+    def random_test_all_buildings(self, num_iterations=1, max_interval_days=-1, window_unit="h"):
         
         for i in range(num_iterations):
-            window = self.generate_random_window('h')
-            start, end = self.generate_random_time_interval()
-            no_data = { window: window, start: start, end: end }
+            window = self.generate_random_window(window_unit)
+            start, end = self.generate_random_time_interval(max_interval_days=max_interval_days)
+            no_data = { "window": window, "start": start, "end": end }
             for building in self.buildings:
                 for zone in self.zones[building]:
                     response = self.get_response(building=building, zone=zone, window=window, start=start, end=end)
