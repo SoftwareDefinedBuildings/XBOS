@@ -132,6 +132,107 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
 
     return temperature_data, None
 
+def _get_raw_temperature_bands(building, zone, pymortar_client, start, end, window_size):
+    """
+    :param building:
+    :param zone:
+    :param pymortar_client:
+    :param start: datetime, timezone aware, rfc3339
+    :param end: datetime, timezone aware, rfc3339
+    :param window_size:
+    :return:
+    """
+    temperature_bands_query = """
+        SELECT ?tstat ?heating_setpoint ?cooling_setpoint WHERE {
+        ?tstat rdf:type brick:Thermostat .
+        ?tstat bf:controls/bf:feeds <http://xbos.io/ontologies/%s#%s> .
+        ?tstat bf:hasPoint ?heating_setpoint .
+        ?tstat bf:hasPoint ?cooling_setpoint .
+        ?heating_setpoint rdf:type brick:Supply_Air_Temperature_Heating_Setpoint .
+        ?cooling_setpoint rdf:type brick:Supply_Air_Temperature_Cooling_Setpoint
+    };""" % (building, zone)
+
+    temperature_bands_view = pymortar.View(
+        name="temperature_bands_view",
+        sites=[building],
+        definition=temperature_bands_query,
+    )
+
+    temperature_bands_stream = pymortar.DataFrame(
+        name="temperature_bands",
+        aggregation=pymortar.MEAN,
+        window=window_size,
+        timeseries=[
+            pymortar.Timeseries(
+                view="temperature_bands_view",
+                dataVars=["?heating_setpoint", "?cooling_setpoint"],
+            )
+        ]
+    )
+
+    request = pymortar.FetchRequest(
+        sites=[building],
+        views=[
+            temperature_bands_view
+        ],
+        dataFrames=[
+            temperature_bands_stream
+        ],
+        time=pymortar.TimeParams(
+            start=rfc3339(start),
+            end=rfc3339(end),
+        )
+    )
+
+    temperature_bands_data = pymortar_client.fetch(request)["temperature_bands"]
+
+    if temperature_bands_data is None:
+        return None, "did not fetch data from pymortar with query: %s" % temperature_bands_query
+
+    return temperature_bands_data, None
+
+def get_raw_temperature_bands(request, pymortar_client):
+    """Returns temperature setpoints for the given request or None."""
+    print("received request:", request.building, request.zone, request.start, request.end, request.window)
+    duration = get_window_in_sec(request.window)
+
+    unit = "F" # we will keep the outside temperature in fahrenheit for now.
+
+    request_length = [len(request.building), len(request.zone), request.start, request.end,
+                      duration]
+    if any(v == 0 for v in request_length):
+        return None, "invalid request, empty params"
+    if request.end > int(time.time() * 1e9):
+        return None, "invalid request, end date is in the future."
+    if request.start >= request.end:
+        return None, "invalid request, start date is after end date."
+    if request.start < 0 or request.end < 0:
+        return None, "invalid request, negative dates"
+    if request.start + (duration * 1e9) > request.end:
+        return None, "invalid request, start date + window is greater than end date"
+
+    start_datetime = datetime.utcfromtimestamp(
+                                                        float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
+                                                        tzinfo=pytz.utc)
+
+    temperature_bands_data, err = _get_raw_temperature_bands(request.building, request.zone, pymortar_client,
+                                                    start_datetime,
+                                                    end_datetime,
+                                                    request.window)
+
+    if temperature_bands_data is None:
+        return None, "No data received from database."
+
+    heating_setpoints = []
+    cooling_setpoints = []
+
+    for index, row in temperature_bands_data.iterrows():
+        heating_setpoints.append(indoor_temperature_action_pb2.HeatingSetpoint(time=int(index.timestamp() * 1e9), setpoint=row.ix[0], unit=unit))
+        cooling_setpoints.append(indoor_temperature_action_pb2.CoolingSetpoint(time=int(index.timestamp() * 1e9), setpoint=row.ix[1], unit=unit))
+
+    return indoor_temperature_action_pb2.RawTemperatureBandsReply(heating_setpoints=heating_setpoints, cooling_setpoints=cooling_setpoints), None
+
 
 # TODO Make sure we don't include NONE values in the returned points.
 def get_raw_indoor_temperatures(request, pymortar_client):
@@ -239,6 +340,20 @@ class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorT
             return indoor_temperature_action_pb2.RawTemperatureReply()
         else:
             return raw_temperatures
+    
+    def GetRawTemperatureBands(self, request, context):
+        """A simple RPC.
+
+        Sends the indoor heating and cooling setpoints for a given HVAC zone, within a timeframe (start, end), and a requested window
+        An error is returned if there are no setpoints for the given request
+        """
+        raw_temperature_bands, error = get_raw_temperature_bands(request, self.pymortar_client)
+        if raw_temperature_bands is None:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details(error)
+            return indoor_temperature_action_pb2.RawTemperatureBandsReply()
+        else:
+            return raw_temperature_bands
 
     def GetRawActions(self, request, context):
         """A simple RPC.

@@ -95,12 +95,12 @@ class TestHelper(unittest.TestCase):
 
         self.generate_yaml_file(self.yaml_file_name, no_data)
 
-    def random_test_all_buildings(self, num_iterations=1):
+    def random_test_all_buildings(self, num_iterations=1, max_interval_days=-1, window_unit="h"):
         
         for i in range(num_iterations):
-            window = "1h"#self.generate_random_window('h')
-            start, end = self.generate_random_time_interval()
-            no_data = { window: window, start: start, end: end }
+            window = self.generate_random_window(window_unit)
+            start, end = self.generate_random_time_interval(max_interval_days=max_interval_days)
+            no_data = { "window": window, "start": start, "end": end }
             for building in self.buildings:
                 for zone in self.zones[building]:
                     response = self.get_response(building=building, zone=zone, window=window, start=start, end=end)
@@ -128,13 +128,18 @@ class TestHelper(unittest.TestCase):
         with open(file_path, 'w') as outfile:
             yaml.dump(data, outfile)
     
-    def generate_random_time_interval(self):
+    def generate_random_time_interval(self, start=-1, end=-1, max_interval_days=-1):
         """ Generates a time interval between 3 years ago and now """
-        num_years_ago = np.float32(self.random_float(0.5, 3)).item()
-        end = datetime.datetime.now().replace(tzinfo=pytz.utc)
-        start = end - datetime.timedelta(weeks=52 * num_years_ago)
-        end = start + datetime.timedelta(minutes=np.uint32(self.random_int(10, int((end - start).total_seconds() / 60))).item())
+        if start == -1 or end == -1:
+            num_years_ago = np.float32(self.random_float(0.5, 3)).item()
+            end = datetime.datetime.now().replace(tzinfo=pytz.utc)
+            start = end - datetime.timedelta(weeks=52 * num_years_ago)
         
+        if max_interval_days != -1:
+            end = start + datetime.timedelta(days=max_interval_days)
+
+        end = start + datetime.timedelta(minutes=np.uint32(self.random_int(10, int((end - start).total_seconds() / 60))).item())
+
         return start, end
 
     def generate_random_window(self, unit="h"):

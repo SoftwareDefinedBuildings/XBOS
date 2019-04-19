@@ -52,8 +52,8 @@ class TestComfortbandData(TestHelper):
                 last_time = self.window_is_accurate(last_time, time.to_pydatetime(), window)
             i += 1
     
-    def test_all_buildings(self):
-        self.random_test_all_buildings(num_iterations=2)
+    def test_random_all_buildings(self):
+        self.random_test_all_buildings(num_iterations=2, max_interval_days=30, window_unit="h")
 
     
 if __name__ == '__main__':
