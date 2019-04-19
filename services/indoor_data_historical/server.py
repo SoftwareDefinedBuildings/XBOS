@@ -144,7 +144,6 @@ def _get_raw_temperature_bands(building, zone, pymortar_client, start, end, wind
     """
     temperature_bands_query = """
         SELECT ?tstat ?heating_setpoint ?cooling_setpoint WHERE {
-        ?tstat rdf:type brick:Thermostat .
         ?tstat bf:controls/bf:feeds <http://xbos.io/ontologies/%s#%s> .
         ?tstat bf:hasPoint ?heating_setpoint .
         ?tstat bf:hasPoint ?cooling_setpoint .
@@ -228,8 +227,8 @@ def get_raw_temperature_bands(request, pymortar_client):
     cooling_setpoints = []
 
     for index, row in temperature_bands_data.iterrows():
-        heating_setpoints.append(indoor_temperature_action_pb2.HeatingSetpoint(time=int(index.timestamp() * 1e9), setpoint=row.ix[0], unit=unit))
-        cooling_setpoints.append(indoor_temperature_action_pb2.CoolingSetpoint(time=int(index.timestamp() * 1e9), setpoint=row.ix[1], unit=unit))
+        heating_setpoints.append(indoor_temperature_action_pb2.HeatingSetpoint(time=int(index.timestamp() * 1e9), setpoint=row.iloc[0], unit=unit))
+        cooling_setpoints.append(indoor_temperature_action_pb2.CoolingSetpoint(time=int(index.timestamp() * 1e9), setpoint=row.iloc[1], unit=unit))
 
     return indoor_temperature_action_pb2.RawTemperatureBandsReply(heating_setpoints=heating_setpoints, cooling_setpoints=cooling_setpoints), None
 
