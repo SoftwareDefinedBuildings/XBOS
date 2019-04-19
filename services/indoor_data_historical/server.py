@@ -223,14 +223,12 @@ def get_raw_temperature_bands(request, pymortar_client):
     if temperature_bands_data is None:
         return None, "No data received from database."
 
-    heating_setpoints = []
-    cooling_setpoints = []
+    setpoints = []
 
     for index, row in temperature_bands_data.iterrows():
-        heating_setpoints.append(indoor_temperature_action_pb2.HeatingSetpoint(time=int(index.timestamp() * 1e9), setpoint=row.iloc[0], unit=unit))
-        cooling_setpoints.append(indoor_temperature_action_pb2.CoolingSetpoint(time=int(index.timestamp() * 1e9), setpoint=row.iloc[1], unit=unit))
+        setpoints.append(indoor_temperature_action_pb2.Setpoint(time=int(index.timestamp() * 1e9), temperature_low=row.iloc[1], temperature_high=row.iloc[0], unit=unit))
 
-    return indoor_temperature_action_pb2.RawTemperatureBandsReply(heating_setpoints=heating_setpoints, cooling_setpoints=cooling_setpoints), None
+    return indoor_temperature_action_pb2.RawTemperatureBandsReply(setpoints=setpoints), None
 
 
 # TODO Make sure we don't include NONE values in the returned points.

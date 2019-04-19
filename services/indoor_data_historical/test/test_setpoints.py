@@ -23,8 +23,6 @@ def run():
             end =  int(time.mktime(end.timetuple())*1e9)
 
             temperature_bands_response = stub.GetRawTemperatureBands(indoor_temperature_action_pb2.Request(building="ciee", zone="hvac_zone_eastzone", start=start,end=end,window="1h"))
-            heating_setpoints = temperature_bands_response.heating_setpoints
-            cooling_setpoints = temperature_bands_response.cooling_setpoints
             print(temperature_bands_response)
 
         except grpc.RpcError as e:

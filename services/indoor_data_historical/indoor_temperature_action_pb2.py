@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='indoor_temperature_action',
   syntax='proto3',
   serialized_options=_b('P\001'),
-  serialized_pb=_b('\n\x1findoor_temperature_action.proto\x12\x19indoor_temperature_action\"U\n\x07Request\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\x0c\n\x04zone\x18\x02 \x01(\t\x12\r\n\x05start\x18\x03 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x03\x12\x0e\n\x06window\x18\x05 \x01(\t\"?\n\x0fHeatingSetpoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x10\n\x08setpoint\x18\x02 \x01(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t\"?\n\x0f\x43oolingSetpoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x10\n\x08setpoint\x18\x02 \x01(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t\"C\n\x10TemperaturePoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x13\n\x0btemperature\x18\x02 \x01(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t\"+\n\x0b\x41\x63tionPoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x0e\n\x06\x61\x63tion\x18\x02 \x01(\x01\"X\n\x13RawTemperatureReply\x12\x41\n\x0ctemperatures\x18\x01 \x03(\x0b\x32+.indoor_temperature_action.TemperaturePoint\"I\n\x0eRawActionReply\x12\x37\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32&.indoor_temperature_action.ActionPoint\"\xa8\x01\n\x18RawTemperatureBandsReply\x12\x45\n\x11heating_setpoints\x18\x01 \x03(\x0b\x32*.indoor_temperature_action.HeatingSetpoint\x12\x45\n\x11\x63ooling_setpoints\x18\x02 \x03(\x0b\x32*.indoor_temperature_action.CoolingSetpoint2\xdc\x02\n\x17IndoorTemperatureAction\x12j\n\x12GetRawTemperatures\x12\".indoor_temperature_action.Request\x1a..indoor_temperature_action.RawTemperatureReply\"\x00\x12`\n\rGetRawActions\x12\".indoor_temperature_action.Request\x1a).indoor_temperature_action.RawActionReply\"\x00\x12s\n\x16GetRawTemperatureBands\x12\".indoor_temperature_action.Request\x1a\x33.indoor_temperature_action.RawTemperatureBandsReply\"\x00\x42\x02P\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x1findoor_temperature_action.proto\x12\x19indoor_temperature_action\"U\n\x07Request\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\x0c\n\x04zone\x18\x02 \x01(\t\x12\r\n\x05start\x18\x03 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x03\x12\x0e\n\x06window\x18\x05 \x01(\t\"Y\n\x08Setpoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x17\n\x0ftemperature_low\x18\x02 \x01(\x01\x12\x18\n\x10temperature_high\x18\x03 \x01(\x01\x12\x0c\n\x04unit\x18\x04 \x01(\t\"C\n\x10TemperaturePoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x13\n\x0btemperature\x18\x02 \x01(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t\"+\n\x0b\x41\x63tionPoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x0e\n\x06\x61\x63tion\x18\x02 \x01(\x01\"X\n\x13RawTemperatureReply\x12\x41\n\x0ctemperatures\x18\x01 \x03(\x0b\x32+.indoor_temperature_action.TemperaturePoint\"I\n\x0eRawActionReply\x12\x37\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32&.indoor_temperature_action.ActionPoint\"R\n\x18RawTemperatureBandsReply\x12\x36\n\tsetpoints\x18\x01 \x03(\x0b\x32#.indoor_temperature_action.Setpoint2\xdc\x02\n\x17IndoorTemperatureAction\x12j\n\x12GetRawTemperatures\x12\".indoor_temperature_action.Request\x1a..indoor_temperature_action.RawTemperatureReply\"\x00\x12`\n\rGetRawActions\x12\".indoor_temperature_action.Request\x1a).indoor_temperature_action.RawActionReply\"\x00\x12s\n\x16GetRawTemperatureBands\x12\".indoor_temperature_action.Request\x1a\x33.indoor_temperature_action.RawTemperatureBandsReply\"\x00\x42\x02P\x01\x62\x06proto3')
 )
 
 
@@ -84,30 +84,37 @@ _REQUEST = _descriptor.Descriptor(
 )
 
 
-_HEATINGSETPOINT = _descriptor.Descriptor(
-  name='HeatingSetpoint',
-  full_name='indoor_temperature_action.HeatingSetpoint',
+_SETPOINT = _descriptor.Descriptor(
+  name='Setpoint',
+  full_name='indoor_temperature_action.Setpoint',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='time', full_name='indoor_temperature_action.HeatingSetpoint.time', index=0,
+      name='time', full_name='indoor_temperature_action.Setpoint.time', index=0,
       number=1, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='setpoint', full_name='indoor_temperature_action.HeatingSetpoint.setpoint', index=1,
+      name='temperature_low', full_name='indoor_temperature_action.Setpoint.temperature_low', index=1,
       number=2, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='unit', full_name='indoor_temperature_action.HeatingSetpoint.unit', index=2,
-      number=3, type=9, cpp_type=9, label=1,
+      name='temperature_high', full_name='indoor_temperature_action.Setpoint.temperature_high', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='unit', full_name='indoor_temperature_action.Setpoint.unit', index=3,
+      number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -125,52 +132,7 @@ _HEATINGSETPOINT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=149,
-  serialized_end=212,
-)
-
-
-_COOLINGSETPOINT = _descriptor.Descriptor(
-  name='CoolingSetpoint',
-  full_name='indoor_temperature_action.CoolingSetpoint',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='time', full_name='indoor_temperature_action.CoolingSetpoint.time', index=0,
-      number=1, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='setpoint', full_name='indoor_temperature_action.CoolingSetpoint.setpoint', index=1,
-      number=2, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='unit', full_name='indoor_temperature_action.CoolingSetpoint.unit', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=214,
-  serialized_end=277,
+  serialized_end=238,
 )
 
 
@@ -214,8 +176,8 @@ _TEMPERATUREPOINT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=279,
-  serialized_end=346,
+  serialized_start=240,
+  serialized_end=307,
 )
 
 
@@ -252,8 +214,8 @@ _ACTIONPOINT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=348,
-  serialized_end=391,
+  serialized_start=309,
+  serialized_end=352,
 )
 
 
@@ -283,8 +245,8 @@ _RAWTEMPERATUREREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=393,
-  serialized_end=481,
+  serialized_start=354,
+  serialized_end=442,
 )
 
 
@@ -314,8 +276,8 @@ _RAWACTIONREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=483,
-  serialized_end=556,
+  serialized_start=444,
+  serialized_end=517,
 )
 
 
@@ -327,15 +289,8 @@ _RAWTEMPERATUREBANDSREPLY = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='heating_setpoints', full_name='indoor_temperature_action.RawTemperatureBandsReply.heating_setpoints', index=0,
+      name='setpoints', full_name='indoor_temperature_action.RawTemperatureBandsReply.setpoints', index=0,
       number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='cooling_setpoints', full_name='indoor_temperature_action.RawTemperatureBandsReply.cooling_setpoints', index=1,
-      number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -352,17 +307,15 @@ _RAWTEMPERATUREBANDSREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=559,
-  serialized_end=727,
+  serialized_start=519,
+  serialized_end=601,
 )
 
 _RAWTEMPERATUREREPLY.fields_by_name['temperatures'].message_type = _TEMPERATUREPOINT
 _RAWACTIONREPLY.fields_by_name['actions'].message_type = _ACTIONPOINT
-_RAWTEMPERATUREBANDSREPLY.fields_by_name['heating_setpoints'].message_type = _HEATINGSETPOINT
-_RAWTEMPERATUREBANDSREPLY.fields_by_name['cooling_setpoints'].message_type = _COOLINGSETPOINT
+_RAWTEMPERATUREBANDSREPLY.fields_by_name['setpoints'].message_type = _SETPOINT
 DESCRIPTOR.message_types_by_name['Request'] = _REQUEST
-DESCRIPTOR.message_types_by_name['HeatingSetpoint'] = _HEATINGSETPOINT
-DESCRIPTOR.message_types_by_name['CoolingSetpoint'] = _COOLINGSETPOINT
+DESCRIPTOR.message_types_by_name['Setpoint'] = _SETPOINT
 DESCRIPTOR.message_types_by_name['TemperaturePoint'] = _TEMPERATUREPOINT
 DESCRIPTOR.message_types_by_name['ActionPoint'] = _ACTIONPOINT
 DESCRIPTOR.message_types_by_name['RawTemperatureReply'] = _RAWTEMPERATUREREPLY
@@ -377,19 +330,12 @@ Request = _reflection.GeneratedProtocolMessageType('Request', (_message.Message,
   ))
 _sym_db.RegisterMessage(Request)
 
-HeatingSetpoint = _reflection.GeneratedProtocolMessageType('HeatingSetpoint', (_message.Message,), dict(
-  DESCRIPTOR = _HEATINGSETPOINT,
+Setpoint = _reflection.GeneratedProtocolMessageType('Setpoint', (_message.Message,), dict(
+  DESCRIPTOR = _SETPOINT,
   __module__ = 'indoor_temperature_action_pb2'
-  # @@protoc_insertion_point(class_scope:indoor_temperature_action.HeatingSetpoint)
+  # @@protoc_insertion_point(class_scope:indoor_temperature_action.Setpoint)
   ))
-_sym_db.RegisterMessage(HeatingSetpoint)
-
-CoolingSetpoint = _reflection.GeneratedProtocolMessageType('CoolingSetpoint', (_message.Message,), dict(
-  DESCRIPTOR = _COOLINGSETPOINT,
-  __module__ = 'indoor_temperature_action_pb2'
-  # @@protoc_insertion_point(class_scope:indoor_temperature_action.CoolingSetpoint)
-  ))
-_sym_db.RegisterMessage(CoolingSetpoint)
+_sym_db.RegisterMessage(Setpoint)
 
 TemperaturePoint = _reflection.GeneratedProtocolMessageType('TemperaturePoint', (_message.Message,), dict(
   DESCRIPTOR = _TEMPERATUREPOINT,
@@ -435,8 +381,8 @@ _INDOORTEMPERATUREACTION = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=730,
-  serialized_end=1078,
+  serialized_start=604,
+  serialized_end=952,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetRawTemperatures',

@@ -32,18 +32,12 @@ message Request {
   string window = 5;
 }
 
-// HeatingSetpoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
-message HeatingSetpoint {
+// Setpoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
+message Setpoint {
   int64 time = 1;
-  double setpoint = 2;
-  string unit = 3;
-}
-
-// CoolingSetpoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
-message CoolingSetpoint {
-  int64 time = 1;
-  double setpoint = 2;
-  string unit = 3;
+  double temperature_low = 2;
+  double temperature_high = 3;
+  string unit = 4;
 }
 
 // TemperaturePoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
@@ -71,7 +65,6 @@ message RawActionReply {
 
 //The response containing heating and cooling setpoints
 message RawTemperatureBandsReply {
-  repeated HeatingSetpoint heating_setpoints = 1;
-  repeated CoolingSetpoint cooling_setpoints = 2;
+  repeated Setpoint setpoints = 1;
 }
 
