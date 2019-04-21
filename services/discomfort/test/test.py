@@ -1,29 +1,28 @@
 from __future__ import print_function
 
 import grpc
-import time
-import datetime
-import calendar
-import pytz
 import sys
-import yaml
+import datetime
+import pytz
 import pandas as pd
 from pathlib import Path
 sys.path.append(str(Path.cwd().parent))
 import unittest
 import xbos_services_getter as xbos
-from test_helper import TestHelper
+sys.path.append(str(Path.cwd().parent.parent.parent.joinpath("test")))
+import test_utils
 
-class TestDiscomfort(TestHelper):   
+stub = xbos.get_discomfort_stub()
+building_zone_names_stub = xbos.get_building_zone_names_stub()
+buildings = xbos.get_buildings(building_zone_names_stub)
+class TestDiscomfort(unittest.TestCase):   
 
     def __init__(self, test_name):
-        TestHelper.__init__(self, test_name)
-        self.stub = xbos.get_discomfort_stub()
-        self.yaml_file_name = "no_discomfort_data.yml"
+        super(TestDiscomfort, self).__init__(test_name)
 
     def get_response(self, building="ciee", temperature=65.2, temperature_low=45.3, temperature_high=95.6, occupancy=0.6):
         try:            
-            return xbos.get_discomfort(self.stub, building=building, temperature=temperature, temperature_low=temperature_low, temperature_high=temperature_high, occupancy=occupancy)
+            return xbos.get_discomfort(stub, building=building, temperature=temperature, temperature_low=temperature_low, temperature_high=temperature_high, occupancy=occupancy)
         except grpc.RpcError as e:
             print(e)
     
@@ -31,20 +30,13 @@ class TestDiscomfort(TestHelper):
         self.assertIsInstance(obj=response, cls=float)
         self.assertTrue(response >= 0)
     
-    def test_all_buildings_and_zones(self):
-        no_data = []
-        for building in self.buildings:
-            response = self.get_response(building=building)
-            if response is None:
-                if building not in no_data:
-                    no_data.append(building)
-            else:
-                print(building)
-                self.response_exists(response)
-                self.valid_data_exists(response)
-        
-        self.generate_yaml_file(self.yaml_file_name, no_data)
-            
+    @test_utils.only_by_building(log_csv="discomfort_tests.csv", buildings=buildings)
+    def test_all_buildings_and_zones(self, **kwargs):
+        response = self.get_response(**kwargs)
+        self.assertIsNotNone(response)
+        self.valid_data_exists(response)
+        return response
+                    
 if __name__ == '__main__':
     test_loader = unittest.TestLoader()
     test_names = test_loader.getTestCaseNames(TestDiscomfort)
