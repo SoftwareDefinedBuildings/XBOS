@@ -308,12 +308,12 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
     def __init__(self):
         self.pymortar_client = pymortar.Client()
 
-        price_path = PRICE_DATA_PATH + "/" + "price_mapping.csv"
-        if not os.path.exists(price_path):
+        price_path = PRICE_DATA_PATH + "/" + "price-mapping.csv"
+        if not os.path.exists(str(price_path)):
             print("Error: could not find price_mapping.csv file.")
-            quit()
+            sys.exit()
 
-        self.price_mapping = pd.read_csv(price_path)
+        self.price_mapping = pd.read_csv(str(price_path))
 
     def GetPrice(self, request, context):
         prices,error = get_price(request,self.pymortar_client)
