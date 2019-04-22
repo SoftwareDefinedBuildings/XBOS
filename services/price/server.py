@@ -7,9 +7,10 @@ import pandas as pd
 import pymortar
 from rfc3339 import rfc3339
 import os, sys
+from pathlib import Path
 
 PRICE_HOST_ADDRESS = os.environ["PRICE_HOST_ADDRESS"]
-PRICE_DATA_PATH = os.environ["PRICE_DATA_PATH"]
+PRICE_DATA_PATH = Path(os.environ["PRICE_DATA_PATH"])
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 UUID = {
@@ -308,8 +309,8 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
     def __init__(self):
         self.pymortar_client = pymortar.Client()
 
-        price_path = PRICE_DATA_PATH + "/" + "price-mapping.csv"
-        if not os.path.exists(str(price_path)):
+        price_path = PRICE_DATA_PATH / "price-mapping.csv"
+        if not os.path.isfile(str(price_path)):
             print("Error: could not find file at: " + str(price_path))
             sys.exit()
 
