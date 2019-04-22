@@ -9,6 +9,7 @@ from rfc3339 import rfc3339
 import os, sys
 
 PRICE_HOST_ADDRESS = os.environ["PRICE_HOST_ADDRESS"]
+PRICE_DATA_PATH = os.environ["PRICE_DATA_PATH"]
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 UUID = {
@@ -75,9 +76,9 @@ def get_window_in_string(seconds):
         return str(int(seconds/60)) +'m'
     return str(int(seconds))+'s'
 
-def get_tariff_and_utility(request):
-    """Returns tariff and utility for the specified building""" 
-    df = pd.read_csv("price-mapping.csv")
+
+def get_tariff_and_utility(request, df):
+    """Returns tariff and utility for the specified building"""
 
     building_df = df.loc[df["Building"] == request.building]
 
@@ -87,6 +88,7 @@ def get_tariff_and_utility(request):
     utility, tariff = building_df["Utility"].item(), building_df["Tariff"].item()
 
     return price_pb2.TariffUtilityReply(tariff=tariff, utility=utility), None
+
 
 def get_window_in_sec(s):
     """Returns number of seconds in a given duration or zero if it fails.
@@ -306,6 +308,13 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
     def __init__(self):
         self.pymortar_client = pymortar.Client()
 
+        price_path = PRICE_DATA_PATH + "/" + "price_mapping.csv"
+        if not os.path.exists(price_path):
+            print("Error: could not find price_mapping.csv file.")
+            quit()
+
+        self.price_mapping = pd.read_csv(price_path)
+
     def GetPrice(self, request, context):
         prices,error = get_price(request,self.pymortar_client)
         if prices is None:
@@ -320,7 +329,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
         return prices
     
     def GetTariffAndUtility(self, request, context):
-        tariff_utility_reply,error = get_tariff_and_utility(request)
+        tariff_utility_reply,error = get_tariff_and_utility(request, self.price_mapping)
         if tariff_utility_reply is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
