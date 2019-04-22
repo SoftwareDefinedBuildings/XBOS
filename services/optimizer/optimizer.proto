@@ -1,0 +1,39 @@
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. optimizer.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package outdoor_temperature_historical;
+
+// The optimizer service definition.
+service Optimizer {
+  // A simple RPC.
+  //
+  // Get the optimization of the MPC
+  rpc GetMPCOptimization (MPCOptimizationRequest) returns (Reply) {}
+}
+
+message MPCOptimizationRequest {
+  string building = 1;
+  repeated string zones = 2;
+
+  int64 start = 3;
+  int64 end = 4;
+
+  string window = 5;
+
+  double lambda_val = 6;
+
+  map<string, double> starting_temperatures = 7; // zone: temperature
+
+  string unit = 8;
+
+}
+
+
+
+// The response message containing the temperatures
+message Reply {
+  map<string, int64> actions = 1;
+}
