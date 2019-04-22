@@ -1,8 +1,8 @@
 // To create _pb2.py and _pb2_grpc.py files, run the command,
-// python -m grpc_tools.protoc -I=. --python_out=. --grpc_python_out=. MeterData.proto
+// python -m grpc_tools.protoc -I=. --python_out=. --grpc_python_out=. MeterDataHistorical.proto
 
 syntax = "proto3";
-package meter_data;
+package meter_data_historical;
 
 // RPC definition.
 service MeterDataHistorical {
@@ -16,14 +16,14 @@ service MeterDataHistorical {
 // The request message containing the requested data information.
 message Request {
 
-    // List of buildings - list(str)
-    repeated string buildings = 1;
+    // Building name - str
+    string building = 1;
 
-    // Start time (UTC) - 'YYYY-MM-DDTHH:MM:SSZ'
-    string start = 2;
+    // Forecast start time in unix nanoseconds
+    int64 start = 2;
 
-    // The end time (UTC) - 'YYYY-MM-DDTHH:MM:SSZ'
-    string end = 3;
+    // Forecast end time in unix nanoseconds
+    int64 end = 3;
 
     // Point type - e.g. Building_Electric_Meter, Green_Button_Meter
     string point_type = 4;

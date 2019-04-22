@@ -1,14 +1,19 @@
+__author__ = "Pranav Gupta"
+__email__ = "pranavhgupta@lbl.gov"
+
+import os
 import grpc
 import pandas as pd
 from pathlib import Path
+
 import sys
 sys.path.append(str(Path.cwd().parent))
-import os
 
-import meter_data_historical_pb2
-import meter_data_historical_pb2_grpc
+import MeterDataHistorical_pb2
+import MeterDataHistorical_pb2_grpc
 
-METER_DATA_HOST_ADDRESS = os.environ["METER_DATA_HISTORICAL_HOST_ADDRESS"]
+# CHECK: Change port!
+METER_DATA_HOST_ADDRESS = 'localhost:1234'
 
 
 def run():
@@ -18,23 +23,20 @@ def run():
     # of the code.
     with grpc.insecure_channel(METER_DATA_HOST_ADDRESS) as channel:
 
-        stub = meter_data_historical_pb2_grpc.MeterDataHistoricalStub(channel)
+        stub = MeterDataHistorical_pb2_grpc.MeterDataHistoricalStub(channel)
 
         try:
 
-            # start and end time should have the same format, i.e. 'YYYY-MM-DDTHH:MM:SSZ'
-            start = '2018-01-01T00:00:00Z'
-            end = '2018-01-15T00:00:00Z'
+            start = 1514764800000000000  # Monday, January 1, 2018 12:00:00 AM UTC
+            end = 1514786400000000000  # Wednesday, January 1, 2018 06:00:00 AM UTC
             point_type = 'Building_Electric_Meter'
-            aggregate = 'MEAN'
-            window = '15m'
-
-            # Note: bldg expects a type - list(str), so even for 1 site, encapsulate it in a list
-            bldg = ["ciee"]
+            aggregate = 'RAW'
+            window = '15m' # Will be ignored, since aggregate=RAW
+            bldg = "ciee"
 
             # Create gRPC request object
-            request = meter_data_historical_pb2.Request(
-                buildings=bldg,
+            request = MeterDataHistorical_pb2.Request(
+                building=bldg,
                 start=start,
                 end=end,
                 point_type=point_type,
@@ -44,18 +46,28 @@ def run():
 
             response = stub.GetMeterDataHistorical(request)
 
-            df = pd.DataFrame()
+            # NOTE
+            # Converting list(dic) to pd.DataFrame is significantly faster than appending a single row to pd.DataFrame.
+            row_list = []
             for point in response.point:
-                df = df.append([[point.time, point.power]])
+                dic = {
+                    'datetime': point.time,
+                    'power': point.power
+                }
+                row_list.append(dic)
 
-            df.columns = ['datetime', 'power']
+            df = pd.DataFrame(row_list)
             df.set_index('datetime', inplace=True)
-            df.to_csv(bldg[0] + '.csv')
+
+            # Store the dataframe in "data/" folder
+            data_folder = 'data'
+            if not os.path.exists(data_folder):
+                os.makedirs(data_folder)
+            df.to_csv(data_folder + '/' + bldg + '.csv')
 
         except grpc.RpcError as e:
             print(e)
 
 
 if __name__ == '__main__':
-
     run()
