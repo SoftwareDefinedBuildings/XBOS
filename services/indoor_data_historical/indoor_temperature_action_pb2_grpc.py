@@ -24,6 +24,11 @@ class IndoorTemperatureActionStub(object):
         request_serializer=indoor__temperature__action__pb2.Request.SerializeToString,
         response_deserializer=indoor__temperature__action__pb2.RawActionReply.FromString,
         )
+    self.GetRawTemperatureBands = channel.unary_unary(
+        '/indoor_temperature_action.IndoorTemperatureAction/GetRawTemperatureBands',
+        request_serializer=indoor__temperature__action__pb2.Request.SerializeToString,
+        response_deserializer=indoor__temperature__action__pb2.RawTemperatureBandsReply.FromString,
+        )
 
 
 class IndoorTemperatureActionServicer(object):
@@ -47,6 +52,13 @@ class IndoorTemperatureActionServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetRawTemperatureBands(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_IndoorTemperatureActionServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -59,6 +71,11 @@ def add_IndoorTemperatureActionServicer_to_server(servicer, server):
           servicer.GetRawActions,
           request_deserializer=indoor__temperature__action__pb2.Request.FromString,
           response_serializer=indoor__temperature__action__pb2.RawActionReply.SerializeToString,
+      ),
+      'GetRawTemperatureBands': grpc.unary_unary_rpc_method_handler(
+          servicer.GetRawTemperatureBands,
+          request_deserializer=indoor__temperature__action__pb2.Request.FromString,
+          response_serializer=indoor__temperature__action__pb2.RawTemperatureBandsReply.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

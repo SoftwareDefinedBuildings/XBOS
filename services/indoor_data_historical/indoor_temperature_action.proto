@@ -12,6 +12,7 @@ service IndoorTemperatureAction {
   // An error  is returned if there are no temperature for the given request
   rpc GetRawTemperatures (Request) returns (RawTemperatureReply) {}
   rpc GetRawActions (Request) returns (RawActionReply) {}
+  rpc GetRawTemperatureBands (Request) returns (RawTemperatureBandsReply) {}
 }
 
 // The request message containing the requested information.
@@ -31,6 +32,14 @@ message Request {
   string window = 5;
 }
 
+// Setpoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
+message Setpoint {
+  int64 time = 1;
+  double temperature_low = 2;
+  double temperature_high = 3;
+  string unit = 4;
+}
+
 // TemperaturePoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
 message TemperaturePoint {
   int64 time = 1;
@@ -38,6 +47,7 @@ message TemperaturePoint {
   string unit = 3;
 }
 
+// ActionPoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
 message ActionPoint {
   int64 time = 1;
   double action = 2;
@@ -51,5 +61,10 @@ message RawTemperatureReply {
 // The response message containing the temperatures
 message RawActionReply {
   repeated ActionPoint actions = 1;
+}
+
+//The response containing heating and cooling setpoints
+message RawTemperatureBandsReply {
+  repeated Setpoint setpoints = 1;
 }
 

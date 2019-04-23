@@ -1,23 +1,16 @@
 from __future__ import print_function
 
 import grpc
-import time
-import datetime
-import calendar
-import pytz
 import sys
-import yaml
-import math
+import datetime
+import pytz
 import pandas as pd
 from pathlib import Path
-import signal
 sys.path.append(str(Path.cwd().parent))
-import price_pb2
-import price_pb2_grpc
 import unittest
 import xbos_services_getter as xbos
-from test_helper import TestHelper
-import os
+sys.path.append(str(Path.cwd().parent.parent.parent.joinpath("test")))
+import test_utils
 
 # def run():
 #     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
@@ -48,37 +41,36 @@ import os
 
 # if __name__ == '__main__':
 #      run()
-
-class TestPriceData(TestHelper):   
+stub = xbos.get_price_stub()
+building_zone_names_stub = xbos.get_building_zone_names_stub()
+buildings = xbos.get_buildings(building_zone_names_stub)
+zones = xbos.get_all_buildings_zones(building_zone_names_stub)
+start = datetime.datetime.strptime("09/09/2018 07:00:00", "%d/%m/%Y %H:%M:%S").replace(tzinfo=pytz.utc)
+end =  datetime.datetime.strptime("31/12/2018 23:59:59", "%d/%m/%Y %H:%M:%S").replace(tzinfo=pytz.utc)
+class TestPriceData(unittest.TestCase):   
 
     def __init__(self, test_name):
-        TestHelper.__init__(self, test_name)
-        self.stub = xbos.get_price_stub()
-        self.yaml_file_name = "no_price_data"
+        super(TestPriceData, self).__init__(test_name)
 
     def get_response(self, building="ciee", price_type="ENERGY", window="1h", start=-1, end=-1):
-        
-        def handler(signum, frame):
-            raise Exception("No data received")
-
-        #signal.signal(signal.SIGALRM, handler)
-
         try:
             if start == -1 or end == -1:
                 # end = datetime.datetime.now().replace(tzinfo=pytz.utc) - datetime.timedelta(weeks=52)
                 # start = end - datetime.timedelta(days=10)
                 start = datetime.datetime.strptime("09/09/2018 07:00:00", "%d/%m/%Y %H:%M:%S").replace(tzinfo=pytz.utc)
                 end =  datetime.datetime.strptime("31/12/2018 23:59:59", "%d/%m/%Y %H:%M:%S").replace(tzinfo=pytz.utc)
-                # end = datetime.datetime.now().replace(tzinfo=pytz.utc) - datetime.timedelta(weeks=52)
-                # start = end - datetime.timedelta(days=10)
-                # alternate start and end times below
-                # start = int(time.mktime(datetime.datetime.strptime("30/09/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
-                # end = int(time.mktime(datetime.datetime.strptime("1/10/2018 0:00:00", "%d/%m/%Y %H:%M:%S").timetuple())*1e9)
 
-            #signal.alarm(10)
-            return xbos.get_price(self.stub, building=building, price_type=price_type, start=start,end=end,window=window)
+            return xbos.get_price(stub, building=building, price_type=price_type, start=start,end=end,window=window)
         except grpc.RpcError as e:
             print(e)
+
+    def window_is_accurate(self, last_time, cur_time, window):
+        if last_time is not None:
+            time_diff = cur_time - last_time
+            time_delta = test_utils.window_to_timedelta(window)
+            self.assertEqual(time_diff, time_delta)
+
+        return cur_time
     
     def valid_data_exists(self, response, window):
         last_time = None
@@ -101,76 +93,27 @@ class TestPriceData(TestHelper):
                 self.assertTrue(type(row['unit']) == float or type(row['unit']) == str)
                 last_time = self.window_is_accurate(last_time, time.to_pydatetime(), window)
             i += 1
-        
-        #print("Zeros", num_zeros)
-        
-    def tes_all_buildings(self):
-        #self.all_buildings_test()
-        return 5
-        
-    def all_buildings_test(self):        
-        window = "1h"
-        no_energy_data = { "window": window, "buildings": [] }
-        no_demand_data = { "window": window, "buildings": [] }
-        for building in self.buildings:
-            response = self.get_response(building=building, price_type="ENERGY", window=window)
-            if response is None:
-                if building not in no_energy_data['buildings']:
-                    no_energy_data['buildings'].append(building)
-            else:
-                print(building, "ENERGY")
-                self.response_exists(response)
-                self.valid_data_exists(response, window)
-        
-            response = self.get_response(building=building, price_type="DEMAND", window=window)
-            if response is None:
-                if building not in no_demand_data['buildings']:
-                    no_demand_data['buildings'].append(building)
-            else:
-                print(building, "DEMAND")
-                self.response_exists(response)
-                self.valid_data_exists(response, window)
-            
-        self.generate_yaml_file("no_price_energy_data.yml", no_energy_data)
-        self.generate_yaml_file("no_price_demand_data.yml", no_demand_data)
+                
+    @test_utils.all_buildings(start=start, end=end, max_interval_days=1, log_csv="price_energy_tests.csv", buildings=buildings, price_type="ENERGY")
+    def test_all_buildings(self, **kwargs):
+        response = self.get_response(**kwargs)
+        self.assertIsNotNone(response)       
+        self.valid_data_exists(response, kwargs.get("window"))
+        return response
     
-    def test_random_all_buildings(self):
-        self.random_test_all_buildings(num_iterations=2)
-    
-    def random_test_all_buildings(self, num_iterations=1):
+    @test_utils.random_buildings(start=start, end=end, iterations=2, log_csv="price_energy_random_tests.csv", buildings=buildings, price_type="ENERGY")
+    def test_random_buildings(self, **kwargs):
+        response = self.get_response(**kwargs)
+        self.assertIsNotNone(response)       
+        self.valid_data_exists(response, kwargs["window"])
+        return response
 
-        for i in range(num_iterations):
-            window = self.generate_random_window(unit='m', minimum=40)
-            start = datetime.datetime.strptime("09/09/2018 07:00:00", "%d/%m/%Y %H:%M:%S").replace(tzinfo=pytz.utc)
-            end =  datetime.datetime.strptime("31/12/2018 23:59:59", "%d/%m/%Y %H:%M:%S").replace(tzinfo=pytz.utc)
-            start, end = self.generate_random_time_interval(start=start, end=end, max_interval_days=2)
-            print("START", start)
-            print("END", end)
-            print("WINDOW", window)
-            no_energy_data = { "window": window, "start": start, "end": end, "buildings":[] }
-            no_demand_data = { "window": window, "start": start, "end": end, "buildings":[] }
-            for building in self.buildings:
-                response = self.get_response(building=building, price_type="ENERGY", window=window, start=start, end=end)
-                if response is None:
-                    if building not in no_energy_data['buildings']:
-                        no_energy_data['buildings'].append(building)
-                else:
-                    print(building, "ENERGY")
-                    self.response_exists(response)
-                    self.valid_data_exists(response, window)
-
-                response = self.get_response(building=building, price_type="DEMAND", window=window, start=start, end=end)
-                if response is None:
-                    if building not in no_demand_data['buildings']:
-                        no_demand_data['buildings'].append(building)
-                else:
-                    print(building, "DEMAND")
-                    self.response_exists(response)
-                    self.valid_data_exists(response, window)
-
-            self.generate_yaml_file("failed_tests/no_price_energy_data" + str(i + 1) + ".yml", no_energy_data)
-            self.generate_yaml_file("failed_tests/no_price_demand_data" + str(i + 1) + ".yml", no_demand_data)
-        
+    def random_one_building(self, building='ciee', price_type="ENERGY", window_unit="h"):
+        window = test_utils.generate_random_window(window_unit)
+        start, end = test_utils.generate_random_time_interval()
+        response = self.get_response(building=building, price_type=price_type, start=start,end=end,window=window)
+        self.assertIsNotNone(response)
+        self.valid_data_exists(response, window)
     
 if __name__ == '__main__':
     test_loader = unittest.TestLoader()

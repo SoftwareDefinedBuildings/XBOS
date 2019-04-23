@@ -1,0 +1,17 @@
+,building,window,start,end,price_type,passed
+0,jesse-turner-center,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+1,ciee,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+2,csu-dominguez-hills,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+3,hayward-station-8,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+4,avenal-movie-theatre,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+5,word-of-faith-cc,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+6,hayward-station-1,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+7,avenal-veterans-hall,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+8,avenal-animal-shelter,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+9,south-berkeley-senior-center,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+10,local-butcher-shop,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+11,avenal-recreation-center,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+12,orinda-community-center,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+13,avenal-public-works-yard,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+14,north-berkeley-senior-center,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,True
+15,berkeley-corporate-yard,1h,2018-09-09 07:00:00+00:00,2018-12-31 23:59:59+00:00,ENERGY,False
