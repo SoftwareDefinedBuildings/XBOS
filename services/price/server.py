@@ -346,7 +346,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     price_pb2_grpc.add_PriceServicer_to_server(PriceServicer(), server)
-    server.add_insecure_port('localhost:50060')
+    server.add_insecure_port(PRICE_HOST_ADDRESS)
     server.start()
     try:
         while True:
