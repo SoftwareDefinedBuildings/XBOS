@@ -1,0 +1,125 @@
+{
+	"Logging": true,
+	"Registered": false,
+	"IgnoreEpri": true,
+	"ClientTimeout": 60,
+	"AddCert": false,
+	"LocalCertFile": "./config/ca/client.cer",
+	"LocalCertKey": "./config/ca/client.key",
+	"LocalCACertFile": "./config/ca/ca.cer",
+	"SiemensSubServer": "https://epicdr.org:9187/v1/messaging/subscribe?event=PRICE-BAS&target=",
+	"SiemensPubServer": "https://epicdr.org:9187/v1/messaging/publish/DEMAND-BAS",
+	"ServerName": "cmustudent",
+	"AuthString": "",
+	"LocalAddress": "https://dr.xbos.io/signal/",
+	"LocalPort": 9673,
+	"DemandForecastServer":"localhost:30000",
+	"BuildingMapping":{
+		"LBNL":  "",
+		"AAS":   "avenal-animal-shelter",
+		"AVH":   "avenal-veterans-hall",
+		"ARC":   "avenal-recreation-center",
+		"APWD":  "avenal-public-works-yard",
+		"SBSC":  "south-berkeley-senior-center",
+		"CIEE":  "ciee",
+		"WFCC":  "word-of-faith-cc",
+		"HFS8":  "hayward-station-8",
+		"BC":    "",
+		"OCC":   "orinda-community-center",
+		"OL":    "orinda-public-library",
+		"HFS1":  "hayward-station-1",
+		"NBSC":  "north-berkeley-senior-center",
+		"BCY":   "berkeley-corporation-yard",
+		"LBS":   "local-butcher-shop",
+		"AMT":   "avenal-movie-theatre",
+		"RFS":   "rfs",
+		"GSH":   "",
+		"SDH":   "",
+		"CSUDH": "csu-dominguez-hills",
+		"JTFCC": "jesse-turner-center"
+	},
+	"BuildingTarrif": {
+		"DLAP_PGAE-APND": [
+			"LBNL",
+			"AAS",
+			"AVH",
+			"ARC",
+			"APWD",
+			"SBSC",
+			"CIEE",
+			"WFCC",
+			"HFS8",
+			"BC",
+			"OCC",
+			"OL",
+			"HFS1",
+			"NBSC",
+			"BCY",
+			"LBS",
+			"AMT",
+			"RFS",
+			"GSH",
+			"SDH"
+		],
+		"DLAP_SCE-APND": [
+			"CSUDH",
+			"JTFCC"
+		],
+		"FLAT06": [
+			"LBNL"
+		],
+		"PGEA01": [
+			"AAS",
+			"AVH",
+			"ARC",
+			"APWD",
+			"SBSC",
+			"CIEE",
+			"WFCC"
+		],
+		"PGEA06": [
+			"HFS8",
+			"BC"
+		],
+		"PGEA10": [
+			"OCC",
+			"OL",
+			"HFS1",
+			"NBSC",
+			"BCY"
+		],
+		"PGEE19": [
+			"LBS",
+			"AMT",
+			"RFS",
+			"GSH"
+		],
+		"PGEE20": [
+			"SDH"
+		],
+		"PGEPDP": [
+			"CIEE",
+			"OL",
+			"OCC",
+			"HFS1",
+			"AVH",
+			"APWD",
+			"AAS",
+			"AMT",
+			"ARC",
+			"SBSC",
+			"NBSC",
+			"WFCC"
+		],
+		"SCE08B": [
+			"CSUDH"
+		],
+		"SCETGS3": [
+			"JTFCC"
+		],
+		"SCEPDP": [
+			"CSUDH",
+			"JTFCC"
+		]
+	}
+}

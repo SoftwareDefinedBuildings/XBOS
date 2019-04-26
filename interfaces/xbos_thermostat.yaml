@@ -13,6 +13,8 @@ Thermostat:
             - fan_mode
             - mode
             - state
+            - enabled_heat_stages
+            - enabled_cool_stages
             - time
     slots:
         setpoints:
@@ -24,6 +26,11 @@ Thermostat:
             - override
             - mode
             - fan_mode
+            - enabled_heat_stages
+            - enabled_cool_stages
+        stages:
+            - enabled_heat_stages
+            - enabled_cool_stages
     properties:
         temperature:
             type: double
@@ -92,6 +99,16 @@ Thermostat:
                   description: The thermostat is calling for heat (stage two)
                 - value: 5
                   description: The thermostat is calling for cool (stage two)
+        enabled_heat_stages:
+            type: integer
+            description: The number of heating stages currently enabled for the thermostat
+            required: false
+            units: stages
+        enabled_cool_stages:
+            type: integer
+            description: The number of cooling stages currently enabled for the thermostat
+            required: false
+            units: stages
         time:
             type: integer
             description: nanoseconds since the Unix epoch

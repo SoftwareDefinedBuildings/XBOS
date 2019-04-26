@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+// This defines the protocol buffers used by XBOS with WaveMQ. The schema for
+// a wavemq xbos proto message is:
+//   xbosproto/RootMessageType
+//
+// Version 1.0
+package xbospb;
+
+
+// Hamilton Project definitions
+import "hamilton.proto";
+
+
+
+// Root union type
+// We reserve 50 fields per imported file
+message XBOS {
+
+  //Hamilton Fields
+  HamiltonData HamiltonData = 50;
+  HamiltonBRLinkStats HamiltonBRLinkStats = 51;
+  HamiltonBRMessage HamiltonBRMessage = 52;
+}

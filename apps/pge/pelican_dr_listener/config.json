@@ -1,0 +1,16 @@
+{
+  "Usrtopic" : "arn:aws:sns:us-west-2:459826155428:PGECONFIRM",
+  "Usrtopicregion":"us-west-2",
+  "Devtopic" : "arn:aws:sns:us-west-2:459826155428:DEV-PGESCE",
+  "Devtopicregion":"us-west-2",
+  "Disablenotification": true,
+  "DisableBWPublish": false,
+  "BWSubtopic"  : "ciee/devices/pelican/s.pelican/+/i.xbos.demand_response/signal/info",
+  "BWPubtopic"  : "pge/confirmed/demand_response",
+  "BTtopicmaxwait" : 31,
+  "BTtopictimeoutcount": 2,
+  "StartTime": "09:30",
+  "Period": 24,
+  "RetriesPerPeriod": 4,
+  "RetryInterval": 2
+}

@@ -12,6 +12,8 @@ class Thermostat(object):
         self._uri = uri.rstrip('/')
         self._state = {
          "cooling_setpoint": None,
+         "enabled_cool_stages": None,
+         "enabled_heat_stages": None,
          "fan_mode": None,
          "fan_state": None,
          "heating_setpoint": None,
@@ -40,10 +42,19 @@ class Thermostat(object):
         print "Got Thermostat at {0} last alive {1}".format(uri, alive['val'])
 
         self.client.subscribe("{0}/signal/info".format(uri), _handle)
+        self.client.subscribe("{0}/stages/info".format(uri), _handle)
 
     @property
     def cooling_setpoint(self, timeout=30):
         return read_self_timeout(self, 'cooling_setpoint', timeout)
+
+    @property
+    def enabled_cool_stages(self, timeout=30):
+        return read_self_timeout(self, 'enabled_cool_stages', timeout)
+
+    @property
+    def enabled_heat_stages(self, timeout=30):
+        return read_self_timeout(self, 'enabled_heat_stages', timeout)
 
     @property
     def fan_mode(self, timeout=30):
@@ -78,9 +89,9 @@ class Thermostat(object):
         return read_self_timeout(self, 'temperature', timeout)
 
 
-    def write(self, state):
+    def write(self, state, uri='state'):
         po = PayloadObject((2,1,1,0), None, msgpack.packb(state))
-        self.client.publish('{0}/slot/state'.format(self._uri),payload_objects=(po,))
+        self.client.publish('{0}/slot/{1}'.format(self._uri, uri),payload_objects=(po,))
 
     def set_heating_setpoint(self, value):
         self.write({'heating_setpoint': value})
@@ -96,4 +107,10 @@ class Thermostat(object):
 
     def set_fan_mode(self, value):
         self.write({'fan_mode': value})
+
+    def set_enabled_heat_stages(self, value):
+        self.write({'enabled_heat_stages': value}, 'stages')
+
+    def set_enabled_cool_stages(self, value):
+        self.write({'enabled_cool_stages': value}, 'stages')
 

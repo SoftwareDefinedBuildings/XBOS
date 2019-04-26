@@ -1,0 +1,59 @@
+{
+	"Import": {
+		"File Name": "*",
+		"Folder Name": "../data/",
+		"Head Row": [5, 5, 0],
+		"Index Col": 0,
+		"Convert Col": true,
+		"Concat Files": false,
+		"Save File": false
+	},
+
+	"Clean": {
+		"Rename Col": ["OAT", "RelHum_Avg", "CHW_Elec", "Elec", "Gas", "HW_Heat"],
+		"Drop Col": "",
+		"Resample": true,
+		"Frequency": "h",
+		"Resampler": "mean",
+		"Interpolate": true,
+		"Limit": 1,
+		"Method": "linear",
+		"Remove NA": true,
+		"Remove NA How": "any",
+		"Remove Outliers": true,
+		"SD Val": 3,
+		"Remove Out of Bounds": true,
+		"Low Bound": 0,
+		"High Bound": 9998,
+		"Save File": false
+	},
+
+	"Preprocess": {
+		"HDH CPoint": 65,
+		"CDH CPoint": 65,
+		"HDH CDH Calc Col": "",
+		"Col Degree": null,
+		"Degree": null,
+		"Standardize": false,
+		"Normalize": false,
+		"Year": false,
+		"Month": false,
+		"Week": true,
+		"Time of Day": true,
+		"Day of Week": true,
+		"Save File": false
+	},
+
+	"Model": {
+		"Independent Col": null,
+		"Dependent Col": "HW_Heat",
+		"Projection Independent Col": "",
+		"Baseline Period": ["2014-01","2014-12"], 
+		"Projection Period": ["2015-01","2015-12", "2016-01","2016-12"],
+		"Exclude Time Period": [],
+		"Alphas": [0.0001, 0.0017782794100389228, 0.03162277660168379, 0.5623413251903491, 10.0],
+		"CV": 5,
+		"Plot": true,
+		"Fig Size": [18, 5]
+	}
+}

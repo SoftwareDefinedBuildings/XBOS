@@ -1,0 +1,30 @@
+Demand Response Forecast:
+    ponum: 2.1.1.10
+    description: Standard XBOS confirmed demand response events interface
+    interface: i.xbos.demand_response_confirmed
+    signals:
+        info:
+            - event_status
+            - date
+            - time
+    properties:
+        event_status:
+            type: integer
+            description: The status of a DR event for a given day
+            required: true
+            units: event_status
+            enum:
+                - value: 0
+                  description: No event
+                - value: 1
+                  description: Confirmed event
+        date:
+            type: integer
+            description: nanoseconds since the Unix epoch for a given day (at midnight local time)
+            required: true
+            units: ns
+        time:
+            type: integer
+            description: nanoseconds since the Unix epoch
+            required: false
+            units: ns
