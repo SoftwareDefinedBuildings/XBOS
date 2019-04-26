@@ -13,15 +13,15 @@ from collections import defaultdict
 import pymortar
 import xbos_services_getter
 
-import MeterDataHistorical_pb2
-import MeterDataHistorical_pb2_grpc
+import meter_data_historical_pb2
+import meter_data_historical_pb2_grpc
 import os
 
 METER_DATA_HOST_ADDRESS = os.environ["METER_DATA_HISTORICAL_HOST_ADDRESS"]
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 
-class MeterDataHistoricalServicer(MeterDataHistorical_pb2_grpc.MeterDataHistoricalServicer):
+class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistoricalServicer):
 
     def __init__(self):
         """ Constructor.
@@ -161,10 +161,10 @@ class MeterDataHistoricalServicer(MeterDataHistorical_pb2_grpc.MeterDataHistoric
 
         result = []
         for index, row in df.iterrows():
-            point = MeterDataHistorical_pb2.MeterDataPoint(time=str(index), power=row['power'])
+            point = meter_data_historical_pb2.MeterDataPoint(time=str(index), power=row['power'])
             result.append(point)
 
-        return MeterDataHistorical_pb2.Reply(point=result)
+        return meter_data_historical_pb2.Reply(point=result)
 
     def get_parameters(self, request):
         """ Storing and error checking request parameters.
@@ -238,14 +238,14 @@ class MeterDataHistoricalServicer(MeterDataHistorical_pb2_grpc.MeterDataHistoric
             # List of status codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return MeterDataHistorical_pb2.Reply()
+            return meter_data_historical_pb2.Reply()
         else:
 
             result = self.get_historical_data()
 
             if not result:
                 context.set_code(grpc.StatusCode.NOT_FOUND)
-                return MeterDataHistorical_pb2.Reply()
+                return meter_data_historical_pb2.Reply()
 
         return result
 
@@ -253,7 +253,7 @@ class MeterDataHistoricalServicer(MeterDataHistorical_pb2_grpc.MeterDataHistoric
 if __name__ == '__main__':
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    MeterDataHistorical_pb2_grpc.add_MeterDataHistoricalServicer_to_server(MeterDataHistoricalServicer(), server)
+    meter_data_historical_pb2_grpc.add_MeterDataHistoricalServicer_to_server(MeterDataHistoricalServicer(), server)
     server.add_insecure_port(METER_DATA_HOST_ADDRESS)
     server.start()
 

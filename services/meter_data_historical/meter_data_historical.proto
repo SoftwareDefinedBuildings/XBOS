@@ -1,5 +1,5 @@
 // To create _pb2.py and _pb2_grpc.py files, run the command,
-// python -m grpc_tools.protoc -I=. --python_out=. --grpc_python_out=. MeterDataHistorical.proto
+// python -m grpc_tools.protoc -I=. --python_out=. --grpc_python_out=. meter_data_historical.proto
 
 syntax = "proto3";
 package meter_data_historical;
