@@ -17,11 +17,10 @@ $(document).ready(function() {
 				$("#forecast-row").html(s);
 			}
 		});
-	}
-	setPred();
+	} setPred();
 
 	function getColor(l) {
-		if (l == "unlikely") { return "blue-grey lighten-1"}
+		if (l == "unlikely") { return "blue-grey lighten-1" }
 		else if (l == "possible") { return "yellow"; }
 		else if (l == "likely") { return "orange"; }
 		else if (l == "confirmed") { return "red"; }

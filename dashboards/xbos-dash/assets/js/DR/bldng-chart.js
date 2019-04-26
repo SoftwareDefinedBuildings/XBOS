@@ -4,6 +4,7 @@ $(document).ready(function() {
 	let c = ["#66bb6a", "#8d6e63", "#EF5350", "#42A5F5", "#000000", "#e6194b", "#008080", "#911eb4", "#0082c8"];
 	let lines = ["Solid", "Solid", "ShortDash", "ShortDash", "Solid", "ShortDash", "Dot", "ShortDot", "Solid"];
 	let ws = [4, 2, 2, 2, 2, 2, 2, 2, 2];
+	let CLEN = 9;
 
 	function getTime(et, x) { return toDate(et).toString().split(" ")[4].slice(0, x); }
 
@@ -44,7 +45,7 @@ $(document).ready(function() {
 			lst.push(st);
 			var i; for (i = 0; i < lst.length; i += 1) {
 				lst[i].dashStyle = lines[i];
-				lst[i].color = c[i];
+				lst[i].color = c[i % CLEN];
 				lst[i].lineWidth = ws[i];
 			}
 			if (!toRet.length) { lst[0].visible = true; }
@@ -117,7 +118,7 @@ $(document).ready(function() {
 		// }
 		// if (state in $(this).id) { return "sdf"; }
 		// else { 
-			return "<span style='font-size: 14px;'>" + this.id.split(" ")[1] + this.y + "<br/>";
+		return "<span style='font-size: 14px;'>" + this.id.split(" ")[1] + this.y + "<br/>";
 		// }
     }
 
@@ -154,14 +155,7 @@ $(document).ready(function() {
 			}
 		},
 		"title": {
-			"text": "Baseline"
-		},
-		"subtitle": {
-			"text": "set your simulation preferences below",
-			"style": {
-				"fontSize": 16,
-				"fontStyle": "italic"
-			}
+			"text": "Baseline (Building)"
 		},
 		"loading": {
 			"hideDuration": 0,

@@ -1,6 +1,6 @@
 var energyChart;
 $(document).ready(function() {
-	let apis = ["all", "year/in/month", "month/in/1d", "day/in/10m"];
+	let apis = ["all", "year/in/month", "month/in/1d", "day/in/15m"];
 	let levels = ["years", "months", "days", "hours"];
 	// // assert(apis.length == levels.length);
 	let myLev = 1; // change to 0 if we have data for multiple years
@@ -41,18 +41,6 @@ $(document).ready(function() {
 		}
 	}
 
-	// function processResp(j) {
-	// 	j = getData(j);
-	// 	var toRet = makeData(j);
-	// 	var x = true;
-	// 	if (x) {
-	// 		toRet.reverse(); // might not need reverse
-	// 		x = false;
-	// 	}
-	// 	addDrill(toRet); // won't be needed if accessing all data
-	// 	return toRet;
-	// }
-
 	function getData(j) {
 		if ("0" in j) { return j["0"]; }
 		if ("readings" in j) { return j["readings"]; }
@@ -78,9 +66,6 @@ $(document).ready(function() {
 			toAdd.name = getName(date);
 			toAdd.id = getDDID(date);
 			toAdd.y = round(j[k], 2);
-			// if (!end()) {
-			// 	toAdd.drilldown = toAdd.id;
-			// }
 			toRet.push(toAdd);
 		}
 		return toRet;
@@ -171,12 +156,8 @@ $(document).ready(function() {
 						"type": "GET",
 						"dataType": "json",
 						"success": function(d) {
-							energyChart.hideLoading();
 							energyChart.addSeries(processDD(d, "2018", true));
 							energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
-							$('#energyChartReset').addClass("scale-in");
-							$('#goToAll').addClass("scale-in");
-							$('#goToToday').addClass("scale-in");
 						}
 					});
 				},
@@ -189,7 +170,6 @@ $(document).ready(function() {
 							"type": "GET",
 							"dataType": "json",
 							"success": function(data) {
-								energyChart.hideLoading();
 								var dd = processDD(data, e.point.id);
 								energyChart.userOptions.drilldown.series.push(dd);
 								lev -= 1;
@@ -197,6 +177,10 @@ $(document).ready(function() {
 								if (onload && !end()) {
 									goDown(dd);
 								} else {
+									energyChart.hideLoading();
+									$('#energyChartReset').addClass("scale-in");
+									$('#goToAll').addClass("scale-in");
+									$('#goToToday').addClass("scale-in");
 									onload = false;
 								}
 								return;
@@ -306,7 +290,7 @@ $(document).ready(function() {
 	$('#goToToday').click(function() {
 		var s = toDate(Date.now()/1000).toString();
         s = s.slice(4, 10) + ", " + s.slice(11, 15);
-		if (energyChart.subtitle.textStr != s) {
+		if (!end()) {
 			showAll();
 			while (!end()) {
 				energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();

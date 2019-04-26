@@ -3,7 +3,7 @@ $(document).ready(function() {
 	var histArr;
 
 	var checked = false;
-	$("#bvz").click(mySwitch);
+	// $("#bvz").click(mySwitch);
 	function mySwitch(x) {
 		checked = x;
 		if (checked) {
@@ -273,7 +273,8 @@ $(document).ready(function() {
 	});
 
 	function simSuccess(x, y) {
-		x.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
+		x.setTitle({ text: "Simulated" });
+		// x.setTitle({ text: "Simulated" }, { text: "Simulated streams are dotted" });
 		postSim(y);
 	}
 

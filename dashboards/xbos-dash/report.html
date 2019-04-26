@@ -30,11 +30,22 @@
 	<div id="DRBG" class="row center-align z-depth-1 scale-transition scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
 
 	<div class="container">
+		<div id="rep-switch" class="switch">
+			<label id="rep-label" class="valign-wrapper" style="cursor: default;">
+				<span id="switch-sim" class="black-text" style="font-size: 24px; cursor: pointer;">Simulation</span>
+				<input id="rep-checkbox" type="checkbox"/>
+				<span id="rep-lever" class="lever" style="cursor: pointer;"></span>
+				<span id="switch-his" style="font-size: 24px; cursor: pointer;">Historical</span>
+			</label>
+		</div>
+		<div id="report-chart"></div>
 	</div>
 </body>
 
 <script type="text/javascript" src="assets/js/lib/materialize.js"></script>
 <script type="text/javascript" src="assets/js/lib/jquery.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
+<script type="text/javascript" src="assets/js/lib/highcharts.js"></script>
+<script type="text/javascript" src="assets/js/report/report.js"></script>
 
 </html>
