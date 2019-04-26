@@ -15,9 +15,9 @@ import xbos_services_getter
 
 import MeterDataHistorical_pb2
 import MeterDataHistorical_pb2_grpc
+import os
 
-# CHECK: Change port!
-METER_DATA_HOST_ADDRESS = 'localhost:1234'
+METER_DATA_HOST_ADDRESS = os.environ["METER_DATA_HISTORICAL_HOST_ADDRESS"]
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 
