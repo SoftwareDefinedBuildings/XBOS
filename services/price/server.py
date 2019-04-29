@@ -286,6 +286,7 @@ def smart_resample(data, start, end, window, method):
 
     return data_grouped
 
+
 class PriceServicer(price_pb2_grpc.PriceServicer):
     def __init__(self):
         self.pymortar_client = pymortar.Client()

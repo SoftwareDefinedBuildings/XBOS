@@ -1,10 +1,9 @@
-# python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. indoor_temperature_prediction.proto
-
 import os, sys
 
 import datetime
 import pytz
 import pandas as pd
+import numpy as np
 
 from concurrent import futures
 import time
@@ -93,6 +92,67 @@ def training(building, zone, start, end):
     return model, column_order, None
 
 
+def get_error(request):
+    """
+
+    :return:
+    """
+    print("received request:", request.building, request.zone, request.action, request.start, request.end, request.unit)
+
+    request_length = [len(request.building), len(request.zone), request.start,
+                      request.end, request.action,
+                      len(request.temperature_unit)]
+
+    if any(v == 0 for v in request_length):
+        return None, "invalid request, empty params"
+    if not (0 <= request.action <= 2):
+        return None, "invalid request, action is not between 0 and 2."
+    if request.unit != "F":
+        return None, "invalid request, only support 'F' unit."
+
+    # TODO Check if valid building/zone/temperature unit/zone, outside and indoor temperature (not none)
+
+    start = datetime.datetime.utcfromtimestamp(float(request.start / 1e9)).replace(
+        tzinfo=pytz.utc)
+    end = datetime.datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
+        tzinfo=pytz.utc)
+
+    # checking if we have a thermal model, and training if necessary.
+    _, err = check_thermal_model(request.building, request.zone)
+    if err is not None:
+        return None, "No valid Thermal Model. (" + err + ")"
+
+    train_X, train_y, _, _, err = ctm.get_train_test(building=request.building,
+                                                zone=request.zone,
+                                                start=start,
+                                                end=end,
+                                                prediction_window=_INTERVAL,
+                                                raw_data_granularity="1m",
+                                                train_ratio=1,
+                                                is_second_order=True,
+                                                use_occupancy=False,
+                                                curr_action_timesteps=0,
+                                                prev_action_timesteps=-1,
+                                                check_data=False)
+
+    if err is not None:
+        return None, None, err
+
+    thermal_model, column_order = THERMAL_MODELS[request.building][request.zone]
+    if request.action != -1:
+        train_X = train_X[train_X["action"] == request.action]
+    predictions_train = thermal_model.predict(train_X)
+    error = (train_y.values - predictions_train)
+
+    err_mean, err_var = np.mean(error), np.var(error)
+
+    error = indoor_temperature_prediction_pb2.ErrorReply(
+        mean=err_mean,
+        var=err_var,
+        unit="F")
+    return error, None
+
+
 def prediction(request):
     """Returns temperature prediction for a given request or None."""
 
@@ -150,9 +210,6 @@ class IndoorTemperaturePredictionServicer(indoor_temperature_prediction_pb2_grpc
 
     def GetSecondOrderPrediction(self, request, context):
         """A simple RPC.
-
-        Sends the outside temperature for a given building, within a duration (start, end), and a requested window
-        An error  is returned if there are no temperature for the given request
         """
         predicted_temperature, error = prediction(request)
         if predicted_temperature is None:
@@ -162,6 +219,17 @@ class IndoorTemperaturePredictionServicer(indoor_temperature_prediction_pb2_grpc
         else:
             return predicted_temperature
 
+    def GetSecondOrderError(self, request, context):
+        """A simple RPC.
+
+        """
+        error_reply, error = get_error(request)
+        if error_reply is None:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details(error)
+            return indoor_temperature_prediction_pb2.PredictedTemperatureReply()
+        else:
+            return error_reply
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

@@ -19,6 +19,11 @@ class IndoorTemperaturePredictionStub(object):
         request_serializer=indoor__temperature__prediction__pb2.SecondOrderPredictionRequest.SerializeToString,
         response_deserializer=indoor__temperature__prediction__pb2.PredictedTemperatureReply.FromString,
         )
+    self.GetSecondOrderError = channel.unary_unary(
+        '/thermal_model.IndoorTemperaturePrediction/GetSecondOrderError',
+        request_serializer=indoor__temperature__prediction__pb2.ErrorRequest.SerializeToString,
+        response_deserializer=indoor__temperature__prediction__pb2.ErrorReply.FromString,
+        )
 
 
 class IndoorTemperaturePredictionServicer(object):
@@ -34,6 +39,13 @@ class IndoorTemperaturePredictionServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetSecondOrderError(self, request, context):
+    """Get errors associated with prediction
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_IndoorTemperaturePredictionServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -41,6 +53,11 @@ def add_IndoorTemperaturePredictionServicer_to_server(servicer, server):
           servicer.GetSecondOrderPrediction,
           request_deserializer=indoor__temperature__prediction__pb2.SecondOrderPredictionRequest.FromString,
           response_serializer=indoor__temperature__prediction__pb2.PredictedTemperatureReply.SerializeToString,
+      ),
+      'GetSecondOrderError': grpc.unary_unary_rpc_method_handler(
+          servicer.GetSecondOrderError,
+          request_deserializer=indoor__temperature__prediction__pb2.ErrorRequest.FromString,
+          response_serializer=indoor__temperature__prediction__pb2.ErrorReply.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
