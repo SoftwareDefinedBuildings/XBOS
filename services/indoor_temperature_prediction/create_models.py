@@ -127,7 +127,7 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
     if train_X.shape[0] == 0:
         return None, None, None, None, "Not enough data to train the model."
 
-    return train_X, train_y, test_X, test_y, err
+    return train_X, train_y, test_X, test_y, None
 
 
 def create_model(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
@@ -161,7 +161,7 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
 
     train_X, train_y, test_X, test_y, err = get_train_test(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
                  use_occupancy,
-                 curr_action_timesteps, prev_action_timesteps, check_data=True)
+                 curr_action_timesteps, prev_action_timesteps, check_data=check_data)
     if err is not None:
         return None, None, err
 

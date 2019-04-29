@@ -93,15 +93,15 @@ def training(building, zone, start, end):
 
 
 def get_error(request):
-    """
+    """Gets error for prediction + error = label.
 
-    :return:
+    :return: error_reply, err
     """
     print("received request:", request.building, request.zone, request.action, request.start, request.end, request.unit)
 
     request_length = [len(request.building), len(request.zone), request.start,
-                      request.end, request.action,
-                      len(request.temperature_unit)]
+                      request.end,
+                      len(request.unit)]
 
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
@@ -123,40 +123,42 @@ def get_error(request):
         return None, "No valid Thermal Model. (" + err + ")"
 
     train_X, train_y, _, _, err = ctm.get_train_test(building=request.building,
-                                                zone=request.zone,
-                                                start=start,
-                                                end=end,
-                                                prediction_window=_INTERVAL,
-                                                raw_data_granularity="1m",
-                                                train_ratio=1,
-                                                is_second_order=True,
-                                                use_occupancy=False,
-                                                curr_action_timesteps=0,
-                                                prev_action_timesteps=-1,
-                                                check_data=False)
+                                                     zone=request.zone,
+                                                     start=start,
+                                                     end=end,
+                                                     prediction_window=_INTERVAL,
+                                                     raw_data_granularity="1m",
+                                                     train_ratio=1,
+                                                     is_second_order=True,
+                                                     use_occupancy=False,
+                                                     curr_action_timesteps=0,
+                                                     prev_action_timesteps=-1,
+                                                     check_data=False)
 
     if err is not None:
         return None, None, err
 
     thermal_model, column_order = THERMAL_MODELS[request.building][request.zone]
     if request.action != -1:
-        train_X = train_X[train_X["action"] == request.action]
+        filter = train_X["action"] == request.action
+        train_X = train_X[filter]
+        train_y = train_y[filter]
     predictions_train = thermal_model.predict(train_X)
     error = (train_y.values - predictions_train)
 
     err_mean, err_var = np.mean(error), np.var(error)
 
-    error = indoor_temperature_prediction_pb2.ErrorReply(
+    error_reply = indoor_temperature_prediction_pb2.ErrorReply(
         mean=err_mean,
         var=err_var,
         unit="F")
-    return error, None
+    return error_reply, None
 
 
 def prediction(request):
     """Returns temperature prediction for a given request or None."""
 
-    print("received request:", request.building, request.zone, request.current_time, request.action,
+    print("received request:", request.building, request.zone, request.current_time,
           request.indoor_temperature, request.outside_temperature, request.other_zone_temperatures,
           request.temperature_unit)
 
@@ -231,6 +233,7 @@ class IndoorTemperaturePredictionServicer(indoor_temperature_prediction_pb2_grpc
         else:
             return error_reply
 
+
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     indoor_temperature_prediction_pb2_grpc.add_IndoorTemperaturePredictionServicer_to_server(
@@ -245,7 +248,7 @@ def serve():
 
 
 if __name__ == '__main__':
-    initizalize()
+    # initizalize()
     serve()
     #
     # building = 'ciee'

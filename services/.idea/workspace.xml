@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3d62de2d-3cba-45f8-9d70-42b88ea1cab8" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/indoor_temperature_prediction/create_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/indoor_temperature_prediction/create_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction.proto" beforeDir="false" afterPath="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction_pb2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction_pb2_grpc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/indoor_temperature_prediction/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/indoor_temperature_prediction/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/price/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/price/server.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +26,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="ipynb" value="1" />
+          <entry key="ipynb" value="2" />
           <entry key="md" value="13" />
           <entry key="proto" value="24" />
           <entry key="py" value="71" />
@@ -41,7 +36,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="IPNB" value="1" />
+          <entry key="IPNB" value="2" />
           <entry key="Markdown" value="13" />
           <entry key="PLAIN_TEXT" value="23" />
           <entry key="PROTO" value="24" />
@@ -52,7 +47,7 @@
         <counts>
           <entry key="md" value="3616" />
           <entry key="proto" value="554" />
-          <entry key="py" value="3788" />
+          <entry key="py" value="3996" />
           <entry key="txt" value="39" />
         </counts>
       </usages-collector>
@@ -61,20 +56,21 @@
           <entry key="Markdown" value="3616" />
           <entry key="PLAIN_TEXT" value="39" />
           <entry key="PROTO" value="554" />
-          <entry key="Python" value="3788" />
+          <entry key="Python" value="3996" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="431">
+              <caret line="97" column="29" selection-start-line="97" selection-start-column="29" selection-end-line="97" selection-end-column="29" />
               <folding>
                 <element signature="e#110#124#0" expanded="true" />
-                <marker date="1556579699018" expanded="true" signature="3387:5932" ph="..." />
+                <marker date="1556581783051" expanded="true" signature="3387:6088" ph="..." />
               </folding>
             </state>
           </provider>
@@ -86,10 +82,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/Develop Thermal Model.ipynb">
+          <provider selected="true" editor-type-id="ipnb-editor">
+            <state>
+              <selected id="0" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/create_models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="166" selection-start-line="166" selection-end-line="166" />
+            <state relative-caret-position="309">
+              <caret line="129" column="49" lean-forward="true" selection-start-line="129" selection-start-column="11" selection-end-line="129" selection-end-column="49" />
               <folding>
                 <element signature="e#31#45#0" expanded="true" />
               </folding>
@@ -146,23 +151,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction.proto">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="2" selection-start-column="2" selection-end-column="2" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/indoor_data_historical/server.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2385">
-              <caret line="23" column="16" lean-forward="true" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
-              <folding>
-                <element signature="e#105#135#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="655">
+              <caret line="60" column="1" lean-forward="true" selection-start-line="60" selection-start-column="1" selection-end-line="60" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -223,9 +216,9 @@
         <option value="$PROJECT_DIR$/hvac_consumption/test/test.py" />
         <option value="$PROJECT_DIR$/meter_data_historical/req.txt" />
         <option value="$PROJECT_DIR$/price/server.py" />
+        <option value="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction.proto" />
         <option value="$PROJECT_DIR$/indoor_temperature_prediction/create_models.py" />
         <option value="$PROJECT_DIR$/indoor_temperature_prediction/server.py" />
-        <option value="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction.proto" />
       </list>
     </option>
   </component>
@@ -345,7 +338,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/occupancy/occupancy.proto" />
     <entry file="file://$PROJECT_DIR$/src/occupancy/occupancy_pb2.py" />
     <entry file="file://$PROJECT_DIR$/src/occupancy/req.txt" />
     <entry file="file://$PROJECT_DIR$/src/optimizer/Untitled.ipynb" />
@@ -485,7 +477,7 @@
     <entry file="file://$PROJECT_DIR$/indoor_data_historical/server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2385">
-          <caret line="23" column="16" lean-forward="true" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
+          <caret line="23" column="16" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
           <folding>
             <element signature="e#105#135#0" expanded="true" />
           </folding>
@@ -534,10 +526,24 @@
     <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/process_indoor_data.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/Develop Thermal Model.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction.proto">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="655">
+          <caret line="60" column="1" lean-forward="true" selection-start-line="60" selection-start-column="1" selection-end-line="60" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/create_models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="166" selection-start-line="166" selection-end-line="166" />
+        <state relative-caret-position="309">
+          <caret line="129" column="49" lean-forward="true" selection-start-line="129" selection-start-column="11" selection-end-line="129" selection-end-column="49" />
           <folding>
             <element signature="e#31#45#0" expanded="true" />
           </folding>
@@ -546,18 +552,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="431">
+          <caret line="97" column="29" selection-start-line="97" selection-start-column="29" selection-end-line="97" selection-end-column="29" />
           <folding>
             <element signature="e#110#124#0" expanded="true" />
-            <marker date="1556579699018" expanded="true" signature="3387:5932" ph="..." />
+            <marker date="1556581783051" expanded="true" signature="3387:6088" ph="..." />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction.proto">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="2" selection-start-column="2" selection-end-column="2" />
         </state>
       </provider>
     </entry>
