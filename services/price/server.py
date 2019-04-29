@@ -1,9 +1,12 @@
 from concurrent import futures
+import datetime
+import pytz
 import time
 import grpc
 import price_pb2
 import price_pb2_grpc
 import pandas as pd
+import numpy as np
 import pymortar
 from rfc3339 import rfc3339
 import os, sys
@@ -32,52 +35,6 @@ UUID = {
     "SCE_SCETGS3_DEMAND":"31e3e0e4-f319-390d-a015-cdd2bde0e8d0"
 }
 
-def get_price_for_interval(df,t,uuid,duration):
-    """Returns a price array for a time stamp within a duration or None if not found"""
-    price_duration_list = []
-    if t > int(df.last_valid_index().timestamp()+3600):
-        return price_duration_list
-    if t + duration <= int(df.first_valid_index().timestamp()):
-        return price_duration_list
-    if t < int(df.first_valid_index().timestamp()):
-        price_duration_list.append((int(df.first_valid_index().timestamp()),df.iloc[0][uuid], duration+t-int(df.first_valid_index().timestamp())))
-        return price_duration_list
-
-    row_iterator = df.iterrows()
-    for index, row in row_iterator:
-        if t>=int(index.timestamp()) and t<int(index.timestamp()+3600):
-            if t + duration <=int(index.timestamp()+3600):
-                price_duration_list.append((t,row[uuid],duration))
-                return price_duration_list
-            else:
-                if index == df.last_valid_index():
-                    price_duration_list.append((t,row[uuid],int(index.timestamp())+3600-t))
-                    return price_duration_list
-                else:
-                    next_index,next_row = next(row_iterator)
-                    if index.timestamp()+3600 == next_index.timestamp():
-                        price_duration_list.append((t,row[uuid],int(next_index.timestamp())-t))
-                        price_duration_list.append((int(next_index.timestamp()),next_row[uuid],int(t +duration-next_index.timestamp())))
-                        return price_duration_list
-                    else:
-                        if t> int(index.timestamp()) and t < int(index.timestamp()+3600):
-                            price_duration_list.append((t,row[uuid],int(index.timestamp()+3600)-t))
-                            return price_duration_list
-        else:
-            if t < int(index.timestamp()) and t+duration > int(index.timestamp()):
-                price_duration_list.append((int(index.timestamp()),row[uuid],t + duration-int(index.timestamp())))
-                return price_duration_list
-    return price_duration_list
-
-
-def get_window_in_string(seconds):
-    if seconds%3600==0:
-        return str(int(seconds/3600)) +'h'
-    if seconds%60==0:
-        return str(int(seconds/60)) +'m'
-    return str(int(seconds))+'s'
-
-
 def get_tariff_and_utility(request, df):
     """Returns tariff and utility for the specified building"""
 
@@ -90,7 +47,6 @@ def get_tariff_and_utility(request, df):
 
     return price_pb2.TariffUtilityReply(tariff=tariff, utility=utility), None
 
-
 def get_window_in_sec(s):
     """Returns number of seconds in a given duration or zero if it fails.
        Supported durations are seconds (s), minutes (m), hours (h), and days(d)."""
@@ -99,6 +55,58 @@ def get_window_in_sec(s):
         return int(float(s[:-1])) * seconds_per_unit[s[-1]]
     except:
         return 0
+
+def get_from_csv(start, end, key, uuid, price_type):
+    file_name = key[key.index("_") + 1:key.rindex("_")]
+
+    if file_name == "FLAT06":
+        file_name = "PGEFLAT06"
+    
+    df = pd.read_csv(PRICE_DATA_PATH / ("prices_01012017_040172019/" + file_name + ".csv"), index_col=[0], parse_dates=False)
+    df = df.fillna(0)
+
+    prices = []
+    utc_timestamps = []
+
+    df.index = pd.to_datetime(df.index, utc=True)
+
+    df = df[df.index >= pd.Timestamp(start)]
+    df = df[df.index <= pd.Timestamp(end)]
+
+    for index, row in df.iterrows():        
+        utc_timestamps.append(index)
+
+        if price_type == "ENERGY":
+            prices.append(round(row['customer_energy_charge']+row['pdp_non_event_energy_credit']+row['pdp_event_energy_charge'], 2))
+        elif price_type == "DEMAND":
+            prices.append(round(row['customer_demand_charge_season']+row['pdp_non_event_demand_credit']+row['customer_demand_charge_tou'], 2)) 
+
+    return pd.DataFrame(data=prices, columns=[uuid], index=utc_timestamps)  
+    
+
+def get_from_pymortar(start, end, uuid, pymortar_client):    
+
+    price_stream = pymortar.DataFrame(
+        name="price_data",
+        uuids=[uuid],
+        aggregation=pymortar.MEAN,
+        window="1h"
+    )
+
+    price_time_params = pymortar.TimeParams(
+        start=rfc3339(start),
+        end=rfc3339(end),
+    )
+
+    price_request = pymortar.FetchRequest(
+        sites=[""],
+        dataFrames=[
+            price_stream
+        ],
+        time=price_time_params
+    )
+
+    return pymortar_client.fetch(price_request)["price_data"]
 
 def get_price(request, pymortar_client):
     """Returns prices for a given request or None."""
@@ -113,8 +121,8 @@ def get_price(request, pymortar_client):
     request_length = [len(request.utility),len(request.tariff),request.start,request.end,duration]
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
-    if duration <= 0 or duration > 3600:
-        return None, "invalid request, window is negative, zero, or greater than one hour max window is 1 hour"
+    if duration <= 0:
+        return None, "invalid request, window is negative, zero"
     if request.start <0 or request.end <0:
         return None, "invalid request, negative dates"
     if request.end > int((time.time()+_ONE_DAY_IN_SECONDS)*1e9):
@@ -140,170 +148,143 @@ def get_price(request, pymortar_client):
         # e.g., asking for 4:10 returns up to 3:00, then ask for 5:00 to force it to return 4:00
         elif request.end/1e9%3600!=0:
             end = request.end + 36e11
-    #Aligned returns invalid (next) price (we request the equivalent of RAW)    
-    price_stream = pymortar.DataFrame(
-        name="price_data",
-        uuids=[uuid],
-        aggregation=pymortar.MEAN,
-        window="1h"
-    )
+    #Aligned returns invalid (next) price (we request the equivalent of RAW) 
+   
+    csv_end_date = datetime.datetime(2019, 4, 17, 23, 0, 0).replace(tzinfo=pytz.utc)
+    datetime_end = datetime.datetime.fromtimestamp(int(end / 1e9)).replace(tzinfo=pytz.utc)
+    datetime_start = datetime.datetime.fromtimestamp(int(request.start/1e9- request.start/1e9%3600)).replace(tzinfo=pytz.utc)
 
-    price_time_params = pymortar.TimeParams(
-        start=rfc3339(int(request.start/1e9- request.start/1e9%3600)),
-        end=rfc3339(int(end/1e9)),
-    )
-
-    price_request = pymortar.FetchRequest(
-        sites=[""],
-        dataFrames=[
-            price_stream
-        ],
-        time=price_time_params
-    )
-
-    df = pymortar_client.fetch(price_request)["price_data"]
-
-    print(df)
-    print(df.empty)
-
+    if datetime_end < csv_end_date:
+        df = get_from_csv(datetime_start, datetime_end, key, uuid, request.price_type.upper())
+    elif datetime_start > csv_end_date:
+        df = get_from_pymortar(datetime_start, datetime_end, uuid, pymortar_client).tz_localize(pytz.utc)
+    elif datetime_start < csv_end_date and datetime_end > csv_end_date:
+        df_csv = get_from_csv(datetime_start, csv_end_date, key, uuid, request.price_type.upper())
+        df_pymortar = get_from_pymortar(csv_end_date + datetime.timedelta(hours=1), datetime_end, uuid, pymortar_client).tz_localize(pytz.utc)
+        df = pd.concat([df_csv, df_pymortar])
+    
     if df is None:
-        return price_pb2.PriceReply(prices=[]), "did not fetch data from pymortar"
+        return price_pb2.PriceReply(prices=[]), "did not fetch data"
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
     df = df.dropna()
-    print(df.empty)
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
+    
+    interpolated_df = smart_resample(df, datetime_start, datetime_end, duration, "interpolate")
 
     prices = []
-    # if request starts on the hour
-    if request.start/1e9%3600==0:
-        # if window is one hour, return RAW data
-        if duration == 3600:
-            for index,row in df.iterrows():
-                prices.append(price_pb2.PricePoint(time=int(index.timestamp()*1e9),price=row[uuid],unit=unit,window=request.window))
-        # if window adds up to one hour, partition RAW data evenly
-        elif 3600%duration==0:
-            for index, row in df.iterrows():
-                for i in range(int(index.timestamp()),int(index.timestamp())+3600,duration):
-                    if i + duration <= request.end/1e9:
-                        prices.append(price_pb2.PricePoint(time=int(i*1e9),price=row[uuid],unit=unit,window=request.window))
-
-    # if request does not start on the hour
-    else:
-        # if window is one hour, return first partial hour, then RAW data
-        if duration == 3600:
-            i = request.start/1e9
-            for index, row in df.iterrows():
-                if i > index.timestamp():
-                    prices.append(price_pb2.PricePoint(time=int(i*1e9),price=row[uuid],unit=unit, window=get_window_in_string(index.timestamp()+3600-i)))
-                    i = index.timestamp()+3600
-                elif i == index.timestamp():
-                    prices.append(price_pb2.PricePoint(time=int(i*1e9),price=row[uuid],unit=unit, window=request.window))
-                    i = index.timestamp()+3600
-                else:
-                    prices.append(price_pb2.PricePoint(time=int(index.timestamp()*1e9),price=row[uuid],unit=unit, window=request.window))
-                    i = index.timestamp()+3600
-        # if window adds up to one hour, return first partial window, then partition RAW data evenly
-        elif 3600%duration==0:
-            i = request.start/1e9
-            for index, row in df.iterrows():
-                if i > index.timestamp():
-                    part_duration = i-index.timestamp()
-                    if part_duration%duration !=0:
-                        new_duration = (part_duration//duration +1)*duration
-                        if i + new_duration-part_duration <= request.end/1e9:
-                            prices.append(price_pb2.PricePoint(time=int(i*1e9),price=row[uuid],unit=unit,window=get_window_in_string(new_duration-part_duration)))
-                        i = index.timestamp() + new_duration
-                    while i < index.timestamp() + 3600:
-                        if i + duration <= request.end/1e9:
-                            prices.append(price_pb2.PricePoint(time=int(i*1e9),price=row[uuid],unit=unit, window=request.window))
-                        i = i + duration
-                elif i == index.timestamp():
-                    for i in range(int(index.timestamp()),int(index.timestamp())+3600,duration):
-                        if i + duration <= request.end/1e9:
-                            prices.append(price_pb2.PricePoint(time=int(i*1e9),price=row[uuid],unit=unit,window=request.window))
-                    i = index.timestamp()+3600
-                else:
-                    i = index.timestamp()
-                    for i in range(int(index.timestamp()),int(index.timestamp())+3600,duration):
-                        if i + duration <= request.end/1e9:
-                            prices.append(price_pb2.PricePoint(time=int(i*1e9),price=row[uuid],unit=unit,window=request.window))
-                    i = index.timestamp()+3600
-    #if window does not add up to one to one hour, return corresponding data but split windows that overlap two hours
-    if 3600%duration !=0:
-        for i in range (int(request.start/1e9),int(request.end/1e9),duration):
-            pd_list = get_price_for_interval(df,i,uuid,duration)
-            for t,p,d in pd_list:
-                if t + d <= request.end/1e9 and t + duration <=request.end/1e9:
-                    prices.append(price_pb2.PricePoint(time=int(t*1e9),price=p,unit=unit,window=get_window_in_string(d)))
-
+    for index, row in interpolated_df.iterrows():
+        prices.append(price_pb2.PricePoint(time=int(index.timestamp() * 1e9),price=row[uuid],unit=unit,window=request.window))
+    
     return price_pb2.PriceReply(prices=prices), None
 
-        # i = request.start/1e9
-        # for index, row in df.iterrows():
-        #     if i < index.timestamp():
-        #         while i < int(index.timestamp()):
-        #             i = i + duration
-        #     if i + duration > int(df_index.timestamp()+3600):
+def smart_resample(data, start, end, window, method):
+    """
+    Groups data into intervals according to the method used.
+    Returns data indexed with start to end in frequency of interval minutes.
+    :param data: pd.series/pd.df has to have time series index which can contain a span from start to end. Timezone aware.
+    :param start: the start of the data we want. Timezone aware
+    :param end: the end of the data we want (not inclusive). Timezone aware
+    :param window: (int seconds) interval length in which to split data.
+    :param method: (optional string) How to fill nan values. Usually use pad (forward fill for setpoints) and
+                            use "interpolate" for approximate linear processes (like outside temperature. For inside
+                            temperature we would need an accurate thermal model.)
+    :return: data with index of pd.date_range(start, end, interval). Returned in timezone of start.
+    NOTE: - If (end - start) not a multiple of interval, then we choose end = start + (end - start)//inteval * interval.
+                But the new end will not be inclusive.
+          - If end is beyond the end of the data, it will assume that the last value has been constant until the
+              given end.
+    """
+    try:
+         end = end.astimezone(start.tzinfo)
+         data = data.tz_convert(start.tzinfo)
+    except:
+         raise Exception("Start, End, Data need to be timezone aware.")
 
-        # row_iterator = df.iterrows()
-        # df_index,df_row = row_iterator.next()
-        # # Solve case when only one df
-        # if len(df.index)==1:
-        #     st = request.start/1e9
-        #     while st < int(df_index.timestamp()):
-        #         st = st + duration
-        #     if st + duration > int(df_index.timestamp()+3600):
-        #         if st < request.end/1e9:
-        #             prices.append(price_pb2.PricePoint(time=int(st*1e9),price=df_row[uuid],unit=unit,window=get_window_in_string(int(df_index.timestamp())+3600-st)))
-        #     else:
-        #         for i in range(int(st),int(df_index.timestamp()+3600),duration):
-        #             if i + duration > int(df_index.timestamp()+3600):
-        #                 if i < request.end/1e9:
-        #                     prices.append(price_pb2.PricePoint(time=int(i*1e9),price=df_row[uuid],unit=unit,window=get_window_in_string(int(df_index.timestamp())+3600-i)))
-        #             else:
-        #                 if i < request.end/1e9:
-        #                     prices.append(price_pb2.PricePoint(time=int(i*1e9),price=df_row[uuid],unit=unit,window=request.window))
-        #
-        # # df has more than one item
-        # else:
-        #     df_next_index,df_next_row = row_iterator.next()
-        #     for i in range(int(request.start/1e9),int(request.end/1e9),duration):
-        #         while i < int(df_index.timestamp()):
-        #             i = i + duration
-        #         if i > df_index.timestamp():
-        #
-        #         if i+duration <= int(df_index.timestamp()+3600):
-        #             if i < request.end/1e9:
-        #                 prices.append(price_pb2.PricePoint(time=int(i*1e9),price=df_row[uuid],unit=unit,window=request.window))
-        #         else:
-        #             if df_next_index==df.last_valid_index():
-        #                 if df_next_index==df_index+3600:
-        #                     if i<int(df_next_index.timestamp()):
-        #                         if i < request.end/1e9:
-        #                             prices.append(price_pb2.PricePoint(time=int(i*1e9),price=df_row[uuid],unit=unit,window=get_window_in_string(int(df_next_index.timestamp())-i)))
-        #                             prices.append(price_pb2.PricePoint(time=int(int(df_next_index.timestamp())*1e9),price=df_next_row[uuid],unit=unit,window=get_window_in_string(i+duration-int(df_next_index.timestamp()))))
-        #                     else:
-        #                         while (i < df_next_index.timestamp()+3600):
-        #                             if i < request.end/1e9:
-        #                                 if i + duration <= int(df_next_index.timestamp()+3600):
-        #                                     prices.append(price_pb2.PricePoint(time=int(i*1e9),price=df_next_row[uuid],unit=unit,window=request.window))
-        #                                 elif i + duration > int(df_next_index.timestamp()+3600):
-        #                                     prices.append(price_pb2.PricePoint(time=int(i*1e9),price=df_next_row[uuid],unit=unit,window=get_window_in_string(int(df_next_index.timestamp())+3600-i)))
-        #                             i = i + duration
-        #                 else:
-        #                     while i < int(df_next_index.timestamp()):
-        #
-        #
-        #             else:
-        #                 prices.append(price_pb2.PricePoint(time=int(i*1e9),price=df_row[uuid],unit=unit,window=get_window_in_string(int(df_next_index.timestamp())-i)))
-        #                 prices.append(price_pb2.PricePoint(time=int(int(df_next_index.timestamp())*1e9),price=df_next_row[uuid],unit=unit,window=get_window_in_string(i+duration-int(df_next_index.timestamp()))))
-        #                 df_index,df_row = df_next_index,df_next_row
-        #                 df_next_index,df_next_row = row_iterator.next()
-        #
-    # return price_pb2.PriceReply(prices=prices), None
 
+    # make sure that the start and end dates are valid.
+    data = data.sort_index()
+    if not start <= end:
+        raise Exception("Start is after End date.")
+    if not start >= data.index[0]:
+        raise Exception("Resample start date is further back than data start date -- can not resample.")
+    if not window > 0:
+        raise Exception("Interval has to be larger than 0.")
+
+    # add date_range and fill nan's through the given method.
+    date_range = pd.date_range(start, end, freq=str(window) + "S")
+    end = date_range[-1]  # gets the right end.
+
+    # Raise warning if we don't have enough data.
+    if end - datetime.timedelta(seconds=window) > data.index[-1]:
+        print("Warning: the given end is more than one interval after the last datapoint in the given data. %s minutes after end of data."
+              % str((end - data.index[-1]).total_seconds()/60.))
+
+    new_index = date_range.union(data.index).tz_convert(date_range.tzinfo)
+    data_with_index = data.reindex(new_index)
+
+    if method == "interpolate":
+        data = data_with_index.interpolate("time")
+    elif method in ["pad", "ffill"]:
+        data = data_with_index.fillna(method=method)
+    else:
+        raise Exception("Incorrect method for filling nan values given.")
+
+    data = data.loc[start: end]  # While we return data not inclusive, we need last datapoint for weighted average.
+
+    def weighted_average_constant(datapoint, window):
+        """Takes time weighted average of data frame. Each datapoint is weighted from its start time to the next
+        datapoints start time.
+        :param datapoint: pd.df/pd.series. index includes the start of the interval and all data is between start and start + interval.
+        :param window: int seconds.
+        :returns the value in the dataframe weighted by the time duration."""
+        datapoint = datapoint.sort_index()
+        temp_index = np.array(list(datapoint.index) + [datapoint.index[0] + datetime.timedelta(seconds=window)])
+        diffs = temp_index[1:] - temp_index[:-1]
+        weights = np.array([d.total_seconds() for d in diffs]) / float(window)
+        assert 0.99 < sum(weights) < 1.01  # account for tiny precision errors.
+        if isinstance(datapoint, pd.DataFrame):
+            return pd.DataFrame(index=[datapoint.index[0]], columns=datapoint.columns, data=[datapoint.values.T.dot(weights)])
+        else:
+            return pd.Series(index=[datapoint.index[0]], data=datapoint.values.dot(weights))
+
+    def weighted_average_linear(datapoint, window, full_data):
+        """Takes time weighted average of data frame. Each datapoint is weighted from its start time to the next
+        datapoints start time.
+        :param datapoint: pd.df/pd.series. index includes the start of the interval and all data is between start and start + interval.
+        :param window: int seconds.
+        :returns the value in the dataframe weighted by the time duration."""
+        datapoint = datapoint.sort_index()
+        temp_index = np.array(list(datapoint.index) + [datapoint.index[0] + datetime.timedelta(seconds=window)])
+
+        if isinstance(datapoint, pd.DataFrame):
+            temp_values = np.array(
+                list(datapoint.values) + [full_data.loc[temp_index[-1]].values])
+        else:
+            temp_values = np.array(list(datapoint.values) + [full_data.loc[temp_index[-1]]])
+
+        new_values = []
+        for i in range(0, len(temp_values)-1):
+            new_values.append((temp_values[i+1] + temp_values[i])/2.)
+
+        new_values = np.array(new_values)
+        diffs = temp_index[1:] - temp_index[:-1]
+        weights = np.array([d.total_seconds() for d in diffs]) / float(window)
+
+        assert 0.99 < sum(weights) < 1.01  # account for tiny precision errors.
+        if isinstance(datapoint, pd.DataFrame):
+            return pd.DataFrame(index=[datapoint.index[0]], columns=datapoint.columns, data=[new_values.T.dot(weights)])
+        else:
+            return pd.Series(index=[datapoint.index[0]], data=new_values.dot(weights))
+
+    if method == "interpolate":
+        # take weighted average and groupby datapoints which are in the same interval.
+        data_grouped = data.iloc[:-1].groupby(by=lambda x: (x - start).total_seconds() // window, group_keys=False).apply(func=lambda x: weighted_average_linear(x, window, data))
+    else:
+        data_grouped = data.iloc[:-1].groupby(by=lambda x: (x - start).total_seconds() // window, group_keys=False).apply(func=lambda x: weighted_average_constant(x, window))
+
+    return data_grouped
 
 class PriceServicer(price_pb2_grpc.PriceServicer):
     def __init__(self):
