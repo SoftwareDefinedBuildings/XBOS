@@ -248,7 +248,7 @@ def serve():
 
 
 if __name__ == '__main__':
-    # initizalize()
+    initizalize()
     serve()
     #
     # building = 'ciee'
