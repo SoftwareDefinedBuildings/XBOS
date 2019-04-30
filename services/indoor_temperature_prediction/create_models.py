@@ -41,10 +41,10 @@ def load_data(building, zone):
         return pickle.load(f)
 
 
-def create_model(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
+def get_train_test(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
                  use_occupancy,
-                 curr_action_timesteps, prev_action_timesteps, method, check_data=True):
-    """Creates a model with the given specifications.
+                 curr_action_timesteps, prev_action_timesteps, check_data=True):
+    """Create data set to train with.
 
     :param building: (string) building name
     :param zone: (string) zone name
@@ -69,9 +69,6 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
     """
     seconds_prediction_window = xsg.get_window_in_sec(prediction_window)
 
-
-    if method != "OLS":
-        raise NotImplementedError("%s is not supported. Use OLS instead." % method)
 
     # Get data
     # TODO add check that the data we have stored is at least as long and has right prediction_window
@@ -113,7 +110,7 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
     train_data = train_data[train_data["dt"] == seconds_prediction_window]
     train_data = train_data.drop(columns_to_drop, axis=1)
     if train_data.isna().values.any():
-        return None, None, "Nan values detected in training data."
+        return None, None, None, None, "Nan values detected in training data."
 
     train_y = train_data["t_next"] #.interpolate(method="time") Note: We now assume that there are no Nan values in data.
     train_X = train_data.drop(["t_next"], axis=1) #.interpolate(method="time")
@@ -127,8 +124,50 @@ def create_model(building, zone, start, end, prediction_window, raw_data_granula
     test_y = test_data["t_next"] #.interpolate(method="time")
     test_X = test_data.drop(["t_next"], axis=1) #.interpolate(method="time")
 
-    if  train_X.shape[0] == 0:
+    if train_X.shape[0] == 0:
+        return None, None, None, None, "Not enough data to train the model."
+
+    return train_X, train_y, test_X, test_y, None
+
+
+def create_model(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
+                 use_occupancy,
+                 curr_action_timesteps, prev_action_timesteps, method, check_data=True):
+    """Creates a model with the given specifications.
+
+    :param building: (string) building name
+    :param zone: (string) zone name
+    :param start: (datetime timezone aware) start of the dataset used
+    :param end: (datetime timezone aware) start of the dataset used
+    :param prediction_window: (str) number of seconds between predictions
+    :param raw_data_granularity: (str) the window size of the raw data. needs to be less than prediction_window.
+    :param train_ratio: (float) in (0, 1). the ratio in which to split train and test set from the given dataset. The train set comes before test set in time.
+    :param is_second_order: (bool) Whether we are using second order in temperature.
+    :param curr_action_timesteps: (int) The order of the current action. Set 0 if there should only be one action.
+    :param prev_action_timesteps: (int) The order of the previous action. Set 0 if there should only be one prev action.
+        Set -1 if it should not be used at all.
+    :param method: (str) ["OLS", "random_forest", "LSTM"] are the available methods so far
+    :param rmse_series: np.array the rmse of the forecasting procedure.
+    :param num_forecasts: (int) The number of forecasts which contributed to the RMSE.
+    :param forecasting_horizon: (int seconds) The horizon used when forecasting.
+    :param check_data: If True (default), will enforce that training data has the right start/end times (recommended).
+    If False, the times may be different (allows model to be created faster by using previously prepocessed data)
+        – useful when prototyping since the preprocessing does not have to be repeated.
+    :return: trained sklearn.LinearRegression object.
+
+    """
+    if method != "OLS":
+        raise NotImplementedError("%s is not supported. Use OLS instead." % method)
+
+    train_X, train_y, test_X, test_y, err = get_train_test(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
+                 use_occupancy,
+                 curr_action_timesteps, prev_action_timesteps, check_data=check_data)
+    if err is not None:
+        return None, None, err
+
+    if train_X.shape[0] == 0:
         return None, None, "Not enough data to train the model."
+
     # Make OLS model
     reg = LinearRegression().fit(train_X, train_y)
     return reg, test_X.columns, None
