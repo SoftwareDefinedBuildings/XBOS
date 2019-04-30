@@ -143,6 +143,10 @@ def get_error(request):
         filter = train_X["action"] == request.action
         train_X = train_X[filter]
         train_y = train_y[filter]
+
+    if train_X.shape[0] == 0:
+        return None, "Not enough data for given action to get error."
+
     predictions_train = thermal_model.predict(train_X)
     error = (train_y.values - predictions_train)
 
