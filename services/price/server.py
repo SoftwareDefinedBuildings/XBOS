@@ -17,13 +17,13 @@ PRICE_DATA_PATH = Path(os.environ["PRICE_DATA_PATH"])
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 UUID = {
-    "PGE_FLAT06_ENERGY":"5f8add28-9d7f-3e02-b428-bb32f241090d",
+    "PGE_PGEFLAT06_ENERGY":"5f8add28-9d7f-3e02-b428-bb32f241090d",
     "PGE_PGEA01_ENERGY":"6ec2b69f-ed98-3b58-b664-fedc3e0ebc3a",
     "PGE_PGEA06_ENERGY":"476c4dea-6ae7-3476-9b07-d3a932e48ffa",
     "PGE_PGEA10_ENERGY":"f1a7f547-896f-33fc-9fe3-f585495a6839",
     "PGE_PGEE19_ENERGY":"5a32eeeb-c404-3f90-9151-fa87d09cc924",
     "PGE_PGEE20_ENERGY":"679582c3-775d-304a-b36d-c4d8745d7e8e",
-    "PGE_FLAT06_DEMAND":"7776b145-e687-3d2b-9513-29ac9ef6c452",
+    "PGE_PGEFLAT06_DEMAND":"7776b145-e687-3d2b-9513-29ac9ef6c452",
     "PGE_PGEA01_DEMAND":"eebe1b61-fcf6-3944-8071-9abc9cb4ee95",
     "PGE_PGEA06_DEMAND":"a7096d20-9076-375a-b830-1101d1aeb248",
     "PGE_PGEA10_DEMAND":"7bef8016-fe56-3855-bb40-7ae22da1a600",
@@ -35,6 +35,12 @@ UUID = {
     "SCE_SCETGS3_DEMAND":"31e3e0e4-f319-390d-a015-cdd2bde0e8d0"
 }
 
+ALL_TARIFFS_UTILITIES = {
+    "PGE":["PGEFLAT06","PGEA01","PGEA06","PGEA10","PGEE19","PGEE20"],
+    "SCE":["SCE08B","SCETGS3"]
+}
+
+
 def get_tariff_and_utility(request, df):
     """Returns tariff and utility for the specified building"""
 
@@ -42,7 +48,7 @@ def get_tariff_and_utility(request, df):
 
     if building_df.empty:
         return price_pb2.TariffUtilityReply(tariff="", utility=""), "empty data frame"
-    
+
     utility, tariff = building_df["Utility"].item(), building_df["Tariff"].item()
 
     return price_pb2.TariffUtilityReply(tariff=tariff, utility=utility), None
@@ -56,35 +62,27 @@ def get_window_in_sec(s):
     except:
         return 0
 
-def get_from_csv(start, end, key, uuid, price_type):
-    file_name = key[key.index("_") + 1:key.rindex("_")]
-
-    if file_name == "FLAT06":
-        file_name = "PGEFLAT06"
-    
-    df = pd.read_csv(PRICE_DATA_PATH / ("prices_01012017_040172019/" + file_name + ".csv"), index_col=[0], parse_dates=False)
-    df = df.fillna(0)
+def get_from_csv(start, end, key, uuid, price_type,all_tariffs_utilities_dfs):
+    tariff = key[key.index("_") + 1:key.rindex("_")]
+    df = all_tariffs_utilities_dfs[tariff]
 
     prices = []
     utc_timestamps = []
-
-    df.index = pd.to_datetime(df.index, utc=True)
-
     df = df[df.index >= pd.Timestamp(start)]
     df = df[df.index <= pd.Timestamp(end)]
 
-    for index, row in df.iterrows():        
+    for index, row in df.iterrows():
         utc_timestamps.append(index)
 
         if price_type == "ENERGY":
-            prices.append(round(row['customer_energy_charge']+row['pdp_non_event_energy_credit']+row['pdp_event_energy_charge'], 2))
+            prices.append(round(row['customer_energy_charge']+row['pdp_non_event_energy_credit']+row['pdp_event_energy_charge'], 5))
         elif price_type == "DEMAND":
-            prices.append(round(row['customer_demand_charge_season']+row['pdp_non_event_demand_credit']+row['customer_demand_charge_tou'], 2)) 
+            prices.append(round(row['customer_demand_charge_season']+row['pdp_non_event_demand_credit']+row['customer_demand_charge_tou'], 5))
 
-    return pd.DataFrame(data=prices, columns=[uuid], index=utc_timestamps)  
-    
+    return pd.DataFrame(data=prices, columns=[uuid], index=utc_timestamps)
 
-def get_from_pymortar(start, end, uuid, pymortar_client):    
+
+def get_from_pymortar(start, end, uuid, pymortar_client):
 
     price_stream = pymortar.DataFrame(
         name="price_data",
@@ -108,7 +106,7 @@ def get_from_pymortar(start, end, uuid, pymortar_client):
 
     return pymortar_client.fetch(price_request)["price_data"]
 
-def get_price(request, pymortar_client):
+def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
     """Returns prices for a given request or None."""
     print("received request:",request.utility,request.tariff,request.price_type,request.start,request.end,request.window)
     if request.price_type.upper() == "ENERGY":
@@ -148,21 +146,21 @@ def get_price(request, pymortar_client):
         # e.g., asking for 4:10 returns up to 3:00, then ask for 5:00 to force it to return 4:00
         elif request.end/1e9%3600!=0:
             end = request.end + 36e11
-    #Aligned returns invalid (next) price (we request the equivalent of RAW) 
-   
-    csv_end_date = datetime.datetime(2019, 4, 17, 23, 0, 0).replace(tzinfo=pytz.utc)
-    datetime_end = datetime.datetime.fromtimestamp(int(end / 1e9)).replace(tzinfo=pytz.utc)
-    datetime_start = datetime.datetime.fromtimestamp(int(request.start/1e9- request.start/1e9%3600)).replace(tzinfo=pytz.utc)
+    #Aligned returns invalid (next) price (we request the equivalent of RAW)
+
+    csv_end_date = pytz.timezone('US/Pacific').localize(datetime.datetime(year=2019, month=4, day=16, hour=0, minute=0,second=0)).astimezone(pytz.utc)
+    datetime_end = datetime.datetime.utcfromtimestamp(int(end / 1e9)).replace(tzinfo=pytz.utc)
+    datetime_start = datetime.datetime.utcfromtimestamp(int(request.start/1e9- request.start/1e9%3600)).replace(tzinfo=pytz.utc)
 
     if datetime_end < csv_end_date:
-        df = get_from_csv(datetime_start, datetime_end, key, uuid, request.price_type.upper())
-    elif datetime_start > csv_end_date:
-        df = get_from_pymortar(datetime_start, datetime_end, uuid, pymortar_client).tz_localize(pytz.utc)
+        df = get_from_csv(datetime_start, datetime_end, key, uuid, request.price_type.upper(),all_tariffs_utilities_dfs)
+    elif datetime_start >= csv_end_date:
+        df = get_from_pymortar(datetime_start, datetime_end, uuid, pymortar_client)
     elif datetime_start < csv_end_date and datetime_end > csv_end_date:
-        df_csv = get_from_csv(datetime_start, csv_end_date, key, uuid, request.price_type.upper())
-        df_pymortar = get_from_pymortar(csv_end_date + datetime.timedelta(hours=1), datetime_end, uuid, pymortar_client).tz_localize(pytz.utc)
+        df_csv = get_from_csv(datetime_start, csv_end_date, key, uuid, request.price_type.upper(),all_tariffs_utilities_dfs)
+        df_pymortar = get_from_pymortar(csv_end_date + datetime.timedelta(hours=1), datetime_end, uuid, pymortar_client)
         df = pd.concat([df_csv, df_pymortar])
-    
+
     if df is None:
         return price_pb2.PriceReply(prices=[]), "did not fetch data"
     if df.empty:
@@ -170,13 +168,11 @@ def get_price(request, pymortar_client):
     df = df.dropna()
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
-    
-    interpolated_df = smart_resample(df, datetime_start, datetime_end, duration, "interpolate")
-
+    interpolated_df = smart_resample(df, datetime_start, datetime_end, duration, "ffill")
     prices = []
     for index, row in interpolated_df.iterrows():
         prices.append(price_pb2.PricePoint(time=int(index.timestamp() * 1e9),price=row[uuid],unit=unit,window=request.window))
-    
+
     return price_pb2.PriceReply(prices=prices), None
 
 def smart_resample(data, start, end, window, method):
@@ -296,9 +292,20 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
             sys.exit()
 
         self.price_mapping = pd.read_csv(str(price_path))
+        tariffs_utilities = []
+        self.all_tariffs_utilities_dfs = {}
+        for utility, tariffs in ALL_TARIFFS_UTILITIES.items():
+            for tariff in tariffs:
+                tariffs_utilities.append(price_pb2.TariffUtilityReply(tariff=tariff, utility=utility))
+                df = pd.read_csv(PRICE_DATA_PATH / ("prices_01012017_040172019/" + tariff + ".csv"), index_col=[0], parse_dates=False)
+                df = df.fillna(0)
+                df.index = pd.to_datetime(df.index)
+                df = df.tz_localize("US/Pacific",nonexistent='shift_forward' ,ambiguous=False)
+                self.all_tariffs_utilities_dfs[tariff]= df
+        self.all_tariffs_utilities = price_pb2.AllTariffUtilityReply(tariffs_utilities=tariffs_utilities)
 
     def GetPrice(self, request, context):
-        prices,error = get_price(request,self.pymortar_client)
+        prices,error = get_price(request,self.pymortar_client,self.all_tariffs_utilities_dfs)
         if prices is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
@@ -307,9 +314,9 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
             return prices
-        
+
         return prices
-    
+
     def GetTariffAndUtility(self, request, context):
         tariff_utility_reply,error = get_tariff_and_utility(request, self.price_mapping)
         if tariff_utility_reply is None:
@@ -323,6 +330,8 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
 
         return tariff_utility_reply
 
+    def GetAllTariffsAndUtilities(self,request,context):
+        return self.all_tariffs_utilities
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

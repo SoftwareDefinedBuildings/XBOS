@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='meter_data_historical',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1bmeter_data_historical.proto\x12\x15meter_data_historical\"n\n\x07Request\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05start\x18\x02 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x03\x12\x12\n\npoint_type\x18\x04 \x01(\t\x12\x11\n\taggregate\x18\x05 \x01(\t\x12\x0e\n\x06window\x18\x06 \x01(\t\"-\n\x0eMeterDataPoint\x12\x0c\n\x04time\x18\x01 \x01(\t\x12\r\n\x05power\x18\x02 \x01(\x01\"=\n\x05Reply\x12\x34\n\x05point\x18\x01 \x03(\x0b\x32%.meter_data_historical.MeterDataPoint2o\n\x13MeterDataHistorical\x12X\n\x16GetMeterDataHistorical\x12\x1e.meter_data_historical.Request\x1a\x1c.meter_data_historical.Reply\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x1bmeter_data_historical.proto\x12\x15meter_data_historical\"n\n\x07Request\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05start\x18\x02 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x03\x12\x12\n\npoint_type\x18\x04 \x01(\t\x12\x11\n\taggregate\x18\x05 \x01(\t\x12\x0e\n\x06window\x18\x06 \x01(\t\"-\n\x0eMeterDataPoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\r\n\x05power\x18\x02 \x01(\x01\"=\n\x05Reply\x12\x34\n\x05point\x18\x01 \x03(\x0b\x32%.meter_data_historical.MeterDataPoint2o\n\x13MeterDataHistorical\x12X\n\x16GetMeterDataHistorical\x12\x1e.meter_data_historical.Request\x1a\x1c.meter_data_historical.Reply\"\x00\x62\x06proto3')
 )
 
 
@@ -100,8 +100,8 @@ _METERDATAPOINT = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='time', full_name='meter_data_historical.MeterDataPoint.time', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=1, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
