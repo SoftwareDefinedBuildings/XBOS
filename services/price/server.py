@@ -151,6 +151,7 @@ def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
     csv_end_date = pytz.timezone('US/Pacific').localize(datetime.datetime(year=2019, month=4, day=16, hour=0, minute=0,second=0)).astimezone(pytz.utc)
     datetime_end = datetime.datetime.utcfromtimestamp(int(end / 1e9)).replace(tzinfo=pytz.utc)
     datetime_start = datetime.datetime.utcfromtimestamp(int(request.start/1e9- request.start/1e9%3600)).replace(tzinfo=pytz.utc)
+    datetime_req_start = datetime.datetime.utcfromtimestamp(int(request.start/1e9)).replace(tzinfo=pytz.utc)
 
     if datetime_end < csv_end_date:
         df = get_from_csv(datetime_start, datetime_end, key, uuid, request.price_type.upper(),all_tariffs_utilities_dfs)
@@ -168,7 +169,7 @@ def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
     df = df.dropna()
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
-    interpolated_df = smart_resample(df, datetime_start, datetime_end, duration, "ffill")
+    interpolated_df = smart_resample(df, datetime_req_start, datetime_end, duration, "ffill")
     prices = []
     for index, row in interpolated_df.iterrows():
         prices.append(price_pb2.PricePoint(time=int(index.timestamp() * 1e9),price=row[uuid],unit=unit,window=request.window))
