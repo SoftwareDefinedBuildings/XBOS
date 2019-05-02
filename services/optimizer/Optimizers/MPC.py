@@ -16,7 +16,7 @@ import plotly.offline as py
 import itertools
 import xbos_services_getter as xsg
 
-from Optimizers import OptimizerParent
+from DataManager.DataManager import DataManager
 
 
 # TODO Demand charges right now assume constant demand charge throughout interval. should be easy to extend
@@ -46,7 +46,7 @@ class Node:
         return "{0}-{1}".format(self.timestep, self.temperatures)
 
 
-class MPC(OptimizerParent.OptimizerParent):
+class MPC(DataManager):
     """MPC Optimizer.
     No Demand Charges and Two Stage actions implemented."""
 

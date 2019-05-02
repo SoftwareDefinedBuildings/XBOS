@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3d62de2d-3cba-45f8-9d70-42b88ea1cab8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/optimizer/Thermostat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/services.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/services.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/indoor_temperature_prediction/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/indoor_temperature_prediction/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optimizer/Optimizers/DRL.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/optimizer/Optimizers/DRL.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optimizer/Optimizers/MPC Optimizer.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/optimizer/Optimizers/MPC Optimizer.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optimizer/Optimizers/MPC.py" beforeDir="false" afterPath="$PROJECT_DIR$/optimizer/Optimizers/MPC.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optimizer/Optimizers/OptimizerParent.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,7 +21,7 @@
     <session id="2039863559">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="6" />
+          <entry key="project.closed" value="7" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.4" value="2" />
@@ -28,7 +34,7 @@
           <entry key="ipynb" value="2" />
           <entry key="md" value="13" />
           <entry key="proto" value="24" />
-          <entry key="py" value="72" />
+          <entry key="py" value="76" />
           <entry key="sh" value="2" />
           <entry key="txt" value="22" />
         </counts>
@@ -39,14 +45,14 @@
           <entry key="Markdown" value="13" />
           <entry key="PLAIN_TEXT" value="24" />
           <entry key="PROTO" value="24" />
-          <entry key="Python" value="72" />
+          <entry key="Python" value="76" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="3616" />
           <entry key="proto" value="554" />
-          <entry key="py" value="4025" />
+          <entry key="py" value="4839" />
           <entry key="txt" value="39" />
         </counts>
       </usages-collector>
@@ -55,21 +61,57 @@
           <entry key="Markdown" value="3616" />
           <entry key="PLAIN_TEXT" value="39" />
           <entry key="PROTO" value="554" />
-          <entry key="Python" value="4025" />
+          <entry key="Python" value="4839" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
+            <state relative-caret-position="914">
               <caret line="147" column="67" selection-start-line="147" selection-start-column="67" selection-end-line="147" selection-end-column="67" />
               <folding>
                 <element signature="e#110#124#0" expanded="true" />
                 <marker date="1556583194216" expanded="true" signature="3387:6190" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/optimizer/Optimizers/MPC.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="975">
+              <caret line="65" column="83" selection-start-line="65" selection-start-column="62" selection-end-line="65" selection-end-column="83" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/optimizer/Thermostat.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="4" column="48" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="48" />
+              <folding>
+                <element signature="e#0#34#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/optimizer/DataManager/DataManager.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-97">
+              <caret line="14" column="28" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="28" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -101,15 +143,6 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/Develop Thermal Model.ipynb">
-          <provider selected="true" editor-type-id="ipnb-editor">
-            <state>
-              <selected id="0" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/create_models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="397">
@@ -118,25 +151,6 @@
                 <element signature="e#31#45#0" expanded="true" />
               </folding>
             </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/price/server.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="153" column="37" selection-start-line="153" selection-start-column="37" selection-end-line="153" selection-end-column="37" />
-              <folding>
-                <element signature="e#0#30#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/outdoor_temperature_historical/server.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1639" />
           </provider>
         </entry>
       </file>
@@ -157,6 +171,13 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -215,6 +236,10 @@
         <option value="$PROJECT_DIR$/indoor_temperature_prediction/indoor_temperature_prediction.proto" />
         <option value="$PROJECT_DIR$/indoor_temperature_prediction/create_models.py" />
         <option value="$PROJECT_DIR$/indoor_temperature_prediction/server.py" />
+        <option value="$PROJECT_DIR$/optimizer/Optimizers/OptimizerParent.py" />
+        <option value="$PROJECT_DIR$/optimizer/Optimizers/MPC.py" />
+        <option value="$PROJECT_DIR$/optimizer/DataManager/DataManager.py" />
+        <option value="$PROJECT_DIR$/optimizer/Thermostat.py" />
       </list>
     </option>
   </component>
@@ -224,7 +249,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+  <component name="ProjectFrameBounds" fullScreen="true">
     <option name="width" value="1920" />
     <option name="height" value="1080" />
   </component>
@@ -244,12 +269,19 @@
             <path>
               <item name="services" type="b2602c69:ProjectViewProjectNode" />
               <item name="services" type="462c0819:PsiDirectoryNode" />
-              <item name="indoor_temperature_prediction" type="462c0819:PsiDirectoryNode" />
+              <item name="optimizer" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="services" type="b2602c69:ProjectViewProjectNode" />
               <item name="services" type="462c0819:PsiDirectoryNode" />
               <item name="optimizer" type="462c0819:PsiDirectoryNode" />
+              <item name="DataManager" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="services" type="b2602c69:ProjectViewProjectNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
+              <item name="optimizer" type="462c0819:PsiDirectoryNode" />
+              <item name="Optimizers" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -263,6 +295,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -290,10 +323,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="6" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26466382" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22588523" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -334,10 +367,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/occupancy/req.txt" />
-    <entry file="file://$PROJECT_DIR$/src/optimizer/Untitled.ipynb" />
-    <entry file="file://$PROJECT_DIR$/src/temperature_bands/temperature_bands.proto" />
-    <entry file="file://$PROJECT_DIR$/src/temperature_bands/req.txt" />
     <entry file="file://$PROJECT_DIR$/src/outdoor_temperature_prediction/server.py" />
     <entry file="file://$PROJECT_DIR$/src/occupancy/README.md" />
     <entry file="file://$PROJECT_DIR$/src/temperature_bands/README.md" />
@@ -506,11 +535,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/outdoor_temperature_prediction/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1028" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/Develop Thermal Model.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
         <state>
@@ -556,11 +580,56 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/indoor_temperature_prediction/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
+        <state relative-caret-position="914">
           <caret line="147" column="67" selection-start-line="147" selection-start-column="67" selection-end-line="147" selection-end-column="67" />
           <folding>
             <element signature="e#110#124#0" expanded="true" />
             <marker date="1556583194216" expanded="true" signature="3387:6190" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/optimizer/Optimizers/OptimizerParent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" column="25" lean-forward="true" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/outdoor_temperature_prediction/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1028" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/optimizer/DataManager/DataManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-97">
+          <caret line="14" column="28" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/optimizer/Optimizers/MPC.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="975">
+          <caret line="65" column="83" selection-start-line="65" selection-start-column="62" selection-end-line="65" selection-end-column="83" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/optimizer/Thermostat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="48" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#34#0" expanded="true" />
           </folding>
         </state>
       </provider>
