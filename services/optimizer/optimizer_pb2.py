@@ -16,10 +16,10 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='optimizer.proto',
-  package='outdoor_temperature_historical',
+  package='optimizer',
   syntax='proto3',
   serialized_options=_b('P\001'),
-  serialized_pb=_b('\n\x0foptimizer.proto\x12\x1eoutdoor_temperature_historical\"\xb5\x02\n\x16MPCOptimizationRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\r\n\x05start\x18\x03 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x03\x12\x0e\n\x06window\x18\x05 \x01(\t\x12\x12\n\nlambda_val\x18\x06 \x01(\x01\x12o\n\x15starting_temperatures\x18\x07 \x03(\x0b\x32P.outdoor_temperature_historical.MPCOptimizationRequest.StartingTemperaturesEntry\x12\x0c\n\x04unit\x18\x08 \x01(\t\x1a;\n\x19StartingTemperaturesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"|\n\x05Reply\x12\x43\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32\x32.outdoor_temperature_historical.Reply.ActionsEntry\x1a.\n\x0c\x41\x63tionsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x32\x82\x01\n\tOptimizer\x12u\n\x12GetMPCOptimization\x12\x36.outdoor_temperature_historical.MPCOptimizationRequest\x1a%.outdoor_temperature_historical.Reply\"\x00\x42\x02P\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x0foptimizer.proto\x12\toptimizer\"\xa0\x02\n\x16MPCOptimizationRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\r\n\x05start\x18\x03 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x03\x12\x0e\n\x06window\x18\x05 \x01(\t\x12\x12\n\nlambda_val\x18\x06 \x01(\x01\x12Z\n\x15starting_temperatures\x18\x07 \x03(\x0b\x32;.optimizer.MPCOptimizationRequest.StartingTemperaturesEntry\x12\x0c\n\x04unit\x18\x08 \x01(\t\x1a;\n\x19StartingTemperaturesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"g\n\x05Reply\x12.\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32\x1d.optimizer.Reply.ActionsEntry\x1a.\n\x0c\x41\x63tionsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x32X\n\tOptimizer\x12K\n\x12GetMPCOptimization\x12!.optimizer.MPCOptimizationRequest\x1a\x10.optimizer.Reply\"\x00\x42\x02P\x01\x62\x06proto3')
 )
 
 
@@ -27,20 +27,20 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _MPCOPTIMIZATIONREQUEST_STARTINGTEMPERATURESENTRY = _descriptor.Descriptor(
   name='StartingTemperaturesEntry',
-  full_name='outdoor_temperature_historical.MPCOptimizationRequest.StartingTemperaturesEntry',
+  full_name='optimizer.MPCOptimizationRequest.StartingTemperaturesEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='outdoor_temperature_historical.MPCOptimizationRequest.StartingTemperaturesEntry.key', index=0,
+      name='key', full_name='optimizer.MPCOptimizationRequest.StartingTemperaturesEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='outdoor_temperature_historical.MPCOptimizationRequest.StartingTemperaturesEntry.value', index=1,
+      name='value', full_name='optimizer.MPCOptimizationRequest.StartingTemperaturesEntry.value', index=1,
       number=2, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
@@ -58,68 +58,68 @@ _MPCOPTIMIZATIONREQUEST_STARTINGTEMPERATURESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=302,
-  serialized_end=361,
+  serialized_start=260,
+  serialized_end=319,
 )
 
 _MPCOPTIMIZATIONREQUEST = _descriptor.Descriptor(
   name='MPCOptimizationRequest',
-  full_name='outdoor_temperature_historical.MPCOptimizationRequest',
+  full_name='optimizer.MPCOptimizationRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='building', full_name='outdoor_temperature_historical.MPCOptimizationRequest.building', index=0,
+      name='building', full_name='optimizer.MPCOptimizationRequest.building', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='zones', full_name='outdoor_temperature_historical.MPCOptimizationRequest.zones', index=1,
+      name='zones', full_name='optimizer.MPCOptimizationRequest.zones', index=1,
       number=2, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='start', full_name='outdoor_temperature_historical.MPCOptimizationRequest.start', index=2,
+      name='start', full_name='optimizer.MPCOptimizationRequest.start', index=2,
       number=3, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='end', full_name='outdoor_temperature_historical.MPCOptimizationRequest.end', index=3,
+      name='end', full_name='optimizer.MPCOptimizationRequest.end', index=3,
       number=4, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='window', full_name='outdoor_temperature_historical.MPCOptimizationRequest.window', index=4,
+      name='window', full_name='optimizer.MPCOptimizationRequest.window', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='lambda_val', full_name='outdoor_temperature_historical.MPCOptimizationRequest.lambda_val', index=5,
+      name='lambda_val', full_name='optimizer.MPCOptimizationRequest.lambda_val', index=5,
       number=6, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='starting_temperatures', full_name='outdoor_temperature_historical.MPCOptimizationRequest.starting_temperatures', index=6,
+      name='starting_temperatures', full_name='optimizer.MPCOptimizationRequest.starting_temperatures', index=6,
       number=7, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='unit', full_name='outdoor_temperature_historical.MPCOptimizationRequest.unit', index=7,
+      name='unit', full_name='optimizer.MPCOptimizationRequest.unit', index=7,
       number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -137,27 +137,27 @@ _MPCOPTIMIZATIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=52,
-  serialized_end=361,
+  serialized_start=31,
+  serialized_end=319,
 )
 
 
 _REPLY_ACTIONSENTRY = _descriptor.Descriptor(
   name='ActionsEntry',
-  full_name='outdoor_temperature_historical.Reply.ActionsEntry',
+  full_name='optimizer.Reply.ActionsEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='outdoor_temperature_historical.Reply.ActionsEntry.key', index=0,
+      name='key', full_name='optimizer.Reply.ActionsEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='outdoor_temperature_historical.Reply.ActionsEntry.value', index=1,
+      name='value', full_name='optimizer.Reply.ActionsEntry.value', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -175,19 +175,19 @@ _REPLY_ACTIONSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=441,
-  serialized_end=487,
+  serialized_start=378,
+  serialized_end=424,
 )
 
 _REPLY = _descriptor.Descriptor(
   name='Reply',
-  full_name='outdoor_temperature_historical.Reply',
+  full_name='optimizer.Reply',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='actions', full_name='outdoor_temperature_historical.Reply.actions', index=0,
+      name='actions', full_name='optimizer.Reply.actions', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -205,8 +205,8 @@ _REPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=363,
-  serialized_end=487,
+  serialized_start=321,
+  serialized_end=424,
 )
 
 _MPCOPTIMIZATIONREQUEST_STARTINGTEMPERATURESENTRY.containing_type = _MPCOPTIMIZATIONREQUEST
@@ -222,12 +222,12 @@ MPCOptimizationRequest = _reflection.GeneratedProtocolMessageType('MPCOptimizati
   StartingTemperaturesEntry = _reflection.GeneratedProtocolMessageType('StartingTemperaturesEntry', (_message.Message,), dict(
     DESCRIPTOR = _MPCOPTIMIZATIONREQUEST_STARTINGTEMPERATURESENTRY,
     __module__ = 'optimizer_pb2'
-    # @@protoc_insertion_point(class_scope:outdoor_temperature_historical.MPCOptimizationRequest.StartingTemperaturesEntry)
+    # @@protoc_insertion_point(class_scope:optimizer.MPCOptimizationRequest.StartingTemperaturesEntry)
     ))
   ,
   DESCRIPTOR = _MPCOPTIMIZATIONREQUEST,
   __module__ = 'optimizer_pb2'
-  # @@protoc_insertion_point(class_scope:outdoor_temperature_historical.MPCOptimizationRequest)
+  # @@protoc_insertion_point(class_scope:optimizer.MPCOptimizationRequest)
   ))
 _sym_db.RegisterMessage(MPCOptimizationRequest)
 _sym_db.RegisterMessage(MPCOptimizationRequest.StartingTemperaturesEntry)
@@ -237,12 +237,12 @@ Reply = _reflection.GeneratedProtocolMessageType('Reply', (_message.Message,), d
   ActionsEntry = _reflection.GeneratedProtocolMessageType('ActionsEntry', (_message.Message,), dict(
     DESCRIPTOR = _REPLY_ACTIONSENTRY,
     __module__ = 'optimizer_pb2'
-    # @@protoc_insertion_point(class_scope:outdoor_temperature_historical.Reply.ActionsEntry)
+    # @@protoc_insertion_point(class_scope:optimizer.Reply.ActionsEntry)
     ))
   ,
   DESCRIPTOR = _REPLY,
   __module__ = 'optimizer_pb2'
-  # @@protoc_insertion_point(class_scope:outdoor_temperature_historical.Reply)
+  # @@protoc_insertion_point(class_scope:optimizer.Reply)
   ))
 _sym_db.RegisterMessage(Reply)
 _sym_db.RegisterMessage(Reply.ActionsEntry)
@@ -254,16 +254,16 @@ _REPLY_ACTIONSENTRY._options = None
 
 _OPTIMIZER = _descriptor.ServiceDescriptor(
   name='Optimizer',
-  full_name='outdoor_temperature_historical.Optimizer',
+  full_name='optimizer.Optimizer',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=490,
-  serialized_end=620,
+  serialized_start=426,
+  serialized_end=514,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetMPCOptimization',
-    full_name='outdoor_temperature_historical.Optimizer.GetMPCOptimization',
+    full_name='optimizer.Optimizer.GetMPCOptimization',
     index=0,
     containing_service=None,
     input_type=_MPCOPTIMIZATIONREQUEST,

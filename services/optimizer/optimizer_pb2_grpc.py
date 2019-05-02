@@ -15,7 +15,7 @@ class OptimizerStub(object):
       channel: A grpc.Channel.
     """
     self.GetMPCOptimization = channel.unary_unary(
-        '/outdoor_temperature_historical.Optimizer/GetMPCOptimization',
+        '/optimizer.Optimizer/GetMPCOptimization',
         request_serializer=optimizer__pb2.MPCOptimizationRequest.SerializeToString,
         response_deserializer=optimizer__pb2.Reply.FromString,
         )
@@ -44,5 +44,5 @@ def add_OptimizerServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'outdoor_temperature_historical.Optimizer', rpc_method_handlers)
+      'optimizer.Optimizer', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

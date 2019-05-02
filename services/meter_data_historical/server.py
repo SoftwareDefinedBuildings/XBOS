@@ -157,11 +157,15 @@ class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistor
                                                  start=self.start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
                                                  end=self.end_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
                                                  agg=self.aggregate, window=self.window)
+        if len(df.columns)==2:
+            df[df.columns[0]] = df[df.columns[0]]+df[df.columns[1]]
+            df = df.drop(columns=[df.columns[1]])
+
         df.columns = ['power']
 
         result = []
         for index, row in df.iterrows():
-            point = meter_data_historical_pb2.MeterDataPoint(time=str(index), power=row['power'])
+            point = meter_data_historical_pb2.MeterDataPoint(time=int(index.timestamp()*1e9), power=row['power'])
             result.append(point)
 
         return meter_data_historical_pb2.Reply(point=result)

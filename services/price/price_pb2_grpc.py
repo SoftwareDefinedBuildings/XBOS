@@ -19,6 +19,11 @@ class PriceStub(object):
         request_serializer=price__pb2.PriceRequest.SerializeToString,
         response_deserializer=price__pb2.PriceReply.FromString,
         )
+    self.GetAllTariffsAndUtilities = channel.unary_unary(
+        '/price.Price/GetAllTariffsAndUtilities',
+        request_serializer=price__pb2.Empty.SerializeToString,
+        response_deserializer=price__pb2.AllTariffUtilityReply.FromString,
+        )
     self.GetTariffAndUtility = channel.unary_unary(
         '/price.Price/GetTariffAndUtility',
         request_serializer=price__pb2.BuildingRequest.SerializeToString,
@@ -40,9 +45,16 @@ class PriceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetAllTariffsAndUtilities(self, request, context):
+    """Sends all available tariffs and utilities
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def GetTariffAndUtility(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+    """Sends a tariff and utility for the specified building name
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -54,6 +66,11 @@ def add_PriceServicer_to_server(servicer, server):
           servicer.GetPrice,
           request_deserializer=price__pb2.PriceRequest.FromString,
           response_serializer=price__pb2.PriceReply.SerializeToString,
+      ),
+      'GetAllTariffsAndUtilities': grpc.unary_unary_rpc_method_handler(
+          servicer.GetAllTariffsAndUtilities,
+          request_deserializer=price__pb2.Empty.FromString,
+          response_serializer=price__pb2.AllTariffUtilityReply.SerializeToString,
       ),
       'GetTariffAndUtility': grpc.unary_unary_rpc_method_handler(
           servicer.GetTariffAndUtility,

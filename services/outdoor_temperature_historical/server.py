@@ -133,7 +133,7 @@ def get_temperature(request, pymortar_client):
 
     d_start = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
     d_end = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
-        
+
     final_data, err = _get_temperature(request.building, d_start, d_end, duration, pymortar_client)
     if final_data is None:
         return None, err
@@ -164,6 +164,10 @@ class OutdoorTemperatureServicer(outdoor_temperature_historical_pb2_grpc.Outdoor
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
             return outdoor_temperature_historical_pb2.TemperatureReply()
+        elif error is not None:
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(error)
+            return temperatures
         else:
             return temperatures
 

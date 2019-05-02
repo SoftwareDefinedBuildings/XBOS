@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -19,6 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='outdoor_temperature_prediction.proto',
   package='outdoor_temperature_prediction',
   syntax='proto3',
+  serialized_options=_b('P\001'),
   serialized_pb=_b('\n$outdoor_temperature_prediction.proto\x12\x1eoutdoor_temperature_prediction\"C\n\x10TemperaturePoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x13\n\x0btemperature\x18\x02 \x01(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t\"R\n\x12TemperatureRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05start\x18\x02 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x03\x12\x0e\n\x06window\x18\x04 \x01(\t\"Z\n\x10TemperatureReply\x12\x46\n\x0ctemperatures\x18\x01 \x03(\x0b\x32\x30.outdoor_temperature_prediction.TemperaturePoint2\x8e\x01\n\x12OutdoorTemperature\x12x\n\x0eGetTemperature\x12\x32.outdoor_temperature_prediction.TemperatureRequest\x1a\x30.outdoor_temperature_prediction.TemperatureReply\"\x00\x42\x02P\x01\x62\x06proto3')
 )
 
@@ -38,28 +38,28 @@ _TEMPERATUREPOINT = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='temperature', full_name='outdoor_temperature_prediction.TemperaturePoint.temperature', index=1,
       number=2, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='unit', full_name='outdoor_temperature_prediction.TemperaturePoint.unit', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -83,35 +83,35 @@ _TEMPERATUREREQUEST = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='start', full_name='outdoor_temperature_prediction.TemperatureRequest.start', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='end', full_name='outdoor_temperature_prediction.TemperatureRequest.end', index=2,
       number=3, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='window', full_name='outdoor_temperature_prediction.TemperatureRequest.window', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -135,14 +135,14 @@ _TEMPERATUREREPLY = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -180,15 +180,14 @@ TemperatureReply = _reflection.GeneratedProtocolMessageType('TemperatureReply', 
 _sym_db.RegisterMessage(TemperatureReply)
 
 
-DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('P\001'))
+DESCRIPTOR._options = None
 
 _OUTDOORTEMPERATURE = _descriptor.ServiceDescriptor(
   name='OutdoorTemperature',
   full_name='outdoor_temperature_prediction.OutdoorTemperature',
   file=DESCRIPTOR,
   index=0,
-  options=None,
+  serialized_options=None,
   serialized_start=318,
   serialized_end=460,
   methods=[
@@ -199,7 +198,7 @@ _OUTDOORTEMPERATURE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_TEMPERATUREREQUEST,
     output_type=_TEMPERATUREREPLY,
-    options=None,
+    serialized_options=None,
   ),
 ])
 _sym_db.RegisterServiceDescriptor(_OUTDOORTEMPERATURE)

@@ -1,4 +1,4 @@
-// python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. outdoor_temperature_historical.proto
+// python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. outdoor_temperature_prediction.proto
 
 syntax = "proto3";
 
