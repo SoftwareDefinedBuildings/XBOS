@@ -120,7 +120,7 @@ def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
     if duration <= 0:
-        return None, "invalid request, window is negative, zero"
+        return None, "invalid request, window is negative or zero"
     if request.start <0 or request.end <0:
         return None, "invalid request, negative dates"
     if request.end > int((time.time()+_ONE_DAY_IN_SECONDS)*1e9):
