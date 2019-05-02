@@ -75,9 +75,9 @@ def get_from_csv(start, end, key, uuid, price_type,all_tariffs_utilities_dfs):
         utc_timestamps.append(index)
 
         if price_type == "ENERGY":
-            prices.append(round(row['customer_energy_charge']+row['pdp_non_event_energy_credit']+row['pdp_event_energy_charge'], 5))
+            prices.append(round(row['customer_energy_charge']+row['pdp_non_event_energy_credit']+row['pdp_event_energy_charge'], 2))
         elif price_type == "DEMAND":
-            prices.append(round(row['customer_demand_charge_season']+row['pdp_non_event_demand_credit']+row['customer_demand_charge_tou'], 5))
+            prices.append(round(row['customer_demand_charge_season']+row['pdp_non_event_demand_credit']+row['customer_demand_charge_tou'], 2))
 
     return pd.DataFrame(data=prices, columns=[uuid], index=utc_timestamps)
 
@@ -153,7 +153,7 @@ def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
     datetime_start = datetime.datetime.utcfromtimestamp(int(request.start/1e9- request.start/1e9%3600)).replace(tzinfo=pytz.utc)
     datetime_req_start = datetime.datetime.utcfromtimestamp(int(request.start/1e9)).replace(tzinfo=pytz.utc)
 
-    if datetime_end < csv_end_date:
+    if datetime_end <= csv_end_date:
         df = get_from_csv(datetime_start, datetime_end, key, uuid, request.price_type.upper(),all_tariffs_utilities_dfs)
     elif datetime_start >= csv_end_date:
         df = get_from_pymortar(datetime_start, datetime_end, uuid, pymortar_client)
@@ -302,7 +302,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
                 df = pd.read_csv(PRICE_DATA_PATH / ("prices_01012017_040172019/" + tariff + ".csv"), index_col=[0], parse_dates=False)
                 df = df.fillna(0)
                 df.index = pd.to_datetime(df.index)
-                df = df.tz_localize("US/Pacific",nonexistent='shift_forward' ,ambiguous=False)
+                df = df.tz_localize("US/Pacific",nonexistent='shift_forward' ,ambiguous=False).tz_convert(pytz.utc)
                 self.all_tariffs_utilities_dfs[tariff]= df
         self.all_tariffs_utilities = price_pb2.AllTariffUtilityReply(tariffs_utilities=tariffs_utilities)
 
