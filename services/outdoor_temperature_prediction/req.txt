@@ -5,3 +5,4 @@ numpy==1.16.0
 PyYAML==3.13
 xbos_services_utils3 <= 0.0.10dev
 pytz == 2018.9
+requests <=2.18.4
