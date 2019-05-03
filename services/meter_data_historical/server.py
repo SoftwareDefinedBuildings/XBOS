@@ -20,22 +20,28 @@ import os
 METER_DATA_HOST_ADDRESS = os.environ["METER_DATA_HISTORICAL_HOST_ADDRESS"]
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-def get_meter_data(self, site, start, end, point_type="Green_Button_Meter", agg='MEAN', window='15m'):
+
+def get_meter_data(pymortar_client, pymortar_objects, site, start, end,
+                   point_type="Green_Button_Meter", agg='MEAN', window='15m'):
     """ Get meter data from pymortar.
 
     Parameters
     ----------
-    site            : str
+    pymortar_client     : pymortar.Client({})
+        Pymortar Client Object.
+    pymortar_objects    : dict
+        Dictionary that maps aggregation values to corresponding pymortar objects.
+    site                : str
         Building name.
-    start           : str
+    start               : str
         Start date - 'YYYY-MM-DDTHH:MM:SSZ'
-    end             : str
+    end                 : str
         End date - 'YYYY-MM-DDTHH:MM:SSZ'
-    point_type      : str
+    point_type          : str
         Type of data, i.e. Green_Button_Meter, Building_Electric_Meter...
-    agg             : str
+    agg                 : str
         Values include MEAN, MAX, MIN, COUNT, SUM, RAW (the temporal window parameter is ignored)
-    window          : str
+    window              : str
         Size of the moving window.
 
     Returns
@@ -45,11 +51,11 @@ def get_meter_data(self, site, start, end, point_type="Green_Button_Meter", agg=
 
     """
 
-    agg = self.pymortar_objects.get(agg, 'ERROR')
+    agg = pymortar_objects.get(agg, 'ERROR')
 
     if agg == 'ERROR':
         raise ValueError('Invalid aggregate type; should be string and in caps; values include: ' +
-                         self.pymortar_objects.keys())
+                         pymortar_objects.keys())
 
     query_meter = "SELECT ?meter WHERE { ?meter rdf:type brick:" + point_type + " };"
 
@@ -88,7 +94,7 @@ def get_meter_data(self, site, start, end, point_type="Green_Button_Meter", agg=
     )
 
     # Fetch data from request
-    response = self.client.fetch(request)
+    response = pymortar_client.fetch(request)
 
     # resp_meter = (url, uuid, sitename)
     resp_meter = response.query('select * from view_meter')
@@ -100,22 +106,43 @@ def get_meter_data(self, site, start, end, point_type="Green_Button_Meter", agg=
 
     return response['data_meter'], map_uuid_sitename
 
-def get_historical_data(self):
+
+def get_historical_data(request, pymortar_client, pymortar_objects):
     """ Get historical meter data using pymortar and create gRPC repsonse object.
+
+    Parameters
+    ----------
+    request                 : gRPC request
+        Contains parameters to fetch data.
+    pymortar_client     : pymortar.Client({})
+        Pymortar Client Object.
+    pymortar_objects    : dict
+        Dictionary that maps aggregation values to corresponding pymortar objects.
 
     Returns
     -------
-    gRPC response
-        List of points containing the datetime and power consumption.
+    gRPC response, str
+        List of points containing the datetime and power consumption; Error Message
 
     """
 
-    df, map_uuid_meter = self.get_meter_data(site=self.building_name, point_type=self.point_type,
-                                             start=self.start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                                             end=self.end_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                                             agg=self.aggregate, window=self.window)
-    if len(df.columns)==2:
-        df[df.columns[0]] = df[df.columns[0]]+df[df.columns[1]]
+    start_time = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    end_time = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
+
+    try:
+        df, map_uuid_meter = get_meter_data(pymortar_client=pymortar_client,
+                                            pymortar_objects=pymortar_objects,
+                                            site=request.building,
+                                            point_type=request.point_type,
+                                            start=start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                                            end=end_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                                            agg=request.aggregate,
+                                            window=request.window)
+    except Exception as e:
+        return None, e
+
+    if len(df.columns) == 2:
+        df[df.columns[0]] = df[df.columns[0]] + df[df.columns[1]]
         df = df.drop(columns=[df.columns[1]])
 
     df.columns = ['power']
@@ -125,40 +152,32 @@ def get_historical_data(self):
         point = meter_data_historical_pb2.MeterDataPoint(time=int(index.timestamp()*1e9), power=row['power'])
         result.append(point)
 
-    return meter_data_historical_pb2.Reply(point=result)
+    return meter_data_historical_pb2.Reply(point=result), None
 
-def get_parameters(self, request):
+
+def get_parameters(request, supported_buildings):
     """ Storing and error checking request parameters.
 
     Parameters
     ----------
-    request     : gRPC request
+    request                 : gRPC request
         Contains parameters to fetch data.
+    supported_buildings     : list(str)
+        List of buildings available.
 
     Returns
     -------
     str
-        Error message.
+        Error message. If no error message, then return None.
 
     """
 
-    # Retrieve parameters from gRPC request object
-    self.building_name = request.building
-    self.point_type = request.point_type
-    self.aggregate = request.aggregate
-    self.window = request.window
-    self.start_time = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
-    self.end_time = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
+    start_time = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    end_time = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
 
-    # List of zones in building
-    building_names_stub = xbos_services_getter.get_building_zone_names_stub()
-    self.supported_buildings = xbos_services_getter.get_buildings(building_names_stub)
-
-    if any(not elem for elem in [self.building_name, self.start_time, self.end_time,
-                                 self.aggregate, self.window, self.point_type]):
+    if any(not elem for elem in [request.building, start_time, end_time,
+                                 request.aggregate, request.window, request.point_type]):
         return "invalid request, empty param(s)"
-
-    # Add error checking for window
 
     if request.start > int(time.time() * 1e9) or request.end > int(time.time() * 1e9):
         return "invalid request, start/end date is in the future"
@@ -166,8 +185,10 @@ def get_parameters(self, request):
     if request.start >= request.end:
         return "invalid request, start date is equal or after end date."
 
-    if request.building not in self.supported_buildings:
+    if request.building not in supported_buildings:
         return "invalid request, building not found; supported buildings: " + str(self.supported_buildings)
+
+    return None
 
     # # Other error checkings
     # duration = utils.get_window_in_sec(request.window)
@@ -198,6 +219,10 @@ class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistor
         # Pymortar client
         self.pymortar_client = pymortar.Client()
 
+        # List of zones in building
+        building_names_stub = xbos_services_getter.get_building_zone_names_stub()
+        self.supported_buildings = xbos_services_getter.get_buildings(building_names_stub)
+
         self.pymortar_objects = {
             'MEAN': pymortar.MEAN,
             'MAX': pymortar.MAX,
@@ -206,7 +231,6 @@ class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistor
             'SUM': pymortar.SUM,
             'RAW': pymortar.RAW
         }
-
 
     def GetMeterDataHistorical(self, request, context):
         """ RPC.
@@ -225,15 +249,15 @@ class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistor
 
         """
 
-        error = get_parameters(request)
+        error = get_parameters(request, self.supported_buildings)
         if error:
             # List of status codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
             return meter_data_historical_pb2.Reply()
         else:
-            result,error = get_historical_data(request,self.pymortar_client,self.pymortar_objects)
-            if not result:
+            result, error = get_historical_data(request, self.pymortar_client, self.pymortar_objects)
+            if error:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
                 return meter_data_historical_pb2.Reply()

@@ -1,8 +1,7 @@
-grpcio==1.12.1
-grpcio-tools==1.12.1
+grpcio==1.20.1
+grpcio-tools==1.16.1
 PyYAML==3.12
-pytz == 2018.3
-pymortar>=0.1.0
+pytz==2019.1
+pymortar==1.0.4
 rfc3339==6.0
-xbos_services_getter>=0.0.2dev9
-
+xbos-services-getter==0.0.2.dev32

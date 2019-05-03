@@ -9,8 +9,8 @@ from pathlib import Path
 import sys
 sys.path.append(str(Path.cwd().parent))
 
-import MeterDataHistorical_pb2
-import MeterDataHistorical_pb2_grpc
+import meter_data_historical_pb2
+import meter_data_historical_pb2_grpc
 
 # CHECK: Change port!
 METER_DATA_HOST_ADDRESS = 'localhost:1234'
@@ -23,7 +23,7 @@ def run():
     # of the code.
     with grpc.insecure_channel(METER_DATA_HOST_ADDRESS) as channel:
 
-        stub = MeterDataHistorical_pb2_grpc.MeterDataHistoricalStub(channel)
+        stub = meter_data_historical_pb2_grpc.MeterDataHistoricalStub(channel)
 
         try:
 
@@ -31,11 +31,11 @@ def run():
             end = 1514786400000000000  # Wednesday, January 1, 2018 06:00:00 AM UTC
             point_type = 'Building_Electric_Meter'
             aggregate = 'RAW'
-            window = '15m' # Will be ignored, since aggregate=RAW
+            window = '15m'  # Will be ignored, since aggregate=RAW
             bldg = "ciee"
 
             # Create gRPC request object
-            request = MeterDataHistorical_pb2.Request(
+            request = meter_data_historical_pb2.Request(
                 building=bldg,
                 start=start,
                 end=end,
