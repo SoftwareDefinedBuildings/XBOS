@@ -1,11 +1,9 @@
-#python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. indoor_temperature_action.proto
-
 from concurrent import futures
 import time
 import grpc
 import pymortar
-import indoor_temperature_action_pb2
-import indoor_temperature_action_pb2_grpc
+import indoor_data_historical_pb2
+import indoor_data_historical_pb2_grpc
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
@@ -14,9 +12,9 @@ from datetime import datetime
 from rfc3339 import rfc3339
 import pytz
 
-HOST_ADDRESS = os.environ["INDOOR_DATA_HISTORICAL_HOST_ADDRESS"]
+INDOOR_DATA_HISTORICAL_HOST_ADDRESS = os.environ["INDOOR_DATA_HISTORICAL_HOST_ADDRESS"]
 
-def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
+def _get_raw_actions(building, zone, pymortar_client, start, end, window_size, aggregation):
     """
     TODO how to deal with windows in which two different actions are performed in given zone.
     Note: GETS THE MAX ACTION IN GIVEN INTERVAL.
@@ -28,7 +26,7 @@ def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
     :param window_size: string with [s, m, h, d] classified in the end. e.g. "1s" for one second.
     :return:
     """
-    thermostat_action_query = """SELECT ?tstat ?status_point WHERE { 
+    thermostat_action_query = """SELECT ?tstat ?status_point WHERE {
             ?tstat rdf:type brick:Thermostat .
             ?tstat bf:controls/bf:feeds <http://xbos.io/ontologies/%s#%s> .
             ?tstat bf:hasPoint ?status_point .
@@ -45,7 +43,7 @@ def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
 
     thermostat_action_stream = pymortar.DataFrame(
         name="thermostat_action",
-        aggregation=pymortar.MAX,
+        aggregation=aggregation,
         window=window_size,
         timeseries=[
             pymortar.Timeseries(
@@ -76,7 +74,7 @@ def _get_raw_actions(building, zone, pymortar_client, start, end, window_size):
 
     return thermostat_action_data, None
 
-def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, window_size):
+def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, window_size, aggregation):
     """
     :param building:
     :param zone:
@@ -103,7 +101,7 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
 
     temperature_stream = pymortar.DataFrame(
         name="temperature",
-        aggregation=pymortar.MEAN,
+        aggregation=aggregation,
         window=window_size,
         timeseries=[
             pymortar.Timeseries(
@@ -134,7 +132,7 @@ def _get_raw_indoor_temperatures(building, zone, pymortar_client, start, end, wi
 
     return temperature_data, None
 
-def _get_raw_temperature_bands(building, zone, pymortar_client, start, end, window_size):
+def _get_raw_temperature_bands(building, zone, pymortar_client, start, end, window_size, aggregation):
     """
     :param building:
     :param zone:
@@ -161,7 +159,7 @@ def _get_raw_temperature_bands(building, zone, pymortar_client, start, end, wind
 
     temperature_bands_stream = pymortar.DataFrame(
         name="temperature_bands",
-        aggregation=pymortar.MEAN,
+        aggregation=aggregation,
         window=window_size,
         timeseries=[
             pymortar.Timeseries(
@@ -194,13 +192,13 @@ def _get_raw_temperature_bands(building, zone, pymortar_client, start, end, wind
 
 def get_raw_temperature_bands(request, pymortar_client):
     """Returns temperature setpoints for the given request or None."""
-    print("received request:", request.building, request.zone, request.start, request.end, request.window)
+    print("received request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
     duration = get_window_in_sec(request.window)
 
     unit = "F" # we will keep the outside temperature in fahrenheit for now.
 
     request_length = [len(request.building), len(request.zone), request.start, request.end,
-                      duration]
+                      duration, request.aggregation]
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
     if request.end > int(time.time() * 1e9):
@@ -212,15 +210,27 @@ def get_raw_temperature_bands(request, pymortar_client):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
 
-    start_datetime = datetime.utcfromtimestamp(
-                                                        float(request.start / 1e9)).replace(tzinfo=pytz.utc)
-    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
-                                                        tzinfo=pytz.utc)
+    pymortar_objects = {
+        'MEAN': pymortar.MEAN,
+        'MAX': pymortar.MAX,
+        'MIN': pymortar.MIN,
+        'COUNT': pymortar.COUNT,
+        'SUM': pymortar.SUM,
+        'RAW': pymortar.RAW
+    }
+
+    agg = pymortar_objects.get(request.aggregation, 'ERROR')
+    if agg == 'ERROR':
+        return None, "invalid aggregation parameter"
+
+    start_datetime = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
 
     temperature_bands_data, err = _get_raw_temperature_bands(request.building, request.zone, pymortar_client,
                                                     start_datetime,
                                                     end_datetime,
-                                                    request.window)
+                                                    request.window,
+                                                    agg)
 
     if temperature_bands_data is None:
         return None, "No data received from database."
@@ -228,21 +238,21 @@ def get_raw_temperature_bands(request, pymortar_client):
     setpoints = []
 
     for index, row in temperature_bands_data.iterrows():
-        setpoints.append(indoor_temperature_action_pb2.Setpoint(time=int(index.timestamp() * 1e9), temperature_low=row.iloc[1], temperature_high=row.iloc[0], unit=unit))
+        setpoints.append(indoor_data_historical_pb2.Setpoint(time=int(index.timestamp() * 1e9), temperature_low=row.iloc[1], temperature_high=row.iloc[0], unit=unit))
 
-    return indoor_temperature_action_pb2.RawTemperatureBandsReply(setpoints=setpoints), None
+    return indoor_data_historical_pb2.RawTemperatureBandsReply(setpoints=setpoints), None
 
 
 # TODO Make sure we don't include NONE values in the returned points.
 def get_raw_indoor_temperatures(request, pymortar_client):
     """Returns temperatures for the given request or None."""
-    print("received temperature request:", request.building, request.zone, request.start, request.end, request.window)
+    print("received temperature request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
     duration = get_window_in_sec(request.window)
 
     unit = "F" # we will keep the outside temperature in fahrenheit for now.
 
     request_length = [len(request.building), len(request.zone), request.start, request.end,
-                      duration]
+                      duration, request.aggregation]
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
     if request.end > int(time.time() * 1e9):
@@ -254,33 +264,45 @@ def get_raw_indoor_temperatures(request, pymortar_client):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
 
-    start_datetime = datetime.utcfromtimestamp(
-                                                        float(request.start / 1e9)).replace(tzinfo=pytz.utc)
-    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
-                                                        tzinfo=pytz.utc)
+    pymortar_objects = {
+        'MEAN': pymortar.MEAN,
+        'MAX': pymortar.MAX,
+        'MIN': pymortar.MIN,
+        'COUNT': pymortar.COUNT,
+        'SUM': pymortar.SUM,
+        'RAW': pymortar.RAW
+    }
+
+    agg = pymortar_objects.get(request.aggregation, 'ERROR')
+    if agg == 'ERROR':
+        return None, "invalid aggregation parameter"
+
+    start_datetime = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
 
     raw_indoor_temperature_data, err = _get_raw_indoor_temperatures(request.building, request.zone, pymortar_client,
                                                     start_datetime,
                                                     end_datetime,
-                                                    request.window)
+                                                    request.window,
+                                                    agg)
     temperatures = []
 
     if raw_indoor_temperature_data is None:
         return None, "No data received from database."
 
     for index, temp in raw_indoor_temperature_data.iterrows():
-        temperatures.append(indoor_temperature_action_pb2.TemperaturePoint(time=int(index.timestamp() * 1e9), temperature=temp, unit=unit))
+        temperatures.append(indoor_data_historical_pb2.TemperaturePoint(time=int(index.timestamp() * 1e9), temperature=temp, unit=unit))
 
-    return indoor_temperature_action_pb2.RawTemperatureReply(temperatures=temperatures), None
+    return indoor_data_historical_pb2.RawTemperatureReply(temperatures=temperatures), None
 
 
 def get_raw_actions(request, pymortar_client):
     """Returns actions for the given request or None."""
-    print("received action request:", request.building, request.zone, request.start, request.end, request.window)
+    print("received action request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
     duration = get_window_in_sec(request.window)
 
     request_length = [len(request.building), len(request.zone), request.start, request.end,
-                      duration]
+                      duration, request.aggregation]
 
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
@@ -293,15 +315,28 @@ def get_raw_actions(request, pymortar_client):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
 
+    pymortar_objects = {
+        'MEAN': pymortar.MEAN,
+        'MAX': pymortar.MAX,
+        'MIN': pymortar.MIN,
+        'COUNT': pymortar.COUNT,
+        'SUM': pymortar.SUM,
+        'RAW': pymortar.RAW
+    }
+
+    agg = pymortar_objects.get(request.aggregation, 'ERROR')
+    if agg == 'ERROR':
+        return None, "invalid aggregation parameter"
+
     start_datetime = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
-    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(
-                                                        tzinfo=pytz.utc)
+    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
 
 
     raw_action_data, err = _get_raw_actions(request.building, request.zone, pymortar_client,
                                                     start_datetime,
                                                     end_datetime,
-                                                    request.window)
+                                                    request.window,
+                                                    agg)
 
     actions = []
 
@@ -309,9 +344,9 @@ def get_raw_actions(request, pymortar_client):
         return None, "No data received from database."
 
     for index, action in raw_action_data.iterrows():
-        actions.append(indoor_temperature_action_pb2.ActionPoint(time=int(index.timestamp() * 1e9), action=action)) # TOOD action being int will be a problem.
+        actions.append(indoor_data_historical_pb2.ActionPoint(time=int(index.timestamp() * 1e9), action=float(action.values))) # TODO action being int will be a problem.
 
-    return indoor_temperature_action_pb2.RawActionReply(actions=actions), None
+    return indoor_data_historical_pb2.RawActionReply(actions=actions), None
 
 def get_window_in_sec(s):
     """Returns number of seconds in a given duration or zero if it fails.
@@ -322,7 +357,7 @@ def get_window_in_sec(s):
     except:
         return 0
 
-class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorTemperatureActionServicer):
+class IndoorDataHistoricalServicer(indoor_data_historical_pb2_grpc.IndoorDataHistoricalServicer):
     def __init__(self):
         self.pymortar_client = pymortar.Client()
 
@@ -337,10 +372,12 @@ class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorT
         if raw_temperatures is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return indoor_temperature_action_pb2.RawTemperatureReply()
-        else:
-            return raw_temperatures
-    
+            return indoor_data_historical_pb2.RawTemperatureReply()
+        elif error is not None:
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(error)
+        return raw_temperatures
+
     def GetRawTemperatureBands(self, request, context):
         """A simple RPC.
 
@@ -351,9 +388,11 @@ class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorT
         if raw_temperature_bands is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return indoor_temperature_action_pb2.RawTemperatureBandsReply()
-        else:
-            return raw_temperature_bands
+            return indoor_data_historical_pb2.RawTemperatureBandsReply()
+        elif error is not None:
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(error)
+        return raw_temperature_bands
 
 
     def GetRawActions(self, request, context):
@@ -366,15 +405,17 @@ class IndoorTemperatureActionServicer(indoor_temperature_action_pb2_grpc.IndoorT
         if raw_actions is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return indoor_temperature_action_pb2.RawActionReply()
-        else:
-            return raw_actions
+            return indoor_data_historical_pb2.RawActionReply()
+        elif error is not None:
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(error)
+        return raw_actions
 
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    indoor_temperature_action_pb2_grpc.add_IndoorTemperatureActionServicer_to_server(IndoorTemperatureActionServicer(), server)
-    server.add_insecure_port(HOST_ADDRESS)
+    indoor_data_historical_pb2_grpc.add_IndoorDataHistoricalServicer_to_server(IndoorDataHistoricalServicer(), server)
+    server.add_insecure_port(INDOOR_DATA_HISTORICAL_HOST_ADDRESS)
     server.start()
     try:
         while True:

@@ -5,7 +5,7 @@ import discomfort_pb2 as discomfort__pb2
 
 
 class DiscomfortStub(object):
-  """The temperature service definition.
+  """The Discomfort service definition.
   """
 
   def __init__(self, channel):
@@ -22,7 +22,7 @@ class DiscomfortStub(object):
 
 
 class DiscomfortServicer(object):
-  """The temperature service definition.
+  """The Discomfort service definition.
   """
 
   def GetLinearDiscomfort(self, request, context):

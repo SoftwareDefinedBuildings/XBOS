@@ -1,24 +1,25 @@
-// python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. temperature_bands.proto
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. temperature_bands.proto
 
 
 syntax = "proto3";
 
 option java_multiple_files = true;
 
-package schedules_historical;
+package temperature_bands;
 
-// The temperature service definition.
+// The temperature bands service definition.
 service Schedules {
   // A simple RPC.
-  //
-  rpc GetComfortband (Request) returns (ScheduleReply) {}
-  rpc GetDoNotExceed (Request) returns (ScheduleReply) {}
+  rpc GetComfortband (ScheduleRequest) returns (ScheduleReply) {}
+  rpc GetDoNotExceed (ScheduleRequest) returns (ScheduleReply) {}
 }
 
 // The request message containing the requested information.
-message Request {
+message ScheduleRequest {
   // The name of the building
   string building = 1;
+
+  // The name of the zone
   string zone = 2;
 
   // The start time in Unixnanoseconds
@@ -49,4 +50,3 @@ message SchedulePoint {
 message ScheduleReply {
   repeated SchedulePoint schedules = 1;
 }
-

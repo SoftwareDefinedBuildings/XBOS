@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -19,6 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='discomfort.proto',
   package='discomfort',
   syntax='proto3',
+  serialized_options=_b('P\001'),
   serialized_pb=_b('\n\x10\x64iscomfort.proto\x12\ndiscomfort\"\x84\x01\n\x07Request\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\x13\n\x0btemperature\x18\x02 \x01(\x01\x12\x17\n\x0ftemperature_low\x18\x03 \x01(\x01\x12\x18\n\x10temperature_high\x18\x04 \x01(\x01\x12\x0c\n\x04unit\x18\x05 \x01(\t\x12\x11\n\toccupancy\x18\x06 \x01(\x01\"\x1f\n\x0f\x44iscomfortPoint\x12\x0c\n\x04\x63ost\x18\x01 \x01(\x01\x32W\n\nDiscomfort\x12I\n\x13GetLinearDiscomfort\x12\x13.discomfort.Request\x1a\x1b.discomfort.DiscomfortPoint\"\x00\x42\x02P\x01\x62\x06proto3')
 )
 
@@ -38,49 +38,49 @@ _REQUEST = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='temperature', full_name='discomfort.Request.temperature', index=1,
       number=2, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='temperature_low', full_name='discomfort.Request.temperature_low', index=2,
       number=3, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='temperature_high', full_name='discomfort.Request.temperature_high', index=3,
       number=4, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='unit', full_name='discomfort.Request.unit', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='occupancy', full_name='discomfort.Request.occupancy', index=5,
       number=6, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -104,14 +104,14 @@ _DISCOMFORTPOINT = _descriptor.Descriptor(
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -140,15 +140,14 @@ DiscomfortPoint = _reflection.GeneratedProtocolMessageType('DiscomfortPoint', (_
 _sym_db.RegisterMessage(DiscomfortPoint)
 
 
-DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('P\001'))
+DESCRIPTOR._options = None
 
 _DISCOMFORT = _descriptor.ServiceDescriptor(
   name='Discomfort',
   full_name='discomfort.Discomfort',
   file=DESCRIPTOR,
   index=0,
-  options=None,
+  serialized_options=None,
   serialized_start=200,
   serialized_end=287,
   methods=[
@@ -159,7 +158,7 @@ _DISCOMFORT = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_REQUEST,
     output_type=_DISCOMFORTPOINT,
-    options=None,
+    serialized_options=None,
   ),
 ])
 _sym_db.RegisterServiceDescriptor(_DISCOMFORT)

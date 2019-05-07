@@ -1,4 +1,4 @@
-// python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. hvac_consumption.proto
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. hvac_consumption.proto
 
 syntax = "proto3";
 
@@ -27,5 +27,3 @@ message ConsumptionPoint {
   double cooling_consumption_stage_two = 5;
   string unit = 6;  // kWh, Wh
 }
-
-

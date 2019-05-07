@@ -315,7 +315,6 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
         elif error is not None:
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
-            return prices
 
         return prices
 

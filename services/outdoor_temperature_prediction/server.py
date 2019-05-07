@@ -216,6 +216,9 @@ def get_temperature(request):
     return outdoor_temperature_prediction_pb2.TemperatureReply(temperatures=temperatures), None
 
 class OutdoorTemperatureServicer(outdoor_temperature_prediction_pb2_grpc.OutdoorTemperatureServicer):
+    def __init__(self):
+        pass
+
     def GetTemperature(self, request, context):
         temperatures,error = get_temperature(request)
         if temperatures is None:
