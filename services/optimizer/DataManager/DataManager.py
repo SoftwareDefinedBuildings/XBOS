@@ -106,7 +106,7 @@ class DataManager:
 
         # outdoor temperatures
         if "outdoor_temperature" not in non_controllable_data:
-            outdoor_historic_stub = xsg.get_outdoor_historic_stub()
+            outdoor_historic_stub = xsg.get_outdoor_temperature_historic_stub()
             self.outdoor_temperature = xsg.get_outdoor_temperature_historic(outdoor_historic_stub, self.building,
                                                                             self.start, self.end, self.window)
         else:
@@ -129,4 +129,3 @@ class DataManager:
                                  for iter_zone in self.zones}
 
         # TODO Prices
-
