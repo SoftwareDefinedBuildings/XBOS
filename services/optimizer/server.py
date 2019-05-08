@@ -66,7 +66,7 @@ class OptimizerServicer(optimizer_pb2_grpc.OptimizerServicer):
             self.supported_zones[bldg] = xsg.get_zones(building_zone_names_stub, bldg)
 
     def GetMPCOptimization(self, request, context):
-        actions, error = get_actions(request,self.all_buildings,self.all_zones)
+        actions, error = get_actions(request,self.supported_buildings,self.supported_zones)
         if actions is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
