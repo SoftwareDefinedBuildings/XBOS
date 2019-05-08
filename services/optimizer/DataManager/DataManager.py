@@ -121,7 +121,7 @@ class DataManager:
         #             outdoor_historic_stub, outdoor_prediction_stub, self.building, self.start, self.end, self.window)
 
         # discomfort channel
-        self.discomfort_stub = xsg.get_discomfort_stub(secure=False)
+        # self.discomfort_stub = xsg.get_discomfort_stub(secure=False)
 
         # HVAC Consumption TODO ERROR CHECK?
         hvac_consumption_stub = xsg.get_hvac_consumption_stub()

@@ -138,8 +138,13 @@ class MPC(DataManager):
                 curr_occupancy = self.occupancy[iter_zone].iloc[root.timestep]
                 average_edge_temperature = (root.temperatures[iter_zone] + child_node.temperatures[iter_zone]) / 2.
 
-                discomfort[iter_zone] = xsg.get_discomfort(
-                    self.discomfort_stub, self.building, average_edge_temperature,
+                # discomfort[iter_zone] = xsg.get_discomfort(
+                #     self.discomfort_stub, self.building, average_edge_temperature,
+                #     curr_comfortband["t_low"], curr_comfortband["t_high"],
+                #     curr_occupancy)
+
+                discomfort[iter_zone] = self.get_discomfort(
+                    self.building, average_edge_temperature,
                     curr_comfortband["t_low"], curr_comfortband["t_high"],
                     curr_occupancy)
 
@@ -210,3 +215,11 @@ class MPC(DataManager):
             return None, "Could not find feasible action."
 
         return self.g.node[root]["best_action"], None
+
+    def get_discomfort(self,building,temperature,temperature_low,temperature_high,occupancy):
+        discomfort = max(
+            temperature_low - temperature,
+            temperature - temperature_high,
+            0
+        )
+        return occupancy * discomfort
