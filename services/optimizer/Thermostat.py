@@ -17,6 +17,7 @@ class Tstat:
             self.error[action] = {"mean": mean, "var": var}
 
     def next_temperature(self, action):
+        self.last_temperature = self.temperature
         self.temperature += 1 * (action == 1) - 1 * (action == 2) + np.random.normal(self.error[action]["mean"],
                                                                                      self.error[action]["var"])
         return self.temperature
