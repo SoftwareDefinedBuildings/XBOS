@@ -16,7 +16,7 @@ from Optimizers.MPC import MPC
 import xbos_services_getter as xsg
 
 
-def get_actions(request):
+def get_actions(request,all_buildings,all_zones):
     """Returns temperatures for a given request or None.
     Guarantees that no Nan values in returned data exist."""
     print("received request:", request.building, request.zones,
@@ -27,12 +27,8 @@ def get_actions(request):
     request_length = [len(request.building), len(request.zones), request.start, request.end,
                       len(request.starting_temperatures), duration]
 
-    building_zone_names_stub = xsg.get_building_zone_names_stub()
-    all_buildings = xsg.get_buildings(building_zone_names_stub)
     if request.building not in all_buildings:
         return None, "invalid request, building name is not valid."
-    all_zones = xsg.get_zones(building_zone_names_stub, request.building)
-
     if any(v == 0 for v in request_length):
         return None, "invalid request, empty params"
     if request.end > int(time.time() * 1e9):
@@ -47,7 +43,7 @@ def get_actions(request):
         return None, "invalid request, only Fahrenheit is supported as a unit."
     if not 0 <= request.lambda_val <= 1:
         return None, "invalid request, lambda_val needs to be between 0 and 1."
-    if not all([iter_zone in request.starting_temperatures for iter_zone in all_zones]):
+    if not all([iter_zone in request.starting_temperatures for iter_zone in all_zones[request.building]]):
         return None, "invalid request, missing zones in starting_temperatures."
 
     d_start = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
@@ -63,10 +59,14 @@ def get_actions(request):
 
 class OptimizerServicer(optimizer_pb2_grpc.OptimizerServicer):
     def __init__(self):
-        pass
+        building_zone_names_stub = xsg.get_building_zone_names_stub()
+        self.supported_buildings = xsg.get_buildings(building_zone_names_stub)
+        self.supported_zones = {}
+        for bldg in self.supported_buildings:
+            self.supported_zones[bldg] = xsg.get_zones(building_zone_names_stub, bldg)
 
     def GetMPCOptimization(self, request, context):
-        actions, error = get_actions(request)
+        actions, error = get_actions(request,self.supported_buildings,self.supported_zones)
         if actions is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)

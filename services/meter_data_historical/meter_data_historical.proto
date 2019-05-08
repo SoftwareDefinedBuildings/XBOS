@@ -39,7 +39,7 @@ message Request {
 // Dataframe structure for meter data
 message MeterDataPoint {
 
-    // UTC - 'YYYY-MM-DDTHH:MM:SSZ'
+    // time in Unixnanoseconds
     int64 time = 1;
 
     // Power consumption

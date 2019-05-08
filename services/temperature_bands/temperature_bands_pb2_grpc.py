@@ -5,7 +5,7 @@ import temperature_bands_pb2 as temperature__bands__pb2
 
 
 class SchedulesStub(object):
-  """The temperature service definition.
+  """The temperature bands service definition.
   """
 
   def __init__(self, channel):
@@ -15,24 +15,23 @@ class SchedulesStub(object):
       channel: A grpc.Channel.
     """
     self.GetComfortband = channel.unary_unary(
-        '/schedules_historical.Schedules/GetComfortband',
-        request_serializer=temperature__bands__pb2.Request.SerializeToString,
+        '/temperature_bands.Schedules/GetComfortband',
+        request_serializer=temperature__bands__pb2.ScheduleRequest.SerializeToString,
         response_deserializer=temperature__bands__pb2.ScheduleReply.FromString,
         )
     self.GetDoNotExceed = channel.unary_unary(
-        '/schedules_historical.Schedules/GetDoNotExceed',
-        request_serializer=temperature__bands__pb2.Request.SerializeToString,
+        '/temperature_bands.Schedules/GetDoNotExceed',
+        request_serializer=temperature__bands__pb2.ScheduleRequest.SerializeToString,
         response_deserializer=temperature__bands__pb2.ScheduleReply.FromString,
         )
 
 
 class SchedulesServicer(object):
-  """The temperature service definition.
+  """The temperature bands service definition.
   """
 
   def GetComfortband(self, request, context):
     """A simple RPC.
-
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
@@ -50,15 +49,15 @@ def add_SchedulesServicer_to_server(servicer, server):
   rpc_method_handlers = {
       'GetComfortband': grpc.unary_unary_rpc_method_handler(
           servicer.GetComfortband,
-          request_deserializer=temperature__bands__pb2.Request.FromString,
+          request_deserializer=temperature__bands__pb2.ScheduleRequest.FromString,
           response_serializer=temperature__bands__pb2.ScheduleReply.SerializeToString,
       ),
       'GetDoNotExceed': grpc.unary_unary_rpc_method_handler(
           servicer.GetDoNotExceed,
-          request_deserializer=temperature__bands__pb2.Request.FromString,
+          request_deserializer=temperature__bands__pb2.ScheduleRequest.FromString,
           response_serializer=temperature__bands__pb2.ScheduleReply.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'schedules_historical.Schedules', rpc_method_handlers)
+      'temperature_bands.Schedules', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

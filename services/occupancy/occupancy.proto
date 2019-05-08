@@ -1,4 +1,4 @@
-// python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. occupancy.proto
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. occupancy.proto
 
 syntax = "proto3";
 
@@ -44,4 +44,3 @@ message OccupancyPoint {
 message OccupancyReply {
   repeated OccupancyPoint occupancies = 1;
 }
-

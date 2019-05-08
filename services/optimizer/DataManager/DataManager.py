@@ -96,7 +96,7 @@ class DataManager:
         if "occupancy" not in non_controllable_data:
             occupancy_stub = xsg.get_occupancy_stub()
             self.occupancy = {
-            iter_zone: xsg.get_occupancy(occupancy_stub, self.building, iter_zone, self.start, self.end, self.window)
+            iter_zone: xsg.get_occupancy(occupancy_stub, self.building, iter_zone, self.start, self.end, self.window)["occupancy"]
             for iter_zone in self.zones}
         else:
             self.occupancy = non_controllable_data["occupancy"]
@@ -106,9 +106,9 @@ class DataManager:
 
         # outdoor temperatures
         if "outdoor_temperature" not in non_controllable_data:
-            outdoor_historic_stub = xsg.get_outdoor_historic_stub()
+            outdoor_historic_stub = xsg.get_outdoor_temperature_historic_stub()
             self.outdoor_temperature = xsg.get_outdoor_temperature_historic(outdoor_historic_stub, self.building,
-                                                                            self.start, self.end, self.window)
+                                                                            self.start, self.end, self.window)["temperature"]
         else:
             self.outdoor_temperature = non_controllable_data["outdoor_temperature"]
         err = xsg.check_data(self.outdoor_temperature, start, end, window, check_nan=True)
@@ -129,4 +129,3 @@ class DataManager:
                                  for iter_zone in self.zones}
 
         # TODO Prices
-

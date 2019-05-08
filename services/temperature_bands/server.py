@@ -329,8 +329,11 @@ class SchedulesServicer(temperature_bands_pb2_grpc.SchedulesServicer):
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
             return temperature_bands_pb2.ScheduleReply()
-        else:
-            return comfortband
+        elif error is not None:
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(error)
+
+        return comfortband
 
     def GetDoNotExceed(self, request, context):
         """A simple RPC.
@@ -343,8 +346,11 @@ class SchedulesServicer(temperature_bands_pb2_grpc.SchedulesServicer):
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
             return temperature_bands_pb2.ScheduleReply()
-        else:
-            return do_not_exceed
+        elif error is not None:
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(error)
+
+        return do_not_exceed
 
 
 def serve():
@@ -361,4 +367,3 @@ def serve():
 
 if __name__ == '__main__':
     serve()
-

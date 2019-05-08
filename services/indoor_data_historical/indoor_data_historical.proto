@@ -1,11 +1,13 @@
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. indoor_data_historical.proto
+
 syntax = "proto3";
 
 option java_multiple_files = true;
 
-package indoor_temperature_action;
+package indoor_data_historical;
 
 // The temperature service definition.
-service IndoorTemperatureAction {
+service IndoorDataHistorical {
   // A simple RPC.
   //
   // Sends the outside temperature for a given building, within a duration (start, end), and a requested window
@@ -30,6 +32,9 @@ message Request {
   // The frequency/duration window (e.g., 10s, 15m, 1h)
   // Supported units are: d,h,m,s
   string window = 5;
+
+  // Type of data aggregation - RAW, MEAN, MAX...
+  string aggregation = 6;
 }
 
 // Setpoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
@@ -67,4 +72,3 @@ message RawActionReply {
 message RawTemperatureBandsReply {
   repeated Setpoint setpoints = 1;
 }
-

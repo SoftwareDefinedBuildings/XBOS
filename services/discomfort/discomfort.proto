@@ -1,4 +1,4 @@
-// python2.7 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. discomfort.proto
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. discomfort.proto
 
 syntax = "proto3";
 
@@ -29,5 +29,3 @@ message Request {
 message DiscomfortPoint {
   double cost = 1;
 }
-
-
