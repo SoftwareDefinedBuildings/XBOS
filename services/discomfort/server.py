@@ -50,7 +50,7 @@ class DiscomfortServicer(discomfort_pb2_grpc.DiscomfortServicer):
 
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
     discomfort_pb2_grpc.add_DiscomfortServicer_to_server(DiscomfortServicer(), server)
     server.add_insecure_port(HOST_ADDRESS)
     server.start()
