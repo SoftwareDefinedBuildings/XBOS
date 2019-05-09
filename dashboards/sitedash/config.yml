@@ -1,4 +1,4 @@
-agent: '172.17.0.1:28589'
+agent: '127.0.0.1:28589'
 entity: '$BW2_DEFAULT_ENTITY'
 site: 'ciee'
 hod: 'xbos/hod'
