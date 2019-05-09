@@ -3,6 +3,7 @@
 *.pyc
 services_data/
 model_results/
+.idea/
 
 *.bw2bind.log
 .pyc
