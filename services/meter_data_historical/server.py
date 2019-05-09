@@ -141,6 +141,9 @@ def get_historical_data(request, pymortar_client, pymortar_objects):
     except Exception as e:
         return None, e
 
+    if df is None:
+        return None, "did not fetch meter data from pymortar for this query" 
+
     if len(df.columns) == 2:
         df[df.columns[0]] = df[df.columns[0]] + df[df.columns[1]]
         df = df.drop(columns=[df.columns[1]])
