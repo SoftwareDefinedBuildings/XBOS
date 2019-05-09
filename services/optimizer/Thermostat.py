@@ -10,7 +10,7 @@ class Tstat:
         self.indoor_temperature_prediction_stub = xsg.get_indoor_temperature_prediction_stub()
         self.error = {}
         for action in [xsg.NO_ACTION, xsg.HEATING_ACTION, xsg.COOLING_ACTION]:
-            mean, var = xsg.get_indoor_temperature_prediction_error(self.indoor_temperature_prediction_stub,
+            mean, var, unit = xsg.get_indoor_temperature_prediction_error(self.indoor_temperature_prediction_stub,
                                                                     building,
                                                                     zone,
                                                                     action)
@@ -23,7 +23,7 @@ class Tstat:
         return self.temperature
 
     def reset(self, temperature, last_temperature=None):
-        self.temperature = temperaure
+        self.temperature = temperature
         self.last_temperature = last_temperature
 
 class OutdoorThermostats:
