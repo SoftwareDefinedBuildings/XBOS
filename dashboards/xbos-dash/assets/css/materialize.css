@@ -11,7 +11,8 @@
 .mode-title {
   text-align: center;
   font-size: 1.15rem !important;
-  margin: 12px 0 6px 0 !important;
+  line-height: 150%;
+  margin: 6px 0 6px 0 !important;
 }
 
 .mte {

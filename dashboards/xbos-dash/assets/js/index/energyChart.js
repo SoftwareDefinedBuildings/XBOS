@@ -105,7 +105,7 @@ $(document).ready(function() {
 			case 1: 
 				return "All";
 			case 2: //date format example: Jun 2018
-				return "2018";
+				return "2019";
 				// return id[1];
 			case 3: //date format example: Jun 01, 2018
 				return id[0] + " " + id[2];
@@ -156,7 +156,7 @@ $(document).ready(function() {
 						"type": "GET",
 						"dataType": "json",
 						"success": function(d) {
-							energyChart.addSeries(processDD(d, "2018", true));
+							energyChart.addSeries(processDD(d, "2019", true));
 							energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
 						}
 					});
@@ -203,7 +203,7 @@ $(document).ready(function() {
 			"text": 'Energy Usage'
 		},
 		"subtitle": {
-			"text": "2018",
+			"text": "2019",
 			"style": {
 				"fontSize": 18
 			}

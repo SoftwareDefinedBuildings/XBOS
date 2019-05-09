@@ -40,7 +40,8 @@ $(document).ready(function() {
 	});
 
 	$("#modal-continue").click(function() {
-		sessionStorage.setItem("modesToGroup", "areh");
+		sessionStorage.setItem("modes", zoneArr);
+		sessionStorage.setItem("groupname", "");
 		location.href = "schedule-epochs.html";
 	});
 

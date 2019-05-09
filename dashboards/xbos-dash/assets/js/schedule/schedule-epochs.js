@@ -1,16 +1,19 @@
 $(document).ready(function() {
 	M.AutoInit();
-	var passAlong = sessionStorage.getItem("modesToGroup");
-	sessionStorage.setItem("modesToGroup", passAlong);
-	var cname = $("#groupName").prop("value");
-	if (passAlong) {
-		console.log(passAlong);
-		console.log(cname);
-		if (cname != passAlong) {
-			$("#groupName").prop("value", passAlong);
-			sessionStorage.setItem("modesToGroup", "");
-		}
+	var passAlong = sessionStorage.getItem("groupname");
+	if (!passAlong) {
+		$("#groupName").prop("value", "Untitled");
 	}
+	// sessionStorage.setItem("modesToGroup", passAlong);
+	// var cname = $("#groupName").prop("value");
+	// if (passAlong) {
+	// 	console.log(passAlong);
+	// 	console.log(cname);
+	// 	if (cname != passAlong) {
+	// 		$("#groupName").prop("value", passAlong);
+	// 		sessionStorage.setItem("modesToGroup", "");
+	// 	}
+	// }
 	// let c = ["pink", "deep-orange", "green", "teal", "blue", "deep-purple", "tp-blue"];
 	let pipvals = ["12am", "2am", "4am", "6am", "8am", "10am", "12pm", "2pm", "4pm", "6pm", "8pm", "10pm", "12am"];
 	let piprev = ["12am", "10pm", "8pm", "6pm", "4pm", "2pm", "12pm", "10am", "8am", "6am", "4am", "2am", "12am"];
