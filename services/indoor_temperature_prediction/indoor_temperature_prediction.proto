@@ -1,0 +1,62 @@
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. indoor_temperature_prediction.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package thermal_model;
+
+// The temperature service definition.
+service IndoorTemperaturePrediction {
+  // A simple RPC.
+  //
+  // Predicts indoor temperatures.
+  rpc GetSecondOrderPrediction (SecondOrderPredictionRequest) returns (PredictedTemperatureReply) {};
+
+  // Get errors associated with prediction
+  rpc GetSecondOrderError (ErrorRequest) returns (ErrorReply) {}
+}
+
+// The request message containing the requested information.
+message SecondOrderPredictionRequest {
+  // The name of the building
+  string building = 1;
+  string zone = 2;
+
+  // The curent time in Unixnanoseconds
+  int64 current_time = 3;
+
+  int64 action = 4;
+
+  double indoor_temperature = 5;
+  double previous_indoor_temperature = 6;
+  double outside_temperature = 7;
+  map<string, double> other_zone_temperatures = 8;
+
+  string temperature_unit = 9;
+}
+
+message ErrorRequest{
+  string building = 1;
+  string zone = 2;
+  int64 action = 3;
+  int64 start = 4;
+  int64 end = 5;
+  string unit = 6;
+}
+
+
+// TemperaturePoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
+message PredictedTemperatureReply {
+  int64 time = 1;
+  double temperature = 2;
+  string unit = 3;
+}
+
+
+message ErrorReply{
+  double mean = 1;
+  double var = 2;
+  string unit = 3;
+}
+

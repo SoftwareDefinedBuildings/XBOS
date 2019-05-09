@@ -1,0 +1,38 @@
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. building_zone_names.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package building_zone_names;
+
+// The temperature service definition.
+service BuildingZoneNames {
+  // A simple RPC.
+  //
+  // Gets all building names.
+  rpc GetBuildings (BuildingRequest) returns (Reply) {}
+  rpc GetZones (ZoneRequest) returns (Reply) {}
+}
+
+// The request message to get all the building names.
+message BuildingRequest {
+}
+
+// The request message to get the Zone names for a given building.
+message ZoneRequest {
+  string building = 1;
+}
+
+// Name point
+message NamePoint {
+  string name = 1;
+}
+
+// The response message containing the buildings
+message Reply {
+  repeated NamePoint names = 1;
+}
+
+
+

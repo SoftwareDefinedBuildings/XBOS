@@ -1,0 +1,29 @@
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. hvac_consumption.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package hvac_consumption;
+
+// The temperature service definition.
+service ConsumptionHVAC {
+  // A simple RPC.
+  rpc GetConsumption (Request) returns (ConsumptionPoint) {}
+}
+
+// The request message containing the requested information.
+message Request {
+  string building = 1; // The name of the building
+  string zone = 2; // zone name
+}
+
+
+message ConsumptionPoint {
+  double heating_consumption = 1;
+  double cooling_consumption = 2;
+  double ventilation_consumption = 3;
+  double heating_consumption_stage_two = 4;
+  double cooling_consumption_stage_two = 5;
+  string unit = 6;  // kWh, Wh
+}

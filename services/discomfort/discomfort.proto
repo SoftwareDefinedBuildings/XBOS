@@ -1,0 +1,31 @@
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. discomfort.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package discomfort;
+
+// The Discomfort service definition.
+service Discomfort {
+  // A simple RPC.
+  //
+  // Gets the linear discomfort from the edges of the given temperature band. (Euclidean distance to comfortband.)
+  rpc GetLinearDiscomfort (Request) returns (DiscomfortPoint) {}
+}
+
+// The request message containing the requested information.
+message Request {
+  string building = 1;
+  double temperature = 2;
+  double temperature_low = 3;
+  double temperature_high = 4;
+  string unit = 5;
+  double occupancy = 6;
+}
+
+
+// DiscomfortPoint are represented as a float (e.g., 0.3).
+message DiscomfortPoint {
+  double cost = 1;
+}

@@ -1,2 +1,11 @@
 .DS_Store
 .ipynb_checkpoints
+*.pyc
+services_data/
+model_results/
+.idea/
+
+*.bw2bind.log
+.pyc
+.pymortartoken.json
+__pycache__
