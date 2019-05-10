@@ -46,7 +46,7 @@ class Node:
         return "{0}-{1}".format(self.timestep, self.temperatures)
 
 
-class MPC(DataManager):
+class MPC:
     """MPC Optimizer.
     No Demand Charges and Two Stage actions implemented."""
 
@@ -63,7 +63,15 @@ class MPC(DataManager):
         :param lambda_val: (float) lambda value for opjective function
 
         """
-        super().__init__(building, zones, start, end, window, non_controllable_data)
+        self.DataManager = DataManager(building, zones, start, end, window, non_controllable_data)
+        self.start = start
+        self.unix_start = start.timestamp() * 1e9
+        self.end = end
+        self.unix_end = end.timestamp() * 1e9
+        self.window = window  # timedelta string
+
+        self.building = building
+        self.zones = zones
 
         self.lambda_val = lambda_val
         self.debug = debug
@@ -73,7 +81,7 @@ class MPC(DataManager):
     def safety_check(self, node):
         for iter_zone in self.zones:
             curr_temperature = node.temperatures[iter_zone]
-            curr_safety = self.do_not_exceed[iter_zone].iloc[node.timestep]
+            curr_safety = self.DataManager.do_not_exceed[iter_zone].iloc[node.timestep]
             if not (curr_safety["t_low"] <= curr_temperature <= curr_safety["t_high"]):
                 return False
         return True
@@ -134,18 +142,17 @@ class MPC(DataManager):
             # get discomfort across edge
             discomfort = {}
             for iter_zone in self.zones:
-                curr_comfortband = self.comfortband[iter_zone].iloc[root.timestep]
-                curr_occupancy = self.occupancy[iter_zone].iloc[root.timestep]
+                curr_comfortband = self.DataManager.comfortband[iter_zone].iloc[root.timestep]
+                curr_occupancy = self.DataManager.occupancy[iter_zone].iloc[root.timestep]
                 average_edge_temperature = (root.temperatures[iter_zone] + child_node.temperatures[iter_zone]) / 2.
 
-                discomfort[iter_zone] = xsg.get_discomfort(
-                    self.discomfort_stub, self.building, average_edge_temperature,
+                discomfort[iter_zone] = self.DataManager.get_discomfort(self.building, average_edge_temperature,
                     curr_comfortband["t_low"], curr_comfortband["t_high"],
                     curr_occupancy)
 
             # Get consumption across edge
             price = 1  # self.prices.iloc[root.timestep] TODO also add right unit conversion, and duration
-            consumption_cost = {self.zones[i]: price * self.hvac_consumption[self.zones[i]][action[i]]
+            consumption_cost = {self.zones[i]: price * self.DataManager.hvac_consumption[self.zones[i]][action[i]]
                                 for i in range(len(self.zones))}
 
             # add edge
@@ -210,3 +217,23 @@ class MPC(DataManager):
             return None, "Could not find feasible action."
 
         return self.g.node[root]["best_action"], None
+
+
+if __name__ == "__main__":
+    # mini Test
+    start = datetime.datetime(year=2019, month=1, day=1).replace(tzinfo=pytz.utc)
+    end = start + datetime.timedelta(hours=4)
+
+    bldg = "avenal-animal-shelter"
+    zone = "hvac_zone_shelter_corridor"
+    window = "15m"
+
+    op = MPC(bldg, [zone], start, end, window, 0.995)
+
+    # Run shortest path
+    root = Node({zone: 75}, 0)
+
+    root = op.shortest_path(root)
+    print(root)
+    print(op.g.node[root]["best_action"])
+    print(op.reconstruct_path(root))

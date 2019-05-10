@@ -129,3 +129,11 @@ class DataManager:
                                  for iter_zone in self.zones}
 
         # TODO Prices
+
+    def get_discomfort(self, building, temperature, temperature_low, temperature_high, occupancy):
+        discomfort = max(
+            temperature_low - temperature,
+            temperature - temperature_high,
+            0
+        )
+        return occupancy * discomfort
