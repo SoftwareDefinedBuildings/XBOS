@@ -59,9 +59,9 @@ class BuildingEnv(gym.Env):
         low_bound = [32] * 2 * len(
             self.zones)  # we could use parametric temperature bounds... for now we will give negative inft reward
         low_bound += [-100] # for outside temperature we cannot gurantee much
-        
+
         high_bound = [100] * 2 * len(self.zones)
-        low_bound += [200]  # for outside temperature we cannot gurantee much
+        high_bound += [200]  # for outside temperature we cannot gurantee much
 
         low_bound += [0] * (self.num_timesteps + 1)  # total timesteps plus the final timestep which wont be executed
         high_bound += [1] * (self.num_timesteps + 1)  # total timesteps plus the final timestep which wont be executed
