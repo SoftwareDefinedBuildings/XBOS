@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>XBOS Dashboard</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel='shortcut icon' type='image/png' href='./assets/img/favicon2.png'/>
+	<link rel='stylesheet' href='./assets/css/materialize.css'>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+<body id="body" class="">
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper tp-blue">
+				<a href="#" class="brand-logo">XBOS-DR</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="schedule-groupings.html">Schedule</a></li>
+					<li><a href="report.html">Report</a></li>
+					<li><a href="DR.html">DR</a></li>
+					<li class="active"><a href="#">Settings</a></li>
+					<li><a id="weatherLI">73</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<div id="DRBG" class="row center-align z-depth-1 scale-transition scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
+
+	<div class="container">
+		<span style="font-size: 36px;">Notifications</span>
+		<div id="notif-card" class="section z-depth-1">
+			<div class="row valign-wrapper">
+				<div class="col s4">
+					<label>
+						<input id="dayBefore" type="checkbox" class="filled-in" />
+						<span>1 day before confirmed events</span>
+					</label>
+				</div>
+				<div class="col s4">
+					<label>
+						<input id="5DFC" type="checkbox" class="filled-in" />
+						<span>5-day forecasts</span>
+					</label>
+				</div>
+				<div class="col s4 right-align">
+					<a id="save-notifs" class="waves-effect waves-light btn blue">save<i class="material-icons right">save</i></a>
+				</div>
+			</div>
+			<h6 style="padding-left: 12px;">Enter email addresses to subscribe to notifications. *Note: subscriptions must be confirmed.</h6>
+			<div class="row valign-wrapper">
+				<div class="input-field col s5">
+					<input class="validate" type="email">
+					<label>Email Address</label>
+				</div>
+				<div class="col tiny"></div>
+				<div class="input-field col s5">
+					<input class="validate" type="email">
+					<label>Email Address</label>
+				</div>
+				<div class="col s1-7 center-align">
+					<a id='add-emails' class="btn-floating waves-effect waves-light btn"><i class="material-icons">add</i></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="assets/js/lib/materialize.js"></script>
+<script type="text/javascript" src="assets/js/lib/jquery.js"></script>
+<script type="text/javascript" src="assets/js/script.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
+<script type="text/javascript" src="assets/js/settings/settings.js"></script>
+
+</html>
