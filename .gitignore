@@ -6,6 +6,5 @@ model_results/
 .idea/
 
 *.bw2bind.log
-.pyc
 .pymortartoken.json
 __pycache__

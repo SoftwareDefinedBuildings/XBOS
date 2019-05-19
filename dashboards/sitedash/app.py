@@ -25,6 +25,11 @@ from xbos import get_client
 from xbos.services import hod, mdal
 import config
 
+SITE = 'ciee'
+# SITE = 'jesse-turner-center'
+# SITE = 'orinda-community-center'
+# SITE = 'jesse-turner-center'
+OURTZ=pytz.timezone("US/Pacific")
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -152,7 +157,7 @@ def power_summary(last, bucketsize):
         print zip(times,readings)
         df = pd.DataFrame(readings,index=times)
         df.columns = ['readings']
-        return df.dropna().to_json()
+        return df.fillna("myNullVal").to_json()
 
     query = {
         "Composition": ["meter"],
@@ -178,7 +183,7 @@ def power_summary(last, bucketsize):
         return
     else:
         resp['df'].columns = ['readings']
-        return resp['df'].dropna().to_json()
+        return resp['df'].fillna("myNullVal").to_json()
     return "ok"
 
 @app.route('/api/energy/<last>/in/<bucketsize>')
@@ -222,7 +227,7 @@ def energy_summary(last, bucketsize):
                 times.append(config.TZ.localize(t1_))
                 readings.append(resp['df']['readings'].sum())
         df = pd.DataFrame(readings,index=times)
-        return df.dropna().to_json()
+        return df.fillna("myNullVal").to_json()
     print start_date
     query = {
         "Composition": ["meter"],
@@ -249,7 +254,7 @@ def energy_summary(last, bucketsize):
     else:
         resp['df'].columns = ['readings'] # in k@
         resp['df']['readings']/=4. # divide by 4 to get 15min (kW) -> kWh
-        return resp['df'].dropna().resample(bucketsize).apply(sum).to_json()
+        return resp['df'].fillna("myNullVal").resample(bucketsize).apply(sum).to_json()
     return "ok"
 
 @app.route('/api/power')
@@ -431,7 +436,7 @@ def setpoint_today():
     for k in resp.keys():
         v = resp.pop(k)
         zone = zones.get(k,k)
-        v = v[v.dropna().diff() != 0]
+        v = v[v.fillna("myNullVal").diff() != 0]
         resp[zone] = json.loads(v.to_json()) # this is the way to solve weird serialization issues
 
     query["Composition"] = ["cooling"]
@@ -444,7 +449,7 @@ def setpoint_today():
     for k in cool_resp.keys():
         v = cool_resp.pop(k)
         zone = zones.get(k,k)
-        v = v[v.dropna().diff() != 0]
+        v = v[v.fillna("myNullVal").diff() != 0]
         v = json.loads(v.to_json())
         for ts, hsp in resp[zone].items():
             csp = v.get(ts)

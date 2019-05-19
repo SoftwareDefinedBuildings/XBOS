@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>XBOS Dashboard</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel='shortcut icon' type='image/png' href='./assets/img/favicon2.png'/>
+	<link rel='stylesheet' href='./assets/css/materialize.css'>
+	<link rel='stylesheet' href='./assets/css/nouislider.css'>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+<body id="body" class="">
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper tp-blue">
+				<a href="#" class="brand-logo" style="padding-left: 15px;">XBOS-DR</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="index.html">Home</a></li>
+					<li class="active"><a href="#">Schedule</a></li>
+					<li><a href="report.html">Report</a></li>
+					<li><a href="DR.html">DR</a></li>
+					<li><a href="settings.html">Settings</a></li>
+					<li><a id="weatherLI">73</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper materialize-red lighten-2">
+				<div class="col s12">
+					<a href="schedule-groupings.html" class="breadcrumb" style="padding-left: 15px;">Groupings</a>
+					<a href="#" class="breadcrumb">Modes</a>
+				</div>
+			</div>
+		</nav>
+	</div>
+
+	<div id="DRBG" class="row center-align z-depth-1 scale-transition pulse scale-out" style="line-height: 2.25;"><a id="DRTXT" href="html/DR.html">"</a></div>
+
+	<div class="container" style="padding-bottom: 100px;">
+		<div class="row valign-wrapper">
+			<div class="col s3 left-align">
+				<span id="location" style="font-size: 36px;">Group Name:</span>
+			</div>
+			<div class="col s9">
+				<input id="groupName" type="text" maxlength="25" class="my-input mode-title" style="text-align: left; font-size: 20px;" />
+			</div>
+		</div>
+		
+		<h5>Select a mode then click an epoch to assign the mode...</h5>
+		
+		<div class="fixed-action-btn" style="left: 23px; right: auto;">
+			<a href="schedule-groupings.html" class="btn-floating tooltipped btn-large blue" data-position="top" data-tooltip="Modes">
+				<i class="large material-icons">arrow_back</i>
+			</a>
+		</div>
+		
+		<div class="fixed-action-btn">
+			<a id="apply-modes" class="btn-floating btn-large waves-effect waves-light scale-transition">
+				<i class="large material-icons">save</i>
+			</a>
+		</div>
+		
+		<div id="mode-div" class="row center-align valign-wrapper">
+			<div class="col s2 emode mode-card ot-blue">
+				<h4 id="mode0" class="mte">Closed</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
+				</div>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2 emode tp-yellow mode-card">
+				<h4 id="mode1" class="mte">Open</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
+				</div>
+			</div>
+			<div class="col sml"></div>
+			<div style="background-color: #cab2d6;" class="col s2 emode mode-card">
+				<h4 id="mode2" class="mte">Do Not Exceed</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
+				</div>
+			</div>
+			<div class="col sml"></div>
+			<div style="background-color: #fccde5;" class="col s2 emode mode-card">
+				<h4 id="mode2" class="mte">Other</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
+				</div>
+			</div>
+			<div class="col sml"></div>
+			<div style="background-color: #b2df8a;" class="col s2 emode mode-card">
+				<h4 id="mode2" class="mte">Other</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
+				</div>
+			</div>
+			<div class="col sml"></div>
+			<div style="background-color: #b2df8a;" class="col s2 emode mode-card">
+				<h4 id="mode2" class="mte">Other</h4>
+				<div class="setpnt-div">
+					<div class="red lighten-2 spl etab">55</div>
+					<div class="blue lighten-2 spr etab">55</div>
+				</div>
+			</div>
+		</div>
+		<div id="mode-radios" class="row valign-wrapper center-align">
+			<div class="col s2">
+				<label>
+					<input id="mc0" class="with-gap" name="group1" type="radio" checked/>
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc1" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc2" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc3" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc4" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+			<div class="col sml"></div>
+			<div class="col s2">
+				<label>
+					<input id="mc4" class="with-gap" name="group1" type="radio" />
+					<span style="margin-left: 6px;"></span>
+				</label>
+			</div>
+		</div>
+		<div class="row valign-wrapper center-align">
+			<div class="col s10-5">
+				<h5>When <i>editing</i>, click a nob to remove it and click between nobs to add one.</h5>
+			</div>
+			<div class="col s1-5">
+				<a id="sched-btn" class="btn waves-effect waves-light scale-transition">
+					<i class="large material-icons right">edit</i>edit
+				</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="valign-wrapper" style="padding-top: 40px;">
+				<div class="col s1 right-align"><span class="sli-day">Sun</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 right-align"><span class="sli-day">Mon</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 right-align"><span class="sli-day">Tue</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 right-align"><span class="sli-day">Wed</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 right-align"><span class="sli-day">Thu</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 right-align"><span class="sli-day">Fri</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 right-align"><span class="sli-day">Sat</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="row"></div>
+			<div class="valign-wrapper">
+				<div class="col s1 right-align"><span class="sli-day">DR</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+			<div class="valign-wrapper">
+				<div class="col s1 right-align"><span class="sli-day">Holiday</span></div>
+				<div class="col s11"><div class="sched-slider"></div></div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="assets/js/lib/materialize.js"></script>
+<script type="text/javascript" src="assets/js/lib/jquery.js"></script>
+<script type="text/javascript" src="assets/js/script.js"></script>
+<script type="text/javascript" src="assets/js/lib/nouislider.js"></script>
+<script type="text/javascript" src="assets/js/schedule/schedule-epochs.js"></script>
+
+</html>

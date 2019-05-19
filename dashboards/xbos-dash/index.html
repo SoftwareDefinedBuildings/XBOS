@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>XBOS Dashboard</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel='shortcut icon' type='image/png' href='./assets/img/favicon2.png'/>
+	<link rel='stylesheet' href='./assets/css/materialize.css'>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+<body id="body">
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper tp-blue">
+				<a href="#" class="brand-logo">XBOS-DR</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a href="schedule-groupings.html">Schedule</a></li>
+					<li><a href="report.html">Report</a></li>
+					<li><a href="DR.html">DR</a></li>
+					<li><a href="settings.html">Settings</a></li>
+					<li><a id="weatherLI">73</a></li>
+				</ul>
+			</div>
+			<div id="DRBG" class="row center-align pulse z-depth-1 scale-transition scale-out" style="line-height: 2;">
+				<a id="DRTXT" href="html/DR.html">"</a>
+			</div>
+		</nav>
+	</div>
+
+	<div class="row" id="DRROW" style="display: none;"></div>
+	<div class="row"></div>
+	<div class="row"></div>
+
+	<div class="container">
+		<div id="forecast-loader">
+			<div class="progress"><div class="indeterminate"></div></div>
+			<div class="row"></div><div class="row"></div>
+		</div>
+		<div id="forecast-row" style="justify-content: space-between;"></div>
+		<div class="row"></div>
+		<div class="row"></div>
+
+		<div class="section z-depth-1">
+			<div class="row valign-wrapper">
+				<div class="col s6">
+					<div id="energyChart"></div>
+					<div class="row center-align">
+						<div class="col s4"><a id="goToAll" class="scale-transition scale-out waves-effect waves-light btn">Years</a></div>
+						<div class="col s4"><a id="energyChartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom</a></div>
+						<div class="col s4"><a id="goToToday" class="scale-transition scale-out waves-effect waves-light btn">Today</a></div>
+					</div>
+				</div>
+				<div class="col s6">
+					<div id="tempChart"></div>
+					<div class="center-align"><a id="tempChartReset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom</a></div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row"></div>
+		<div class="row"></div>
+
+		<div class="section z-depth-1">
+			<div class="row valign-wrapper">
+				<div id="hvac-loader" class="col s2 center-align scale-transition scale-out" style="display: none;">
+					<div class="preloader-wrapper big active">
+						<div class="spinner-layer spinner-red">
+							<div class="circle-clipper left">
+								<div class="circle"></div>
+							</div>
+							<div class="gap-patch">
+								<div class="circle"></div>
+							</div>
+							<div class="circle-clipper right">
+								<div class="circle"></div>
+							</div>
+						</div>
+
+						<div class="spinner-layer spinner-blue">
+							<div class="circle-clipper left">
+								<div class="circle"></div>
+							</div>
+							<div class="gap-patch">
+								<div class="circle"></div>
+							</div>
+							<div class="circle-clipper right">
+								<div class="circle"></div>
+							</div>
+						</div>
+
+						<div class="spinner-layer spinner-yellow">
+							<div class="circle-clipper left">
+								<div class="circle"></div>
+							</div>
+							<div class="gap-patch">
+								<div class="circle"></div>
+							</div>
+							<div class="circle-clipper right">
+								<div class="circle"></div>
+							</div>
+						</div>
+
+						<div class="spinner-layer spinner-green">
+							<div class="circle-clipper left">
+								<div class="circle"></div>
+							</div>
+							<div class="gap-patch">
+								<div class="circle"></div>
+							</div>
+							<div class="circle-clipper right">
+								<div class="circle"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="hvac" class="col s2-5 scale-transition scale-out center-align">
+					<a id="tempbtn" class="waves-effect waves-light btn scale-transition"><i id="tempicon" class="material-icons right">edit</i>edit</a>
+					<div class="row"></div>
+					<ul id="hvac-dropdown" class="collapsible expandable">
+						<li>
+							<div class="collapsible-header red lighten-1"><i class="material-icons">whatshot</i>Heating</div>
+							<div id="heatingDiv" class="collapsible-body red lighten-5"></div>
+						</li>
+						<li>
+							<div class="collapsible-header blue lighten-1"><i class="material-icons">ac_unit</i>Cooling</div>
+							<div id="coolingDiv" class="collapsible-body blue lighten-5"></div>
+						</li>
+						<li>
+							<div class="collapsible-header grey"><i class="material-icons">block</i>Off</div>
+							<div id="offDiv" class="collapsible-body grey lighten-3"></div>
+						</li>
+						<!-- <li>
+							<div class="collapsible-header yellow lighten-1"><i class="material-icons">lightbulb_outline</i>Lighting</div>
+							<div id="lightingDiv" class="collapsible-body yellow lighten-5"></div>
+						</li> -->
+					</ul>
+				</div>
+				<div class="col s9-5">
+					<div id="floorplan"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="assets/js/lib/highcharts.js"></script>
+<script type="text/javascript" src="assets/js/lib/materialize.js"></script>
+<script type="text/javascript" src="assets/js/lib/drilldown.js"></script>
+<script type="text/javascript" src="assets/js/lib/jquery.js"></script>
+<script type="text/javascript" src="assets/js/lib/highcharts-more.js"></script>
+<script type="text/javascript" src="assets/js/index/energyChart.js"></script>
+<script type="text/javascript" src="assets/js/index/tempChart.js"></script>
+<script type="text/javascript" src="assets/js/index/floorplan.js"></script>
+<script type="text/javascript" src="assets/js/index/index.js"></script>
+<script type="text/javascript" src="assets/js/script.js"></script>
+<script type="text/javascript" src="assets/js/index/drePred.js"></script>
+
+</html>
