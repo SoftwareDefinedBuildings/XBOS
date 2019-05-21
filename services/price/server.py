@@ -169,6 +169,7 @@ def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
     df = df.dropna()
     if df.empty:
         return price_pb2.PriceReply(prices=[]), "empty data frame"
+    df = df.reset_index().drop_duplicates(subset='index', keep='first').set_index('index')
     interpolated_df = smart_resample(df, datetime_req_start, datetime_end, duration, "ffill")
     prices = []
     for index, row in interpolated_df.iterrows():
