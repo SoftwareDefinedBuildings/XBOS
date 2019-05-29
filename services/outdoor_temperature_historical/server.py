@@ -136,7 +136,7 @@ def get_temperature(request, pymortar_client):
 
     final_data, err = _get_temperature(request.building, d_start, d_end, duration, pymortar_client)
     if final_data is None:
-        return outdoor_temperature_historical_pb2.TemperaturePoint(), err
+        return [outdoor_temperature_historical_pb2.TemperaturePoint()], err
 
     temperatures = []
 

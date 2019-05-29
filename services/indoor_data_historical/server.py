@@ -234,7 +234,7 @@ def get_raw_temperature_bands(request, pymortar_client):
                                                     agg)
 
     if temperature_bands_data is None:
-        return None, "No data received from database."
+        return [indoor_data_historical_pb2.Setpoint()], "No data received from database."
 
     setpoints = []
 
@@ -288,7 +288,7 @@ def get_raw_indoor_temperatures(request, pymortar_client):
     temperatures = []
 
     if raw_indoor_temperature_data is None:
-        return None, "No data received from database."
+        return [indoor_data_historical_pb2.TemperaturePoint()], "No data received from database."
 
     for index, temp in raw_indoor_temperature_data.iterrows():
         temperatures.append(indoor_data_historical_pb2.TemperaturePoint(time=int(index.timestamp() * 1e9), temperature=temp, unit=unit))
@@ -341,7 +341,7 @@ def get_raw_actions(request, pymortar_client):
     actions = []
 
     if raw_action_data is None:
-        return None, "No data received from database."
+        return [indoor_data_historical_pb2.ActionPoint()], "No data received from database."
 
     for index, action in raw_action_data.iterrows():
         actions.append(indoor_data_historical_pb2.ActionPoint(time=int(index.timestamp() * 1e9), action=float(action.values))) # TODO action being int will be a problem.

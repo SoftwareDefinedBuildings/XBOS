@@ -233,9 +233,9 @@ def get_comfortband(request):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
     if request.unit != "F":
-        return None, "only fahrenheit support."
+        return None, "invalid request, only fahrenheit support."
     if 60*60 % duration != 0:
-        return None, "window is not a factor of an hour (60(min)*60(sec)%window != 0). e.g. 15min is a factor but 25 is not."
+        return None, "invalid request, window is not a factor of an hour (60(min)*60(sec)%window != 0). e.g. 15min is a factor but 25 is not."
 
     start_datetime = datetime.datetime.utcfromtimestamp(
                                            float(request.start / 1e9)).replace(tzinfo=pytz.utc)
@@ -246,7 +246,7 @@ def get_comfortband(request):
 
     comfortband, err = get_band(request.building, request.zone, start_datetime, end_datetime, duration, "comfortband")
     if comfortband is None:
-        return temperature_bands_pb2.SchedulePoint(), err
+        return [temperature_bands_pb2.SchedulePoint()], err
 
     comfortband_time = time.time()
 
@@ -288,9 +288,9 @@ def get_do_not_exceed(request):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
     if request.unit != "F":
-        return None, "only fahrenheit support."
+        return None, "invalid request, only fahrenheit support."
     if 60*60 % duration != 0:
-        return None, "window is not a factor of an hour (60(min)*60(sec)%window != 0). e.g. 15min is a factor but 25 is not."
+        return None, "invalid request, window is not a factor of an hour (60(min)*60(sec)%window != 0). e.g. 15min is a factor but 25 is not."
 
 
     start_datetime = datetime.datetime.utcfromtimestamp(
@@ -300,7 +300,7 @@ def get_do_not_exceed(request):
 
     do_not_exceed, err = get_band(request.building, request.zone, start_datetime, end_datetime, duration, "do_not_exceed")
     if do_not_exceed is None:
-        return temperature_bands_pb2.SchedulePoint(), err
+        return [temperature_bands_pb2.SchedulePoint()], err
 
     grpc_do_not_exceed = []
     for index, row in do_not_exceed.iterrows():
