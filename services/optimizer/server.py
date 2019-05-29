@@ -99,8 +99,8 @@ def get_simulation(request,all_buildings,all_zones):
         return None, "invalid request, NotImplementedError: variables num_runs not working. Set num_runs to 1."
 
 
-    # somewhat inefficient...
-    tstats = {iter_zone: Tstat(request.building, iter_zone, 75) for iter_zone in request.zones}
+    # somewhat inefficient since this could be stored as class var...
+    tstats = {iter_zone: Tstat(request.building, iter_zone, request.starting_temperatures[iter_zone]) for iter_zone in request.zones}
 
     Simulation_instance = SimulationMPC(request.building, request.zones, request.lambda_val,
                                         d_start, d_end, request.forecasting_horizon, request.window, tstats)
