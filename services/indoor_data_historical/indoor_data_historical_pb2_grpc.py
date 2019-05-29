@@ -14,20 +14,20 @@ class IndoorDataHistoricalStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.GetRawTemperatures = channel.unary_unary(
+    self.GetRawTemperatures = channel.unary_stream(
         '/indoor_data_historical.IndoorDataHistorical/GetRawTemperatures',
         request_serializer=indoor__data__historical__pb2.Request.SerializeToString,
-        response_deserializer=indoor__data__historical__pb2.RawTemperatureReply.FromString,
+        response_deserializer=indoor__data__historical__pb2.TemperaturePoint.FromString,
         )
-    self.GetRawActions = channel.unary_unary(
+    self.GetRawActions = channel.unary_stream(
         '/indoor_data_historical.IndoorDataHistorical/GetRawActions',
         request_serializer=indoor__data__historical__pb2.Request.SerializeToString,
-        response_deserializer=indoor__data__historical__pb2.RawActionReply.FromString,
+        response_deserializer=indoor__data__historical__pb2.ActionPoint.FromString,
         )
-    self.GetRawTemperatureBands = channel.unary_unary(
+    self.GetRawTemperatureBands = channel.unary_stream(
         '/indoor_data_historical.IndoorDataHistorical/GetRawTemperatureBands',
         request_serializer=indoor__data__historical__pb2.Request.SerializeToString,
-        response_deserializer=indoor__data__historical__pb2.RawTemperatureBandsReply.FromString,
+        response_deserializer=indoor__data__historical__pb2.Setpoint.FromString,
         )
 
 
@@ -62,20 +62,20 @@ class IndoorDataHistoricalServicer(object):
 
 def add_IndoorDataHistoricalServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'GetRawTemperatures': grpc.unary_unary_rpc_method_handler(
+      'GetRawTemperatures': grpc.unary_stream_rpc_method_handler(
           servicer.GetRawTemperatures,
           request_deserializer=indoor__data__historical__pb2.Request.FromString,
-          response_serializer=indoor__data__historical__pb2.RawTemperatureReply.SerializeToString,
+          response_serializer=indoor__data__historical__pb2.TemperaturePoint.SerializeToString,
       ),
-      'GetRawActions': grpc.unary_unary_rpc_method_handler(
+      'GetRawActions': grpc.unary_stream_rpc_method_handler(
           servicer.GetRawActions,
           request_deserializer=indoor__data__historical__pb2.Request.FromString,
-          response_serializer=indoor__data__historical__pb2.RawActionReply.SerializeToString,
+          response_serializer=indoor__data__historical__pb2.ActionPoint.SerializeToString,
       ),
-      'GetRawTemperatureBands': grpc.unary_unary_rpc_method_handler(
+      'GetRawTemperatureBands': grpc.unary_stream_rpc_method_handler(
           servicer.GetRawTemperatureBands,
           request_deserializer=indoor__data__historical__pb2.Request.FromString,
-          response_serializer=indoor__data__historical__pb2.RawTemperatureBandsReply.SerializeToString,
+          response_serializer=indoor__data__historical__pb2.Setpoint.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

@@ -155,7 +155,7 @@ def get_historical_data(request, pymortar_client, pymortar_objects):
         point = meter_data_historical_pb2.MeterDataPoint(time=int(index.timestamp()*1e9), power=row['power'])
         result.append(point)
 
-    return meter_data_historical_pb2.Reply(point=result), None
+    return result, None
 
 
 def get_parameters(request, supported_buildings):
@@ -257,14 +257,16 @@ class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistor
             # List of status codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return meter_data_historical_pb2.Reply()
+            return meter_data_historical_pb2.MeterDataPoint()
         else:
             result, error = get_historical_data(request, self.pymortar_client, self.pymortar_objects)
             if error:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
-                return meter_data_historical_pb2.Reply()
-        return result
+                return meter_data_historical_pb2.MeterDataPoint()
+
+        for point in result:
+            yield point
 
 
 def serve():

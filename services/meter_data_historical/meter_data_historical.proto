@@ -9,7 +9,7 @@ service MeterDataHistorical {
 
     // A simple RPC.
     // An error is returned if there is no meter data for the given request.
-    rpc GetMeterDataHistorical (Request) returns (Reply) {}
+    rpc GetMeterDataHistorical (Request) returns (stream MeterDataPoint) {}
 
 }
 
@@ -44,13 +44,5 @@ message MeterDataPoint {
 
     // Power consumption
     double power = 2;
-
-}
-
-// The response message containing meter data
-message Reply {
-
-    // Dataframe containing meter data
-    repeated MeterDataPoint point = 1;
 
 }

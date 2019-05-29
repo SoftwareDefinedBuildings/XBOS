@@ -190,6 +190,7 @@ def _get_raw_temperature_bands(building, zone, pymortar_client, start, end, wind
 
     return temperature_bands_data, None
 
+
 def get_raw_temperature_bands(request, pymortar_client):
     """Returns temperature setpoints for the given request or None."""
     print("received request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
@@ -240,8 +241,7 @@ def get_raw_temperature_bands(request, pymortar_client):
     for index, row in temperature_bands_data.iterrows():
         setpoints.append(indoor_data_historical_pb2.Setpoint(time=int(index.timestamp() * 1e9), temperature_low=row.iloc[1], temperature_high=row.iloc[0], unit=unit))
 
-    return indoor_data_historical_pb2.RawTemperatureBandsReply(setpoints=setpoints), None
-
+    return setpoints, None
 
 # TODO Make sure we don't include NONE values in the returned points.
 def get_raw_indoor_temperatures(request, pymortar_client):
@@ -293,7 +293,7 @@ def get_raw_indoor_temperatures(request, pymortar_client):
     for index, temp in raw_indoor_temperature_data.iterrows():
         temperatures.append(indoor_data_historical_pb2.TemperaturePoint(time=int(index.timestamp() * 1e9), temperature=temp, unit=unit))
 
-    return indoor_data_historical_pb2.RawTemperatureReply(temperatures=temperatures), None
+    return temperatures, None
 
 
 def get_raw_actions(request, pymortar_client):
@@ -346,7 +346,7 @@ def get_raw_actions(request, pymortar_client):
     for index, action in raw_action_data.iterrows():
         actions.append(indoor_data_historical_pb2.ActionPoint(time=int(index.timestamp() * 1e9), action=float(action.values))) # TODO action being int will be a problem.
 
-    return indoor_data_historical_pb2.RawActionReply(actions=actions), None
+    return actions, None
 
 def get_window_in_sec(s):
     """Returns number of seconds in a given duration or zero if it fails.
@@ -361,7 +361,6 @@ class IndoorDataHistoricalServicer(indoor_data_historical_pb2_grpc.IndoorDataHis
     def __init__(self):
         self.pymortar_client = pymortar.Client()
 
-
     def GetRawTemperatures(self, request, context):
         """A simple RPC.
 
@@ -372,11 +371,13 @@ class IndoorDataHistoricalServicer(indoor_data_historical_pb2_grpc.IndoorDataHis
         if raw_temperatures is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return indoor_data_historical_pb2.RawTemperatureReply()
+            return indoor_data_historical_pb2.TemperaturePoint()
         elif error is not None:
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
-        return raw_temperatures
+
+        for temperature in raw_temperatures:
+            yield temperature
 
     def GetRawTemperatureBands(self, request, context):
         """A simple RPC.
@@ -388,12 +389,13 @@ class IndoorDataHistoricalServicer(indoor_data_historical_pb2_grpc.IndoorDataHis
         if raw_temperature_bands is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return indoor_data_historical_pb2.RawTemperatureBandsReply()
+            return indoor_data_historical_pb2.Setpoint()
         elif error is not None:
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
-        return raw_temperature_bands
 
+        for setpoint in raw_temperature_bands:
+            yield setpoint
 
     def GetRawActions(self, request, context):
         """A simple RPC.
@@ -405,11 +407,13 @@ class IndoorDataHistoricalServicer(indoor_data_historical_pb2_grpc.IndoorDataHis
         if raw_actions is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return indoor_data_historical_pb2.RawActionReply()
+            return indoor_data_historical_pb2.ActionPoint()
         elif error is not None:
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
-        return raw_actions
+
+        for action in raw_actions:
+            yield action
 
 
 def serve():
