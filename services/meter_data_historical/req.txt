@@ -4,4 +4,4 @@ PyYAML==3.12
 pytz==2019.1
 pymortar==1.0.4
 rfc3339==6.0
-xbos-services-getter==0.0.2.dev32
+xbos-services-getter>=0.0.2.dev32
