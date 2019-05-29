@@ -12,8 +12,8 @@ service Price {
   // A simple RPC.
   //
   // Sends a price for a utility, tariff, type, duration (start, end), and window
-  // A PriceReply with an empty name is returned if there are no prices for the given request
-  rpc GetPrice (PriceRequest) returns (PriceReply) {}
+  // An empty PricePoint is returned if there are no prices for the given request
+  rpc GetPrice (PriceRequest) returns (stream PricePoint) {}
   // Sends all available tariffs and utilities
   rpc GetAllTariffsAndUtilities (Empty) returns (AllTariffUtilityReply) {}
   // Sends a tariff and utility for the specified building name
@@ -61,11 +61,6 @@ message PriceRequest {
   // Supported units are: h,m,s
   // max is 1 hour (1h, 60m, 3600s)
   string window = 6;
-}
-
-// The response message containing the prices
-message PriceReply {
-  repeated PricePoint prices = 1;
 }
 
 // The response message containing all tariffs and utilities

@@ -14,10 +14,10 @@ class OutdoorTemperatureStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.GetTemperature = channel.unary_unary(
+    self.GetTemperature = channel.unary_stream(
         '/outdoor_temperature_historical.OutdoorTemperature/GetTemperature',
         request_serializer=outdoor__temperature__historical__pb2.TemperatureRequest.SerializeToString,
-        response_deserializer=outdoor__temperature__historical__pb2.TemperatureReply.FromString,
+        response_deserializer=outdoor__temperature__historical__pb2.TemperaturePoint.FromString,
         )
 
 
@@ -38,10 +38,10 @@ class OutdoorTemperatureServicer(object):
 
 def add_OutdoorTemperatureServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'GetTemperature': grpc.unary_unary_rpc_method_handler(
+      'GetTemperature': grpc.unary_stream_rpc_method_handler(
           servicer.GetTemperature,
           request_deserializer=outdoor__temperature__historical__pb2.TemperatureRequest.FromString,
-          response_serializer=outdoor__temperature__historical__pb2.TemperatureReply.SerializeToString,
+          response_serializer=outdoor__temperature__historical__pb2.TemperaturePoint.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

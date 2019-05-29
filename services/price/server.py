@@ -163,19 +163,23 @@ def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
         df = pd.concat([df_csv, df_pymortar])
 
     if df is None:
-        return price_pb2.PriceReply(prices=[]), "did not fetch data"
+        return [price_pb2.PricePoint()], "did not fetch data"
+        # return price_pb2.PriceReply(prices=[]), "did not fetch data"
     if df.empty:
-        return price_pb2.PriceReply(prices=[]), "empty data frame"
+        return [price_pb2.PricePoint()], "empty data frame"
+        # return price_pb2.PriceReply(prices=[]), "empty data frame"
     df = df.dropna()
     if df.empty:
-        return price_pb2.PriceReply(prices=[]), "empty data frame"
+        return [price_pb2.PricePoint()], "empty data frame"
+        # return price_pb2.PriceReply(prices=[]), "empty data frame"
     df = df.reset_index().drop_duplicates(subset='index', keep='first').set_index('index')
     interpolated_df = smart_resample(df, datetime_req_start, datetime_end, duration, "ffill")
     prices = []
     for index, row in interpolated_df.iterrows():
         prices.append(price_pb2.PricePoint(time=int(index.timestamp() * 1e9),price=row[uuid],unit=unit,window=request.window))
 
-    return price_pb2.PriceReply(prices=prices), None
+    # return price_pb2.PriceReply(prices=prices), None
+    return prices, None
 
 def smart_resample(data, start, end, window, method):
     """
@@ -312,12 +316,12 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
         if prices is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return price_pb2.PriceReply()
+            return price_pb2.PricePoint()
         elif error is not None:
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
-
-        return prices
+        for price in prices:
+            yield price
 
     def GetTariffAndUtility(self, request, context):
         tariff_utility_reply,error = get_tariff_and_utility(request, self.price_mapping)

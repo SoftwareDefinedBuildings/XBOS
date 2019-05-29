@@ -14,10 +14,10 @@ class PriceStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.GetPrice = channel.unary_unary(
+    self.GetPrice = channel.unary_stream(
         '/price.Price/GetPrice',
         request_serializer=price__pb2.PriceRequest.SerializeToString,
-        response_deserializer=price__pb2.PriceReply.FromString,
+        response_deserializer=price__pb2.PricePoint.FromString,
         )
     self.GetAllTariffsAndUtilities = channel.unary_unary(
         '/price.Price/GetAllTariffsAndUtilities',
@@ -39,7 +39,7 @@ class PriceServicer(object):
     """A simple RPC.
 
     Sends a price for a utility, tariff, type, duration (start, end), and window
-    A PriceReply with an empty name is returned if there are no prices for the given request
+    An empty PricePoint is returned if there are no prices for the given request
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
@@ -62,10 +62,10 @@ class PriceServicer(object):
 
 def add_PriceServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'GetPrice': grpc.unary_unary_rpc_method_handler(
+      'GetPrice': grpc.unary_stream_rpc_method_handler(
           servicer.GetPrice,
           request_deserializer=price__pb2.PriceRequest.FromString,
-          response_serializer=price__pb2.PriceReply.SerializeToString,
+          response_serializer=price__pb2.PricePoint.SerializeToString,
       ),
       'GetAllTariffsAndUtilities': grpc.unary_unary_rpc_method_handler(
           servicer.GetAllTariffsAndUtilities,

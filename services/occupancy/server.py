@@ -165,8 +165,8 @@ def get_occupancy(request):
     for idx, row in all_occupancy.iteritems():
         grpc_occ.append(
             occupancy_pb2.OccupancyPoint(time=int(idx.timestamp() * 1e9), occupancy=row))
-
-    return occupancy_pb2.OccupancyReply(occupancies=grpc_occ), None
+    return grpc_occ , None
+    # return occupancy_pb2.OccupancyReply(occupancies=grpc_occ), None
 
 
 class OccupancyServicer(occupancy_pb2_grpc.OccupancyServicer):
@@ -183,9 +183,10 @@ class OccupancyServicer(occupancy_pb2_grpc.OccupancyServicer):
         if occupancy is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return occupancy_pb2.OccupancyReply()
+            return occupancy_pb2.OccupancyPoint()
         else:
-            return occupancy
+            for occ in occupancy:
+                yield occ
 
 
 def serve():

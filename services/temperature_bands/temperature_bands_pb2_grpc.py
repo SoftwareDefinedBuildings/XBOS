@@ -14,15 +14,15 @@ class SchedulesStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.GetComfortband = channel.unary_unary(
+    self.GetComfortband = channel.unary_stream(
         '/temperature_bands.Schedules/GetComfortband',
         request_serializer=temperature__bands__pb2.ScheduleRequest.SerializeToString,
-        response_deserializer=temperature__bands__pb2.ScheduleReply.FromString,
+        response_deserializer=temperature__bands__pb2.SchedulePoint.FromString,
         )
-    self.GetDoNotExceed = channel.unary_unary(
+    self.GetDoNotExceed = channel.unary_stream(
         '/temperature_bands.Schedules/GetDoNotExceed',
         request_serializer=temperature__bands__pb2.ScheduleRequest.SerializeToString,
-        response_deserializer=temperature__bands__pb2.ScheduleReply.FromString,
+        response_deserializer=temperature__bands__pb2.SchedulePoint.FromString,
         )
 
 
@@ -47,15 +47,15 @@ class SchedulesServicer(object):
 
 def add_SchedulesServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'GetComfortband': grpc.unary_unary_rpc_method_handler(
+      'GetComfortband': grpc.unary_stream_rpc_method_handler(
           servicer.GetComfortband,
           request_deserializer=temperature__bands__pb2.ScheduleRequest.FromString,
-          response_serializer=temperature__bands__pb2.ScheduleReply.SerializeToString,
+          response_serializer=temperature__bands__pb2.SchedulePoint.SerializeToString,
       ),
-      'GetDoNotExceed': grpc.unary_unary_rpc_method_handler(
+      'GetDoNotExceed': grpc.unary_stream_rpc_method_handler(
           servicer.GetDoNotExceed,
           request_deserializer=temperature__bands__pb2.ScheduleRequest.FromString,
-          response_serializer=temperature__bands__pb2.ScheduleReply.SerializeToString,
+          response_serializer=temperature__bands__pb2.SchedulePoint.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

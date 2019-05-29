@@ -136,14 +136,14 @@ def get_temperature(request, pymortar_client):
 
     final_data, err = _get_temperature(request.building, d_start, d_end, duration, pymortar_client)
     if final_data is None:
-        return None, err
+        return outdoor_temperature_historical_pb2.TemperaturePoint(), err
 
     temperatures = []
 
     for index, temp in final_data.iteritems():
         temperatures.append(outdoor_temperature_historical_pb2.TemperaturePoint(time=int(index.timestamp() * 1e9), temperature=temp, unit=unit))
-
-    return outdoor_temperature_historical_pb2.TemperatureReply(temperatures=temperatures), None
+    return temperatures, None
+    # return outdoor_temperature_historical_pb2.TemperatureReply(temperatures=temperatures), None
 
 def get_window_in_sec(s):
     """Returns number of seconds in a given duration or zero if it fails.
@@ -163,13 +163,15 @@ class OutdoorTemperatureServicer(outdoor_temperature_historical_pb2_grpc.Outdoor
         if temperatures is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return outdoor_temperature_historical_pb2.TemperatureReply()
+            return outdoor_temperature_historical_pb2.TemperaturePoint()
         elif error is not None:
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
-            return temperatures
-        else:
-            return temperatures
+        for temp in temperatures:
+            yield temp
+        #     return temperatures
+        # else:
+        #     return temperatures
 
 
 def serve():
