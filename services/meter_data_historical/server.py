@@ -263,8 +263,6 @@ class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistor
             if error:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
-                # return meter_data_historical_pb2.MeterDataPoint()
-            if result is None:
                 result = [meter_data_historical_pb2.MeterDataPoint()]
 
         for point in result:
