@@ -8,7 +8,7 @@ class Tstat:
     STANDARD_VAR = 1
     STANDARD_UNIT = "F"
 
-    def __init__(self, building, zone, temperature, last_temperature=None, suppress_not_enough_data_error=True):
+    def __init__(self, building, zone, temperature, last_temperature=None, suppress_not_enough_data_error=False):
         self.temperature = temperature
         self.last_temperature = last_temperature
         self.indoor_temperature_prediction_stub = xsg.get_indoor_temperature_prediction_stub()
