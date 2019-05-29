@@ -142,7 +142,7 @@ def get_historical_data(request, pymortar_client, pymortar_objects):
         return None, e
 
     if df is None:
-        return None, "did not fetch meter data from pymortar for this query" 
+        return None, "did not fetch meter data from pymortar for this query"
 
     if len(df.columns) == 2:
         df[df.columns[0]] = df[df.columns[0]] + df[df.columns[1]]
@@ -189,7 +189,7 @@ def get_parameters(request, supported_buildings):
         return "invalid request, start date is equal or after end date."
 
     if request.building not in supported_buildings:
-        return "invalid request, building not found; supported buildings: " + str(self.supported_buildings)
+        return "invalid request, building not found; supported buildings: " + str(supported_buildings)
 
     return None
 
@@ -263,7 +263,9 @@ class MeterDataHistoricalServicer(meter_data_historical_pb2_grpc.MeterDataHistor
             if error:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
-                return meter_data_historical_pb2.MeterDataPoint()
+                # return meter_data_historical_pb2.MeterDataPoint()
+            if result is None:
+                result = [meter_data_historical_pb2.MeterDataPoint()]
 
         for point in result:
             yield point
