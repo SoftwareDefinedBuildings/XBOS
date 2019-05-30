@@ -62,7 +62,8 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
     :param num_forecasts: (int) The number of forecasts which contributed to the RMSE.
     :param forecasting_horizon: (int seconds) The horizon used when forecasting.
     :param check_data: If True (default), will enforce that training data has the right start/end times (recommended).
-    If False, the times may be different (allows model to be created faster by using previously prepocessed data)
+        If False, then data will be returns if it exists;
+        However, the times may be different (allows model to be created faster by using previously prepocessed data)
         – useful when prototyping since the preprocessing does not have to be repeated.
     :return: trained sklearn.LinearRegression object.
 
@@ -74,6 +75,7 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
     # TODO add check that the data we have stored is at least as long and has right prediction_window
     # TODO Fix how we deal with nan's. some zone temperatures might get set to -1.
     loaded_data = load_data(building, zone)
+    print(loaded_data)
     err = xsg.check_data(loaded_data, start, end, prediction_window, check_nan=True)
     if (loaded_data is None) or ((err is not None) and check_data):
         processed_data, err = pid.get_preprocessed_data(building, zone, start, end, prediction_window, raw_data_granularity)
@@ -81,8 +83,8 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
             return None, None, err
         store_data(processed_data, building, zone)
     else:
-        processed_data = loaded_data
-
+        processed_data = loaded_data.loc[start:end]
+    print("YO")
     # add features
     processed_data = pid.indoor_data_cleaning(processed_data)
     if is_second_order:
