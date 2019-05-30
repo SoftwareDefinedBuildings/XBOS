@@ -1,4 +1,7 @@
+**Note: this version of XBOS uses the older blockchain-based BOSSWAVE system. Development on a newer version of XBOS based on WAVE + WAVEMQ is available at https://github.com/gtfierro/xboswave**
+
 # XBOS
+
 The eXtensible Building Operating System
 
 Documentation available at https://docs.xbos.io/
