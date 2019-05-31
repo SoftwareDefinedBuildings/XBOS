@@ -526,23 +526,23 @@ class IndoorDataHistoricalServicer(indoor_data_historical_pb2_grpc.IndoorDataHis
         for action in raw_actions:
             yield action
 
-        def GetRawModes(self, request, context):
-            """A simple RPC.
+    def GetRawModes(self, request, context):
+        """A simple RPC.
 
-             Sends the indoor mode for a given HVAC Zone, within a timeframe (start, end), and a requested window
-             An error is returned if there are no modes for the given request
-             """
-            raw_modes, error = get_raw_modes(request, self.pymortar_client)
-            if raw_modes is None:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details(error)
-                return indoor_data_historical_pb2.ModePoint()
-            elif error is not None:
-                context.set_code(grpc.StatusCode.UNAVAILABLE)
-                context.set_details(error)
+         Sends the indoor mode for a given HVAC Zone, within a timeframe (start, end), and a requested window
+         An error is returned if there are no modes for the given request
+         """
+        raw_modes, error = get_raw_modes(request, self.pymortar_client)
+        if raw_modes is None:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details(error)
+            return indoor_data_historical_pb2.ModePoint()
+        elif error is not None:
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(error)
 
-            for mode in raw_modes:
-                yield mode
+        for mode in raw_modes:
+            yield mode
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
