@@ -5,7 +5,7 @@ import numpy as np
 Note, set STANDARD fields to specify error for actions which do not have enough data for valid predictions. """
 class Tstat:
     STANDARD_MEAN = 0
-    STANDARD_VAR = 1
+    STANDARD_VAR = 0
     STANDARD_UNIT = "F"
 
     def __init__(self, building, zone, temperature, last_temperature=None, suppress_not_enough_data_error=False):
