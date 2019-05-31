@@ -14,6 +14,64 @@ import pytz
 
 INDOOR_DATA_HISTORICAL_HOST_ADDRESS = os.environ["INDOOR_DATA_HISTORICAL_HOST_ADDRESS"]
 
+def _get_raw_modes(building, zone, pymortar_client, start, end, window_size, aggregation):
+    """
+    :param building:
+    :param zone:
+    :param pymortar_client:
+    :param start: datetime, timezone aware, rfc3339
+    :param end: datetime, timezone aware, rfc3339
+    :param window_size: string with [s, m, h, d] classified in the end. e.g. "1s" for one second.
+    :return:
+    """
+    thermostat_mode_query = """SELECT ?tstat ?status_point WHERE {
+            ?tstat rdf:type brick:Thermostat .
+            ?tstat bf:controls/bf:feeds <http://xbos.io/ontologies/%s#%s> .
+            ?tstat bf:hasPoint ?status_point .
+            ?status_point rdf:type brick:Thermostat_Mode_Command .
+        };""" % (building, zone)
+
+    # resp = pymortar_client.qualify([thermostat_mode_query]) Needed to get list of all sites
+
+    thermostat_mode_view = pymortar.View(
+        name="thermostat_mode_view",
+        sites=[building],
+        definition=thermostat_mode_query,
+    )
+
+    thermostat_mode_stream = pymortar.DataFrame(
+        name="thermostat_mode",
+        aggregation=aggregation,
+        window=window_size,
+        timeseries=[
+            pymortar.Timeseries(
+                view="thermostat_mode_view",
+                dataVars=["?status_point"],
+            )
+        ]
+    )
+
+    request = pymortar.FetchRequest(
+        sites=[building],
+        views=[
+            thermostat_mode_view
+        ],
+        dataFrames=[
+            thermostat_mode_stream
+        ],
+        time=pymortar.TimeParams(
+            start=rfc3339(start),
+            end=rfc3339(end),
+        )
+    )
+
+    thermostat_mode_data = pymortar_client.fetch(request)["thermostat_mode"]
+
+    if thermostat_mode_data is None:
+        return None, "did not fetch data from pymortar with query: %s" % thermostat_mode_query
+
+    return thermostat_mode_data, None
+
 def _get_raw_actions(building, zone, pymortar_client, start, end, window_size, aggregation):
     """
     TODO how to deal with windows in which two different actions are performed in given zone.
@@ -295,6 +353,59 @@ def get_raw_indoor_temperatures(request, pymortar_client):
 
     return temperatures, None
 
+def get_raw_modes(request, pymortar_client):
+    """Returns modes for the given request or None."""
+    print("received mode request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
+    duration = get_window_in_sec(request.window)
+
+    request_length = [len(request.building), len(request.zone), request.start, request.end,
+                      duration, request.aggregation]
+
+    if any(v == 0 for v in request_length):
+        return None, "invalid request, empty params"
+    if request.end > int(time.time() * 1e9):
+        return None, "invalid request, end date is in the future."
+    if request.start >= request.end:
+        return None, "invalid request, start date is after end date."
+    if request.start < 0 or request.end < 0:
+        return None, "invalid request, negative dates"
+    if request.start + (duration * 1e9) > request.end:
+        return None, "invalid request, start date + window is greater than end date"
+
+    pymortar_objects = {
+        'MEAN': pymortar.MEAN,
+        'MAX': pymortar.MAX,
+        'MIN': pymortar.MIN,
+        'COUNT': pymortar.COUNT,
+        'SUM': pymortar.SUM,
+        'RAW': pymortar.RAW
+    }
+
+    agg = pymortar_objects.get(request.aggregation, 'ERROR')
+    if agg == 'ERROR':
+        return None, "invalid aggregation parameter"
+
+    start_datetime = datetime.utcfromtimestamp(float(request.start / 1e9)).replace(tzinfo=pytz.utc)
+    end_datetime = datetime.utcfromtimestamp(float(request.end / 1e9)).replace(tzinfo=pytz.utc)
+
+
+    raw_mode_data, err = _get_raw_modes(request.building, request.zone, pymortar_client,
+                                                    start_datetime,
+                                                    end_datetime,
+                                                    request.window,
+                                                    agg)
+
+    modes = []
+
+    if raw_mode_data is None:
+        return [indoor_data_historical_pb2.ModePoint()], "No data received from database."
+
+    for index, mode in raw_mode_data.iterrows():
+        modes.append(indoor_data_historical_pb2.ModePoint(time=int(index.timestamp() * 1e9), mode=float(mode.values))) # TODO mode being int will be a problem.
+
+    return modes, None
+
+
 
 def get_raw_actions(request, pymortar_client):
     """Returns actions for the given request or None."""
@@ -415,6 +526,23 @@ class IndoorDataHistoricalServicer(indoor_data_historical_pb2_grpc.IndoorDataHis
         for action in raw_actions:
             yield action
 
+        def GetRawModes(self, request, context):
+            """A simple RPC.
+
+             Sends the indoor mode for a given HVAC Zone, within a timeframe (start, end), and a requested window
+             An error is returned if there are no modes for the given request
+             """
+            raw_modes, error = get_raw_modes(request, self.pymortar_client)
+            if raw_modes is None:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details(error)
+                return indoor_data_historical_pb2.ModePoint()
+            elif error is not None:
+                context.set_code(grpc.StatusCode.UNAVAILABLE)
+                context.set_details(error)
+
+            for mode in raw_modes:
+                yield mode
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

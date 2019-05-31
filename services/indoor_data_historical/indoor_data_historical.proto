@@ -15,6 +15,7 @@ service IndoorDataHistorical {
   rpc GetRawTemperatures (Request) returns (stream TemperaturePoint) {}
   rpc GetRawActions (Request) returns (stream ActionPoint) {}
   rpc GetRawTemperatureBands (Request) returns (stream Setpoint) {}
+  rpc GetRawModes (Request) returns (stream ModePoint) {}
 }
 
 // The request message containing the requested information.
@@ -56,4 +57,10 @@ message TemperaturePoint {
 message ActionPoint {
   int64 time = 1;
   double action = 2;
+}
+
+// ModePoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
+message ModePoint {
+  int64 time = 1;
+  double mode = 2;
 }

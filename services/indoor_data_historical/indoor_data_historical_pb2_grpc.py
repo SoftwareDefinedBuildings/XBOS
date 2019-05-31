@@ -29,6 +29,11 @@ class IndoorDataHistoricalStub(object):
         request_serializer=indoor__data__historical__pb2.Request.SerializeToString,
         response_deserializer=indoor__data__historical__pb2.Setpoint.FromString,
         )
+    self.GetRawModes = channel.unary_stream(
+        '/indoor_data_historical.IndoorDataHistorical/GetRawModes',
+        request_serializer=indoor__data__historical__pb2.Request.SerializeToString,
+        response_deserializer=indoor__data__historical__pb2.ModePoint.FromString,
+        )
 
 
 class IndoorDataHistoricalServicer(object):
@@ -59,6 +64,13 @@ class IndoorDataHistoricalServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetRawModes(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_IndoorDataHistoricalServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -76,6 +88,11 @@ def add_IndoorDataHistoricalServicer_to_server(servicer, server):
           servicer.GetRawTemperatureBands,
           request_deserializer=indoor__data__historical__pb2.Request.FromString,
           response_serializer=indoor__data__historical__pb2.Setpoint.SerializeToString,
+      ),
+      'GetRawModes': grpc.unary_stream_rpc_method_handler(
+          servicer.GetRawModes,
+          request_deserializer=indoor__data__historical__pb2.Request.FromString,
+          response_serializer=indoor__data__historical__pb2.ModePoint.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
