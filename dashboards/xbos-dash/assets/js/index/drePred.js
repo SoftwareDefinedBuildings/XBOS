@@ -4,10 +4,11 @@ $(document).ready(function() {
 
 	function setPred() {
 		$.ajax({
-			"url": "http://127.0.0.1:5000/api/prediction/dr",
+			"url": "http://127.0.0.1:5000/api/prediction/dr/pge",
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {
+				console.log("hi");
 				var days = d.days;
 				var s = "";
 				days.forEach(function(elem) {
