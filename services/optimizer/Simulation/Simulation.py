@@ -22,6 +22,7 @@ from Optimizers.MPC.MPC import Node
 from DataManager.DataManager import DataManager
 from Thermostat import Tstat
 
+
 # Simulation Class for MPC. Stops simulation when the current time is equal to the end.
 class SimulationMPC():
 
