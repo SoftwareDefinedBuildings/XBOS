@@ -118,7 +118,6 @@ def get_all_thermostats(client, hod, building):
         if building in hod_xsg_mismatch:
             if k in hod_xsg_mismatch[building]:
                 k = hod_xsg_mismatch[building][k]
-        # tstats[k] = tstat["?uri"]
         try:
             tstats[k] = Thermostat(client, tstat["?uri"])
         except Exception:
@@ -151,7 +150,7 @@ def get_thermostat_state(building, zones, building_tstats):
         zone_current_state[zone] = building_tstats[building][zone].state
         zone_current_temperature[zone] = building_tstats[building][zone].temperature
         logging.info("zone:%s, htgsp:%s, clgsp:%s, override:%s, mode:%s, state:%s, temp:%s, ",zone,zone_current_htgsp[zone],zone_current_clgsp[zone],zone_current_override[zone] , zone_current_mode[zone],zone_current_state[zone],zone_current_temperature[zone])
-    return action_enactor_pb2.Response(zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature)
+    return zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature
 
 def turn_thermostat_off(request,building_tstats):
     logging.info("turn_thermostat_off received request: %s %s %s",request.building, request.zones,request.num_trials)
@@ -164,10 +163,8 @@ def turn_thermostat_off(request,building_tstats):
     state_off = {"override": False, "mode":OFF}
     for zone in request.zones:
         zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_off,request.trials)
-    state = get_thermostat_state(request.building, request.zones,building_tstats)
-    state["zone_request_status"] = zone_request_status
-    state["unit"] = "F"
-    return state, None
+    zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
+    return action_enactor_pb2.Response(zone_request_status=zone_request_status,unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
 
 def restore_thermostat_schedule(request,building_tstats):
     logging.info("restore_thermostat_schedule received request: %s %s %s",request.building, request.zones,request.num_trials)
@@ -180,17 +177,18 @@ def restore_thermostat_schedule(request,building_tstats):
     state_resume = {"override": False}
     for zone in request.zones:
         zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_resume,request.trials)
-    state = get_thermostat_state(request.building, request.zones,building_tstats)
-    state["zone_request_status"] = zone_request_status
-    state["unit"] = "F"
-    return state, None
+    zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
+    return action_enactor_pb2.Response(zone_request_status=zone_request_status,unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
 
 def get_thermostat_status(request,building_tstats):
     logging.info("get_thermostat_status received request: %s %s",request.building, request.zones)
     err = verify_building_zones(request)
     if err is not None:
         return None, err
-    return get_thermostat_state(request.building, request.zones,building_tstats), None
+
+    zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
+    return action_enactor_pb2.Response(unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
+    # return get_thermostat_state(request.building, request.zones,building_tstats), None
 
 def get_user_overwrite(request,building_tstats):
     logging.info("get_user_overwrite received request: %s %s %s %s %s",request.building, request.zones,request.zone_expected_htgsp, request.zone_expected_clgsp ,request.unit)
@@ -209,10 +207,8 @@ def get_user_overwrite(request,building_tstats):
     zone_request_status = {}
     for zone in request.zones:
         zone_request_status[zone] = (building_tstats[building][zone].heating_setpoint == request.zone_expected_htgsp) and (building_tstats[building][zone].cooling_setpoint == request.zone_expected_clgsp)
-    state = get_thermostat_state(request.building, request.zones,building_tstats)
-    state["zone_request_status"] = zone_request_status
-    state["unit"] = "F"
-    return state, None
+    zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
+    return action_enactor_pb2.Response(zone_request_status=zone_request_status,unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
 
 def set_thermostat_action(request,building_tstats):
     logging.info("set_thermostat_action received request: %s %s %s %s %s %s",request.building, request.zones,request.zone_action, request.zone_dne_htgsp,request.zone_dne_clgsp, request.zone_hysteresis, request.num_trials ,request.unit)
@@ -257,10 +253,8 @@ def set_thermostat_action(request,building_tstats):
         else:
             return None, "invalid request, zone.actions can only be NO_ACTION, HEATING_ACTION, COOLING_ACTION"
         zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_setpoint,request.num_trials)
-    state = get_thermostat_state(request.building, request.zones,building_tstats)
-    state["zone_request_status"] = zone_request_status
-    state["unit"] = "F"
-    return state, None
+    zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
+    return action_enactor_pb2.Response(zone_request_status=zone_request_status,unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
 
 def set_thermostat_setpoint(request,building_tstats):
     logging.info("set_thermostat_setpoint received request: %s %s %s %s %s %s",request.building, request.zones,request.zone_htgsp,request.zone_clgsp, request.num_trials ,request.unit)
@@ -285,10 +279,8 @@ def set_thermostat_setpoint(request,building_tstats):
             return None, "invalid request, zone_clgsp is less than or equal to zone_htgsp"
         state_setpoint = {"heating_setpoint": request.zone_htgsp[zone], "cooling_setpoint": request.zone_clgsp[zone], "override":True, "mode":AUTO}
         zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_setpoint,request.trials)
-    state = get_thermostat_state(request.building, request.zones,building_tstats)
-    state["zone_request_status"] = zone_request_status
-    state["unit"] = "F"
-    return state, None
+    zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
+    return action_enactor_pb2.Response(zone_request_status=zone_request_status,unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
 
 class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
     def __init__(self):
