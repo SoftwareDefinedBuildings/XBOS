@@ -240,15 +240,15 @@ def set_thermostat_action(request,building_tstats):
             return None, "invalid request, zone_dne_clgsp is less than zone_dne_htgsp"
         if request.zone_hysteresis[zone] < 0:
             return None, "invalid request, zone_hysteresis cannot be negative"
-        if  request.action[zone]==NO_ACTION:
+        if  request.zone_action[zone]==NO_ACTION:
             state_setpoint = {"heating_setpoint": request.zone_dne_htgsp[zone] , "cooling_setpoint": request.zone_dne_clgsp[zone], "override":True, "mode":AUTO}
-        elif request.action[zone]==HEATING_ACTION:
+        elif request.zone_action[zone]==HEATING_ACTION:
             heating_setpoint = building_tstats[request.building][zone].temperature + 2 * request.zone_hysteresis[zone]
             cooling_setpoint = request.zone_dne_clgsp[zone]
             if heating_setpoint < request.zone_dne_htgsp[zone]:
                 heating_setpoint = request.zone_dne_htgsp[zone]
             state_setpoint = {"heating_setpoint": heating_setpoint, "cooling_setpoint": cooling_setpoint, "override":True, "mode":AUTO}
-        elif request.action[zone]==COOLING_ACTION:
+        elif request.zone_action[zone]==COOLING_ACTION:
             cooling_setpoint = building_tstats[request.building][zone].temperature - 2 * request.zone_hysteresis[zone]
             heating_setpoint = request.zone_dne_htgsp[zone]
             if cooling_setpoint > request.zone_dne_clgsp[zone]:
