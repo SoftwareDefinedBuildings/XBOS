@@ -65,6 +65,6 @@ message Response {
   map<string, bool> zone_current_override = 4;
   map<string, int64> zone_current_mode = 5;
   map<string, int64> zone_current_state = 6;
-  map<string, int64> zone_current_temperature = 7;
+  map<string, double> zone_current_temperature = 7;
   string unit = 8;
 }

@@ -15,8 +15,8 @@ from xbos.devices.thermostat import Thermostat
 
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-ACTION_ENACTOR_HOST_ADDRESS = os.environ["ACTION_ENACTOR_HOST_ADDRESS"]
-
+# ACTION_ENACTOR_HOST_ADDRESS = os.environ["ACTION_ENACTOR_HOST_ADDRESS"]
+ACTION_ENACTOR_HOST_ADDRESS = local
 '''
 Utility constants state and mode
 '''
@@ -325,7 +325,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             if setpoints is None:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details(error)
-                return action_enactor_pb2.Reply()
+                return action_enactor_pb2.Response()
             elif error is not None:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
@@ -335,7 +335,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             logging.error(tb)
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(tb)
-            return action_enactor_pb2.Reply()
+            return action_enactor_pb2.Response()
 
     def SetThermostatSetpoint(self,request,context):
         try:
@@ -343,7 +343,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             if setpoints is None:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details(error)
-                return action_enactor_pb2.Reply()
+                return action_enactor_pb2.Response()
             elif error is not None:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
@@ -353,7 +353,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             logging.error(tb)
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(tb)
-            return action_enactor_pb2.Reply()
+            return action_enactor_pb2.Response()
 
     def GetThermostatStatus(self,request,context):
         try:
@@ -361,7 +361,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             if setpoints is None:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details(error)
-                return action_enactor_pb2.Reply()
+                return action_enactor_pb2.Response()
             elif error is not None:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
@@ -371,7 +371,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             logging.error(tb)
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(tb)
-            return action_enactor_pb2.Reply()
+            return action_enactor_pb2.Response()
 
     def TurnThermostatOff(self, request,context):
         try:
@@ -379,7 +379,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             if setpoints is None:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details(error)
-                return action_enactor_pb2.Reply()
+                return action_enactor_pb2.Response()
             elif error is not None:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
@@ -389,7 +389,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             logging.error(tb)
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(tb)
-            return action_enactor_pb2.Reply()
+            return action_enactor_pb2.Response()
 
     def GetUserOverwrite(self,request,context):
         try:
@@ -397,7 +397,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             if setpoints is None:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details(error)
-                return action_enactor_pb2.Reply()
+                return action_enactor_pb2.Response()
             elif error is not None:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
@@ -407,7 +407,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             logging.error(tb)
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(tb)
-            return action_enactor_pb2.Reply()
+            return action_enactor_pb2.Response()
 
     def RestoreThermostatSchedule(self,request,context):
         try:
@@ -415,7 +415,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             if setpoints is None:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details(error)
-                return action_enactor_pb2.Reply()
+                return action_enactor_pb2.Response()
             elif error is not None:
                 context.set_code(grpc.StatusCode.UNAVAILABLE)
                 context.set_details(error)
@@ -425,7 +425,7 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             logging.error(tb)
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(tb)
-            return action_enactor_pb2.Reply()
+            return action_enactor_pb2.Response()
 
 
 
