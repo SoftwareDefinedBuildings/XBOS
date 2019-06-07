@@ -15,8 +15,7 @@ from xbos.devices.thermostat import Thermostat
 
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-# ACTION_ENACTOR_HOST_ADDRESS = os.environ["ACTION_ENACTOR_HOST_ADDRESS"]
-ACTION_ENACTOR_HOST_ADDRESS = "localhost:50005"
+ACTION_ENACTOR_HOST_ADDRESS = os.environ["ACTION_ENACTOR_HOST_ADDRESS"]
 
 '''
 Utility constants state and mode
@@ -304,7 +303,6 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             for bldg in xsg_all_buildings:
                 # Getting the tstats for the building.
                 self.building_tstats[bldg] = get_all_thermostats(client, hod_client, bldg)
-                continue #TODO REMOVE ME
                 # if set(self.building_tstats[bldg]) != set(xsg_all_zones[bldg]):
                 if not set(xsg_all_zones[bldg]).issubset(set(self.building_tstats[bldg])):
                     missing_zones = []
@@ -320,7 +318,6 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             tb = traceback.format_exc()
             logging.critical("failed to get thermostats\n%s",tb)
             sys.exit(0)
-        sys.exit(0)  #TODO REMOVE ME
 
     def SetThermostatAction(self,request,context):
         try:
