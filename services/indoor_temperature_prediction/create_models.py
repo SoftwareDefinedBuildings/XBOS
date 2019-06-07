@@ -41,6 +41,30 @@ def load_data(building, zone):
         return pickle.load(f)
 
 
+def save_model(building, zone, model, config):
+    model_dir = Path.cwd() / "saved_models" / building
+    if not os.path.isdir(model_dir):
+        os.makedirs(model_dir)
+
+    file_path = model_dir / (zone + ".pkl")
+
+    with open(str(file_path), "wb") as f:
+        pickle.dump(model, f)
+
+
+def load_model(building, zone):
+    model_dir = Path.cwd() / "saved_models" / building
+    if not os.path.isdir(model_dir):
+        return None
+
+    file_path = model_dir / (zone + ".pkl")
+    if not os.path.isfile(file_path):
+        return None
+
+    with open(str(file_path), "rb") as f:
+        return pickle.load(f)
+
+
 def get_train_test(building, zone, start, end, prediction_window, raw_data_granularity, train_ratio, is_second_order,
                  use_occupancy,
                  curr_action_timesteps, prev_action_timesteps, check_data=True):
@@ -75,7 +99,6 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
     # TODO add check that the data we have stored is at least as long and has right prediction_window
     # TODO Fix how we deal with nan's. some zone temperatures might get set to -1.
     loaded_data = load_data(building, zone)
-    print(loaded_data)
     err = xsg.check_data(loaded_data, start, end, prediction_window, check_nan=True)
     if (loaded_data is None) or ((err is not None) and check_data):
         processed_data, err = pid.get_preprocessed_data(building, zone, start, end, prediction_window, raw_data_granularity)
@@ -114,8 +137,8 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
     if train_data.isna().values.any():
         return None, None, None, None, "Nan values detected in training data."
 
-    train_y = train_data["t_next"] #.interpolate(method="time") Note: We now assume that there are no Nan values in data.
-    train_X = train_data.drop(["t_next"], axis=1) #.interpolate(method="time")
+    train_y = train_data["t_next"] # Note: We now assume that there are no Nan values in data.
+    train_X = train_data.drop(["t_next"], axis=1)
 
     # test data
     if test_data.isna().values.any():
@@ -123,8 +146,8 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
     test_data = test_data[test_data["dt"] == seconds_prediction_window]
     test_data = test_data.drop(columns_to_drop, axis=1)
 
-    test_y = test_data["t_next"] #.interpolate(method="time")
-    test_X = test_data.drop(["t_next"], axis=1) #.interpolate(method="time")
+    test_y = test_data["t_next"]
+    test_X = test_data.drop(["t_next"], axis=1)
 
     if train_X.shape[0] == 0:
         return None, None, None, None, "Not enough data to train the model."

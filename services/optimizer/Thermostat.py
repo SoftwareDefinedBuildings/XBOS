@@ -15,6 +15,7 @@ class Tstat:
         self.error = {}
         for action in [xsg.NO_ACTION, xsg.HEATING_ACTION, xsg.COOLING_ACTION]:
             try:
+                raise Exception("ERROR: Hack. Whoever sees this, yell at Daniel to get back to fixing the thermal model.")
                 mean, var, unit = xsg.get_indoor_temperature_prediction_error(self.indoor_temperature_prediction_stub,
                                                                               building,
                                                                               zone,
