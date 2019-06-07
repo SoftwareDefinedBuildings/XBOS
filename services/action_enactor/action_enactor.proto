@@ -1,0 +1,70 @@
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. action_enactor.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package action_enactor;
+
+// The controller service definition
+service ActionEnactor {
+  // A simple RPC.
+  //
+  rpc SetThermostatAction(ActionRequest) returns (Response) {}
+  rpc SetThermostatSetpoint(SetpointRequest) returns (Response) {}
+  rpc GetThermostatStatus(StatusRequest) returns (Response) {}
+  rpc TurnThermostatOff(ThermostatRequest) returns (Response) {}
+  rpc RestoreThermostatSchedule(ThermostatRequest) returns (Response) {}
+  rpc GetUserOverwrite(UserOverwriteRequest) returns (Response) {}
+}
+message ActionRequest {
+  string building = 1;
+  repeated string zones = 2;
+  map<string, int64> zone_action = 3;
+  map<string, double> zone_dne_htgsp = 4;
+  map<string, double> zone_dne_clgsp = 5;
+  map<string, double> zone_hysteresis = 6;
+  int64 num_trials = 7;
+  string unit = 8;
+}
+
+message SetpointRequest {
+  string building = 1;
+  repeated string zones = 2;
+  map<string, double> zone_htgsp = 3;
+  map<string, double> zone_clgsp = 4;
+  int64 num_trials = 5;
+  string unit = 6;
+}
+
+message StatusRequest {
+  string building = 1;
+  repeated string zones = 2;
+}
+
+message ThermostatRequest {
+  string building = 1;
+  repeated string zones = 2;
+  int64 num_trials = 3;
+}
+
+message UserOverwriteRequest{
+  string building = 1;
+  repeated string zones = 2;
+  map<string, double> zone_expected_htgsp = 3;
+  map<string, double> zone_expected_clgsp = 4;
+  string unit = 5;
+}
+
+message Response {
+  // whether the request was successful for a given zone
+  map<string, bool> zone_request_status = 1;
+  // current thermostat state
+  map<string, double> zone_current_htgsp = 2;
+  map<string, double> zone_current_clgsp = 3;
+  map<string, bool> zone_current_override = 4;
+  map<string, int64> zone_current_mode = 5;
+  map<string, int64> zone_current_state = 6;
+  map<string, int64> zone_current_temperature = 7;
+  string unit = 8;
+}
