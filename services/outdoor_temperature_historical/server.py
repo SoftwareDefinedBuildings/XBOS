@@ -20,7 +20,7 @@ import pytz
 # TODO Change this function to fit pymortar data instead of mdal
 def _preprocess_pymortar_outside_data(outside_data):
     """
-    Fixes pymortar bug.
+    Fixes early pymortar bug.
     Interpolating is justified by:
     - Introducing limited inaccuracies: Data contains at most a few hours of consecutive nan data.
     - Is necessary: Due to pymortar, at a windowSize of less than 15 min, nan values appear between real values.

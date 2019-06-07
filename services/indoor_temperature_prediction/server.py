@@ -136,7 +136,7 @@ def get_error(request):
                                                      check_data=False)
 
     if err is not None:
-        return None, None, err
+        return None, err
 
     thermal_model, column_order = THERMAL_MODELS[request.building][request.zone]
     if request.action != -1:
