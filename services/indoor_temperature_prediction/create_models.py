@@ -80,11 +80,11 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
     if (loaded_data is None) or ((err is not None) and check_data):
         processed_data, err = pid.get_preprocessed_data(building, zone, start, end, prediction_window, raw_data_granularity)
         if err is not None:
-            return None, None, err
+            return None, None, None, None, err
         store_data(processed_data, building, zone)
     else:
         processed_data = loaded_data.loc[start:end]
-    print("YO")
+
     # add features
     processed_data = pid.indoor_data_cleaning(processed_data)
     if is_second_order:
@@ -119,7 +119,7 @@ def get_train_test(building, zone, start, end, prediction_window, raw_data_granu
 
     # test data
     if test_data.isna().values.any():
-        return None, None, "Nan values detected in test data."
+        return None, None, None, None, "Nan values detected in test data."
     test_data = test_data[test_data["dt"] == seconds_prediction_window]
     test_data = test_data.drop(columns_to_drop, axis=1)
 
