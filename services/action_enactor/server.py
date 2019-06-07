@@ -150,6 +150,7 @@ def get_thermostat_state(building, zones, building_tstats):
         zone_current_mode[zone] = building_tstats[building][zone].mode
         zone_current_state[zone] = building_tstats[building][zone].state
         zone_current_temperature[zone] = building_tstats[building][zone].temperature
+        logging.info("zone:%s, htgsp:%s, clgsp:%s, override:%s, mode:%s, state:%s, temp:%s, ",zone,zone_current_htgsp[zone],zone_current_clgsp[zone],zone_current_override[zone] , zone_current_mode[zone],zone_current_state[zone],zone_current_temperature[zone])
     return action_enactor_pb2.Response(zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature)
 
 def turn_thermostat_off(request,building_tstats):
