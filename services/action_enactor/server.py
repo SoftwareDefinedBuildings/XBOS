@@ -256,7 +256,7 @@ def set_thermostat_action(request,building_tstats):
             state_setpoint = {"heating_setpoint": heating_setpoint, "cooling_setpoint": cooling_setpoint, "override":True, "mode":AUTO}
         else:
             return None, "invalid request, zone.actions can only be NO_ACTION, HEATING_ACTION, COOLING_ACTION"
-        zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_setpoint,request.trials)
+        zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_setpoint,request.num_trials)
     state = get_thermostat_state(request.building, request.zones,building_tstats)
     state["zone_request_status"] = zone_request_status
     state["unit"] = "F"
