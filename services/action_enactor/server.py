@@ -32,7 +32,7 @@ COOL_ONLY = 2
 AUTO = 3
 
 xsg_all_buildings = ['avenal-recreation-center', 'berkeley-corporate-yard', 'csu-dominguez-hills', 'word-of-faith-cc', 'hayward-station-1', 'avenal-public-works-yard', 'local-butcher-shop', 'avenal-veterans-hall', 'south-berkeley-senior-center', 'orinda-community-center', 'jesse-turner-center', 'avenal-animal-shelter', 'north-berkeley-senior-center', 'avenal-movie-theatre', 'hayward-station-8', 'ciee']
-xsg_all_buildings = ['avenal-veterans-hall']
+# xsg_all_buildings = ['avenal-veterans-hall']
 
 xsg_all_zones = {'avenal-recreation-center': ['hvac_zone_large_room', 'hvac_zone_tech_center'], 'berkeley-corporate-yard': ['hvac_zone_parks_assembly', 'hvac_zone_radioshop', 'hvac_zone_s_and_u_open_office', 'hvac_zone_scott_britt_rm', 'hvac_zone_cs_open_office', 'hvac_zone_electricalshop', 'hvac_zone_fac_main_dept', 'hvac_zone_green_room'], 'csu-dominguez-hills': ['hvac_zone_sac_2101', 'hvac_zone_sac_2114', 'hvac_zone_sac_2150', 'hvac_zone_sac_2126', 'hvac_zone_sac_2113a', 'hvac_zone_sac_2104', 'hvac_zone_sac_2_corridor', 'hvac_zone_sac_2106', 'hvac_zone_sac_2129', 'hvac_zone_sac_2107', 'hvac_zone_sac_2113', 'hvac_zone_sac_2149', 'hvac_zone_sac_2102', 'hvac_zone_sac_2103', 'hvac_zone_sac_2144', 'hvac_zone_sac_2105', 'hvac_zone_sac_2134'], 'word-of-faith-cc': ['hvac_zone_hospitality', 'hvac_zone_fellowship_hall', 'hvac_zone_lobby', 'hvac_zone_sanctuary_lb_2', 'hvac_zone_sanctuary_rf_2', 'hvac_zone_school_age_rm', 'hvac_zone_pre_k_classroom'], 'hayward-station-1': ['hvac_zone_ac_2', 'hvac_zone_ac_3', 'hvac_zone_ac_4', 'hvac_zone_ac_5', 'hvac_zone_ac_6', 'hvac_zone_ac_7', 'hvac_zone_ac_1'], 'avenal-public-works-yard': ['hvac_zone_public_works'], 'local-butcher-shop': ['hvac_zone_retail_space'], 'avenal-veterans-hall': ['hvac_zone_ac_3', 'hvac_zone_ac_1', 'hvac_zone_ac_4', 'hvac_zone_ac_6', 'hvac_zone_ac_5', 'hvac_zone_ac_2'], 'south-berkeley-senior-center': ['hvac_zone_ac_2', 'hvac_zone_ac_3', 'hvac_zone_front_office'], 'orinda-community-center': ['hvac_zone_ac_7', 'hvac_zone_rm7', 'hvac_zone_kinder_gym', 'hvac_zone_ac_6', 'hvac_zone_ac_3', 'hvac_zone_rm1', 'hvac_zone_ac_4', 'hvac_zone_ac_5', 'hvac_zone_rm6', 'hvac_zone_ac_1', 'hvac_zone_front_office', 'hvac_zone_ac_2', 'hvac_zone_rm2', 'hvac_zone_ac_8'], 'jesse-turner-center': ['hvac_zone_resource_center', 'hvac_zone_class_132', 'hvac_zone_meeting_room_122', 'hvac_zone_multi_purpose_147', 'hvac_zone_fitness_room_138', 'hvac_zone_assembly_112', 'hvac_zone_basketball_court_2', 'hvac_zone_basketball_court_6', 'hvac_zone_basketball_court_5', 'hvac_zone_lobby', 'hvac_zone_basketball_court_3', 'hvac_zone_control_desk', 'hvac_zone_foyer_gallery', 'hvac_zone_assembly_113', 'hvac_zone_class_131', 'hvac_zone_front_entrance', 'hvac_zone_office_room_148', 'hvac_zone_basketball_court_4', 'hvac_zone_dance_room_109', 'hvac_zone_back_stage', 'hvac_zone_basketball_court_1', 'hvac_zone_kitchen', 'hvac_zone_assembly_111', 'hvac_zone_electrical_room123'], 'avenal-animal-shelter': ['hvac_zone_shelter_corridor'], 'north-berkeley-senior-center': ['hvac_zone_ac_1', 'hvac_zone_ac_3', 'hvac_zone_ac_5'], 'avenal-movie-theatre': ['hvac_zone_lobby', 'hvac_zone_main_hallway', 'hvac_zone_room_a', 'hvac_zone_theater_2', 'hvac_zone_back_hallway', 'hvac_zone_room_d', 'hvac_zone_pegasus_hall', 'hvac_zone_theater_1'], 'hayward-station-8': ['hvac_zone_f_3', 'hvac_zone_f_1', 'hvac_zone_f_2'], 'ciee': ['hvac_zone_centralzone', 'hvac_zone_eastzone', 'hvac_zone_northzone', 'hvac_zone_southzone']}
 
@@ -162,7 +162,7 @@ def turn_thermostat_off(request,building_tstats):
     zone_request_status = {}
     state_off = {"override": False, "mode":OFF}
     for zone in request.zones:
-        zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_off,request.trials)
+        zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_off,request.num_trials)
     zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
     return action_enactor_pb2.Response(zone_request_status=zone_request_status,unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
 
@@ -176,7 +176,7 @@ def restore_thermostat_schedule(request,building_tstats):
     zone_request_status = {}
     state_resume = {"override": False}
     for zone in request.zones:
-        zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_resume,request.trials)
+        zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_resume,request.num_trials)
     zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
     return action_enactor_pb2.Response(zone_request_status=zone_request_status,unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
 
@@ -278,7 +278,7 @@ def set_thermostat_setpoint(request,building_tstats):
         if request.zone_clgsp[zone] <= request.zone_htgsp[zone]:
             return None, "invalid request, zone_clgsp is less than or equal to zone_htgsp"
         state_setpoint = {"heating_setpoint": request.zone_htgsp[zone], "cooling_setpoint": request.zone_clgsp[zone], "override":True, "mode":AUTO}
-        zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_setpoint,request.trials)
+        zone_request_status[zone] = set_thermostat_state(building_tstats[request.building][zone],state_setpoint,request.num_trials)
     zone_current_htgsp,zone_current_clgsp,zone_current_override,zone_current_mode,zone_current_state,zone_current_temperature = get_thermostat_state(request.building, request.zones,building_tstats)
     return action_enactor_pb2.Response(zone_request_status=zone_request_status,unit="F",zone_current_htgsp=zone_current_htgsp,zone_current_clgsp=zone_current_clgsp,zone_current_override=zone_current_override,zone_current_mode=zone_current_mode,zone_current_state=zone_current_state,zone_current_temperature=zone_current_temperature), None
 
@@ -296,13 +296,11 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             for bldg in xsg_all_buildings:
                 # Getting the tstats for the building.
                 self.building_tstats[bldg] = get_all_thermostats(client, hod_client, bldg)
-                # if set(self.building_tstats[bldg]) != set(xsg_all_zones[bldg]):
                 if not set(xsg_all_zones[bldg]).issubset(set(self.building_tstats[bldg])):
                     missing_zones = []
                     for zone in xsg_all_zones[bldg]:
                         if zone not in self.building_tstats[bldg]:
                             missing_zones.append(zone)
-                    # logging.critical("mismatch for bldg: %s", bldg)
                     logging.critical("zone mismatch between hod and xbos_services_getter for bldg: %s \nhod_zones:%s\nmissing zones:%s\n",bldg,self.building_tstats[bldg].keys(),missing_zones)
                     hod_xsg_match = False
             if not hod_xsg_match:
@@ -311,7 +309,6 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
             tb = traceback.format_exc()
             logging.critical("failed to get thermostats\n%s",tb)
             sys.exit(0)
-
     def SetThermostatAction(self,request,context):
         try:
             setpoints, error = set_thermostat_action(request,self.building_tstats)
