@@ -24,7 +24,7 @@ $(document).ready(function() {
             s[i] = s[i].charAt(0).toUpperCase() + s[i].slice(1).toLowerCase();
         }
         s = s.join("");
-        s = s.replace("Zone", "").replace("ZONE", "").replace("zone", "");
+        s = s.replace("ZONE", "").replace("Zone", "").replace("zone", "");
         s = s.replace("HVAC", "").replace("Hvac", "").replace("hvac", "");
         return s;
     }

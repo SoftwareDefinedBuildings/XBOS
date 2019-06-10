@@ -8,7 +8,17 @@ $(document).ready(function() {
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {
-				console.log("hi");
+				var days = d.days;
+				var s = "";
+				days.forEach(function(elem) {
+					s += "<div class='z-depth-1 center-align forecast-card " + getColor(elem.likelihood) + "'><h6>" + getDate(elem.date) + "</h6><h6>event " + elem.likelihood + "</h6></div>";
+				});
+				$("#forecast-loader").hide();
+				$("#forecast-row").html(s);
+			},
+			"error": function(d) {
+				console.log("failed");
+				d = {"days": [{"date": 1533324092,"likelihood": "unlikely"},{"date": 1566624092, "likelihood": "possible"}]};
 				var days = d.days;
 				var s = "";
 				days.forEach(function(elem) {
