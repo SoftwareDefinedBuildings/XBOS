@@ -311,7 +311,7 @@ def set_thermostat_state(tstat, state, trials):
         else:
             time.sleep(SLEEP_BETWEEN_TRIALS)
     # logging.warning("failed to set state: %s\n for a tstat: mode %s, override %s, htgsp %s, clgsp %s ",
-                    # state, tstat.mode, tstat.override, tstat.heating_setpoint, tstat.cooling_setpoint)
+            # state, tstat.mode, tstat.override, tstat.heating_setpoint, tstat.cooling_setpoint)
     return False
 
 
@@ -387,31 +387,6 @@ def get_thermostat_status(request, building_tstats):
     zone_current_htgsp, zone_current_clgsp, zone_current_override, zone_current_mode, zone_current_state, zone_current_temperature = get_thermostat_state(
         request.building, request.zones, building_tstats)
     return action_enactor_pb2.Response(unit="F", zone_current_htgsp=zone_current_htgsp, zone_current_clgsp=zone_current_clgsp, zone_current_override=zone_current_override, zone_current_mode=zone_current_mode, zone_current_state=zone_current_state, zone_current_temperature=zone_current_temperature), None
-
-
-def get_user_overwrite(request, building_tstats):
-    logging.info("GetUserOverwrite request: %s %s %s %s %s", request.building, request.zones, dict(
-        request.zone_expected_htgsp), dict(request.zone_expected_clgsp), request.unit)
-    err = verify_building_zones(request)
-    if err is not None:
-        return None, err
-    request_length = [len(request.zone_expected_htgsp), len(
-        request.zone_expected_clgsp), len(request.unit)]
-    if any(v == 0 for v in request_length):
-        return None, "invalid request, empty params"
-    if request.unit != "F":
-        return None, "invalid request, only Fahrenheit temperatures are supported"
-    if set(request.zones) != set(request.zone_expected_htgsp):
-        return None, "invalid request, missing zone temperature(s) in zone_expected_htgsp"
-    if set(request.zones) != set(request.zone_expected_clgsp):
-        return None, "invalid request, missing zone temperature(s) in zone_expected_clgsp"
-    zone_request_status = {}
-    for zone in request.zones:
-        zone_request_status[zone] = not ((building_tstats[request.building][zone].heating_setpoint == request.zone_expected_htgsp[zone]) and (
-            building_tstats[request.building][zone].cooling_setpoint == request.zone_expected_clgsp[zone]))
-    zone_current_htgsp, zone_current_clgsp, zone_current_override, zone_current_mode, zone_current_state, zone_current_temperature = get_thermostat_state(
-        request.building, request.zones, building_tstats)
-    return action_enactor_pb2.Response(zone_request_status=zone_request_status, unit="F", zone_current_htgsp=zone_current_htgsp, zone_current_clgsp=zone_current_clgsp, zone_current_override=zone_current_override, zone_current_mode=zone_current_mode, zone_current_state=zone_current_state, zone_current_temperature=zone_current_temperature), None
 
 
 def set_thermostat_action(request, building_tstats):
@@ -601,25 +576,6 @@ class ActionEnactorServicer(action_enactor_pb2_grpc.ActionEnactorServicer):
     def SetThermostatOff(self, request, context):
         try:
             setpoints, error = set_thermostat_off(
-                request, self.building_tstats)
-            if setpoints is None:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details(error)
-                return action_enactor_pb2.Response()
-            elif error is not None:
-                context.set_code(grpc.StatusCode.UNAVAILABLE)
-                context.set_details(error)
-            return setpoints
-        except Exception:
-            tb = traceback.format_exc()
-            logging.error(tb)
-            context.set_code(grpc.StatusCode.UNAVAILABLE)
-            context.set_details(tb)
-            return action_enactor_pb2.Response()
-
-    def GetUserOverwrite(self, request, context):
-        try:
-            setpoints, error = get_user_overwrite(
                 request, self.building_tstats)
             if setpoints is None:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)

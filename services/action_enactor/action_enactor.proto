@@ -15,7 +15,6 @@ service ActionEnactor {
   rpc SetThermostatOverride(ThermostatRequest) returns (Response) {}
   rpc SetThermostatOff(ThermostatRequest) returns (Response) {}
   rpc GetThermostatStatus(StatusRequest) returns (Response) {}
-  rpc GetUserOverwrite(UserOverwriteRequest) returns (Response) {}
 }
 
 message StatusRequest {
@@ -28,14 +27,6 @@ message ThermostatRequest {
   repeated string zones = 2;
   map<string, bool> zone_override = 3;
   int64 num_trials = 4;
-}
-
-message UserOverwriteRequest{
-  string building = 1;
-  repeated string zones = 2;
-  map<string, double> zone_expected_htgsp = 3;
-  map<string, double> zone_expected_clgsp = 4;
-  string unit = 5;
 }
 
 message SetpointRequest {

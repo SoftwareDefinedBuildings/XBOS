@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='action_enactor',
   syntax='proto3',
   serialized_options=_b('P\001'),
-  serialized_pb=_b('\n\x14\x61\x63tion_enactor.proto\x12\x0e\x61\x63tion_enactor\"0\n\rStatusRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\"\xc9\x01\n\x11ThermostatRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12J\n\rzone_override\x18\x03 \x03(\x0b\x32\x33.action_enactor.ThermostatRequest.ZoneOverrideEntry\x12\x12\n\nnum_trials\x18\x04 \x01(\x03\x1a\x33\n\x11ZoneOverrideEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"\xed\x02\n\x14UserOverwriteRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12X\n\x13zone_expected_htgsp\x18\x03 \x03(\x0b\x32;.action_enactor.UserOverwriteRequest.ZoneExpectedHtgspEntry\x12X\n\x13zone_expected_clgsp\x18\x04 \x03(\x0b\x32;.action_enactor.UserOverwriteRequest.ZoneExpectedClgspEntry\x12\x0c\n\x04unit\x18\x05 \x01(\t\x1a\x38\n\x16ZoneExpectedHtgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x38\n\x16ZoneExpectedClgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"\xb2\x04\n\x0fSetpointRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\x42\n\nzone_htgsp\x18\x03 \x03(\x0b\x32..action_enactor.SetpointRequest.ZoneHtgspEntry\x12\x42\n\nzone_clgsp\x18\x04 \x03(\x0b\x32..action_enactor.SetpointRequest.ZoneClgspEntry\x12@\n\tzone_mode\x18\x05 \x03(\x0b\x32-.action_enactor.SetpointRequest.ZoneModeEntry\x12H\n\rzone_override\x18\x06 \x03(\x0b\x32\x31.action_enactor.SetpointRequest.ZoneOverrideEntry\x12\x12\n\nnum_trials\x18\x07 \x01(\x03\x12\x0c\n\x04unit\x18\x08 \x01(\t\x1a\x30\n\x0eZoneHtgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x30\n\x0eZoneClgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a/\n\rZoneModeEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x1a\x33\n\x11ZoneOverrideEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"\xc5\x05\n\rActionRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\x42\n\x0bzone_action\x18\x03 \x03(\x0b\x32-.action_enactor.ActionRequest.ZoneActionEntry\x12G\n\x0ezone_dne_htgsp\x18\x04 \x03(\x0b\x32/.action_enactor.ActionRequest.ZoneDneHtgspEntry\x12G\n\x0ezone_dne_clgsp\x18\x05 \x03(\x0b\x32/.action_enactor.ActionRequest.ZoneDneClgspEntry\x12J\n\x0fzone_hysteresis\x18\x06 \x03(\x0b\x32\x31.action_enactor.ActionRequest.ZoneHysteresisEntry\x12\x46\n\rzone_override\x18\x07 \x03(\x0b\x32/.action_enactor.ActionRequest.ZoneOverrideEntry\x12\x12\n\nnum_trials\x18\x08 \x01(\x03\x12\x0c\n\x04unit\x18\t \x01(\t\x1a\x31\n\x0fZoneActionEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x1a\x33\n\x11ZoneDneHtgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x33\n\x11ZoneDneClgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x35\n\x13ZoneHysteresisEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x33\n\x11ZoneOverrideEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"\xd6\x07\n\x08Response\x12L\n\x13zone_request_status\x18\x01 \x03(\x0b\x32/.action_enactor.Response.ZoneRequestStatusEntry\x12J\n\x12zone_current_htgsp\x18\x02 \x03(\x0b\x32..action_enactor.Response.ZoneCurrentHtgspEntry\x12J\n\x12zone_current_clgsp\x18\x03 \x03(\x0b\x32..action_enactor.Response.ZoneCurrentClgspEntry\x12P\n\x15zone_current_override\x18\x04 \x03(\x0b\x32\x31.action_enactor.Response.ZoneCurrentOverrideEntry\x12H\n\x11zone_current_mode\x18\x05 \x03(\x0b\x32-.action_enactor.Response.ZoneCurrentModeEntry\x12J\n\x12zone_current_state\x18\x06 \x03(\x0b\x32..action_enactor.Response.ZoneCurrentStateEntry\x12V\n\x18zone_current_temperature\x18\x07 \x03(\x0b\x32\x34.action_enactor.Response.ZoneCurrentTemperatureEntry\x12\x0c\n\x04unit\x18\x08 \x01(\t\x1a\x38\n\x16ZoneRequestStatusEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\x1a\x37\n\x15ZoneCurrentHtgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x37\n\x15ZoneCurrentClgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a:\n\x18ZoneCurrentOverrideEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\x1a\x36\n\x14ZoneCurrentModeEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x1a\x37\n\x15ZoneCurrentStateEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x1a=\n\x1bZoneCurrentTemperatureEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x32\x8a\x04\n\rActionEnactor\x12T\n\x15SetThermostatSetpoint\x12\x1f.action_enactor.SetpointRequest\x1a\x18.action_enactor.Response\"\x00\x12P\n\x13SetThermostatAction\x12\x1d.action_enactor.ActionRequest\x1a\x18.action_enactor.Response\"\x00\x12V\n\x15SetThermostatOverride\x12!.action_enactor.ThermostatRequest\x1a\x18.action_enactor.Response\"\x00\x12Q\n\x10SetThermostatOff\x12!.action_enactor.ThermostatRequest\x1a\x18.action_enactor.Response\"\x00\x12P\n\x13GetThermostatStatus\x12\x1d.action_enactor.StatusRequest\x1a\x18.action_enactor.Response\"\x00\x12T\n\x10GetUserOverwrite\x12$.action_enactor.UserOverwriteRequest\x1a\x18.action_enactor.Response\"\x00\x42\x02P\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x14\x61\x63tion_enactor.proto\x12\x0e\x61\x63tion_enactor\"0\n\rStatusRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\"\xc9\x01\n\x11ThermostatRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12J\n\rzone_override\x18\x03 \x03(\x0b\x32\x33.action_enactor.ThermostatRequest.ZoneOverrideEntry\x12\x12\n\nnum_trials\x18\x04 \x01(\x03\x1a\x33\n\x11ZoneOverrideEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"\xb2\x04\n\x0fSetpointRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\x42\n\nzone_htgsp\x18\x03 \x03(\x0b\x32..action_enactor.SetpointRequest.ZoneHtgspEntry\x12\x42\n\nzone_clgsp\x18\x04 \x03(\x0b\x32..action_enactor.SetpointRequest.ZoneClgspEntry\x12@\n\tzone_mode\x18\x05 \x03(\x0b\x32-.action_enactor.SetpointRequest.ZoneModeEntry\x12H\n\rzone_override\x18\x06 \x03(\x0b\x32\x31.action_enactor.SetpointRequest.ZoneOverrideEntry\x12\x12\n\nnum_trials\x18\x07 \x01(\x03\x12\x0c\n\x04unit\x18\x08 \x01(\t\x1a\x30\n\x0eZoneHtgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x30\n\x0eZoneClgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a/\n\rZoneModeEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x1a\x33\n\x11ZoneOverrideEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"\xc5\x05\n\rActionRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\x42\n\x0bzone_action\x18\x03 \x03(\x0b\x32-.action_enactor.ActionRequest.ZoneActionEntry\x12G\n\x0ezone_dne_htgsp\x18\x04 \x03(\x0b\x32/.action_enactor.ActionRequest.ZoneDneHtgspEntry\x12G\n\x0ezone_dne_clgsp\x18\x05 \x03(\x0b\x32/.action_enactor.ActionRequest.ZoneDneClgspEntry\x12J\n\x0fzone_hysteresis\x18\x06 \x03(\x0b\x32\x31.action_enactor.ActionRequest.ZoneHysteresisEntry\x12\x46\n\rzone_override\x18\x07 \x03(\x0b\x32/.action_enactor.ActionRequest.ZoneOverrideEntry\x12\x12\n\nnum_trials\x18\x08 \x01(\x03\x12\x0c\n\x04unit\x18\t \x01(\t\x1a\x31\n\x0fZoneActionEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x1a\x33\n\x11ZoneDneHtgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x33\n\x11ZoneDneClgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x35\n\x13ZoneHysteresisEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x33\n\x11ZoneOverrideEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"\xd6\x07\n\x08Response\x12L\n\x13zone_request_status\x18\x01 \x03(\x0b\x32/.action_enactor.Response.ZoneRequestStatusEntry\x12J\n\x12zone_current_htgsp\x18\x02 \x03(\x0b\x32..action_enactor.Response.ZoneCurrentHtgspEntry\x12J\n\x12zone_current_clgsp\x18\x03 \x03(\x0b\x32..action_enactor.Response.ZoneCurrentClgspEntry\x12P\n\x15zone_current_override\x18\x04 \x03(\x0b\x32\x31.action_enactor.Response.ZoneCurrentOverrideEntry\x12H\n\x11zone_current_mode\x18\x05 \x03(\x0b\x32-.action_enactor.Response.ZoneCurrentModeEntry\x12J\n\x12zone_current_state\x18\x06 \x03(\x0b\x32..action_enactor.Response.ZoneCurrentStateEntry\x12V\n\x18zone_current_temperature\x18\x07 \x03(\x0b\x32\x34.action_enactor.Response.ZoneCurrentTemperatureEntry\x12\x0c\n\x04unit\x18\x08 \x01(\t\x1a\x38\n\x16ZoneRequestStatusEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\x1a\x37\n\x15ZoneCurrentHtgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a\x37\n\x15ZoneCurrentClgspEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x1a:\n\x18ZoneCurrentOverrideEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\x1a\x36\n\x14ZoneCurrentModeEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x1a\x37\n\x15ZoneCurrentStateEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x1a=\n\x1bZoneCurrentTemperatureEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\x32\xb4\x03\n\rActionEnactor\x12T\n\x15SetThermostatSetpoint\x12\x1f.action_enactor.SetpointRequest\x1a\x18.action_enactor.Response\"\x00\x12P\n\x13SetThermostatAction\x12\x1d.action_enactor.ActionRequest\x1a\x18.action_enactor.Response\"\x00\x12V\n\x15SetThermostatOverride\x12!.action_enactor.ThermostatRequest\x1a\x18.action_enactor.Response\"\x00\x12Q\n\x10SetThermostatOff\x12!.action_enactor.ThermostatRequest\x1a\x18.action_enactor.Response\"\x00\x12P\n\x13GetThermostatStatus\x12\x1d.action_enactor.StatusRequest\x1a\x18.action_enactor.Response\"\x00\x42\x02P\x01\x62\x06proto3')
 )
 
 
@@ -152,139 +152,6 @@ _THERMOSTATREQUEST = _descriptor.Descriptor(
 )
 
 
-_USEROVERWRITEREQUEST_ZONEEXPECTEDHTGSPENTRY = _descriptor.Descriptor(
-  name='ZoneExpectedHtgspEntry',
-  full_name='action_enactor.UserOverwriteRequest.ZoneExpectedHtgspEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='action_enactor.UserOverwriteRequest.ZoneExpectedHtgspEntry.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='action_enactor.UserOverwriteRequest.ZoneExpectedHtgspEntry.value', index=1,
-      number=2, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=_b('8\001'),
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=546,
-  serialized_end=602,
-)
-
-_USEROVERWRITEREQUEST_ZONEEXPECTEDCLGSPENTRY = _descriptor.Descriptor(
-  name='ZoneExpectedClgspEntry',
-  full_name='action_enactor.UserOverwriteRequest.ZoneExpectedClgspEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='action_enactor.UserOverwriteRequest.ZoneExpectedClgspEntry.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='action_enactor.UserOverwriteRequest.ZoneExpectedClgspEntry.value', index=1,
-      number=2, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=_b('8\001'),
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=604,
-  serialized_end=660,
-)
-
-_USEROVERWRITEREQUEST = _descriptor.Descriptor(
-  name='UserOverwriteRequest',
-  full_name='action_enactor.UserOverwriteRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='building', full_name='action_enactor.UserOverwriteRequest.building', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='zones', full_name='action_enactor.UserOverwriteRequest.zones', index=1,
-      number=2, type=9, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='zone_expected_htgsp', full_name='action_enactor.UserOverwriteRequest.zone_expected_htgsp', index=2,
-      number=3, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='zone_expected_clgsp', full_name='action_enactor.UserOverwriteRequest.zone_expected_clgsp', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='unit', full_name='action_enactor.UserOverwriteRequest.unit', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[_USEROVERWRITEREQUEST_ZONEEXPECTEDHTGSPENTRY, _USEROVERWRITEREQUEST_ZONEEXPECTEDCLGSPENTRY, ],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=295,
-  serialized_end=660,
-)
-
-
 _SETPOINTREQUEST_ZONEHTGSPENTRY = _descriptor.Descriptor(
   name='ZoneHtgspEntry',
   full_name='action_enactor.SetpointRequest.ZoneHtgspEntry',
@@ -318,8 +185,8 @@ _SETPOINTREQUEST_ZONEHTGSPENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1025,
-  serialized_end=1073,
+  serialized_start=657,
+  serialized_end=705,
 )
 
 _SETPOINTREQUEST_ZONECLGSPENTRY = _descriptor.Descriptor(
@@ -355,8 +222,8 @@ _SETPOINTREQUEST_ZONECLGSPENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1075,
-  serialized_end=1123,
+  serialized_start=707,
+  serialized_end=755,
 )
 
 _SETPOINTREQUEST_ZONEMODEENTRY = _descriptor.Descriptor(
@@ -392,8 +259,8 @@ _SETPOINTREQUEST_ZONEMODEENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1125,
-  serialized_end=1172,
+  serialized_start=757,
+  serialized_end=804,
 )
 
 _SETPOINTREQUEST_ZONEOVERRIDEENTRY = _descriptor.Descriptor(
@@ -508,8 +375,8 @@ _SETPOINTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=663,
-  serialized_end=1225,
+  serialized_start=295,
+  serialized_end=857,
 )
 
 
@@ -546,8 +413,8 @@ _ACTIONREQUEST_ZONEACTIONENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1674,
-  serialized_end=1723,
+  serialized_start=1306,
+  serialized_end=1355,
 )
 
 _ACTIONREQUEST_ZONEDNEHTGSPENTRY = _descriptor.Descriptor(
@@ -583,8 +450,8 @@ _ACTIONREQUEST_ZONEDNEHTGSPENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1725,
-  serialized_end=1776,
+  serialized_start=1357,
+  serialized_end=1408,
 )
 
 _ACTIONREQUEST_ZONEDNECLGSPENTRY = _descriptor.Descriptor(
@@ -620,8 +487,8 @@ _ACTIONREQUEST_ZONEDNECLGSPENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1778,
-  serialized_end=1829,
+  serialized_start=1410,
+  serialized_end=1461,
 )
 
 _ACTIONREQUEST_ZONEHYSTERESISENTRY = _descriptor.Descriptor(
@@ -657,8 +524,8 @@ _ACTIONREQUEST_ZONEHYSTERESISENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1831,
-  serialized_end=1884,
+  serialized_start=1463,
+  serialized_end=1516,
 )
 
 _ACTIONREQUEST_ZONEOVERRIDEENTRY = _descriptor.Descriptor(
@@ -780,8 +647,8 @@ _ACTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1228,
-  serialized_end=1937,
+  serialized_start=860,
+  serialized_end=1569,
 )
 
 
@@ -818,8 +685,8 @@ _RESPONSE_ZONEREQUESTSTATUSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2516,
-  serialized_end=2572,
+  serialized_start=2148,
+  serialized_end=2204,
 )
 
 _RESPONSE_ZONECURRENTHTGSPENTRY = _descriptor.Descriptor(
@@ -855,8 +722,8 @@ _RESPONSE_ZONECURRENTHTGSPENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2574,
-  serialized_end=2629,
+  serialized_start=2206,
+  serialized_end=2261,
 )
 
 _RESPONSE_ZONECURRENTCLGSPENTRY = _descriptor.Descriptor(
@@ -892,8 +759,8 @@ _RESPONSE_ZONECURRENTCLGSPENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2631,
-  serialized_end=2686,
+  serialized_start=2263,
+  serialized_end=2318,
 )
 
 _RESPONSE_ZONECURRENTOVERRIDEENTRY = _descriptor.Descriptor(
@@ -929,8 +796,8 @@ _RESPONSE_ZONECURRENTOVERRIDEENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2688,
-  serialized_end=2746,
+  serialized_start=2320,
+  serialized_end=2378,
 )
 
 _RESPONSE_ZONECURRENTMODEENTRY = _descriptor.Descriptor(
@@ -966,8 +833,8 @@ _RESPONSE_ZONECURRENTMODEENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2748,
-  serialized_end=2802,
+  serialized_start=2380,
+  serialized_end=2434,
 )
 
 _RESPONSE_ZONECURRENTSTATEENTRY = _descriptor.Descriptor(
@@ -1003,8 +870,8 @@ _RESPONSE_ZONECURRENTSTATEENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2804,
-  serialized_end=2859,
+  serialized_start=2436,
+  serialized_end=2491,
 )
 
 _RESPONSE_ZONECURRENTTEMPERATUREENTRY = _descriptor.Descriptor(
@@ -1040,8 +907,8 @@ _RESPONSE_ZONECURRENTTEMPERATUREENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2861,
-  serialized_end=2922,
+  serialized_start=2493,
+  serialized_end=2554,
 )
 
 _RESPONSE = _descriptor.Descriptor(
@@ -1119,16 +986,12 @@ _RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1940,
-  serialized_end=2922,
+  serialized_start=1572,
+  serialized_end=2554,
 )
 
 _THERMOSTATREQUEST_ZONEOVERRIDEENTRY.containing_type = _THERMOSTATREQUEST
 _THERMOSTATREQUEST.fields_by_name['zone_override'].message_type = _THERMOSTATREQUEST_ZONEOVERRIDEENTRY
-_USEROVERWRITEREQUEST_ZONEEXPECTEDHTGSPENTRY.containing_type = _USEROVERWRITEREQUEST
-_USEROVERWRITEREQUEST_ZONEEXPECTEDCLGSPENTRY.containing_type = _USEROVERWRITEREQUEST
-_USEROVERWRITEREQUEST.fields_by_name['zone_expected_htgsp'].message_type = _USEROVERWRITEREQUEST_ZONEEXPECTEDHTGSPENTRY
-_USEROVERWRITEREQUEST.fields_by_name['zone_expected_clgsp'].message_type = _USEROVERWRITEREQUEST_ZONEEXPECTEDCLGSPENTRY
 _SETPOINTREQUEST_ZONEHTGSPENTRY.containing_type = _SETPOINTREQUEST
 _SETPOINTREQUEST_ZONECLGSPENTRY.containing_type = _SETPOINTREQUEST
 _SETPOINTREQUEST_ZONEMODEENTRY.containing_type = _SETPOINTREQUEST
@@ -1163,7 +1026,6 @@ _RESPONSE.fields_by_name['zone_current_state'].message_type = _RESPONSE_ZONECURR
 _RESPONSE.fields_by_name['zone_current_temperature'].message_type = _RESPONSE_ZONECURRENTTEMPERATUREENTRY
 DESCRIPTOR.message_types_by_name['StatusRequest'] = _STATUSREQUEST
 DESCRIPTOR.message_types_by_name['ThermostatRequest'] = _THERMOSTATREQUEST
-DESCRIPTOR.message_types_by_name['UserOverwriteRequest'] = _USEROVERWRITEREQUEST
 DESCRIPTOR.message_types_by_name['SetpointRequest'] = _SETPOINTREQUEST
 DESCRIPTOR.message_types_by_name['ActionRequest'] = _ACTIONREQUEST
 DESCRIPTOR.message_types_by_name['Response'] = _RESPONSE
@@ -1190,29 +1052,6 @@ ThermostatRequest = _reflection.GeneratedProtocolMessageType('ThermostatRequest'
   ))
 _sym_db.RegisterMessage(ThermostatRequest)
 _sym_db.RegisterMessage(ThermostatRequest.ZoneOverrideEntry)
-
-UserOverwriteRequest = _reflection.GeneratedProtocolMessageType('UserOverwriteRequest', (_message.Message,), dict(
-
-  ZoneExpectedHtgspEntry = _reflection.GeneratedProtocolMessageType('ZoneExpectedHtgspEntry', (_message.Message,), dict(
-    DESCRIPTOR = _USEROVERWRITEREQUEST_ZONEEXPECTEDHTGSPENTRY,
-    __module__ = 'action_enactor_pb2'
-    # @@protoc_insertion_point(class_scope:action_enactor.UserOverwriteRequest.ZoneExpectedHtgspEntry)
-    ))
-  ,
-
-  ZoneExpectedClgspEntry = _reflection.GeneratedProtocolMessageType('ZoneExpectedClgspEntry', (_message.Message,), dict(
-    DESCRIPTOR = _USEROVERWRITEREQUEST_ZONEEXPECTEDCLGSPENTRY,
-    __module__ = 'action_enactor_pb2'
-    # @@protoc_insertion_point(class_scope:action_enactor.UserOverwriteRequest.ZoneExpectedClgspEntry)
-    ))
-  ,
-  DESCRIPTOR = _USEROVERWRITEREQUEST,
-  __module__ = 'action_enactor_pb2'
-  # @@protoc_insertion_point(class_scope:action_enactor.UserOverwriteRequest)
-  ))
-_sym_db.RegisterMessage(UserOverwriteRequest)
-_sym_db.RegisterMessage(UserOverwriteRequest.ZoneExpectedHtgspEntry)
-_sym_db.RegisterMessage(UserOverwriteRequest.ZoneExpectedClgspEntry)
 
 SetpointRequest = _reflection.GeneratedProtocolMessageType('SetpointRequest', (_message.Message,), dict(
 
@@ -1366,8 +1205,6 @@ _sym_db.RegisterMessage(Response.ZoneCurrentTemperatureEntry)
 
 DESCRIPTOR._options = None
 _THERMOSTATREQUEST_ZONEOVERRIDEENTRY._options = None
-_USEROVERWRITEREQUEST_ZONEEXPECTEDHTGSPENTRY._options = None
-_USEROVERWRITEREQUEST_ZONEEXPECTEDCLGSPENTRY._options = None
 _SETPOINTREQUEST_ZONEHTGSPENTRY._options = None
 _SETPOINTREQUEST_ZONECLGSPENTRY._options = None
 _SETPOINTREQUEST_ZONEMODEENTRY._options = None
@@ -1391,8 +1228,8 @@ _ACTIONENACTOR = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=2925,
-  serialized_end=3447,
+  serialized_start=2557,
+  serialized_end=2993,
   methods=[
   _descriptor.MethodDescriptor(
     name='SetThermostatSetpoint',
@@ -1436,15 +1273,6 @@ _ACTIONENACTOR = _descriptor.ServiceDescriptor(
     index=4,
     containing_service=None,
     input_type=_STATUSREQUEST,
-    output_type=_RESPONSE,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='GetUserOverwrite',
-    full_name='action_enactor.ActionEnactor.GetUserOverwrite',
-    index=5,
-    containing_service=None,
-    input_type=_USEROVERWRITEREQUEST,
     output_type=_RESPONSE,
     serialized_options=None,
   ),

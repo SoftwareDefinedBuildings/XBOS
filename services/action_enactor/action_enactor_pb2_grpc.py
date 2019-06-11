@@ -39,11 +39,6 @@ class ActionEnactorStub(object):
         request_serializer=action__enactor__pb2.StatusRequest.SerializeToString,
         response_deserializer=action__enactor__pb2.Response.FromString,
         )
-    self.GetUserOverwrite = channel.unary_unary(
-        '/action_enactor.ActionEnactor/GetUserOverwrite',
-        request_serializer=action__enactor__pb2.UserOverwriteRequest.SerializeToString,
-        response_deserializer=action__enactor__pb2.Response.FromString,
-        )
 
 
 class ActionEnactorServicer(object):
@@ -86,13 +81,6 @@ class ActionEnactorServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def GetUserOverwrite(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
 
 def add_ActionEnactorServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -119,11 +107,6 @@ def add_ActionEnactorServicer_to_server(servicer, server):
       'GetThermostatStatus': grpc.unary_unary_rpc_method_handler(
           servicer.GetThermostatStatus,
           request_deserializer=action__enactor__pb2.StatusRequest.FromString,
-          response_serializer=action__enactor__pb2.Response.SerializeToString,
-      ),
-      'GetUserOverwrite': grpc.unary_unary_rpc_method_handler(
-          servicer.GetUserOverwrite,
-          request_deserializer=action__enactor__pb2.UserOverwriteRequest.FromString,
           response_serializer=action__enactor__pb2.Response.SerializeToString,
       ),
   }
