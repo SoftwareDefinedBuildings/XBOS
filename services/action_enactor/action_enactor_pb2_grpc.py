@@ -14,29 +14,29 @@ class ActionEnactorStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.SetThermostatAction = channel.unary_unary(
-        '/action_enactor.ActionEnactor/SetThermostatAction',
-        request_serializer=action__enactor__pb2.ActionRequest.SerializeToString,
-        response_deserializer=action__enactor__pb2.Response.FromString,
-        )
     self.SetThermostatSetpoint = channel.unary_unary(
         '/action_enactor.ActionEnactor/SetThermostatSetpoint',
         request_serializer=action__enactor__pb2.SetpointRequest.SerializeToString,
         response_deserializer=action__enactor__pb2.Response.FromString,
         )
+    self.SetThermostatAction = channel.unary_unary(
+        '/action_enactor.ActionEnactor/SetThermostatAction',
+        request_serializer=action__enactor__pb2.ActionRequest.SerializeToString,
+        response_deserializer=action__enactor__pb2.Response.FromString,
+        )
+    self.SetThermostatOverride = channel.unary_unary(
+        '/action_enactor.ActionEnactor/SetThermostatOverride',
+        request_serializer=action__enactor__pb2.ThermostatRequest.SerializeToString,
+        response_deserializer=action__enactor__pb2.Response.FromString,
+        )
+    self.SetThermostatOff = channel.unary_unary(
+        '/action_enactor.ActionEnactor/SetThermostatOff',
+        request_serializer=action__enactor__pb2.ThermostatRequest.SerializeToString,
+        response_deserializer=action__enactor__pb2.Response.FromString,
+        )
     self.GetThermostatStatus = channel.unary_unary(
         '/action_enactor.ActionEnactor/GetThermostatStatus',
         request_serializer=action__enactor__pb2.StatusRequest.SerializeToString,
-        response_deserializer=action__enactor__pb2.Response.FromString,
-        )
-    self.TurnThermostatOff = channel.unary_unary(
-        '/action_enactor.ActionEnactor/TurnThermostatOff',
-        request_serializer=action__enactor__pb2.ThermostatRequest.SerializeToString,
-        response_deserializer=action__enactor__pb2.Response.FromString,
-        )
-    self.RestoreThermostatSchedule = channel.unary_unary(
-        '/action_enactor.ActionEnactor/RestoreThermostatSchedule',
-        request_serializer=action__enactor__pb2.ThermostatRequest.SerializeToString,
         response_deserializer=action__enactor__pb2.Response.FromString,
         )
     self.GetUserOverwrite = channel.unary_unary(
@@ -50,7 +50,7 @@ class ActionEnactorServicer(object):
   """The controller service definition
   """
 
-  def SetThermostatAction(self, request, context):
+  def SetThermostatSetpoint(self, request, context):
     """A simple RPC.
 
     """
@@ -58,7 +58,21 @@ class ActionEnactorServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def SetThermostatSetpoint(self, request, context):
+  def SetThermostatAction(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetThermostatOverride(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetThermostatOff(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -66,20 +80,6 @@ class ActionEnactorServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def GetThermostatStatus(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def TurnThermostatOff(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def RestoreThermostatSchedule(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -96,29 +96,29 @@ class ActionEnactorServicer(object):
 
 def add_ActionEnactorServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'SetThermostatAction': grpc.unary_unary_rpc_method_handler(
-          servicer.SetThermostatAction,
-          request_deserializer=action__enactor__pb2.ActionRequest.FromString,
-          response_serializer=action__enactor__pb2.Response.SerializeToString,
-      ),
       'SetThermostatSetpoint': grpc.unary_unary_rpc_method_handler(
           servicer.SetThermostatSetpoint,
           request_deserializer=action__enactor__pb2.SetpointRequest.FromString,
           response_serializer=action__enactor__pb2.Response.SerializeToString,
       ),
+      'SetThermostatAction': grpc.unary_unary_rpc_method_handler(
+          servicer.SetThermostatAction,
+          request_deserializer=action__enactor__pb2.ActionRequest.FromString,
+          response_serializer=action__enactor__pb2.Response.SerializeToString,
+      ),
+      'SetThermostatOverride': grpc.unary_unary_rpc_method_handler(
+          servicer.SetThermostatOverride,
+          request_deserializer=action__enactor__pb2.ThermostatRequest.FromString,
+          response_serializer=action__enactor__pb2.Response.SerializeToString,
+      ),
+      'SetThermostatOff': grpc.unary_unary_rpc_method_handler(
+          servicer.SetThermostatOff,
+          request_deserializer=action__enactor__pb2.ThermostatRequest.FromString,
+          response_serializer=action__enactor__pb2.Response.SerializeToString,
+      ),
       'GetThermostatStatus': grpc.unary_unary_rpc_method_handler(
           servicer.GetThermostatStatus,
           request_deserializer=action__enactor__pb2.StatusRequest.FromString,
-          response_serializer=action__enactor__pb2.Response.SerializeToString,
-      ),
-      'TurnThermostatOff': grpc.unary_unary_rpc_method_handler(
-          servicer.TurnThermostatOff,
-          request_deserializer=action__enactor__pb2.ThermostatRequest.FromString,
-          response_serializer=action__enactor__pb2.Response.SerializeToString,
-      ),
-      'RestoreThermostatSchedule': grpc.unary_unary_rpc_method_handler(
-          servicer.RestoreThermostatSchedule,
-          request_deserializer=action__enactor__pb2.ThermostatRequest.FromString,
           response_serializer=action__enactor__pb2.Response.SerializeToString,
       ),
       'GetUserOverwrite': grpc.unary_unary_rpc_method_handler(
