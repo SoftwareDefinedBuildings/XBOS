@@ -50,7 +50,8 @@ XSG_ALL_BUILDINGS = [
     # 'north-berkeley-senior-center', # CANNOT DO CONTROLS IN HERE
     'avenal-movie-theatre',
     'hayward-station-8',
-    'ciee']
+    # 'ciee', # CANNOT DO CONTROLS IN HERE (THERMOSTATS ARE GOING OFFLINE BUILDING CLOSING)
+    ]
 
 XSG_ALL_ZONES = {
     'avenal-recreation-center':
@@ -174,8 +175,9 @@ XSG_ALL_ZONES = {
          'hvac_zone_f_1',
          'hvac_zone_f_2'],
     'ciee':
-        ['hvac_zone_eastzone',
-         # 'hvac_zone_centralzone', TODO Remove if ciee:hvac_zone_centralzone is controllable again (comes back online)
+        [
+        'hvac_zone_eastzone',
+         'hvac_zone_centralzone',
          'hvac_zone_northzone',
          'hvac_zone_southzone']}
 
@@ -257,9 +259,6 @@ def get_all_thermostats(client, hod, building):
             if k in BRICK_XSG_MISMATCH[building]:
                 k = BRICK_XSG_MISMATCH[building][k]
         try:
-            # TODO Remove if ciee:hvac_zone_centralzone is controllable again (comes back online)
-            if building == 'ciee' and k == 'hvac_zone_centralzone':
-                continue
             tstats[k] = Thermostat(client, tstat["?uri"])
         except Exception:
             tb = traceback.format_exc()
