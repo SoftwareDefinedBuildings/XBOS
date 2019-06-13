@@ -6,14 +6,43 @@ import grpc
 import price_pb2
 import price_pb2_grpc
 import pandas as pd
+from pandas.tseries.holiday import USFederalHolidayCalendar,USColumbusDay
 import numpy as np
 import pymortar
+import requests
+import csv
 from rfc3339 import rfc3339
 import os, sys
 from pathlib import Path
 
+import logging
+import traceback
+
+logging.basicConfig(format='%(asctime)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
+
+
 PRICE_HOST_ADDRESS = os.environ["PRICE_HOST_ADDRESS"]
 PRICE_DATA_PATH = Path(os.environ["PRICE_DATA_PATH"])
+
+PGE_URL = os.environ["PGE_URL"]
+PGE_WKDAY_MAX_TEMP = int(os.environ["PGE_WKDAY_MAX_TEMP"])
+PGE_WKDAY_MIN_TEMP = int(os.environ["PGE_WKDAY_MIN_TEMP"])
+PGE_WKEND_MAX_TEMP = int(os.environ["PGE_WKEND_MAX_TEMP"])
+PGE_WKEND_MIN_TEMP = int(os.environ["PGE_WKEND_MIN_TEMP"])
+
+SCE_URL = os.environ["SCE_URL"]
+
+UNLIKELY = 0
+POSSIBLE = 1
+LIKELY = 2
+CONFIRMED = 3
+
+PGE_HOLIDAY_CAL = USFederalHolidayCalendar()
+# Remove Columbus Day rule
+if USColumbusDay in PGE_HOLIDAY_CAL.rules:
+    PGE_HOLIDAY_CAL.rules.remove(USColumbusDay)
+
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 UUID = {
@@ -40,14 +69,164 @@ ALL_TARIFFS_UTILITIES = {
     "SCE":["SCE08B","SCETGS3"]
 }
 
+# TODO STORE AND UPDATE LIST SOMEWHERE THEN WE CAN GET HISTORICAL DR DATES
+# LIST OF HISTORICAL EVENT DAYS FOR 2017 and 2018
+# ,end_date,start_date,utility_id,date,utility
+# 0,2017-06-16 23:00:00-08:00,2017-06-16 00:00:00-08:00,14328,2017-06-16,PGE
+# 1,2017-06-19 23:00:00-08:00,2017-06-19 00:00:00-08:00,14328,2017-06-19,PGE
+# 2,2017-06-20 23:00:00-08:00,2017-06-20 00:00:00-08:00,14328,2017-06-20,PGE
+# 3,2017-06-22 23:00:00-08:00,2017-06-22 00:00:00-08:00,14328,2017-06-22,PGE
+# 4,2017-06-23 23:00:00-08:00,2017-06-23 00:00:00-08:00,14328,2017-06-23,PGE
+# 5,2017-07-07 23:00:00-08:00,2017-07-07 00:00:00-08:00,14328,2017-07-07,PGE
+# 6,2017-07-27 23:00:00-08:00,2017-07-27 00:00:00-08:00,14328,2017-07-27,PGE
+# 7,2017-07-31 23:00:00-08:00,2017-07-31 00:00:00-08:00,14328,2017-07-31,PGE
+# 8,2017-08-01 23:00:00-08:00,2017-08-01 00:00:00-08:00,14328,2017-08-01,PGE
+# 9,2017-08-02 23:00:00-08:00,2017-08-02 00:00:00-08:00,14328,2017-08-02,PGE
+# 10,2017-08-28 23:00:00-08:00,2017-08-28 00:00:00-08:00,14328,2017-08-28,PGE
+# 11,2017-08-29 23:00:00-08:00,2017-08-29 00:00:00-08:00,14328,2017-08-29,PGE
+# 12,2017-08-31 23:00:00-08:00,2017-08-31 00:00:00-08:00,14328,2017-08-31,PGE
+# 13,2017-09-01 23:00:00-08:00,2017-09-01 00:00:00-08:00,14328,2017-09-01,PGE
+# 14,2017-09-02 23:00:00-08:00,2017-09-02 00:00:00-08:00,14328,2017-09-02,PGE
+# 15,2017-06-19 23:00:00-08:00,2017-06-19 00:00:00-08:00,17609,2017-06-19,SCE
+# 16,2017-06-20 23:00:00-08:00,2017-06-20 00:00:00-08:00,17609,2017-06-20,SCE
+# 17,2017-07-06 23:00:00-08:00,2017-07-06 00:00:00-08:00,17609,2017-07-06,SCE
+# 18,2017-07-07 23:00:00-08:00,2017-07-07 00:00:00-08:00,17609,2017-07-07,SCE
+# 19,2017-07-27 23:00:00-08:00,2017-07-27 00:00:00-08:00,17609,2017-07-27,SCE
+# 20,2017-07-31 23:00:00-08:00,2017-07-31 00:00:00-08:00,17609,2017-07-31,SCE
+# 21,2017-08-01 23:00:00-08:00,2017-08-01 00:00:00-08:00,17609,2017-08-01,SCE
+# 22,2017-08-28 23:00:00-08:00,2017-08-28 00:00:00-08:00,17609,2017-08-28,SCE
+# 23,2017-08-29 23:00:00-08:00,2017-08-29 00:00:00-08:00,17609,2017-08-29,SCE
+# 24,2017-08-31 23:00:00-08:00,2017-08-31 00:00:00-08:00,17609,2017-08-31,SCE
+# 25,2017-09-05 23:00:00-08:00,2017-09-05 00:00:00-08:00,17609,2017-09-05,SCE
+# 26,2017-09-12 23:00:00-08:00,2017-09-12 00:00:00-08:00,17609,2017-09-12,SCE
+# 27,2018-06-12 23:00:00-08:00,2018-06-12 00:00:00-08:00,14328,2018-06-12,PGE
+# 28,2018-06-13 23:00:00-08:00,2018-06-13 00:00:00-08:00,14328,2018-06-13,PGE
+# 29,2018-07-10 23:00:00-08:00,2018-07-10 00:00:00-08:00,14328,2018-07-10,PGE
+# 30,2018-07-16 23:00:00-08:00,2018-07-16 00:00:00-08:00,14328,2018-07-16,PGE
+# 31,2018-07-17 23:00:00-08:00,2018-07-17 00:00:00-08:00,14328,2018-07-17,PGE
+# 32,2018-07-19 23:00:00-08:00,2018-07-19 00:00:00-08:00,14328,2018-07-19,PGE
+# 33,2018-07-24 23:00:00-08:00,2018-07-24 00:00:00-08:00,14328,2018-07-24,PGE
+# 34,2018-07-25 23:00:00-08:00,2018-07-25 00:00:00-08:00,14328,2018-07-25,PGE
+# 35,2018-07-27 23:00:00-08:00,2018-07-27 00:00:00-08:00,14328,2018-07-27,PGE
+# 36,2018-07-06 23:00:00-08:00,2018-07-06 00:00:00-08:00,17609,2018-07-06,SCE
+# 37,2018-07-09 23:00:00-08:00,2018-07-09 00:00:00-08:00,17609,2018-07-09,SCE
+# 38,2018-07-10 23:00:00-08:00,2018-07-10 00:00:00-08:00,17609,2018-07-10,SCE
+# 39,2018-07-17 23:00:00-08:00,2018-07-17 00:00:00-08:00,17609,2018-07-17,SCE
+# 40,2018-07-18 23:00:00-08:00,2018-07-18 00:00:00-08:00,17609,2018-07-18,SCE
+# 41,2018-08-01 23:00:00-08:00,2018-08-01 00:00:00-08:00,17609,2018-08-01,SCE
+# 42,2018-08-02 23:00:00-08:00,2018-08-02 00:00:00-08:00,17609,2018-08-02,SCE
+# 43,2018-08-06 23:00:00-08:00,2018-08-06 00:00:00-08:00,17609,2018-08-06,SCE
+# 44,2018-08-07 23:00:00-08:00,2018-08-07 00:00:00-08:00,17609,2018-08-07,SCE
+# 45,2018-08-09 23:00:00-08:00,2018-08-09 00:00:00-08:00,17609,2018-08-09,SCE
+# 46,2018-09-28 23:00:00-08:00,2018-09-28 00:00:00-08:00,17609,2018-09-28,SCE
+# 47,2018-10-18 23:00:00-08:00,2018-10-18 00:00:00-08:00,17609,2018-10-18,SCE
+
+
+
+def get_dr_confirmed_pge():
+    #TODO FIGURE OUT A WAY TO GET CONFIRMED DR EVENTS FOR PGE
+    return price_pb2.DemandResponseReply(), None
+
+
+# THIS FUNCTION FOLLOWS TO AN EXTENT THE FOLLOWING LOGIC:
+# https://www.pge.com/resources/js/pge_five_day_forecast_par-pdp.js
+def get_dr_forecast_pge():
+    with requests.Session() as s:
+        download = s.get(PGE_URL)
+        decoded_content = download.content.decode('utf-8')
+        cr = csv.reader(decoded_content.splitlines(), delimiter=',')
+        my_list = list(cr)
+        statuses = []
+        for i in range(0,10,2):
+            dt = datetime.datetime.strptime(my_list[3][i+9], '%m/%d/%Y')
+            dt = pytz.timezone('US/Pacific').localize(dt)
+            temp = int(my_list[26][i+14])
+            status = UNLIKELY
+            if dt in PGE_HOLIDAY_CAL.holidays() or dt.weekday()>4:
+                if temp>=PGE_WKEND_MAX_TEMP:
+                    status=LIKELY
+                elif temp>=PGE_WKEND_MIN_TEMP:
+                    status=POSSIBLE
+                else:
+                    status=UNLIKELY
+            else:
+                if temp>=PGE_WKDAY_MAX_TEMP:
+                    status=LIKELY
+                elif temp>=PGE_WKDAY_MIN_TEMP:
+                    status=POSSIBLE
+                else:
+                    status=UNLIKELY
+            statuses.append(price_pb2.DemandResponsePoint(time=int(dt.timestamp() * 1e9),status=status))
+        return price_pb2.DemandResponseReply(statuses=statuses),None
+
+def get_dr_confirmed_sce():
+    return price_pb2.DemandResponseReply(), None
+
+    with requests.Session() as s:
+        download = s.get(SCE_URL)
+        decoded_content = download.content.decode('utf-8')
+        df = pd.read_html(decoded_content)
+        #     for item in df:
+        #         print("------")
+        #         print(item)
+        #         print("------")
+        #TODO FINISH THIS use df[1] or df[5] to get CONFIRMED CPP INCLUDING TODAY & TOMORROW
+        return df[0]["Expected Pricing Category*"].to_dict()
+
+def get_dr_forecast_sce():
+    with requests.Session() as s:
+        download = s.get(SCE_URL)
+        decoded_content = download.content.decode('utf-8')
+        df = pd.read_html(decoded_content)
+        df[0]["Date of Usage"] = pd.to_datetime(df[0]["Date of Usage"]).dt.tz_localize(tz='US/Pacific')
+        df[0].set_index("Date of Usage",inplace=True)
+        df[0]["Expected Pricing Category*"].replace("EXTREMELY HOT SUMMER WEEKDAY",LIKELY,inplace=True)
+        df[0]["Expected Pricing Category*"].replace("HOT SUMMER WEEKDAY",POSSIBLE,inplace=True)
+        df[0]["Expected Pricing Category*"].replace("EXTREMELY HOT SUMMER WEEKDAY",POSSIBLE,inplace=True)
+        df[0]["Expected Pricing Category*"].replace(regex='([a-zA-Z])',value=UNLIKELY,inplace=True)
+        today = datetime.datetime.now()
+        today = pytz.timezone('US/Pacific').localize(datetime.datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0))
+        logging.info(today)
+        if today in df[0].index:
+            df[0] = df[0].drop(today, axis=0)
+        # df[0] = df[0].drop(pytz.timezone('US/Pacific').localize(datetime.date.today()), axis=0)
+        statuses = []
+        for index, row in df[0].iterrows():
+            statuses.append(price_pb2.DemandResponsePoint(time=int(index.timestamp()*1e9), status=row["Expected Pricing Category*"]))
+
+        return price_pb2.DemandResponseReply(statuses=statuses),None
+
+def get_dr_forecast(request):
+    logging.info("received GetDemandResponseForecast request:%s",request.utility)
+    # forecast is only for PGE PDP and SCE CPP
+    if len(request.utility)==0 or request.utility.upper() not in ["PGE","SCE"]:
+        return None, "Invalid request, only PGE or SCE utilities are supported"
+    if request.utility.upper() == "SCE":
+        return get_dr_forecast_sce()
+    else:
+        return get_dr_forecast_pge()
+
+def get_dr_confirmed(request):
+    logging.info("received GetDemandResponseConfirmed request:%s",request.utility)
+    # forecast is only for PGE PDP and SCE CPP
+    if len(request.utility)==0 or request.utility.upper() not in ["PGE","SCE"]:
+        return None, "Invalid request, only PGE or SCE utilities are supported"
+    if request.utility.upper() == "SCE":
+        return get_dr_confirmed_sce()
+    else:
+        return get_dr_confirmed_pge()
+
+
 
 def get_tariff_and_utility(request, df):
     """Returns tariff and utility for the specified building"""
+    logging.info("received GetTariffAndUtility request:%s",request.building)
 
     building_df = df.loc[df["Building"] == request.building]
 
     if building_df.empty:
-        return price_pb2.TariffUtilityReply(tariff="", utility=""), "empty data frame"
+        return None, "invalid request, invalid building name"
+        # return price_pb2.TariffUtilityReply(tariff="", utility=""), "empty data frame"
 
     utility, tariff = building_df["Utility"].item(), building_df["Tariff"].item()
 
@@ -108,7 +287,7 @@ def get_from_pymortar(start, end, uuid, pymortar_client):
 
 def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
     """Returns prices for a given request or None."""
-    print("received request:",request.utility,request.tariff,request.price_type,request.start,request.end,request.window)
+    logging.info("received GetPrice request:%s %s %s %s %s %s",request.utility,request.tariff,request.price_type,request.start,request.end,request.window)
     if request.price_type.upper() == "ENERGY":
         unit = "$/kWh"
     elif request.price_type.upper() == "DEMAND":
@@ -198,11 +377,8 @@ def smart_resample(data, start, end, window, method):
           - If end is beyond the end of the data, it will assume that the last value has been constant until the
               given end.
     """
-    try:
-         end = end.astimezone(start.tzinfo)
-         data = data.tz_convert(start.tzinfo)
-    except:
-         raise Exception("Start, End, Data need to be timezone aware.")
+    end = end.astimezone(start.tzinfo)
+    data = data.tz_convert(start.tzinfo)
 
 
     # make sure that the start and end dates are valid.
@@ -220,7 +396,7 @@ def smart_resample(data, start, end, window, method):
 
     # Raise warning if we don't have enough data.
     if end - datetime.timedelta(seconds=window) > data.index[-1]:
-        print("Warning: the given end is more than one interval after the last datapoint in the given data. %s minutes after end of data."
+        logging.warning("Warning: the given end is more than one interval after the last datapoint in the given data. %s minutes after end of data."
               % str((end - data.index[-1]).total_seconds()/60.))
 
     new_index = date_range.union(data.index).tz_convert(date_range.tzinfo)
@@ -295,7 +471,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
 
         price_path = PRICE_DATA_PATH / "price-mapping.csv"
         if not os.path.isfile(str(price_path)):
-            print("Error: could not find file at: " + str(price_path))
+            logging.critical("Error: could not find file at: " + str(price_path))
             sys.exit()
 
         self.price_mapping = pd.read_csv(str(price_path))
@@ -312,31 +488,80 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
         self.all_tariffs_utilities = price_pb2.AllTariffUtilityReply(tariffs_utilities=tariffs_utilities)
 
     def GetPrice(self, request, context):
-        prices,error = get_price(request,self.pymortar_client,self.all_tariffs_utilities_dfs)
-        if prices is None:
-            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-            context.set_details(error)
-            return price_pb2.PricePoint()
-        elif error is not None:
+        try:
+            prices,error = get_price(request,self.pymortar_client,self.all_tariffs_utilities_dfs)
+            if prices is None:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details(error)
+                return price_pb2.PricePoint()
+            elif error is not None:
+                context.set_code(grpc.StatusCode.UNAVAILABLE)
+                context.set_details(error)
+            for price in prices:
+                yield price
+        except Exception:
+            tb = traceback.format_exc()
+            logging.error(tb)
             context.set_code(grpc.StatusCode.UNAVAILABLE)
-            context.set_details(error)
-        for price in prices:
-            yield price
+            context.set_details(tb)
+            return price_pb2.PricePoint()
 
     def GetTariffAndUtility(self, request, context):
-        tariff_utility_reply,error = get_tariff_and_utility(request, self.price_mapping)
-        if tariff_utility_reply is None:
-            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-            context.set_details(error)
-            return price_pb2.TariffUtilityReply()
-        elif error is not None:
-            context.set_code(grpc.StatusCode.UNAVAILABLE)
-            context.set_details(error)
+        try:
+            tariff_utility_reply,error = get_tariff_and_utility(request, self.price_mapping)
+            if tariff_utility_reply is None:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details(error)
+                return price_pb2.TariffUtilityReply()
+            elif error is not None:
+                context.set_code(grpc.StatusCode.UNAVAILABLE)
+                context.set_details(error)
             return tariff_utility_reply
+        except Exception:
+            tb = traceback.format_exc()
+            logging.error(tb)
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(tb)
+            return price_pb2.TariffUtilityReply()
 
-        return tariff_utility_reply
+    def GetDemandResponseForecast(self, request, context):
+        try:
+            dr_response,error = get_dr_forecast(request)
+            if dr_response is None:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details(error)
+                return price_pb2.DemandResponseReply()
+            elif error is not None:
+                context.set_code(grpc.StatusCode.UNAVAILABLE)
+                context.set_details(error)
+            return dr_response
+        except Exception:
+            tb = traceback.format_exc()
+            logging.error(tb)
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(tb)
+            return price_pb2.DemandResponseReply()
+
+    def GetDemandResponseConfirmed(self, request, context):
+        try:
+            dr_response,error = get_dr_confirmed(request)
+            if dr_response is None:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details(error)
+                return price_pb2.DemandResponseReply()
+            elif error is not None:
+                context.set_code(grpc.StatusCode.UNAVAILABLE)
+                context.set_details(error)
+            return dr_response
+        except Exception:
+            tb = traceback.format_exc()
+            logging.error(tb)
+            context.set_code(grpc.StatusCode.UNAVAILABLE)
+            context.set_details(tb)
+            return price_pb2.DemandResponseReply()
 
     def GetAllTariffsAndUtilities(self,request,context):
+        logging.info("received GetAllTariffsAndUtilities request")
         return self.all_tariffs_utilities
 
 def serve():

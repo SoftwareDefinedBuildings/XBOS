@@ -1,7 +1,8 @@
-grpcio==1.12.1
-grpcio-tools==1.12.1
-PyYAML==3.12
-pytz == 2018.3
+grpcio>=1.12.1
+grpcio-tools>=1.12.1
+PyYAML>=3.12
+pytz >= 2018.3
 pymortar>=0.1.0
-rfc3339==6.0
-pathlib == 1.0.1
+rfc3339>=6.0
+pathlib >= 1.0.1
+requests >= 2.22.0

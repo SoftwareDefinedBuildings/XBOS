@@ -29,6 +29,16 @@ class PriceStub(object):
         request_serializer=price__pb2.BuildingRequest.SerializeToString,
         response_deserializer=price__pb2.TariffUtilityReply.FromString,
         )
+    self.GetDemandResponseForecast = channel.unary_unary(
+        '/price.Price/GetDemandResponseForecast',
+        request_serializer=price__pb2.DemandResponseRequest.SerializeToString,
+        response_deserializer=price__pb2.DemandResponseReply.FromString,
+        )
+    self.GetDemandResponseConfirmed = channel.unary_unary(
+        '/price.Price/GetDemandResponseConfirmed',
+        request_serializer=price__pb2.DemandResponseRequest.SerializeToString,
+        response_deserializer=price__pb2.DemandResponseReply.FromString,
+        )
 
 
 class PriceServicer(object):
@@ -59,6 +69,20 @@ class PriceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetDemandResponseForecast(self, request, context):
+    """Sends demand response forecast for the next 5 days (only PG&E PDP and SCE CPP)
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetDemandResponseConfirmed(self, request, context):
+    """Sends confirmed demand response days for today and tomorrow (only PG&E PDP and SCE CPP)
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_PriceServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -76,6 +100,16 @@ def add_PriceServicer_to_server(servicer, server):
           servicer.GetTariffAndUtility,
           request_deserializer=price__pb2.BuildingRequest.FromString,
           response_serializer=price__pb2.TariffUtilityReply.SerializeToString,
+      ),
+      'GetDemandResponseForecast': grpc.unary_unary_rpc_method_handler(
+          servicer.GetDemandResponseForecast,
+          request_deserializer=price__pb2.DemandResponseRequest.FromString,
+          response_serializer=price__pb2.DemandResponseReply.SerializeToString,
+      ),
+      'GetDemandResponseConfirmed': grpc.unary_unary_rpc_method_handler(
+          servicer.GetDemandResponseConfirmed,
+          request_deserializer=price__pb2.DemandResponseRequest.FromString,
+          response_serializer=price__pb2.DemandResponseReply.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

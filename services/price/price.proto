@@ -18,6 +18,11 @@ service Price {
   rpc GetAllTariffsAndUtilities (Empty) returns (AllTariffUtilityReply) {}
   // Sends a tariff and utility for the specified building name
   rpc GetTariffAndUtility (BuildingRequest) returns (TariffUtilityReply) {}
+  // Sends demand response forecast for the next 5 days (only PG&E PDP and SCE CPP)
+  rpc GetDemandResponseForecast (DemandResponseRequest) returns (DemandResponseReply) {}
+  // Sends confirmed demand response days for today and tomorrow (only PG&E PDP and SCE CPP)
+  rpc GetDemandResponseConfirmed (DemandResponseRequest) returns (DemandResponseReply) {}
+
 }
 
 // PricePoints are represented as a float per unit (e.g., 0.14 $/kWh) starting at a given time
@@ -33,6 +38,20 @@ message Empty {
 
 }
 
+//The request message containg the requested utility
+message DemandResponseRequest {
+  string utility = 1;
+}
+
+
+message DemandResponseReply {
+  repeated DemandResponsePoint statuses = 1;
+}
+
+message DemandResponsePoint {
+  int64 time = 1;
+  int64 status = 2; // UNLIKELY = 0, POSSIBLE = 1, LIKELY = 2, CONFIRMED = 3
+}
 //The request message containing the requested building name
 message BuildingRequest {
   string building = 1;
