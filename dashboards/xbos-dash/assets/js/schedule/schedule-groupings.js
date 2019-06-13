@@ -61,4 +61,16 @@ $(document).ready(function() {
 		M.toast({html: 'Current modes successfully updated.', classes:"rounded", displayLength: 2000});
 		console.log(obj);
 	});
+
+	function saveMode() {
+		$.ajax({
+			"url": "http://127.0.0.1:5000/save_mode",
+			"type": "GET",
+			"dataType": "json",
+			"success": function(d) {
+				console.log("hi");
+			}
+		});
+	} saveMode();
+
 });
