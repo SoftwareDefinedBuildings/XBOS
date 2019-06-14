@@ -1,0 +1,31 @@
+Thermostat Schedule Block:
+    ponum: 2.1.2.2
+    description: Standard XBOS thermostat block schedule interface
+    interface: i.xbos.thermostat_schedule
+    signals:
+        info:
+            - cool_setting
+            - heat_setting
+            - system
+            - time
+    properties:
+        cool_setting:
+            type: float
+            description: Current Temperature Threshold for Cooling
+            required: true
+            units: degrees Fahrenheit
+        heat_setting:
+            type: float
+            description: Current Temperature Threshold for Heating
+            required: true
+            units: degrees Fahrenheit
+        system:
+            type: string
+            description: Setting state of thermostat
+            required: true
+            units: cool/heat/auto/off
+        time:
+            type: string
+            description:
+            required: true
+            units: rrule
