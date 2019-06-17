@@ -35,6 +35,7 @@ pymortar_objects = {
 
 
 def train_models(weather_mapping,pymortar_client):
+    logging.info("about to train all models")
     fb_prophet_models ={}
     start = pytz.timezone('US/Pacific').localize(datetime(year=2013, month=1, day=1, hour=0, minute=0))
     end = pytz.timezone('US/Pacific').localize(datetime.now())
@@ -42,6 +43,7 @@ def train_models(weather_mapping,pymortar_client):
     agg = pymortar.RAW
     for bldg in weather_mapping.Building:
         uuid = weather_mapping.loc[weather_mapping.Building==bldg].UUID.item()
+        logging.info("training model for building: %s with uuid: %s",bldg,uuid)
         raw,err = get_mortar_oat_uuid(uuid,start,end,window,agg,pymortar_client)
         if raw is None:
             logging.critical("Error: failed to fetch raw data for building: %s with uuid: %s",bldg,uuid)
@@ -52,6 +54,7 @@ def train_models(weather_mapping,pymortar_client):
         df.pop('index')
         m = Prophet()
         fb_prophet_models[bldg]=m.fit(df)
+    logging.info("finished training all models, ready to serve")
     return fb_prophet_models
 
 
