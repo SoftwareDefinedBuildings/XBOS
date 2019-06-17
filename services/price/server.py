@@ -471,7 +471,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
 
         price_path = PRICE_DATA_PATH / "price-mapping.csv"
         if not os.path.isfile(str(price_path)):
-            logging.critical("Error: could not find file at: " + str(price_path))
+            logging.critical("Error: could not find file at: %s" , str(price_path))
             sys.exit()
 
         self.price_mapping = pd.read_csv(str(price_path))

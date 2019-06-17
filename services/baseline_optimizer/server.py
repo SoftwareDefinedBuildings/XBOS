@@ -73,9 +73,11 @@ def verify_request(request,all_buildings,all_zones):
         return "invalid request, start date is equal or after end date."
     if request.start + (duration * 1e9) > request.end:
         return "invalid request, start date + window is greater than end date"
-    if not any([zone not in all_zones[request.building]] for zone in request.zones):
+    if not set(request.zones).issubset(set(all_zones[request.building])):
+    # if not any([zone not in all_zones[request.building]] for zone in request.zones):
         return "invalid request, invalid zone(s) name"
-    if not all([zone in request.starting_temperatures] for zone in request.zones):
+    if set(request.zones) != set(request.starting_temperatures)
+    # if not all([zone in request.starting_temperatures] for zone in request.zones):
         return "invalid request, missing zone temperature(s) in starting_temperatures"
     if request.unit != "F" and request.unit != "C":
         return "invalid request, only Fahrenheit or Celsius temperatures are supported"
@@ -116,7 +118,8 @@ def get_setpoint_expansion_action(request, temperature_bands_stub, occupancy_stu
     err = verify_request(request,all_buildings,all_zones)
     if err is not None:
         return None, err
-    if not all([zone in request.expansion_degrees] for zone in request.zones):
+    if set(request.zones) != set(request.expansion_degrees):
+    # if not all([zone in request.expansion_degrees] for zone in request.zones):
         return None, "invalid request, missing zone temperature expansion(s) in expansion_degrees"
     for zone in request.expansion_degrees:
         if request.expansion_degrees[zone] < 0:
@@ -146,7 +149,8 @@ def get_demand_charge_action(request, temperature_bands_stub, occupancy_stub,all
     if err is not None:
         return None, err
     if request.include_all_zones:
-        if not all([zone in request.zones] for zone in all_zones[request.building]):
+        # if not all([zone in request.zones] for zone in all_zones[request.building]):
+        if set(request.zones) != set(all_zones[request.building])
             return None, "invalid request, missing zone(s) in zones, need all zones"
     if request.max_zones < 0 or request.max_zones > len(request.zones):
         return None, "invalid request, max_zones is less than zero or greater than number of all zones"
