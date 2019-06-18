@@ -1,6 +1,8 @@
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import outdoor_temperature_prediction_pb2
 import outdoor_temperature_prediction_pb2_grpc
 import datetime
@@ -85,7 +87,7 @@ def smart_resample(data, start, end, window, method):
 
     # Raise warning if we don't have enough data.
     if end - datetime.timedelta(seconds=window) > data.index[-1]:
-        print("Warning: the given end is more than one interval after the last datapoint in the given data. %s minutes after end of data."
+        logging.warning("Warning: the given end is more than one interval after the last datapoint in the given data. %s minutes after end of data."
               % str((end - data.index[-1]).total_seconds()/60.))
 
     new_index = date_range.union(data.index).tz_convert(date_range.tzinfo)
@@ -156,7 +158,7 @@ def smart_resample(data, start, end, window, method):
 
 def get_temperature(request):
     """Returns temperatures for a given request or None for client errors."""
-    print("received request:", request.building, request.start, request.end, request.window)
+    logging.info("received request:", request.building, request.start, request.end, request.window)
     # validate request
     duration = get_window_in_sec(request.window)
     request_length = [len(request.building), request.start, request.end,duration]
@@ -182,10 +184,10 @@ def get_temperature(request):
         weather_json = requests.get(weather_meta["properties"]["forecastHourly"])
         weather_data_dictionary = weather_json.json()
         if "properties" not in weather_data_dictionary or "periods" not in weather_data_dictionary["properties"]:
-            print("Failed to fetch data from weather service",e)
+            logging.error("Failed to fetch data from weather service",e)
             return outdoor_temperature_prediction_pb2.TemperatureReply(temperatures=[]), "Failed to fetch data from weather service" + str(e)
     except Exception as e:
-        print("Failed to fetch data from weather service",e)
+        logging.error("Failed to fetch data from weather service",e)
         return outdoor_temperature_prediction_pb2.TemperatureReply(temperatures=[]), "Failed to fetch data from weather service" + str(e)
 
     # convert weather data to a pandas Series.
@@ -198,7 +200,7 @@ def get_temperature(request):
         elif row["temperatureUnit"] =="C":
             weather_temperatures.append(9.0/5.0 * row["temperature"] + 32)
         else:
-            print("Weather fetch got data which was not Fahrenheit or Celsius. It had units: %s" % row["temperatureUnit"])
+            logging.warning("Weather fetch got data which was not Fahrenheit or Celsius. It had units: %s" % row["temperatureUnit"])
             return outdoor_temperature_prediction_pb2.TemperatureReply(temperatures=[]), "Weather fetch got data which was not Fahrenheit or Celsius. It had units: %s" % row["temperatureUnit"]
     weather_data = pd.Series(data=weather_temperatures, index=weather_times)
 
@@ -237,6 +239,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     outdoor_temperature_prediction_pb2_grpc.add_OutdoorTemperatureServicer_to_server(OutdoorTemperatureServicer(), server)
     server.add_insecure_port(OUTDOOR_TEMPERATURE_PREDICTION_HOST_ADDRESS)
+    logging.info("Serving on {0}".format(OUTDOOR_TEMPERATURE_PREDICTION_HOST_ADDRESS))
     server.start()
     try:
         while True:

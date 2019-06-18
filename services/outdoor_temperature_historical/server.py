@@ -3,6 +3,8 @@
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import pymortar
 import outdoor_temperature_historical_pb2
 import outdoor_temperature_historical_pb2_grpc
@@ -30,7 +32,7 @@ def _preprocess_pymortar_outside_data(outside_data):
 
     # Due to MDAL bug, nan values were stored as 32.
     if len(outside_data) == 1:
-        print("WARNING: Only one weather station for selected region. We need to replace 32 values with Nan due to "
+        logging.warning("WARNING: Only one weather station for selected region. We need to replace 32 values with Nan due to "
               "past inconsistencies, but not enough data to compensate for the lost data by taking mean.")
     outside_data = outside_data.applymap(
             lambda t: nan if t == 32 else t)  # TODO this only works for fahrenheit now.
@@ -113,7 +115,7 @@ def _get_temperature(building, start, end, interval, pymortar_client):
 def get_temperature(request, pymortar_client):
     """Returns temperatures for a given request or None.
     Guarantees that no Nan values in returned data exist."""
-    print("received request:", request.building, request.start, request.end, request.window)
+    logging.info("received request:", request.building, request.start, request.end, request.window)
     duration = get_window_in_sec(request.window)
 
     unit = "F" # we will keep the outside temperature in fahrenheit for now.
@@ -176,6 +178,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     outdoor_temperature_historical_pb2_grpc.add_OutdoorTemperatureServicer_to_server(OutdoorTemperatureServicer(), server)
     server.add_insecure_port(OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS)
+    logging.info("Serving on {0}".format(OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS))
     server.start()
     try:
         while True:

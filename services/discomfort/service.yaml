@@ -1,50 +1,41 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-    name: building-zone-names
+    name: discomfort
     namespace: xbos
     labels:
-        app: building-zone-names
+        app: discomfort
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: building-zone-names
+            app: discomfort
     template:
         metadata:
             labels:
-                app: building-zone-names
+                app: discomfort
         spec:
-            volumes:
-                - name: data
-                  hostPath:
-                    path: /etc/xbos-microservices/building_zone_names
             containers:
                 - name: service
-                  image:  xbos/microsvc_building_zone_names:latest
+                  image:  xbos/microsvc_discomfort:latest
                   imagePullPolicy: Always
                   env:
-                      - name: BUILDING_ZONE_NAMES_HOST_ADDRESS
+                      - name: DISCOMFORT_HOST_ADDRESS
                         value: "0.0.0.0:50066"
-                      - name: BUILDING_ZONE_NAMES_DATA_PATH
-                        value: "/data"
-                  volumeMounts:
-                      - name: data
-                        mountPath: /data
                   ports:
                     - containerPort: 50066
 ---
 kind: Service
 apiVersion: v1
 metadata:
-    name: building-zone-names
+    name: discomfort
     namespace: xbos
 spec:
     type: ClusterIP
     #externalIPs:
     #- << ip address here >>
     selector:
-        app: building-zone-names
+        app: discomfort
     ports:
       - name: grpc
         port: 5000

@@ -1,5 +1,7 @@
 from concurrent import futures
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import discomfort_pb2
 import discomfort_pb2_grpc
 import time
@@ -12,7 +14,7 @@ HOST_ADDRESS = os.environ["DISCOMFORT_HOST_ADDRESS"]
 def get_linear_discomfort(request):
     """Returns linear discomfort (float) or None if Error encountered."""
 
-    print("received request:", request.building, request.temperature, request.temperature_low, request.temperature_high, request.occupancy, request.unit)
+    logging.info("received request:", request.building, request.temperature, request.temperature_low, request.temperature_high, request.occupancy, request.unit)
 
     if request.unit != "F":
         return None, "not implemented, unit conversion is not implemented yet. Only Fahrenheit is supported."
@@ -53,6 +55,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
     discomfort_pb2_grpc.add_DiscomfortServicer_to_server(DiscomfortServicer(), server)
     server.add_insecure_port(HOST_ADDRESS)
+    logging.info("Serving on {0}".format(HOST_ADDRESS))
     server.start()
     try:
         while True:

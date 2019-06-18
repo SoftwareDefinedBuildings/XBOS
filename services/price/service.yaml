@@ -1,33 +1,37 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-    name: building-zone-names
+    name: price
     namespace: xbos
     labels:
-        app: building-zone-names
+        app: price
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: building-zone-names
+            app: price
     template:
         metadata:
             labels:
-                app: building-zone-names
+                app: price
         spec:
             volumes:
                 - name: data
                   hostPath:
-                    path: /etc/xbos-microservices/building_zone_names
+                    path: /etc/xbos-microservices/price
             containers:
                 - name: service
-                  image:  xbos/microsvc_building_zone_names:latest
+                  image:  xbos/microsvc_price:latest
                   imagePullPolicy: Always
                   env:
-                      - name: BUILDING_ZONE_NAMES_HOST_ADDRESS
+                      - name: PRICE_HOST_ADDRESS
                         value: "0.0.0.0:50066"
-                      - name: BUILDING_ZONE_NAMES_DATA_PATH
+                      - name: PRICE_DATA_PATH
                         value: "/data"
+                      - name: MORTAR_API_USERNAME
+                        value: "<here>"
+                      - name: MORTAR_API_PASSWORD
+                        value: "<here>"
                   volumeMounts:
                       - name: data
                         mountPath: /data
@@ -37,14 +41,14 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-    name: building-zone-names
+    name: price
     namespace: xbos
 spec:
     type: ClusterIP
     #externalIPs:
     #- << ip address here >>
     selector:
-        app: building-zone-names
+        app: price
     ports:
       - name: grpc
         port: 5000

@@ -1,8 +1,6 @@
-grpcio==1.12.1
-grpcio-tools==1.12.1
-PyYAML==3.12
-pytz==2018.3
-pymortar>=1.0.0
-rfc3339==6.0
-
-
+grpcio
+grpcio-tools
+PyYAML
+pytz
+pymortar
+rfc3339

@@ -1,8 +1,8 @@
 from concurrent import futures
 import time
 import grpc
-import optimizer_pb2
-import optimizer_pb2_grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 
 import os
 OPTIMIZER_HOST_ADDRESS = os.environ["OPTIMIZER_HOST_ADDRESS"]
@@ -12,14 +12,17 @@ import os, sys
 from datetime import datetime
 import pytz
 
-from Optimizers.MPC import MPC
+from Optimizers import MPC
 import xbos_services_getter as xsg
+
+from xbos_services_getter import optimizer_pb2
+from xbos_services_getter import optimizer_pb2_grpc
 
 
 def get_actions(request,all_buildings,all_zones):
     """Returns temperatures for a given request or None.
     Guarantees that no Nan values in returned data exist."""
-    print("received request:", request.building, request.zones,
+    logging.info("received request:", request.building, request.zones,
           request.start, request.end, request.window, request.lambda_val, request.starting_temperatures, request.unit)
 
     duration = xsg.get_window_in_sec(request.window)
@@ -79,6 +82,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     optimizer_pb2_grpc.add_OptimizerServicer_to_server(OptimizerServicer(), server)
     server.add_insecure_port(OPTIMIZER_HOST_ADDRESS)
+    logging.info("Serving on {0}".format(OPTIMIZER_HOST_ADDRESS))
     server.start()
     try:
         while True:

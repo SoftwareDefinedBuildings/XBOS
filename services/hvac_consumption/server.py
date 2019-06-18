@@ -1,6 +1,8 @@
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import hvac_consumption_pb2
 import hvac_consumption_pb2_grpc
 
@@ -32,7 +34,7 @@ def _get_hvac_consumption_config(building, zone):
 def get_hvac_consumption(request):
     """Returns the consumption of heating/cooling actions in the given HVAC zone or None if Error encountered."""
 
-    print("received request:", request.building, request.zone)
+    logging.info("received request:", request.building, request.zone)
 
     request_length = [len(request.building), len(request.zone)]
 
@@ -85,6 +87,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     hvac_consumption_pb2_grpc.add_ConsumptionHVACServicer_to_server(ConsumptionHVACServicer(), server)
     server.add_insecure_port(HOST_ADDRESS)
+    logging.info("Serving {0} with data {1}".format(HOST_ADDRESS, HVAC_CONSUMPTION_DATA_PATH))
     server.start()
     try:
         while True:

@@ -1,50 +1,49 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-    name: building-zone-names
+    name: indoor-temperature-prediction
     namespace: xbos
     labels:
-        app: building-zone-names
+        app: indoor-temperature-prediction
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: building-zone-names
+            app: indoor-temperature-prediction
     template:
         metadata:
             labels:
-                app: building-zone-names
+                app: indoor-temperature-prediction
         spec:
             volumes:
                 - name: data
                   hostPath:
-                    path: /etc/xbos-microservices/building_zone_names
+                    path: /etc/xbos-microservices/indoor_temperature_prediction
             containers:
                 - name: service
-                  image:  xbos/microsvc_building_zone_names:latest
+                  image:  xbos/microsvc_indoor_temperature_prediction:latest
                   imagePullPolicy: Always
                   env:
                       - name: BUILDING_ZONE_NAMES_HOST_ADDRESS
+                        value: "k8ms.xbos.io:9001"
+                      - name: INDOOR_DATA_HISTORICAL_HOST_ADDRESS
+                        value: "k8ms.xbos.io:9001"
+                      - name: INDOOR_TEMPERATURE_PREDICTION_HOST_ADDRESS
                         value: "0.0.0.0:50066"
-                      - name: BUILDING_ZONE_NAMES_DATA_PATH
-                        value: "/data"
-                  volumeMounts:
-                      - name: data
-                        mountPath: /data
                   ports:
                     - containerPort: 50066
 ---
 kind: Service
 apiVersion: v1
 metadata:
-    name: building-zone-names
+    name: indoor-temperature-prediction
     namespace: xbos
 spec:
     type: ClusterIP
     #externalIPs:
     #- << ip address here >>
     selector:
-        app: building-zone-names
+        app: indoor-temperature-prediction
     ports:
       - name: grpc
         port: 5000

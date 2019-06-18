@@ -3,6 +3,8 @@ import datetime
 import pytz
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import price_pb2
 import price_pb2_grpc
 import pandas as pd
@@ -108,7 +110,7 @@ def get_from_pymortar(start, end, uuid, pymortar_client):
 
 def get_price(request, pymortar_client, all_tariffs_utilities_dfs):
     """Returns prices for a given request or None."""
-    print("received request:",request.utility,request.tariff,request.price_type,request.start,request.end,request.window)
+    logging.info("received request:",request.utility,request.tariff,request.price_type,request.start,request.end,request.window)
     if request.price_type.upper() == "ENERGY":
         unit = "$/kWh"
     elif request.price_type.upper() == "DEMAND":
@@ -215,7 +217,7 @@ def smart_resample(data, start, end, window, method):
 
     # Raise warning if we don't have enough data.
     if end - datetime.timedelta(seconds=window) > data.index[-1]:
-        print("Warning: the given end is more than one interval after the last datapoint in the given data. %s minutes after end of data."
+        logging.warning("Warning: the given end is more than one interval after the last datapoint in the given data. %s minutes after end of data."
               % str((end - data.index[-1]).total_seconds()/60.))
 
     new_index = date_range.union(data.index).tz_convert(date_range.tzinfo)
@@ -290,7 +292,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
 
         price_path = PRICE_DATA_PATH / "price-mapping.csv"
         if not os.path.isfile(str(price_path)):
-            print("Error: could not find file at: " + str(price_path))
+            logging.error("Error: could not find file at: " + str(price_path))
             sys.exit()
 
         self.price_mapping = pd.read_csv(str(price_path))
@@ -302,7 +304,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
                 df = pd.read_csv(PRICE_DATA_PATH / ("prices_01012017_040172019/" + tariff + ".csv"), index_col=[0], parse_dates=False)
                 df = df.fillna(0)
                 df.index = pd.to_datetime(df.index)
-                df = df.tz_localize("US/Pacific",nonexistent='shift_forward' ,ambiguous=False).tz_convert(pytz.utc)
+                df = df.tz_localize("US/Pacific",nonexistent='shift_forward',ambiguous=False).tz_convert(pytz.utc)
                 self.all_tariffs_utilities_dfs[tariff]= df
         self.all_tariffs_utilities = price_pb2.AllTariffUtilityReply(tariffs_utilities=tariffs_utilities)
 
@@ -338,6 +340,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     price_pb2_grpc.add_PriceServicer_to_server(PriceServicer(), server)
     server.add_insecure_port(PRICE_HOST_ADDRESS)
+    logging.info("Serving on {0} with data path {1}".format(PRICE_HOST_ADDRESS, PRICE_DATA_PATH))
     server.start()
     try:
         while True:
