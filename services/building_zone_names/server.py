@@ -123,6 +123,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     building_zone_names_pb2_grpc.add_BuildingZoneNamesServicer_to_server(BuildingZoneNamesServices(), server)
     server.add_insecure_port(NAMES_HOST_ADDRESS)
+    print("Serving on {0} with data path {1}".format(NAMES_HOST_ADDRESS, NAMES_DATA_PATH)
     server.start()
     try:
         while True:
