@@ -77,9 +77,6 @@ class DataManager:
             for iter_zone in self.zones}
         else:
             self.comfortband = non_controllable_data["comfortband"]
-        print(self.comfortband)
-        print("start", start)
-        print("end", end)
         err = check_data_zones(self.zones, self.comfortband, start, end, window)
         if err is not None:
             raise Exception("Bad comfortband given. " + err)

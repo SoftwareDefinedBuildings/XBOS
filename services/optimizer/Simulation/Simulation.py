@@ -27,7 +27,18 @@ from Thermostat import Tstat
 class SimulationMPC():
 
     def __init__(self, building, zones, lambda_val, start, end, forecasting_horizon, window, tstats, non_contrallable_data=None):
+        """
 
+        :param building:
+        :param zones:
+        :param lambda_val:
+        :param start: datetime with timezone
+        :param end: datetime with timezone
+        :param forecasting_horizon:
+        :param window:
+        :param tstats:
+        :param non_contrallable_data:
+        """
         assert xsg.get_window_in_sec(forecasting_horizon) % xsg.get_window_in_sec(window) == 0
 
         self.building = building
@@ -46,9 +57,7 @@ class SimulationMPC():
 
         self.DataManager = DataManager(building, zones, start, end, window, non_contrallable_data)
 
-
-
-        self.tstats = tstats# dictionary of simulator object with key zone. has functions: current_temperature, next_temperature(action)
+        self.tstats = tstats  # dictionary of simulator object with key zone. has functions: current_temperature, next_temperature(action)
 
         self.current_time = start
         self.current_time_step = 0
