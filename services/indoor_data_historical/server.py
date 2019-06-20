@@ -1,6 +1,8 @@
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import pymortar
 import indoor_data_historical_pb2
 import indoor_data_historical_pb2_grpc
@@ -251,7 +253,7 @@ def _get_raw_temperature_bands(building, zone, pymortar_client, start, end, wind
 
 def get_raw_temperature_bands(request, pymortar_client):
     """Returns temperature setpoints for the given request or None."""
-    print("received request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
+    logging.info("received request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
     duration = get_window_in_sec(request.window)
 
     unit = "F" # we will keep the outside temperature in fahrenheit for now.
@@ -304,7 +306,7 @@ def get_raw_temperature_bands(request, pymortar_client):
 # TODO Make sure we don't include NONE values in the returned points.
 def get_raw_indoor_temperatures(request, pymortar_client):
     """Returns temperatures for the given request or None."""
-    print("received temperature request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
+    logging.info("received temperature request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
     duration = get_window_in_sec(request.window)
 
     unit = "F" # we will keep the outside temperature in fahrenheit for now.
@@ -409,7 +411,7 @@ def get_raw_modes(request, pymortar_client):
 
 def get_raw_actions(request, pymortar_client):
     """Returns actions for the given request or None."""
-    print("received action request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
+    logging.info("received action request:", request.building, request.zone, request.start, request.end, request.window, request.aggregation)
     duration = get_window_in_sec(request.window)
 
     request_length = [len(request.building), len(request.zone), request.start, request.end,
@@ -548,6 +550,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     indoor_data_historical_pb2_grpc.add_IndoorDataHistoricalServicer_to_server(IndoorDataHistoricalServicer(), server)
     server.add_insecure_port(INDOOR_DATA_HISTORICAL_HOST_ADDRESS)
+    logging.info("Serving on {0}".format(INDOOR_DATA_HISTORICAL_HOST_ADDRESS))
     server.start()
     try:
         while True:

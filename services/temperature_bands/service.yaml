@@ -1,0 +1,56 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+    name: temperature-bands
+    namespace: xbos
+    labels:
+        app: temperature-bands
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: temperature-bands
+    template:
+        metadata:
+            labels:
+                app: temperature-bands
+        spec:
+            volumes:
+                - name: data
+                  hostPath:
+                    path: /etc/xbos-microservices/temperature_bands
+            containers:
+                - name: service
+                  image:  xbos/microsvc_temperature_bands:latest
+                  imagePullPolicy: Always
+                  env:
+                      - name: TEMPERATURE_BANDS_HOST_ADDRESS
+                        value: "0.0.0.0:50066"
+                      - name: TEMPERATURE_BANDS_DATA_PATH
+                        value: "/data"
+                      - name: XBOS_SERVICES_UTILS3_DATA_PATH
+                        value: "n/a"
+                  volumeMounts:
+                      - name: data
+                        mountPath: /data
+                  ports:
+                    - containerPort: 50066
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: temperature-bands
+    namespace: xbos
+spec:
+    type: ClusterIP
+    #externalIPs:
+    #- << ip address here >>
+    selector:
+        app: temperature-bands
+    ports:
+      - name: grpc
+        port: 5000
+        protocol: TCP
+        targetPort: 50066
+
+

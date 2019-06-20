@@ -1,0 +1,51 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+    name: meter-data-historical
+    namespace: xbos
+    labels:
+        app: meter-data-historical
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: meter-data-historical
+    template:
+        metadata:
+            labels:
+                app: meter-data-historical
+        spec:
+            containers:
+                - name: service
+                  image:  xbos/microsvc_meter_data_historical:latest
+                  imagePullPolicy: Always
+                  env:
+                      - name: BUILDING_ZONE_NAMES_HOST_ADDRESS
+                        value: "building-zone-names.xbos.svc.cluster.local"
+                      - name: METER_DATA_HISTORICAL_HOST_ADDRESS
+                        value: "localhost:50066"
+                      - name: MORTAR_API_USERNAME
+                        value: '<here>'
+                      - name: MORTAR_API_PASSWORD
+                        value: '<here>'
+                  ports:
+                    - containerPort: 50066
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: meter-data-historical
+    namespace: xbos
+spec:
+    type: ClusterIP
+    #externalIPs:
+    #- << ip address here >>
+    selector:
+        app: meter-data-historical
+    ports:
+      - name: grpc
+        port: 5000
+        protocol: TCP
+        targetPort: 50066
+
+

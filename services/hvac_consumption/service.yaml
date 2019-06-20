@@ -1,0 +1,58 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+    name: hvac-consumption
+    namespace: xbos
+    labels:
+        app: hvac-consumption
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: hvac-consumption
+    template:
+        metadata:
+            labels:
+                app: hvac-consumption
+        spec:
+            volumes:
+                - name: data
+                  hostPath:
+                    path: /etc/xbos-microservices/hvac_consumption
+            containers:
+                - name: service
+                  image:  xbos/microsvc_hvac_consumption:latest
+                  imagePullPolicy: Always
+                  env:
+                      - name: BW2_DEFAULT_ENTITY
+                        value: /data/entity.ent
+                      - name: BW2_AGENT
+                        value: 172.17.0.1:28589 # TODO: fix?
+                      - name: HVAC_CONSUMPTION_HOST_ADDRESS
+                        value: "0.0.0.0:50066"
+                      - name: HVAC_CONSUMPTION_DATA_PATH
+                        value: "/data"
+                  volumeMounts:
+                      - name: data
+                        mountPath: /data
+                  ports:
+                    - containerPort: 50066
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: hvac-consumption
+    namespace: xbos
+spec:
+    type: ClusterIP
+    #externalIPs:
+    #- << ip address here >>
+    selector:
+        app: hvac-consumption
+    ports:
+      - name: grpc
+        port: 5000
+        protocol: TCP
+        targetPort: 50066
+
+

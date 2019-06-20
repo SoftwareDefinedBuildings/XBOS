@@ -1,6 +1,8 @@
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import temperature_bands_pb2
 import temperature_bands_pb2_grpc
 
@@ -215,7 +217,7 @@ def get_comfortband(request):
 
     start_time = time.time()
 
-    print("received request:", request.building, request.zone, request.start, request.end, request.window, request.unit)
+    logging.info("received request:", request.building, request.zone, request.start, request.end, request.window, request.unit)
     duration = utils.get_window_in_sec(request.window)
 
     request_length = [len(request.building), len(request.zone), request.start, request.end,
@@ -259,9 +261,10 @@ def get_comfortband(request):
                                         unit="F"))
 
     response_creation_time = time.time()
-    # print("Error checking time %f seconds" % (error_checking_time - start_time ))
-    # print("Comfortband time %f seconds" % (comfortband_time - error_checking_time ))
-    # print("Response creation time %f seconds" % (response_creation_time - comfortband_time ))
+    logging.info("Error checking time %f seconds" % (error_checking_time - start_time ))
+    logging.info("Comfortband time %f seconds" % (comfortband_time - error_checking_time ))
+    logging.info("Response creation time %f seconds" % (response_creation_time - comfortband_time ))
+
 
     return grpc_comfortband,None
     # return temperature_bands_pb2.ScheduleReply(schedules=grpc_comfortband), None
@@ -270,7 +273,7 @@ def get_comfortband(request):
 def get_do_not_exceed(request):
     """Returns preprocessed thermal data for a given request or None."""
 
-    print("received request:", request.building, request.zone, request.start, request.end, request.window, request.unit)
+    logging.info("received request:", request.building, request.zone, request.start, request.end, request.window, request.unit)
     duration = utils.get_window_in_sec(request.window)
 
     request_length = [len(request.building), len(request.zone), request.start, request.end,
@@ -359,6 +362,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     temperature_bands_pb2_grpc.add_SchedulesServicer_to_server(SchedulesServicer(), server)
     server.add_insecure_port(TEMPERATURE_BANDS_HOST_ADDRESS)
+    logging.info("Serving on {0} with data path {1}".format(TEMPERATURE_BANDS_HOST_ADDRESS, TEMPERATURE_BANDS_DATA_PATH))
     server.start()
     try:
         while True:

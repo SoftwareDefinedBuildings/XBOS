@@ -6,16 +6,19 @@ __email__ = "pranavhgupta@lbl.gov"
 import time
 import pytz
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 from concurrent import futures
 from datetime import datetime
 from collections import defaultdict
 
 import pymortar
-import xbos_services_getter
 
-import meter_data_historical_pb2
-import meter_data_historical_pb2_grpc
+#import meter_data_historical_pb2
+#import meter_data_historical_pb2_grpc
 import os
+import xbos_services_getter
+from xbos_services_getter import meter_data_historical_pb2, meter_data_historical_pb2_grpc
 
 METER_DATA_HOST_ADDRESS = os.environ["METER_DATA_HISTORICAL_HOST_ADDRESS"]
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
@@ -273,6 +276,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     meter_data_historical_pb2_grpc.add_MeterDataHistoricalServicer_to_server(MeterDataHistoricalServicer(), server)
     server.add_insecure_port(METER_DATA_HOST_ADDRESS)
+    logging.info("Serving on {0}".format(METER_DATA_HOST_ADDRESS))
     server.start()
     try:
         while True:

@@ -1,0 +1,56 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+    name: occupancy
+    namespace: xbos
+    labels:
+        app: occupancy
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: occupancy
+    template:
+        metadata:
+            labels:
+                app: occupancy
+        spec:
+            volumes:
+                - name: data
+                  hostPath:
+                    path: /etc/xbos-microservices/occupancy
+            containers:
+                - name: service
+                  image:  xbos/microsvc_occupancy:latest
+                  imagePullPolicy: Always
+                  env:
+                      - name: OCCUPANCY_HOST_ADDRESS
+                        value: "0.0.0.0:50066"
+                      - name: OCCUPANCY_DATA_PATH
+                        value: "/data"
+                      - name: XBOS_SERVICES_UTILS3_DATA_PATH
+                        value: "no value?"
+                  volumeMounts:
+                      - name: data
+                        mountPath: /data
+                  ports:
+                    - containerPort: 50066
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: occupancy
+    namespace: xbos
+spec:
+    type: ClusterIP
+    #externalIPs:
+    #- << ip address here >>
+    selector:
+        app: occupancy
+    ports:
+      - name: grpc
+        port: 5000
+        protocol: TCP
+        targetPort: 50066
+
+

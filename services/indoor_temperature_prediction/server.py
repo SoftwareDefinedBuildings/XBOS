@@ -8,6 +8,8 @@ import numpy as np
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 
 import indoor_temperature_prediction_pb2
 import indoor_temperature_prediction_pb2_grpc
@@ -42,12 +44,12 @@ def initizalize():
     building_zone_names_stub = xsg.get_building_zone_names_stub()
     all_building_zone_names = xsg.get_all_buildings_zones(building_zone_names_stub)
     for building in all_building_zone_names.keys():
-        print("Initizalizing building:", building)
+        logging.info("Initizalizing building:", building)
         for zone in all_building_zone_names[building]:
-            print("Zone:", zone)
+            logging.info("Zone:", zone)
             _, err = check_thermal_model(building, zone)
             if err is not None:
-                print("Error: " + err)
+                logging.error("Error: " + err)
         print("")
 
 
@@ -97,7 +99,7 @@ def get_error(request):
 
     :return: error_reply, err
     """
-    print("received request:", request.building, request.zone, request.action, request.start, request.end, request.unit)
+    logging.info("received request:", request.building, request.zone, request.action, request.start, request.end, request.unit)
 
     request_length = [len(request.building), len(request.zone), request.start,
                       request.end,
@@ -162,7 +164,7 @@ def get_error(request):
 def prediction(request):
     """Returns temperature prediction for a given request or None."""
 
-    print("received request:", request.building, request.zone, request.current_time,
+    logging.info("received request:", request.building, request.zone, request.current_time,
           request.indoor_temperature, request.outside_temperature, request.other_zone_temperatures,
           request.temperature_unit)
 
@@ -243,6 +245,7 @@ def serve():
     indoor_temperature_prediction_pb2_grpc.add_IndoorTemperaturePredictionServicer_to_server(
         IndoorTemperaturePredictionServicer(), server)
     server.add_insecure_port(HOST_ADDRESS)
+    logging.info("Serving on {0}".format(HOST_ADDRESS))
     server.start()
     try:
         while True:
@@ -252,6 +255,7 @@ def serve():
 
 
 if __name__ == '__main__':
+    logging.info("Initializing")
     initizalize()
     serve()
     #

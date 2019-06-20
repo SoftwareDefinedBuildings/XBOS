@@ -1,6 +1,8 @@
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import pymortar
 import outdoor_temperature_historical_pb2
 import outdoor_temperature_historical_pb2_grpc
@@ -21,6 +23,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 
 OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS = os.environ["OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS"]
 OUTDOOR_TEMPERATURE_HISTORICAL_DATA_PATH = Path(os.environ["OUTDOOR_TEMPERATURE_HISTORICAL_DATA_PATH"])
+
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
@@ -290,6 +293,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
     outdoor_temperature_historical_pb2_grpc.add_OutdoorTemperatureServicer_to_server(OutdoorTemperatureServicer(), server)
     server.add_insecure_port(OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS)
+    logging.info("Serving on {0}".format(OUTDOOR_TEMPERATURE_HISTORICAL_HOST_ADDRESS))
     server.start()
     try:
         while True:

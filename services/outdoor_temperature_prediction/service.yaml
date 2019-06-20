@@ -1,0 +1,52 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+    name: outdoor-temperature-prediction
+    namespace: xbos
+    labels:
+        app: outdoor-temperature-prediction
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: outdoor-temperature-prediction
+    template:
+        metadata:
+            labels:
+                app: outdoor-temperature-prediction
+        spec:
+            volumes:
+                - name: data
+                  hostPath:
+                    path: /etc/xbos-microservices/outdoor_temperature_prediction
+            containers:
+                - name: service
+                  image:  xbos/microsvc_outdoor_temperature_prediction:latest
+                  imagePullPolicy: Always
+                  env:
+                      - name: OUTDOOR_TEMPERATURE_PREDICTION_HOST_ADDRESS
+                        value: "0.0.0.0:50066"
+                  volumeMounts:
+                      - name: data
+                        mountPath: /data
+                  ports:
+                    - containerPort: 50066
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: outdoor-temperature-prediction
+    namespace: xbos
+spec:
+    type: ClusterIP
+    #externalIPs:
+    #- << ip address here >>
+    selector:
+        app: outdoor-temperature-prediction
+    ports:
+      - name: grpc
+        port: 5000
+        protocol: TCP
+        targetPort: 50066
+
+

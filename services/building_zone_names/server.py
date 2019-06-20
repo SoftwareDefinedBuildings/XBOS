@@ -1,6 +1,8 @@
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 
 import os
 import yaml
@@ -55,7 +57,7 @@ def _get_zones(building):
 
 def get_buildings():
     """Returns preprocessed thermal data for a given request or None."""
-    print("received building request.")
+    logging.info("received building request.")
 
     buildings, err = _get_buildings()
     if err is not None:
@@ -72,7 +74,7 @@ def get_buildings():
 def get_zones(request):
     """Returns preprocessed thermal data for a given request or None."""
 
-    print("received zone request:", request.building)
+    logging.info("received zone request:", request.building)
 
     zones, err = _get_zones(request.building)
     if err is not None:
@@ -123,6 +125,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     building_zone_names_pb2_grpc.add_BuildingZoneNamesServicer_to_server(BuildingZoneNamesServices(), server)
     server.add_insecure_port(NAMES_HOST_ADDRESS)
+    logging.info("Serving on {0} with data path {1}".format(NAMES_HOST_ADDRESS, NAMES_DATA_PATH))
     server.start()
     try:
         while True:

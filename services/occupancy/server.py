@@ -1,6 +1,8 @@
 from concurrent import futures
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import occupancy_pb2
 import occupancy_pb2_grpc
 
@@ -135,7 +137,7 @@ def get_all_occ(building, zone, start, end, interval):
 
 def get_occupancy(request):
     """Returns preprocessed thermal data for a given request or None."""
-    print("received request:", request.building, request.zone, request.start, request.end, request.window)
+    logging.info("received request:", request.building, request.zone, request.start, request.end, request.window)
     window_seconds = utils.get_window_in_sec(request.window)
 
     request_length = [len(request.building), len(request.zone), request.start, request.end,
@@ -196,6 +198,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     occupancy_pb2_grpc.add_OccupancyServicer_to_server(OccupancyServicer(), server)
     server.add_insecure_port(OCCUPANCY_HOST_ADDRESS)
+    logging.info("Serving on {0} with data path {1}".format(OCCUPANCY_HOST_ADDRESS, OCCUPANCY_DATA_PATH))
     server.start()
     try:
         while True:

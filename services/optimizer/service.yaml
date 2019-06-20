@@ -1,0 +1,49 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+    name: optimizer
+    namespace: xbos
+    labels:
+        app: optimizer
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: optimizer
+    template:
+        metadata:
+            labels:
+                app: optimizer
+        spec:
+            containers:
+                - name: service
+                  image:  xbos/microsvc_optimizer:latest
+                  imagePullPolicy: Always
+                  env:
+                      - name: OPTIMIZER_HOST_ADDRESS
+                        value: "0.0.0.0:50066"
+                      - name: BUILDING_ZONE_NAMES_HOST_ADDRESS
+                        value: "k8ms.xbos.io:9001"
+                      - name: XBOS_SERVICES_UTILS3_DATA_PATH
+                        value: "n/a"
+                  ports:
+                    - containerPort: 50066
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: optimizer
+    namespace: xbos
+spec:
+    type: ClusterIP
+    #externalIPs:
+    #- << ip address here >>
+    selector:
+        app: optimizer
+    ports:
+      - name: grpc
+        port: 5000
+        protocol: TCP
+        targetPort: 50066
+
+

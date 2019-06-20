@@ -3,6 +3,8 @@ import datetime
 import pytz
 import time
 import grpc
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
 import price_pb2
 import price_pb2_grpc
 import pandas as pd
@@ -483,7 +485,7 @@ class PriceServicer(price_pb2_grpc.PriceServicer):
                 df = pd.read_csv(PRICE_DATA_PATH / ("prices_01012017_040172019/" + tariff + ".csv"), index_col=[0], parse_dates=False)
                 df = df.fillna(0)
                 df.index = pd.to_datetime(df.index)
-                df = df.tz_localize("US/Pacific",nonexistent='shift_forward' ,ambiguous=False).tz_convert(pytz.utc)
+                df = df.tz_localize("US/Pacific",nonexistent='shift_forward',ambiguous=False).tz_convert(pytz.utc)
                 self.all_tariffs_utilities_dfs[tariff]= df
         self.all_tariffs_utilities = price_pb2.AllTariffUtilityReply(tariffs_utilities=tariffs_utilities)
 
@@ -568,6 +570,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     price_pb2_grpc.add_PriceServicer_to_server(PriceServicer(), server)
     server.add_insecure_port(PRICE_HOST_ADDRESS)
+    logging.info("Serving on {0} with data path {1}".format(PRICE_HOST_ADDRESS, PRICE_DATA_PATH))
     server.start()
     try:
         while True:
