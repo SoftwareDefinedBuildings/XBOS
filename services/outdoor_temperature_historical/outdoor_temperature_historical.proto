@@ -12,7 +12,11 @@ service OutdoorTemperature {
   //
   // Sends the outside temperature for a given building, within a duration (start, end), and a requested window
   // An error  is returned if there are no temperature for the given request
-  rpc GetTemperature (TemperatureRequest) returns (TemperatureReply) {}
+  // GetPreprocessedTemperature uses Facebook Prophet to return interpolated historical data or predict future data
+  rpc GetPreprocessedTemperature (TemperatureRequest) returns (stream TemperaturePoint) {}
+  // GetRawTemperature uses pymortar to return historical data only
+  rpc GetRawTemperature (TemperatureRequest) returns (stream TemperaturePoint) {}
+
 }
 
 // TemperaturePoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
@@ -36,9 +40,7 @@ message TemperatureRequest {
   // The frequency/duration window (e.g., 10s, 15m, 1h)
   // Supported units are: d,h,m,s
   string window = 4;
-}
 
-// The response message containing the temperatures
-message TemperatureReply {
-  repeated TemperaturePoint temperatures = 1;
+  // The aggregate type for raw data include MEAN, MAX, MIN, COUNT, SUM, RAW (the temporal window parameter is ignored)
+  string aggregate = 5;
 }

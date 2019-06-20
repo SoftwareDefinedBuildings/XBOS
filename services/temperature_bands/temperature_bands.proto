@@ -10,8 +10,8 @@ package temperature_bands;
 // The temperature bands service definition.
 service Schedules {
   // A simple RPC.
-  rpc GetComfortband (ScheduleRequest) returns (ScheduleReply) {}
-  rpc GetDoNotExceed (ScheduleRequest) returns (ScheduleReply) {}
+  rpc GetComfortband (ScheduleRequest) returns (stream SchedulePoint) {}
+  rpc GetDoNotExceed (ScheduleRequest) returns (stream SchedulePoint) {}
 }
 
 // The request message containing the requested information.
@@ -47,6 +47,6 @@ message SchedulePoint {
 
 
 // The response message containing the temperatures
-message ScheduleReply {
-  repeated SchedulePoint schedules = 1;
-}
+// message ScheduleReply {
+//   repeated SchedulePoint schedules = 1;
+// }

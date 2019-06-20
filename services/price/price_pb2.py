@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='price',
   syntax='proto3',
   serialized_options=_b('P\001'),
-  serialized_pb=_b('\n\x0bprice.proto\x12\x05price\"G\n\nPricePoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t\x12\x0e\n\x06window\x18\x04 \x01(\t\"\x07\n\x05\x45mpty\"#\n\x0f\x42uildingRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\"o\n\x0cPriceRequest\x12\x0f\n\x07utility\x18\x01 \x01(\t\x12\x0e\n\x06tariff\x18\x02 \x01(\t\x12\x12\n\nprice_type\x18\x03 \x01(\t\x12\r\n\x05start\x18\x04 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x05 \x01(\x03\x12\x0e\n\x06window\x18\x06 \x01(\t\"/\n\nPriceReply\x12!\n\x06prices\x18\x01 \x03(\x0b\x32\x11.price.PricePoint\"M\n\x15\x41llTariffUtilityReply\x12\x34\n\x11tariffs_utilities\x18\x01 \x03(\x0b\x32\x19.price.TariffUtilityReply\"5\n\x12TariffUtilityReply\x12\x0f\n\x07utility\x18\x01 \x01(\t\x12\x0e\n\x06tariff\x18\x02 \x01(\t2\xd4\x01\n\x05Price\x12\x34\n\x08GetPrice\x12\x13.price.PriceRequest\x1a\x11.price.PriceReply\"\x00\x12I\n\x19GetAllTariffsAndUtilities\x12\x0c.price.Empty\x1a\x1c.price.AllTariffUtilityReply\"\x00\x12J\n\x13GetTariffAndUtility\x12\x16.price.BuildingRequest\x1a\x19.price.TariffUtilityReply\"\x00\x42\x02P\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x0bprice.proto\x12\x05price\"G\n\nPricePoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x0c\n\x04unit\x18\x03 \x01(\t\x12\x0e\n\x06window\x18\x04 \x01(\t\"\x07\n\x05\x45mpty\"(\n\x15\x44\x65mandResponseRequest\x12\x0f\n\x07utility\x18\x01 \x01(\t\"C\n\x13\x44\x65mandResponseReply\x12,\n\x08statuses\x18\x01 \x03(\x0b\x32\x1a.price.DemandResponsePoint\"3\n\x13\x44\x65mandResponsePoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\x0e\n\x06status\x18\x02 \x01(\x03\"#\n\x0f\x42uildingRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\"o\n\x0cPriceRequest\x12\x0f\n\x07utility\x18\x01 \x01(\t\x12\x0e\n\x06tariff\x18\x02 \x01(\t\x12\x12\n\nprice_type\x18\x03 \x01(\t\x12\r\n\x05start\x18\x04 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x05 \x01(\x03\x12\x0e\n\x06window\x18\x06 \x01(\t\"M\n\x15\x41llTariffUtilityReply\x12\x34\n\x11tariffs_utilities\x18\x01 \x03(\x0b\x32\x19.price.TariffUtilityReply\"5\n\x12TariffUtilityReply\x12\x0f\n\x07utility\x18\x01 \x01(\t\x12\x0e\n\x06tariff\x18\x02 \x01(\t2\x89\x03\n\x05Price\x12\x36\n\x08GetPrice\x12\x13.price.PriceRequest\x1a\x11.price.PricePoint\"\x00\x30\x01\x12I\n\x19GetAllTariffsAndUtilities\x12\x0c.price.Empty\x1a\x1c.price.AllTariffUtilityReply\"\x00\x12J\n\x13GetTariffAndUtility\x12\x16.price.BuildingRequest\x1a\x19.price.TariffUtilityReply\"\x00\x12W\n\x19GetDemandResponseForecast\x12\x1c.price.DemandResponseRequest\x1a\x1a.price.DemandResponseReply\"\x00\x12X\n\x1aGetDemandResponseConfirmed\x12\x1c.price.DemandResponseRequest\x1a\x1a.price.DemandResponseReply\"\x00\x42\x02P\x01\x62\x06proto3')
 )
 
 
@@ -101,6 +101,106 @@ _EMPTY = _descriptor.Descriptor(
 )
 
 
+_DEMANDRESPONSEREQUEST = _descriptor.Descriptor(
+  name='DemandResponseRequest',
+  full_name='price.DemandResponseRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='utility', full_name='price.DemandResponseRequest.utility', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=104,
+  serialized_end=144,
+)
+
+
+_DEMANDRESPONSEREPLY = _descriptor.Descriptor(
+  name='DemandResponseReply',
+  full_name='price.DemandResponseReply',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='statuses', full_name='price.DemandResponseReply.statuses', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=146,
+  serialized_end=213,
+)
+
+
+_DEMANDRESPONSEPOINT = _descriptor.Descriptor(
+  name='DemandResponsePoint',
+  full_name='price.DemandResponsePoint',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='time', full_name='price.DemandResponsePoint.time', index=0,
+      number=1, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='status', full_name='price.DemandResponsePoint.status', index=1,
+      number=2, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=215,
+  serialized_end=266,
+)
+
+
 _BUILDINGREQUEST = _descriptor.Descriptor(
   name='BuildingRequest',
   full_name='price.BuildingRequest',
@@ -127,8 +227,8 @@ _BUILDINGREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=104,
-  serialized_end=139,
+  serialized_start=268,
+  serialized_end=303,
 )
 
 
@@ -193,39 +293,8 @@ _PRICEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=141,
-  serialized_end=252,
-)
-
-
-_PRICEREPLY = _descriptor.Descriptor(
-  name='PriceReply',
-  full_name='price.PriceReply',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='prices', full_name='price.PriceReply.prices', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=254,
-  serialized_end=301,
+  serialized_start=305,
+  serialized_end=416,
 )
 
 
@@ -255,8 +324,8 @@ _ALLTARIFFUTILITYREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=303,
-  serialized_end=380,
+  serialized_start=418,
+  serialized_end=495,
 )
 
 
@@ -293,17 +362,19 @@ _TARIFFUTILITYREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=382,
-  serialized_end=435,
+  serialized_start=497,
+  serialized_end=550,
 )
 
-_PRICEREPLY.fields_by_name['prices'].message_type = _PRICEPOINT
+_DEMANDRESPONSEREPLY.fields_by_name['statuses'].message_type = _DEMANDRESPONSEPOINT
 _ALLTARIFFUTILITYREPLY.fields_by_name['tariffs_utilities'].message_type = _TARIFFUTILITYREPLY
 DESCRIPTOR.message_types_by_name['PricePoint'] = _PRICEPOINT
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
+DESCRIPTOR.message_types_by_name['DemandResponseRequest'] = _DEMANDRESPONSEREQUEST
+DESCRIPTOR.message_types_by_name['DemandResponseReply'] = _DEMANDRESPONSEREPLY
+DESCRIPTOR.message_types_by_name['DemandResponsePoint'] = _DEMANDRESPONSEPOINT
 DESCRIPTOR.message_types_by_name['BuildingRequest'] = _BUILDINGREQUEST
 DESCRIPTOR.message_types_by_name['PriceRequest'] = _PRICEREQUEST
-DESCRIPTOR.message_types_by_name['PriceReply'] = _PRICEREPLY
 DESCRIPTOR.message_types_by_name['AllTariffUtilityReply'] = _ALLTARIFFUTILITYREPLY
 DESCRIPTOR.message_types_by_name['TariffUtilityReply'] = _TARIFFUTILITYREPLY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -322,6 +393,27 @@ Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), d
   ))
 _sym_db.RegisterMessage(Empty)
 
+DemandResponseRequest = _reflection.GeneratedProtocolMessageType('DemandResponseRequest', (_message.Message,), dict(
+  DESCRIPTOR = _DEMANDRESPONSEREQUEST,
+  __module__ = 'price_pb2'
+  # @@protoc_insertion_point(class_scope:price.DemandResponseRequest)
+  ))
+_sym_db.RegisterMessage(DemandResponseRequest)
+
+DemandResponseReply = _reflection.GeneratedProtocolMessageType('DemandResponseReply', (_message.Message,), dict(
+  DESCRIPTOR = _DEMANDRESPONSEREPLY,
+  __module__ = 'price_pb2'
+  # @@protoc_insertion_point(class_scope:price.DemandResponseReply)
+  ))
+_sym_db.RegisterMessage(DemandResponseReply)
+
+DemandResponsePoint = _reflection.GeneratedProtocolMessageType('DemandResponsePoint', (_message.Message,), dict(
+  DESCRIPTOR = _DEMANDRESPONSEPOINT,
+  __module__ = 'price_pb2'
+  # @@protoc_insertion_point(class_scope:price.DemandResponsePoint)
+  ))
+_sym_db.RegisterMessage(DemandResponsePoint)
+
 BuildingRequest = _reflection.GeneratedProtocolMessageType('BuildingRequest', (_message.Message,), dict(
   DESCRIPTOR = _BUILDINGREQUEST,
   __module__ = 'price_pb2'
@@ -335,13 +427,6 @@ PriceRequest = _reflection.GeneratedProtocolMessageType('PriceRequest', (_messag
   # @@protoc_insertion_point(class_scope:price.PriceRequest)
   ))
 _sym_db.RegisterMessage(PriceRequest)
-
-PriceReply = _reflection.GeneratedProtocolMessageType('PriceReply', (_message.Message,), dict(
-  DESCRIPTOR = _PRICEREPLY,
-  __module__ = 'price_pb2'
-  # @@protoc_insertion_point(class_scope:price.PriceReply)
-  ))
-_sym_db.RegisterMessage(PriceReply)
 
 AllTariffUtilityReply = _reflection.GeneratedProtocolMessageType('AllTariffUtilityReply', (_message.Message,), dict(
   DESCRIPTOR = _ALLTARIFFUTILITYREPLY,
@@ -366,8 +451,8 @@ _PRICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=438,
-  serialized_end=650,
+  serialized_start=553,
+  serialized_end=946,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetPrice',
@@ -375,7 +460,7 @@ _PRICE = _descriptor.ServiceDescriptor(
     index=0,
     containing_service=None,
     input_type=_PRICEREQUEST,
-    output_type=_PRICEREPLY,
+    output_type=_PRICEPOINT,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
@@ -394,6 +479,24 @@ _PRICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_BUILDINGREQUEST,
     output_type=_TARIFFUTILITYREPLY,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetDemandResponseForecast',
+    full_name='price.Price.GetDemandResponseForecast',
+    index=3,
+    containing_service=None,
+    input_type=_DEMANDRESPONSEREQUEST,
+    output_type=_DEMANDRESPONSEREPLY,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetDemandResponseConfirmed',
+    full_name='price.Price.GetDemandResponseConfirmed',
+    index=4,
+    containing_service=None,
+    input_type=_DEMANDRESPONSEREQUEST,
+    output_type=_DEMANDRESPONSEREPLY,
     serialized_options=None,
   ),
 ])

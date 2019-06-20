@@ -233,9 +233,9 @@ def get_comfortband(request):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
     if request.unit != "F":
-        return None, "only fahrenheit support."
+        return None, "invalid request, only fahrenheit support."
     if 60*60 % duration != 0:
-        return None, "window is not a factor of an hour (60(min)*60(sec)%window != 0). e.g. 15min is a factor but 25 is not."
+        return None, "invalid request, window is not a factor of an hour (60(min)*60(sec)%window != 0). e.g. 15min is a factor but 25 is not."
 
     start_datetime = datetime.datetime.utcfromtimestamp(
                                            float(request.start / 1e9)).replace(tzinfo=pytz.utc)
@@ -246,7 +246,7 @@ def get_comfortband(request):
 
     comfortband, err = get_band(request.building, request.zone, start_datetime, end_datetime, duration, "comfortband")
     if comfortband is None:
-        return None, err
+        return [temperature_bands_pb2.SchedulePoint()], err
 
     comfortband_time = time.time()
 
@@ -259,12 +259,12 @@ def get_comfortband(request):
                                         unit="F"))
 
     response_creation_time = time.time()
-    print("Error checking time %f seconds" % (error_checking_time - start_time ))
-    print("Comfortband time %f seconds" % (comfortband_time - error_checking_time ))
-    print("Response creation time %f seconds" % (response_creation_time - comfortband_time ))
+    # print("Error checking time %f seconds" % (error_checking_time - start_time ))
+    # print("Comfortband time %f seconds" % (comfortband_time - error_checking_time ))
+    # print("Response creation time %f seconds" % (response_creation_time - comfortband_time ))
 
-
-    return temperature_bands_pb2.ScheduleReply(schedules=grpc_comfortband), None
+    return grpc_comfortband,None
+    # return temperature_bands_pb2.ScheduleReply(schedules=grpc_comfortband), None
 
 
 def get_do_not_exceed(request):
@@ -288,9 +288,9 @@ def get_do_not_exceed(request):
     if request.start + (duration * 1e9) > request.end:
         return None, "invalid request, start date + window is greater than end date"
     if request.unit != "F":
-        return None, "only fahrenheit support."
+        return None, "invalid request, only fahrenheit support."
     if 60*60 % duration != 0:
-        return None, "window is not a factor of an hour (60(min)*60(sec)%window != 0). e.g. 15min is a factor but 25 is not."
+        return None, "invalid request, window is not a factor of an hour (60(min)*60(sec)%window != 0). e.g. 15min is a factor but 25 is not."
 
 
     start_datetime = datetime.datetime.utcfromtimestamp(
@@ -300,7 +300,7 @@ def get_do_not_exceed(request):
 
     do_not_exceed, err = get_band(request.building, request.zone, start_datetime, end_datetime, duration, "do_not_exceed")
     if do_not_exceed is None:
-        return None, err
+        return [temperature_bands_pb2.SchedulePoint()], err
 
     grpc_do_not_exceed = []
     for index, row in do_not_exceed.iterrows():
@@ -309,8 +309,8 @@ def get_do_not_exceed(request):
                                         temperature_low=row["t_low"],
                                         temperature_high=row["t_high"],
                                         unit="F"))
-
-    return temperature_bands_pb2.ScheduleReply(schedules=grpc_do_not_exceed), None
+    return grpc_do_not_exceed,None
+    # return temperature_bands_pb2.ScheduleReply(schedules=grpc_do_not_exceed), None
 
 
 class SchedulesServicer(temperature_bands_pb2_grpc.SchedulesServicer):
@@ -328,12 +328,13 @@ class SchedulesServicer(temperature_bands_pb2_grpc.SchedulesServicer):
         if comfortband is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return temperature_bands_pb2.ScheduleReply()
+            return temperature_bands_pb2.SchedulePoint()
         elif error is not None:
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
-
-        return comfortband
+        for band in comfortband:
+            yield band
+        # return comfortband
 
     def GetDoNotExceed(self, request, context):
         """A simple RPC.
@@ -345,12 +346,13 @@ class SchedulesServicer(temperature_bands_pb2_grpc.SchedulesServicer):
         if do_not_exceed is None:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(error)
-            return temperature_bands_pb2.ScheduleReply()
+            return temperature_bands_pb2.SchedulePoint()
         elif error is not None:
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details(error)
-
-        return do_not_exceed
+        for dne in do_not_exceed:
+            yield dne
+        # return do_not_exceed
 
 
 def serve():

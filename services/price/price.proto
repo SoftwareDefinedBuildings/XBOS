@@ -12,12 +12,17 @@ service Price {
   // A simple RPC.
   //
   // Sends a price for a utility, tariff, type, duration (start, end), and window
-  // A PriceReply with an empty name is returned if there are no prices for the given request
-  rpc GetPrice (PriceRequest) returns (PriceReply) {}
+  // An empty PricePoint is returned if there are no prices for the given request
+  rpc GetPrice (PriceRequest) returns (stream PricePoint) {}
   // Sends all available tariffs and utilities
   rpc GetAllTariffsAndUtilities (Empty) returns (AllTariffUtilityReply) {}
   // Sends a tariff and utility for the specified building name
   rpc GetTariffAndUtility (BuildingRequest) returns (TariffUtilityReply) {}
+  // Sends demand response forecast for the next 5 days (only PG&E PDP and SCE CPP)
+  rpc GetDemandResponseForecast (DemandResponseRequest) returns (DemandResponseReply) {}
+  // Sends confirmed demand response days for today and tomorrow (only PG&E PDP and SCE CPP)
+  rpc GetDemandResponseConfirmed (DemandResponseRequest) returns (DemandResponseReply) {}
+
 }
 
 // PricePoints are represented as a float per unit (e.g., 0.14 $/kWh) starting at a given time
@@ -33,6 +38,20 @@ message Empty {
 
 }
 
+//The request message containg the requested utility
+message DemandResponseRequest {
+  string utility = 1;
+}
+
+
+message DemandResponseReply {
+  repeated DemandResponsePoint statuses = 1;
+}
+
+message DemandResponsePoint {
+  int64 time = 1;
+  int64 status = 2; // UNLIKELY = 0, POSSIBLE = 1, LIKELY = 2, CONFIRMED = 3
+}
 //The request message containing the requested building name
 message BuildingRequest {
   string building = 1;
@@ -61,11 +80,6 @@ message PriceRequest {
   // Supported units are: h,m,s
   // max is 1 hour (1h, 60m, 3600s)
   string window = 6;
-}
-
-// The response message containing the prices
-message PriceReply {
-  repeated PricePoint prices = 1;
 }
 
 // The response message containing all tariffs and utilities

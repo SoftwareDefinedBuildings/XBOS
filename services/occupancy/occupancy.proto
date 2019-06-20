@@ -12,7 +12,7 @@ service Occupancy {
   //
   // Sends the historic occupancy for a given building and zone within a duration (start, end), and a requested window
   // An error  is returned if there are no temperature for the given request
-  rpc GetOccupancy (Request) returns (OccupancyReply) {}
+  rpc GetOccupancy (Request) returns (stream OccupancyPoint) {}
 }
 
 // The request message containing the requested information.
@@ -41,6 +41,6 @@ message OccupancyPoint {
 
 
 // The response message containing the temperatures
-message OccupancyReply {
-  repeated OccupancyPoint occupancies = 1;
-}
+// message OccupancyReply {
+//   repeated OccupancyPoint occupancies = 1;
+// }
