@@ -19,7 +19,7 @@ def run():
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    with grpc.insecure_channel('localhost:50060') as channel:
+    with grpc.insecure_channel('localhost:50000') as channel:
         stub = price_pb2_grpc.PriceStub(channel)
         try:
             # response = stub.GetPrice(price_pb2.PriceRequest(utility="PGE",tariff="PGEA10",price_type="energy",start=int((time.time())*1000000000.0),end=int((time.time()+3600*2)*1000000000.0),window="15m"))
@@ -37,7 +37,8 @@ def run():
 
             tariff_and_utility = stub.GetTariffAndUtility(price_pb2.BuildingRequest(building="ciee"))
             response = stub.GetPrice(price_pb2.PriceRequest(price_type="ENERGY", tariff=tariff_and_utility.tariff, utility=tariff_and_utility.utility, start=start,end=end,window="1h"))
-            print(response)
+            for resp in response:
+                print(resp)
             # for temperature in response.temperatures:
             #     # print("Price at: %s is: %.2f %s" % (time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(int(price.time/1000000000.0))) + ' UTC', price.price, price.unit))
             #     print("Temp at: %s is: %.2f %s" % (time.ctime(int(temperature.time/1e9)) + ' PST', temperature.temperature, temperature.unit))
@@ -53,7 +54,7 @@ if __name__ == '__main__':
 # zones = xbos.get_all_buildings_zones(building_zone_names_stub)
 # start = datetime.datetime.strptime("09/09/2018 07:00:00", "%d/%m/%Y %H:%M:%S").replace(tzinfo=pytz.utc)
 # end =  datetime.datetime.strptime("31/12/2018 23:59:59", "%d/%m/%Y %H:%M:%S").replace(tzinfo=pytz.utc)
-# class TestPriceData(unittest.TestCase):   
+# class TestPriceData(unittest.TestCase):
 
 #     def __init__(self, test_name):
 #         super(TestPriceData, self).__init__(test_name)
@@ -77,7 +78,7 @@ if __name__ == '__main__':
 #             self.assertEqual(time_diff, time_delta)
 
 #         return cur_time
-    
+
 #     def valid_data_exists(self, response, window):
 #         last_time = None
 #         num_rows = response.shape[0]
@@ -99,18 +100,18 @@ if __name__ == '__main__':
 #                 self.assertTrue(type(row['unit']) == float or type(row['unit']) == str)
 #                 last_time = self.window_is_accurate(last_time, time.to_pydatetime(), window)
 #             i += 1
-                
+
 #     @test_utils.all_buildings(start=start, end=end, max_interval_days=1, log_csv="price_energy_tests.csv", buildings=buildings, price_type="ENERGY")
 #     def test_all_buildings(self, **kwargs):
 #         response = self.get_response(**kwargs)
-#         self.assertIsNotNone(response)       
+#         self.assertIsNotNone(response)
 #         self.valid_data_exists(response, kwargs.get("window"))
 #         return response
-    
+
 #     @test_utils.random_buildings(start=start, end=end, iterations=2, log_csv="price_energy_random_tests.csv", buildings=buildings, price_type="ENERGY")
 #     def test_random_buildings(self, **kwargs):
 #         response = self.get_response(**kwargs)
-#         self.assertIsNotNone(response)       
+#         self.assertIsNotNone(response)
 #         self.valid_data_exists(response, kwargs["window"])
 #         return response
 
@@ -120,7 +121,7 @@ if __name__ == '__main__':
 #         response = self.get_response(building=building, price_type=price_type, start=start,end=end,window=window)
 #         self.assertIsNotNone(response)
 #         self.valid_data_exists(response, window)
-    
+
 # if __name__ == '__main__':
 #     test_loader = unittest.TestLoader()
 #     test_names = test_loader.getTestCaseNames(TestPriceData)

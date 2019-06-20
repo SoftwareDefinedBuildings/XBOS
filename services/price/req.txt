@@ -1,8 +1,11 @@
 grpcio
 grpcio-tools
-pandas>=0.24.0
+pandas
 PyYAML
 pytz
-pymortar>=1.0.0
+pymortar
 rfc3339
 pathlib
+numpy
+requests
+lxml

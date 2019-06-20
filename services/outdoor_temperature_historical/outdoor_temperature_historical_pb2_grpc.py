@@ -14,10 +14,15 @@ class OutdoorTemperatureStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.GetTemperature = channel.unary_unary(
-        '/outdoor_temperature_historical.OutdoorTemperature/GetTemperature',
+    self.GetPreprocessedTemperature = channel.unary_stream(
+        '/outdoor_temperature_historical.OutdoorTemperature/GetPreprocessedTemperature',
         request_serializer=outdoor__temperature__historical__pb2.TemperatureRequest.SerializeToString,
-        response_deserializer=outdoor__temperature__historical__pb2.TemperatureReply.FromString,
+        response_deserializer=outdoor__temperature__historical__pb2.TemperaturePoint.FromString,
+        )
+    self.GetRawTemperature = channel.unary_stream(
+        '/outdoor_temperature_historical.OutdoorTemperature/GetRawTemperature',
+        request_serializer=outdoor__temperature__historical__pb2.TemperatureRequest.SerializeToString,
+        response_deserializer=outdoor__temperature__historical__pb2.TemperaturePoint.FromString,
         )
 
 
@@ -25,11 +30,19 @@ class OutdoorTemperatureServicer(object):
   """The temperature service definition.
   """
 
-  def GetTemperature(self, request, context):
+  def GetPreprocessedTemperature(self, request, context):
     """A simple RPC.
 
     Sends the outside temperature for a given building, within a duration (start, end), and a requested window
     An error  is returned if there are no temperature for the given request
+    GetPreprocessedTemperature uses Facebook Prophet to return interpolated historical data or predict future data
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetRawTemperature(self, request, context):
+    """GetRawTemperature uses pymortar to return historical data only
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
@@ -38,10 +51,15 @@ class OutdoorTemperatureServicer(object):
 
 def add_OutdoorTemperatureServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'GetTemperature': grpc.unary_unary_rpc_method_handler(
-          servicer.GetTemperature,
+      'GetPreprocessedTemperature': grpc.unary_stream_rpc_method_handler(
+          servicer.GetPreprocessedTemperature,
           request_deserializer=outdoor__temperature__historical__pb2.TemperatureRequest.FromString,
-          response_serializer=outdoor__temperature__historical__pb2.TemperatureReply.SerializeToString,
+          response_serializer=outdoor__temperature__historical__pb2.TemperaturePoint.SerializeToString,
+      ),
+      'GetRawTemperature': grpc.unary_stream_rpc_method_handler(
+          servicer.GetRawTemperature,
+          request_deserializer=outdoor__temperature__historical__pb2.TemperatureRequest.FromString,
+          response_serializer=outdoor__temperature__historical__pb2.TemperaturePoint.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='meter_data_historical',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1bmeter_data_historical.proto\x12\x15meter_data_historical\"n\n\x07Request\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05start\x18\x02 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x03\x12\x12\n\npoint_type\x18\x04 \x01(\t\x12\x11\n\taggregate\x18\x05 \x01(\t\x12\x0e\n\x06window\x18\x06 \x01(\t\"-\n\x0eMeterDataPoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\r\n\x05power\x18\x02 \x01(\x01\"=\n\x05Reply\x12\x34\n\x05point\x18\x01 \x03(\x0b\x32%.meter_data_historical.MeterDataPoint2o\n\x13MeterDataHistorical\x12X\n\x16GetMeterDataHistorical\x12\x1e.meter_data_historical.Request\x1a\x1c.meter_data_historical.Reply\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x1bmeter_data_historical.proto\x12\x15meter_data_historical\"n\n\x07Request\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05start\x18\x02 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x03\x12\x12\n\npoint_type\x18\x04 \x01(\t\x12\x11\n\taggregate\x18\x05 \x01(\t\x12\x0e\n\x06window\x18\x06 \x01(\t\"-\n\x0eMeterDataPoint\x12\x0c\n\x04time\x18\x01 \x01(\x03\x12\r\n\x05power\x18\x02 \x01(\x01\x32z\n\x13MeterDataHistorical\x12\x63\n\x16GetMeterDataHistorical\x12\x1e.meter_data_historical.Request\x1a%.meter_data_historical.MeterDataPoint\"\x00\x30\x01\x62\x06proto3')
 )
 
 
@@ -128,41 +128,8 @@ _METERDATAPOINT = _descriptor.Descriptor(
   serialized_end=211,
 )
 
-
-_REPLY = _descriptor.Descriptor(
-  name='Reply',
-  full_name='meter_data_historical.Reply',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='point', full_name='meter_data_historical.Reply.point', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=213,
-  serialized_end=274,
-)
-
-_REPLY.fields_by_name['point'].message_type = _METERDATAPOINT
 DESCRIPTOR.message_types_by_name['Request'] = _REQUEST
 DESCRIPTOR.message_types_by_name['MeterDataPoint'] = _METERDATAPOINT
-DESCRIPTOR.message_types_by_name['Reply'] = _REPLY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Request = _reflection.GeneratedProtocolMessageType('Request', (_message.Message,), dict(
@@ -179,13 +146,6 @@ MeterDataPoint = _reflection.GeneratedProtocolMessageType('MeterDataPoint', (_me
   ))
 _sym_db.RegisterMessage(MeterDataPoint)
 
-Reply = _reflection.GeneratedProtocolMessageType('Reply', (_message.Message,), dict(
-  DESCRIPTOR = _REPLY,
-  __module__ = 'meter_data_historical_pb2'
-  # @@protoc_insertion_point(class_scope:meter_data_historical.Reply)
-  ))
-_sym_db.RegisterMessage(Reply)
-
 
 
 _METERDATAHISTORICAL = _descriptor.ServiceDescriptor(
@@ -194,8 +154,8 @@ _METERDATAHISTORICAL = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=276,
-  serialized_end=387,
+  serialized_start=213,
+  serialized_end=335,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetMeterDataHistorical',
@@ -203,7 +163,7 @@ _METERDATAHISTORICAL = _descriptor.ServiceDescriptor(
     index=0,
     containing_service=None,
     input_type=_REQUEST,
-    output_type=_REPLY,
+    output_type=_METERDATAPOINT,
     serialized_options=None,
   ),
 ])

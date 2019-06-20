@@ -12,9 +12,10 @@ service IndoorDataHistorical {
   //
   // Sends the outside temperature for a given building, within a duration (start, end), and a requested window
   // An error  is returned if there are no temperature for the given request
-  rpc GetRawTemperatures (Request) returns (RawTemperatureReply) {}
-  rpc GetRawActions (Request) returns (RawActionReply) {}
-  rpc GetRawTemperatureBands (Request) returns (RawTemperatureBandsReply) {}
+  rpc GetRawTemperatures (Request) returns (stream TemperaturePoint) {}
+  rpc GetRawActions (Request) returns (stream ActionPoint) {}
+  rpc GetRawTemperatureBands (Request) returns (stream Setpoint) {}
+  rpc GetRawModes (Request) returns (stream ModePoint) {}
 }
 
 // The request message containing the requested information.
@@ -58,17 +59,8 @@ message ActionPoint {
   double action = 2;
 }
 
-// The response message containing the temperatures
-message RawTemperatureReply {
-  repeated TemperaturePoint temperatures = 1;
-}
-
-// The response message containing the temperatures
-message RawActionReply {
-  repeated ActionPoint actions = 1;
-}
-
-//The response containing heating and cooling setpoints
-message RawTemperatureBandsReply {
-  repeated Setpoint setpoints = 1;
+// ModePoint are represented as a float per unit (e.g., 45.4 F) starting at a given time
+message ModePoint {
+  int64 time = 1;
+  double mode = 2;
 }

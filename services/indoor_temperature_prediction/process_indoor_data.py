@@ -45,7 +45,7 @@ def _get_indoor_temperature_historic(stub, building, zone, start, end, window):
     loaded_data = load_data(building, zone, "indoor_temperature_historic_cache")
     err = xsg.check_data(loaded_data, start, end, window)
     if (loaded_data is not None) and (err is None):
-        return loaded_data
+        return loaded_data.loc[start:end]
 
     indoor_temperature = xsg.get_indoor_temperature_historic(stub, building, zone, start, end,
                                                              window)
@@ -56,10 +56,10 @@ def _get_indoor_temperature_historic(stub, building, zone, start, end, window):
 def _get_action_historic(stub, building, zone, start, end, window):
     loaded_data = load_data(building, zone, "action_historic_cache")
     err = xsg.check_data(loaded_data, start, end, window)
-    if (loaded_data is not None) and (err is not None):
-        return loaded_data
+    if (loaded_data is not None) and (err is None):
+        return loaded_data.loc[start:end]
 
-    action_historic = xsg.get_actions_historic(stub, building, zone, start, end,
+    action_historic = xsg.get_indoor_actions_historic(stub, building, zone, start, end,
                                                              window)
     store_data(action_historic, building, zone, "action_historic_cache")
     return action_historic
@@ -79,12 +79,15 @@ def get_preprocessed_data(building, zone, start, end, window, raw_data_granulari
             "temperature_zone_...", "dt"]. TODO explain meaning of each feature somewhere.
 
     """
-
     # get indoor temperature and action for current zone
     indoor_historic_stub = xsg.get_indoor_historic_stub()
     indoor_temperatures = _get_indoor_temperature_historic(indoor_historic_stub, building, zone, start, end,
                                                              raw_data_granularity)
+    assert indoor_temperatures['unit'].values[0] == "F"
+    indoor_temperatures = indoor_temperatures["temperature"].squeeze()
+
     indoor_actions = _get_action_historic(indoor_historic_stub, building, zone, start, end, raw_data_granularity)
+    indoor_actions = indoor_actions["action"].squeeze()
 
     # get indoor temperature for other zones.
     building_zone_names_stub = xsg.get_building_zone_names_stub()
@@ -92,8 +95,11 @@ def get_preprocessed_data(building, zone, start, end, window, raw_data_granulari
     all_other_zone_temperature_data = {}
     for iter_zone in all_zones:
         if iter_zone != zone:
-            all_other_zone_temperature_data[iter_zone] = _get_indoor_temperature_historic(indoor_historic_stub,
+            other_zone_temperature = _get_indoor_temperature_historic(indoor_historic_stub,
                                                                  building, iter_zone, start, end, window)
+            assert other_zone_temperature['unit'].values[0] == "F"
+            other_zone_temperature = other_zone_temperature["temperature"].squeeze()
+            all_other_zone_temperature_data[iter_zone] = other_zone_temperature
 
     # Preprocessing indoor data putting temperature and action data together.
     indoor_data = pd.concat([indoor_temperatures.to_frame(name="t_in"), indoor_actions.to_frame(name="action")], axis=1)
@@ -102,7 +108,7 @@ def get_preprocessed_data(building, zone, start, end, window, raw_data_granulari
         return None, "No data left after preprocessing."
 
     # get historic outdoor temperatures
-    outdoor_historic_stub = xsg.get_outdoor_historic_stub()
+    outdoor_historic_stub = xsg.get_outdoor_temperature_historic_stub()
     outdoor_historic_temperatures = xsg.get_outdoor_temperature_historic(outdoor_historic_stub, building, start, end, window)
 
     # getting occupancy
@@ -201,7 +207,7 @@ def add_feature_last_temperature(data):
     for index, row in data.iterrows():
 
         if last_temp is None:
-            last_temps.append(row["t_in"])  # so the feature will be zero instead
+            last_temps.append(row["t_in"])  # so (last_temp - curr_temp) feature will be zero instead
         else:
             last_temps.append(last_temp)
 
@@ -255,7 +261,6 @@ def preprocess_indoor_data(indoor_data, interval):
     'dt' (int), 'action' (float), 'action_prev' (float), 'action_duration' (int)}
     No nan values except potentially in action_prev column -- means that we don't know the last action.
     """
-
     if indoor_data.shape[0] == 0:
         return None
 
@@ -282,7 +287,6 @@ def preprocess_indoor_data(indoor_data, interval):
 
     # start loop
     for index, row in indoor_data.iterrows():
-
         # if actions are None we just move on
         if np.isnan(curr_action) and np.isnan(row["action"]):
             continue
@@ -372,6 +376,7 @@ def preprocess_indoor_data(indoor_data, interval):
             last_time = index
 
             is_valid_block = not (np.isnan(curr_action) or np.isnan(start_temperature))
+
 
     # add last datapoint
     if start_time != indoor_data.index[-1] and is_valid_block:

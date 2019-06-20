@@ -27,7 +27,7 @@ THERMAL_MODELS = {}
 
 END = datetime.datetime(year=2019, month=4, day=1).replace(
     tzinfo=pytz.utc)  # datetime.datetime.utcnow().replace(tzinfo=pytz.utc) # TODO make environ var.
-START = END - datetime.timedelta(days=120)  # TODO Put back to 120
+START = END - datetime.timedelta(days=365)
 
 
 def get_window_in_sec(s):
@@ -138,7 +138,7 @@ def get_error(request):
                                                      check_data=False)
 
     if err is not None:
-        return None, None, err
+        return None, err
 
     thermal_model, column_order = THERMAL_MODELS[request.building][request.zone]
     if request.action != -1:

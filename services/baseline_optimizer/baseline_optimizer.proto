@@ -1,0 +1,119 @@
+// python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. baseline_optimizer.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package baseline_optimizer;
+
+// The controller service definition
+service BaselineOptimizer {
+  // A simple RPC.
+  //
+  rpc GetNormalScheduleAction (NormalScheduleRequest) returns (Reply) {}
+  rpc GetSetpointExpansionAction (SetpointExpansionRequest) returns (Reply) {}
+  rpc GetDemandChargeAction(DemandChargeRequest) returns (Reply) {}
+  rpc GetNormalScheduleSimulation (NormalScheduleRequest) returns (stream Reply) {}
+  rpc GetSetpointExpansionSimulation (SetpointExpansionRequest) returns (stream Reply) {}
+  rpc GetDemandChargeSimualtion(DemandChargeRequest) returns (stream Reply) {}
+}
+
+message NormalScheduleRequest {
+  string building = 1;
+  repeated string zones = 2;
+
+  // The start time in Unixnanoseconds
+  int64 start = 3;
+
+  // The end time in Unixnanoseconds
+  int64 end = 4;
+
+  // The frequency/duration window (e.g., 10s, 15m, 1h)
+  // Supported units are: d,h,m,s
+  string window = 5;
+
+
+  map<string, double> starting_temperatures = 6; // zone: temperature
+
+  // temperature unit
+  // Current supported unit are: F or C
+  string unit = 7;
+
+  // set to True to use occupancy probabiliy
+  // if probabiliy >= 0.5 use comfort_band otherwise use do_not_exceed_band
+  bool occupancy = 8;
+
+  // if occupancy is False and do_not_exceed is True then use do_not_exceed_band
+  // if occupancy is False and do_not_exceed is False then use comfort_band
+  bool do_not_exceed = 9;
+
+}
+
+message SetpointExpansionRequest {
+  string building = 1;
+  repeated string zones = 2;
+
+  // The start time in Unixnanoseconds
+  int64 start = 3;
+
+  // The end time in Unixnanoseconds
+  int64 end = 4;
+
+  // The frequency/duration window (e.g., 10s, 15m, 1h)
+  // Supported units are: d,h,m,s
+  string window = 5;
+
+
+  map<string, double> starting_temperatures = 6; // zone: temperature
+  map<string, double> expansion_degrees = 7; // zone: expansion degrees
+  // temperature unit
+  // Current supported unit are: F or C
+  string unit = 8;
+
+  // set to True to use occupancy probabiliy
+  // if probabiliy >= 0.5 use comfort_band otherwise use do_not_exceed_band
+  bool occupancy = 9;
+
+  // if occupancy is False and do_not_exceed is True then use do_not_exceed_band
+  // if occupancy is False and do_not_exceed is False then use comfort_band
+  bool do_not_exceed = 10;
+
+}
+
+message DemandChargeRequest {
+  string building = 1;
+  repeated string zones = 2;
+
+  // The start time in Unixnanoseconds
+  int64 start = 3;
+
+  // The end time in Unixnanoseconds
+  int64 end = 4;
+
+  // The frequency/duration window (e.g., 10s, 15m, 1h)
+  // Supported units are: d,h,m,s
+  string window = 5;
+
+
+  map<string, double> starting_temperatures = 6; // zone: temperature
+
+  // temperature unit
+  // Current supported unit are: F or C
+  string unit = 7;
+
+  // Max number of zones to control to remain below peak
+  int64 max_zones = 8;
+  // set to True to include all zones in a building or False to only modulate a subset of max_zones from zones
+  bool include_all_zones = 9;
+
+  // set to True to use occupancy probabiliy in calculating linear discomfort
+  bool occupancy = 10;
+
+  // set to True to always control zones outside of do_not_exceed band, False to use comfort_band
+  bool do_not_exceed = 11;
+
+}
+
+message Reply {
+  map<string, int64> actions = 1;
+}

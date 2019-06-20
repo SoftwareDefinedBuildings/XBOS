@@ -19,6 +19,11 @@ class OptimizerStub(object):
         request_serializer=optimizer__pb2.MPCOptimizationRequest.SerializeToString,
         response_deserializer=optimizer__pb2.Reply.FromString,
         )
+    self.GetMPCSimulation = channel.unary_unary(
+        '/optimizer.Optimizer/GetMPCSimulation',
+        request_serializer=optimizer__pb2.SimulationRequest.SerializeToString,
+        response_deserializer=optimizer__pb2.SimulationReply.FromString,
+        )
 
 
 class OptimizerServicer(object):
@@ -34,6 +39,13 @@ class OptimizerServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetMPCSimulation(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_OptimizerServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -41,6 +53,11 @@ def add_OptimizerServicer_to_server(servicer, server):
           servicer.GetMPCOptimization,
           request_deserializer=optimizer__pb2.MPCOptimizationRequest.FromString,
           response_serializer=optimizer__pb2.Reply.SerializeToString,
+      ),
+      'GetMPCSimulation': grpc.unary_unary_rpc_method_handler(
+          servicer.GetMPCSimulation,
+          request_deserializer=optimizer__pb2.SimulationRequest.FromString,
+          response_serializer=optimizer__pb2.SimulationReply.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

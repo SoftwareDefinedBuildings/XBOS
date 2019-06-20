@@ -12,6 +12,7 @@ service Optimizer {
   //
   // Get the optimization of the MPC
   rpc GetMPCOptimization (MPCOptimizationRequest) returns (Reply) {}
+  rpc GetMPCSimulation (SimulationRequest) returns (SimulationReply) {}
 }
 
 message MPCOptimizationRequest {
@@ -31,9 +32,47 @@ message MPCOptimizationRequest {
 
 }
 
+message SimulationRequest {
+  string building = 1;
+  repeated string zones = 2;
+
+  int64 start = 3;
+  int64 end = 4;
+
+  string forecasting_horizon = 5;
+  string window = 6;
+
+  double lambda_val = 7;
+
+  map<string, double> starting_temperatures = 8; // zone: temperature
+
+  string unit = 9;
+
+  int64 num_runs = 10;
+
+}
 
 
-// The response message containing the temperatures
+
+// The response message containing the optimal actions
 message Reply {
   map<string, int64> actions = 1;
+}
+
+message ActionList {
+  repeated int64 actions = 1;
+}
+
+message TemperatureList {
+  repeated double temperatures = 1;
+}
+
+
+message ActionTemperatureReply {
+  map<string, ActionList> actions = 1;
+  map<string, TemperatureList> temperatures = 2;
+}
+
+message SimulationReply{
+  repeated ActionTemperatureReply simulation_results = 1;
 }

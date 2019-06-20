@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='optimizer',
   syntax='proto3',
   serialized_options=_b('P\001'),
-  serialized_pb=_b('\n\x0foptimizer.proto\x12\toptimizer\"\xa0\x02\n\x16MPCOptimizationRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\r\n\x05start\x18\x03 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x03\x12\x0e\n\x06window\x18\x05 \x01(\t\x12\x12\n\nlambda_val\x18\x06 \x01(\x01\x12Z\n\x15starting_temperatures\x18\x07 \x03(\x0b\x32;.optimizer.MPCOptimizationRequest.StartingTemperaturesEntry\x12\x0c\n\x04unit\x18\x08 \x01(\t\x1a;\n\x19StartingTemperaturesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"g\n\x05Reply\x12.\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32\x1d.optimizer.Reply.ActionsEntry\x1a.\n\x0c\x41\x63tionsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\x32X\n\tOptimizer\x12K\n\x12GetMPCOptimization\x12!.optimizer.MPCOptimizationRequest\x1a\x10.optimizer.Reply\"\x00\x42\x02P\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x0foptimizer.proto\x12\toptimizer\"\xa0\x02\n\x16MPCOptimizationRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\r\n\x05start\x18\x03 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x03\x12\x0e\n\x06window\x18\x05 \x01(\t\x12\x12\n\nlambda_val\x18\x06 \x01(\x01\x12Z\n\x15starting_temperatures\x18\x07 \x03(\x0b\x32;.optimizer.MPCOptimizationRequest.StartingTemperaturesEntry\x12\x0c\n\x04unit\x18\x08 \x01(\t\x1a;\n\x19StartingTemperaturesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"\xc5\x02\n\x11SimulationRequest\x12\x10\n\x08\x62uilding\x18\x01 \x01(\t\x12\r\n\x05zones\x18\x02 \x03(\t\x12\r\n\x05start\x18\x03 \x01(\x03\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x03\x12\x1b\n\x13\x66orecasting_horizon\x18\x05 \x01(\t\x12\x0e\n\x06window\x18\x06 \x01(\t\x12\x12\n\nlambda_val\x18\x07 \x01(\x01\x12U\n\x15starting_temperatures\x18\x08 \x03(\x0b\x32\x36.optimizer.SimulationRequest.StartingTemperaturesEntry\x12\x0c\n\x04unit\x18\t \x01(\t\x12\x10\n\x08num_runs\x18\n \x01(\x03\x1a;\n\x19StartingTemperaturesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"g\n\x05Reply\x12.\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32\x1d.optimizer.Reply.ActionsEntry\x1a.\n\x0c\x41\x63tionsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\"\x1d\n\nActionList\x12\x0f\n\x07\x61\x63tions\x18\x01 \x03(\x03\"\'\n\x0fTemperatureList\x12\x14\n\x0ctemperatures\x18\x01 \x03(\x01\"\xbc\x02\n\x16\x41\x63tionTemperatureReply\x12?\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32..optimizer.ActionTemperatureReply.ActionsEntry\x12I\n\x0ctemperatures\x18\x02 \x03(\x0b\x32\x33.optimizer.ActionTemperatureReply.TemperaturesEntry\x1a\x45\n\x0c\x41\x63tionsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12$\n\x05value\x18\x02 \x01(\x0b\x32\x15.optimizer.ActionList:\x02\x38\x01\x1aO\n\x11TemperaturesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12)\n\x05value\x18\x02 \x01(\x0b\x32\x1a.optimizer.TemperatureList:\x02\x38\x01\"P\n\x0fSimulationReply\x12=\n\x12simulation_results\x18\x01 \x03(\x0b\x32!.optimizer.ActionTemperatureReply2\xa8\x01\n\tOptimizer\x12K\n\x12GetMPCOptimization\x12!.optimizer.MPCOptimizationRequest\x1a\x10.optimizer.Reply\"\x00\x12N\n\x10GetMPCSimulation\x12\x1c.optimizer.SimulationRequest\x1a\x1a.optimizer.SimulationReply\"\x00\x42\x02P\x01\x62\x06proto3')
 )
 
 
@@ -142,6 +142,137 @@ _MPCOPTIMIZATIONREQUEST = _descriptor.Descriptor(
 )
 
 
+_SIMULATIONREQUEST_STARTINGTEMPERATURESENTRY = _descriptor.Descriptor(
+  name='StartingTemperaturesEntry',
+  full_name='optimizer.SimulationRequest.StartingTemperaturesEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='optimizer.SimulationRequest.StartingTemperaturesEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='optimizer.SimulationRequest.StartingTemperaturesEntry.value', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=260,
+  serialized_end=319,
+)
+
+_SIMULATIONREQUEST = _descriptor.Descriptor(
+  name='SimulationRequest',
+  full_name='optimizer.SimulationRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='building', full_name='optimizer.SimulationRequest.building', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='zones', full_name='optimizer.SimulationRequest.zones', index=1,
+      number=2, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='start', full_name='optimizer.SimulationRequest.start', index=2,
+      number=3, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='end', full_name='optimizer.SimulationRequest.end', index=3,
+      number=4, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='forecasting_horizon', full_name='optimizer.SimulationRequest.forecasting_horizon', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='window', full_name='optimizer.SimulationRequest.window', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='lambda_val', full_name='optimizer.SimulationRequest.lambda_val', index=6,
+      number=7, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='starting_temperatures', full_name='optimizer.SimulationRequest.starting_temperatures', index=7,
+      number=8, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='unit', full_name='optimizer.SimulationRequest.unit', index=8,
+      number=9, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='num_runs', full_name='optimizer.SimulationRequest.num_runs', index=9,
+      number=10, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_SIMULATIONREQUEST_STARTINGTEMPERATURESENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=322,
+  serialized_end=647,
+)
+
+
 _REPLY_ACTIONSENTRY = _descriptor.Descriptor(
   name='ActionsEntry',
   full_name='optimizer.Reply.ActionsEntry',
@@ -175,8 +306,8 @@ _REPLY_ACTIONSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=378,
-  serialized_end=424,
+  serialized_start=706,
+  serialized_end=752,
 )
 
 _REPLY = _descriptor.Descriptor(
@@ -205,16 +336,235 @@ _REPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=321,
-  serialized_end=424,
+  serialized_start=649,
+  serialized_end=752,
+)
+
+
+_ACTIONLIST = _descriptor.Descriptor(
+  name='ActionList',
+  full_name='optimizer.ActionList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='actions', full_name='optimizer.ActionList.actions', index=0,
+      number=1, type=3, cpp_type=2, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=754,
+  serialized_end=783,
+)
+
+
+_TEMPERATURELIST = _descriptor.Descriptor(
+  name='TemperatureList',
+  full_name='optimizer.TemperatureList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='temperatures', full_name='optimizer.TemperatureList.temperatures', index=0,
+      number=1, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=785,
+  serialized_end=824,
+)
+
+
+_ACTIONTEMPERATUREREPLY_ACTIONSENTRY = _descriptor.Descriptor(
+  name='ActionsEntry',
+  full_name='optimizer.ActionTemperatureReply.ActionsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='optimizer.ActionTemperatureReply.ActionsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='optimizer.ActionTemperatureReply.ActionsEntry.value', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=993,
+  serialized_end=1062,
+)
+
+_ACTIONTEMPERATUREREPLY_TEMPERATURESENTRY = _descriptor.Descriptor(
+  name='TemperaturesEntry',
+  full_name='optimizer.ActionTemperatureReply.TemperaturesEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='optimizer.ActionTemperatureReply.TemperaturesEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='optimizer.ActionTemperatureReply.TemperaturesEntry.value', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1064,
+  serialized_end=1143,
+)
+
+_ACTIONTEMPERATUREREPLY = _descriptor.Descriptor(
+  name='ActionTemperatureReply',
+  full_name='optimizer.ActionTemperatureReply',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='actions', full_name='optimizer.ActionTemperatureReply.actions', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='temperatures', full_name='optimizer.ActionTemperatureReply.temperatures', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_ACTIONTEMPERATUREREPLY_ACTIONSENTRY, _ACTIONTEMPERATUREREPLY_TEMPERATURESENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=827,
+  serialized_end=1143,
+)
+
+
+_SIMULATIONREPLY = _descriptor.Descriptor(
+  name='SimulationReply',
+  full_name='optimizer.SimulationReply',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='simulation_results', full_name='optimizer.SimulationReply.simulation_results', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1145,
+  serialized_end=1225,
 )
 
 _MPCOPTIMIZATIONREQUEST_STARTINGTEMPERATURESENTRY.containing_type = _MPCOPTIMIZATIONREQUEST
 _MPCOPTIMIZATIONREQUEST.fields_by_name['starting_temperatures'].message_type = _MPCOPTIMIZATIONREQUEST_STARTINGTEMPERATURESENTRY
+_SIMULATIONREQUEST_STARTINGTEMPERATURESENTRY.containing_type = _SIMULATIONREQUEST
+_SIMULATIONREQUEST.fields_by_name['starting_temperatures'].message_type = _SIMULATIONREQUEST_STARTINGTEMPERATURESENTRY
 _REPLY_ACTIONSENTRY.containing_type = _REPLY
 _REPLY.fields_by_name['actions'].message_type = _REPLY_ACTIONSENTRY
+_ACTIONTEMPERATUREREPLY_ACTIONSENTRY.fields_by_name['value'].message_type = _ACTIONLIST
+_ACTIONTEMPERATUREREPLY_ACTIONSENTRY.containing_type = _ACTIONTEMPERATUREREPLY
+_ACTIONTEMPERATUREREPLY_TEMPERATURESENTRY.fields_by_name['value'].message_type = _TEMPERATURELIST
+_ACTIONTEMPERATUREREPLY_TEMPERATURESENTRY.containing_type = _ACTIONTEMPERATUREREPLY
+_ACTIONTEMPERATUREREPLY.fields_by_name['actions'].message_type = _ACTIONTEMPERATUREREPLY_ACTIONSENTRY
+_ACTIONTEMPERATUREREPLY.fields_by_name['temperatures'].message_type = _ACTIONTEMPERATUREREPLY_TEMPERATURESENTRY
+_SIMULATIONREPLY.fields_by_name['simulation_results'].message_type = _ACTIONTEMPERATUREREPLY
 DESCRIPTOR.message_types_by_name['MPCOptimizationRequest'] = _MPCOPTIMIZATIONREQUEST
+DESCRIPTOR.message_types_by_name['SimulationRequest'] = _SIMULATIONREQUEST
 DESCRIPTOR.message_types_by_name['Reply'] = _REPLY
+DESCRIPTOR.message_types_by_name['ActionList'] = _ACTIONLIST
+DESCRIPTOR.message_types_by_name['TemperatureList'] = _TEMPERATURELIST
+DESCRIPTOR.message_types_by_name['ActionTemperatureReply'] = _ACTIONTEMPERATUREREPLY
+DESCRIPTOR.message_types_by_name['SimulationReply'] = _SIMULATIONREPLY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 MPCOptimizationRequest = _reflection.GeneratedProtocolMessageType('MPCOptimizationRequest', (_message.Message,), dict(
@@ -232,6 +582,21 @@ MPCOptimizationRequest = _reflection.GeneratedProtocolMessageType('MPCOptimizati
 _sym_db.RegisterMessage(MPCOptimizationRequest)
 _sym_db.RegisterMessage(MPCOptimizationRequest.StartingTemperaturesEntry)
 
+SimulationRequest = _reflection.GeneratedProtocolMessageType('SimulationRequest', (_message.Message,), dict(
+
+  StartingTemperaturesEntry = _reflection.GeneratedProtocolMessageType('StartingTemperaturesEntry', (_message.Message,), dict(
+    DESCRIPTOR = _SIMULATIONREQUEST_STARTINGTEMPERATURESENTRY,
+    __module__ = 'optimizer_pb2'
+    # @@protoc_insertion_point(class_scope:optimizer.SimulationRequest.StartingTemperaturesEntry)
+    ))
+  ,
+  DESCRIPTOR = _SIMULATIONREQUEST,
+  __module__ = 'optimizer_pb2'
+  # @@protoc_insertion_point(class_scope:optimizer.SimulationRequest)
+  ))
+_sym_db.RegisterMessage(SimulationRequest)
+_sym_db.RegisterMessage(SimulationRequest.StartingTemperaturesEntry)
+
 Reply = _reflection.GeneratedProtocolMessageType('Reply', (_message.Message,), dict(
 
   ActionsEntry = _reflection.GeneratedProtocolMessageType('ActionsEntry', (_message.Message,), dict(
@@ -247,10 +612,57 @@ Reply = _reflection.GeneratedProtocolMessageType('Reply', (_message.Message,), d
 _sym_db.RegisterMessage(Reply)
 _sym_db.RegisterMessage(Reply.ActionsEntry)
 
+ActionList = _reflection.GeneratedProtocolMessageType('ActionList', (_message.Message,), dict(
+  DESCRIPTOR = _ACTIONLIST,
+  __module__ = 'optimizer_pb2'
+  # @@protoc_insertion_point(class_scope:optimizer.ActionList)
+  ))
+_sym_db.RegisterMessage(ActionList)
+
+TemperatureList = _reflection.GeneratedProtocolMessageType('TemperatureList', (_message.Message,), dict(
+  DESCRIPTOR = _TEMPERATURELIST,
+  __module__ = 'optimizer_pb2'
+  # @@protoc_insertion_point(class_scope:optimizer.TemperatureList)
+  ))
+_sym_db.RegisterMessage(TemperatureList)
+
+ActionTemperatureReply = _reflection.GeneratedProtocolMessageType('ActionTemperatureReply', (_message.Message,), dict(
+
+  ActionsEntry = _reflection.GeneratedProtocolMessageType('ActionsEntry', (_message.Message,), dict(
+    DESCRIPTOR = _ACTIONTEMPERATUREREPLY_ACTIONSENTRY,
+    __module__ = 'optimizer_pb2'
+    # @@protoc_insertion_point(class_scope:optimizer.ActionTemperatureReply.ActionsEntry)
+    ))
+  ,
+
+  TemperaturesEntry = _reflection.GeneratedProtocolMessageType('TemperaturesEntry', (_message.Message,), dict(
+    DESCRIPTOR = _ACTIONTEMPERATUREREPLY_TEMPERATURESENTRY,
+    __module__ = 'optimizer_pb2'
+    # @@protoc_insertion_point(class_scope:optimizer.ActionTemperatureReply.TemperaturesEntry)
+    ))
+  ,
+  DESCRIPTOR = _ACTIONTEMPERATUREREPLY,
+  __module__ = 'optimizer_pb2'
+  # @@protoc_insertion_point(class_scope:optimizer.ActionTemperatureReply)
+  ))
+_sym_db.RegisterMessage(ActionTemperatureReply)
+_sym_db.RegisterMessage(ActionTemperatureReply.ActionsEntry)
+_sym_db.RegisterMessage(ActionTemperatureReply.TemperaturesEntry)
+
+SimulationReply = _reflection.GeneratedProtocolMessageType('SimulationReply', (_message.Message,), dict(
+  DESCRIPTOR = _SIMULATIONREPLY,
+  __module__ = 'optimizer_pb2'
+  # @@protoc_insertion_point(class_scope:optimizer.SimulationReply)
+  ))
+_sym_db.RegisterMessage(SimulationReply)
+
 
 DESCRIPTOR._options = None
 _MPCOPTIMIZATIONREQUEST_STARTINGTEMPERATURESENTRY._options = None
+_SIMULATIONREQUEST_STARTINGTEMPERATURESENTRY._options = None
 _REPLY_ACTIONSENTRY._options = None
+_ACTIONTEMPERATUREREPLY_ACTIONSENTRY._options = None
+_ACTIONTEMPERATUREREPLY_TEMPERATURESENTRY._options = None
 
 _OPTIMIZER = _descriptor.ServiceDescriptor(
   name='Optimizer',
@@ -258,8 +670,8 @@ _OPTIMIZER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=426,
-  serialized_end=514,
+  serialized_start=1228,
+  serialized_end=1396,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetMPCOptimization',
@@ -268,6 +680,15 @@ _OPTIMIZER = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_MPCOPTIMIZATIONREQUEST,
     output_type=_REPLY,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetMPCSimulation',
+    full_name='optimizer.Optimizer.GetMPCSimulation',
+    index=1,
+    containing_service=None,
+    input_type=_SIMULATIONREQUEST,
+    output_type=_SIMULATIONREPLY,
     serialized_options=None,
   ),
 ])

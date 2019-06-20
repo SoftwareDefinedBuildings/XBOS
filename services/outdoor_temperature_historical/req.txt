@@ -4,3 +4,7 @@ PyYAML
 pytz
 pymortar
 rfc3339
+pandas
+pathlib
+fbprophet
+numpy

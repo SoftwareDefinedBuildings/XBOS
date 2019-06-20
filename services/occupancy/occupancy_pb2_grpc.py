@@ -14,10 +14,10 @@ class OccupancyStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.GetOccupancy = channel.unary_unary(
+    self.GetOccupancy = channel.unary_stream(
         '/occupancy_historical.Occupancy/GetOccupancy',
         request_serializer=occupancy__pb2.Request.SerializeToString,
-        response_deserializer=occupancy__pb2.OccupancyReply.FromString,
+        response_deserializer=occupancy__pb2.OccupancyPoint.FromString,
         )
 
 
@@ -38,10 +38,10 @@ class OccupancyServicer(object):
 
 def add_OccupancyServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'GetOccupancy': grpc.unary_unary_rpc_method_handler(
+      'GetOccupancy': grpc.unary_stream_rpc_method_handler(
           servicer.GetOccupancy,
           request_deserializer=occupancy__pb2.Request.FromString,
-          response_serializer=occupancy__pb2.OccupancyReply.SerializeToString,
+          response_serializer=occupancy__pb2.OccupancyPoint.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
