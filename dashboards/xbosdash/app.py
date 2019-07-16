@@ -3,7 +3,7 @@ import pandas as pd
 import pendulum
 import toml
 from flask import Flask
-from flask import jsonify
+from flask import jsonify, send_from_directory
 from flask import request
 from flask import current_app
 from flask import make_response
@@ -346,10 +346,11 @@ def serve_occupancy(last, bucketsize):
 #def setpoint_today():
 #    pass
 
-@app.route('/')
+@app.route('/<filename>')
 @crossdomain(origin='*')
-def home():
-    return render_template('index.html')
+def home(filename):
+    return send_from_directory('templates', filename)
+    #return render_template('index.html')
 
 
 if __name__ == '__main__':
