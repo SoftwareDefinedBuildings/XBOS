@@ -38,7 +38,6 @@ $(document).ready(function() {
             var toAdd = new Object();
             toAdd.name = clean(z);
             toAdd.id = toAdd.name;
-            console.log('makedata',j[z])
             toAdd.data = makeData(j[z], toAdd.name, sums, first, pa);
             toRet.push(toAdd);
             if (first) { first = false; }
@@ -251,7 +250,7 @@ $(document).ready(function() {
             "events": {
                 "load": function(e) {
                     $.ajax({
-                        "url": "http://127.0.0.1:5000/api/hvac/day/in/30m",
+                        "url": "http://127.0.0.1:5000/api/hvac/day/30m",
                         "type": "GET",
                         "dataType": "json",
                         "success": function(d) {
