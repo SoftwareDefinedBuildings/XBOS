@@ -1,0 +1,8 @@
+pymortar
+pandas
+numpy
+pendulum
+toml
+flask
+pytz
+xbos_services_getter
