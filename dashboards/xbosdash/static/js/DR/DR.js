@@ -233,9 +233,25 @@ $(document).ready(function() {
 		toRet.isBuilding = true;
 		toRet.date = new Date().getTime();
 		toRet.lam = parseFloat($("#sim-lam-range").prop("value"));
-		setTimeout(function() { simSuccess(bldngChart, "bldng"); }, 3000);
+		//setTimeout(function() { simSuccess(bldngChart, "bldng"); }, 3000);
 		// bldngChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
-		console.log(toRet);
+		console.log("simulation input?", toRet);
+        // TODO: start from NOW, go until midnight tonight
+        $.ajax({
+            "url": "http://127.0.0.1:5000/api/simulation/0.5/2019-07-01T12:00:00Z",
+            "success": function(d) {
+                console.log("simulation", d);
+                var a = processResp(d);
+                for (var x = 0; x < a.length; x += 1) { bldngChart.addSeries(a[x], false); }
+                $("#bldng-reset").addClass("scale-in");
+                simSuccess(bldngChart, "bldng");
+                bldngChart.hideLoading();
+                bldngChart.redraw();
+            },
+            "error": function(d) {
+                console.error(d)
+            }
+        })
 		return toRet;
 	});
 

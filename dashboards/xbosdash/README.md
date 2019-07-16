@@ -11,7 +11,7 @@ pip install -r requirements.txt
 FLASK_APP=app.py flask run
 ```
 
-You either need a BOSSWAVE agent running on your machine, or you can run a ragent process.
+Make sure you fill out `config.toml`; this requires making an account on [https://mortardata.org/](https://mortardata.org/)
 
 ## API Doc
 

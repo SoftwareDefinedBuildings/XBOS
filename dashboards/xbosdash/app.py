@@ -311,11 +311,45 @@ def serve_prediction_hvac(bucketsize):
 def serve_prediction_dr():
     return jsonify({'days': [{'date': 1558126800, 'likelihood': 'likely'}]})
 
+def format_simulation_output(output):
+    # actions -> number to label
+    for zone, data in output.items():
+        data['state'] = {int(t/1e6): state_to_string(v) for t,v in data.pop('actions').items()}
+        data['inside'] = {int(t/1e6): v for t,v in data.pop('temperatures').items()}
+        data['outside'] = {t: 30 for t in data['inside'].keys()}
+        data['cooling'] = {t: 30 for t in data['inside'].keys()}
+        data['heating'] = {t: 30 for t in data['inside'].keys()}
+        output[zone] = data
+    return output
+
+@app.route('/api/simulation/<drlambda>/<date>')
+def simulate_lambda_site(drlambda, date):
+    ret = {}
+    for zone in xsg.get_zones(sites[0]):
+        start = pendulum.parse(date, tz='US/Pacific')
+        # TODO: change back to 12
+        end = start.add(hours=1)
+        fmt = '%Y-%m-%dT%H:%M:%S%z'
+        start = datetime.strptime(start.strftime(fmt), fmt)
+        end = datetime.strptime(end.strftime(fmt), fmt)
+
+        try:
+            res = xsg.simulation(sites[0], start, end, '1h', float(drlambda), zone=zone)
+            # dataframe to dict
+            formatted = {k: df.set_index(df.index.astype(int)).to_dict() for k, df in res.items()}
+            ret.update(formatted)
+            print(formatted)
+            #return jsonify(formatted)
+        except Exception as e:
+            return jsonify({'error': 'could not get prediction', 'msg': str(e)})
+    print(ret)
+    return jsonify(format_simulation_output(ret))
+
 @app.route('/api/simulation/<drlambda>/<date>/<zone>')
 @crossdomain(origin='*')
 def simulate_lambda(drlambda, date, zone):
     """
-    assume that the lambda is for the peak period only: 4-7pm
+    TODO: do we assume that the lambda is for the peak period only: 4-7pm
         how do we do this on the backend?
     assume date is in YYYY-MM-DD
     """
@@ -330,9 +364,8 @@ def simulate_lambda(drlambda, date, zone):
     try:
         res = xsg.simulation(sites[0], start, end, '1h', float(drlambda), zone=zone)
         # dataframe to dict
-        formatted = {k: df.set_index(df.index.astype(int)).to_dict() for k, df in res.items()}
-        print(formatted)
-        return jsonify(formatted)
+        d = {k: df.set_index(df.index.astype(int)).to_dict() for k, df in res.items()}
+        return jsonify(format_simulation_output(d))
     except Exception as e:
         return jsonify({'error': 'could not get prediction', 'msg': str(e)})
 
