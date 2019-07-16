@@ -1,0 +1,10 @@
+[Dashboard]
+  sitename = "mysite"
+
+[Microservices]
+  url = "1.2.3.4:9001"
+
+[Mortar]
+  username = "myuser"
+  password = "mypass"
+  url = "api.mortardata.org"

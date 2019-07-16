@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>XBOS Dashboard</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./static/img/favicon1.png'/> -->
+	<link rel='shortcut icon' type='image/png' href='./static/img/favicon2.png'/>
+	<link rel='stylesheet' href='./static/css/materialize.css'>
+	<link rel='stylesheet' href='./static/css/nouislider.css'>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+<body id="body">
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper tp-blue">
+				<a href="#" class="brand-logo">XBOS-DR</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="schedule-groupings.html">Schedule</a></li>
+					<li><a href="report.html">Report</a></li>
+					<li class="active"><a href="#">DR</a></li>
+					<li><a href="settings.html">Settings</a></li>
+					<li><a id="weatherLI">73</a></li>
+				</ul>
+			</div>
+			<div id="DRBG" class="row center-align pulse z-depth-1 scale-transition scale-out" style="line-height: 2;">
+				<a id="DRTXT" href="html/DR.html">"</a>
+			</div>
+		</nav>
+	</div>
+
+	<div class="row" id="DRROW" style="display: none;"></div>
+	<div class="row"></div>
+	<div class="row"></div>
+
+	<div class="container">
+		<div id="my-div" class="switch">
+			<label id="label" class="valign-wrapper" style="cursor: default;">
+				<span id="switch-bldng" class="black-text" style="font-size: 24px; cursor: pointer;">Building</span>
+				<input id="checkbox" type="checkbox"/>
+				<span id="lever" class="lever" style="cursor: pointer;"></span>
+				<span id="switch-zone" style="font-size: 24px; cursor: pointer;">Zones</span>
+			</label>
+		</div>
+
+		<div class="row"></div>
+
+		<div id="bldng-chart" class="section z-depth-1">
+			<div class="row valign-wrapper">
+				<div id="bldng-DR" class="col s12"></div>
+			</div>
+			<div class="center-align"><a id="bldng-reset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom</a></div>
+			<div class="row"></div>
+			<div class="divider"></div>
+			<div class="row"></div>
+			<div class="row valign-wrapper center-align">
+				<div class="col s2 red">Summary</div>
+				<div class="col s2 blue">Saved</div>
+				<div class="col s2 green">Used</div>
+				<div class="col s2 purple">Etc.</div>
+				<div class="col s2 purple">Etc.</div>
+				<div class="col s2 purple">Etc.</div>
+			</div>
+		</div>
+
+		<div id="zone-chart" class="section z-depth-1" style="display: none;">
+			<div class="row valign-wrapper">
+				<div id="zone-DR" class="col s12"></div>
+			</div>
+			<div class="center-align"><a id="zone-reset" class="waves-effect waves-light btn">Reset Zoom</a></div>
+			<div class="row"></div>
+			<div class="row"></div>
+			<div class="row valign-wrapper center-align">
+				<div class="col s2 red">Summary</div>
+				<div class="col s2 blue">Saved</div>
+				<div class="col s2 green">Used</div>
+				<div class="col s2 purple">Etc.</div>
+				<div class="col s2 purple">Etc.</div>
+				<div class="col s2 purple">Etc.</div>
+			</div>
+		</div>
+
+		<!-- <a class="btn tooltipped" data-position="top" data-tooltip="jkbvkghjhkjg">Hover me!</a> -->
+
+		<div class="row"></div>
+
+		<div id="sim-loader" style="display: none;">
+			<div class="row"></div><div class="row"></div><div class="row"></div>
+			<div class="progress">
+				<div class="indeterminate"></div>
+			</div>
+		</div>
+
+		<div id="bldng-config" class="section">
+			<div class="section z-depth-1">
+				<div class="row center-align">
+					<div class="col s2"></div>
+					<div class="col s8">
+						<h4 class="center-align dr-title" style="margin-bottom: 0;">Orinda Community Center Building</h4>
+						<h6 class="center-align" style="margin-bottom: 0;">Use the slider to set the Cost-Comfort Index</h6>
+					</div>
+					<div class="col s2"></div>
+				</div>
+				<div class="row center-align">
+					<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
+					<div class="col s6"><p class="range-field"><input type="range" id="sim-lam-range" min="0" max="1" step="0.01"/></p></div>
+					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
+					<div class="col s4 right-align">
+						<a id="historic-date" class="dropdown-trigger btn" data-target="date-dropdown">Historical</a>
+						<ul id='date-dropdown' class='dropdown-content'>
+							<li class="his-sel active"><a>None</a></li>
+						</ul>
+					</div>
+					<div class="col s4 center-align"><a id="bldng-btn" class="waves-effect waves-light btn">Run</a></div>
+					<div class="col s4 left-align"><h5>Simulation</h5></div>
+					<div class="col s2"></div>
+					<div class="col s2">
+						<h5 id="historic-lam" class="bldng-his-val grey-text">_____</h5>
+						<h5 id="historic-dis" class="bldng-his-val grey-text">_____</h5>
+						<h5 id="historic-money-savings" class="bldng-his-val grey-text">_____</h5>
+						<h5 id="historic-energy-savings" class="bldng-his-val grey-text">_____</h5>
+						<h5 class="his-cooling-deg grey-text">_____</h5>
+					</div>
+					<div class="col s4 center-align">
+						<h5>Cost-Comfort Index</h5>
+						<h5>Discomfort</h5>
+						<h5>$ Saved</h5>
+						<h5>kWH Saved</h5>
+						<h5>Cooling Degree-Hrs</h5>
+					</div>
+					<div class="col s2">
+						<h5 id="sim-lam">0.50</h5>
+						<h5 id="sim-dis" class="bldng-val purple-text text-darken-5">_____</h5>
+						<h5 id="sim-money-savings" class="bldng-val green-text text-darken-1">_____</h5>
+						<h5 id="sim-energy-savings" class="bldng-val orange-text text-darken-1">_____</h5>
+						<h5 class="sim-cooling-deg blue-text text-darken-1">_____</h5>
+					</div>
+					<div class="col s2"></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="zone-config" class="section" style="display: none;">
+			<div class="section z-depth-1">
+				<div class="row center-align">
+					<div class="col s2"></div>
+					<div class="col s8">
+						<h4 class="center-align dr-title" style="margin-bottom: 0;">Orinda Community Center Building</h4>
+						<h6 class="center-align" style="margin-bottom: 0;">use the sliders below to set each zone's lambda value</h6>
+					</div>
+					<div class="col s2"></div>
+					<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
+					<div class="col s6"><p class="range-field"><input type="range" disabled="disabled"/></p></div>
+					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
+					<div class="col s4 right-align">
+						<a id="zone-historic-date" class="dropdown-trigger btn" data-target="zone-date-dropdown">Historical</a>
+						<ul id='zone-date-dropdown' class='dropdown-content'>
+							<li class="zone-his-sel active"><a>None</a></li>
+						</ul>
+					</div>
+					<div class="col s4 center-align"><a id="zone-btn" class="waves-effect waves-light btn">Run</a></div>
+					<div class="col s4 left-align"><h5>Simulation</h5></div>
+					<div class="col s2"></div>
+					<div class="col s2">
+						<h5 id="his-lam-avg" class="sum-his-val grey-text">_____</h5>
+						<h5 id="his-dis-avg" class="sum-his-val grey-text">_____</h5>
+						<h5 id="his-money-avg" class="sum-his-val grey-text">_____</h5>
+						<h5 id="his-energy-avg" class="sum-his-val grey-text">_____</h5>
+						<h5 class="his-cooling-deg grey-text">_____</h5>
+					</div>
+					<div class="col s4 center-align">
+						<h5>Average λ</h5>
+						<h5>Average Discomfort</h5>
+						<h5>Total $ Saved</h5>
+						<h5>Total kWH Saved</h5>
+						<h5>Cooling Degree-Hrs</h5>
+					</div>
+					<div class="col s2">
+						<h5 id="sim-lam-avg">0.50</h5>
+						<h5 id="sim-dis-avg" class="sum-val purple-text text-darken-5">_____</h5>
+						<h5 id="sim-money-avg" class="sum-val green-text text-darken-1">_____</h5>
+						<h5 id="sim-energy-avg" class="sum-val orange-text text-darken-1">_____</h5>
+						<h5 class="sim-cooling-deg blue-text text-darken-1">_____</h5>
+					</div>
+					<div class="col s2"></div>
+				</div>
+			</div>
+			<div class="row"></div>
+			<div class="row"></div>
+			<div class="row"></div>
+			<div class="row valign-wrapper">
+				<div class="col s2">
+					<h5 style="margin: 0;">Sort by &nbsp; </h5>
+				</div>
+				<div class="col s2 pull-s1">
+					<a id="sort-btn" style="width: 100%;" class="dropdown-trigger btn" data-target="zone-sort">Default</a>
+					<ul id='zone-sort' class='dropdown-content'>
+						<li id="normal" class="sort-li active"><a>Default</a></li>
+						<li id="alph" class="sort-li"><a>Alphabetical</a></li>
+						<li id="lam" class="sort-li"><a>Lambda</a></li>
+						<li id="dis" class="sort-li"><a>Discomfort</a></li>
+						<li id="dol" class="sort-li"><a>$ Savings</a></li>
+						<li id="kWH" class="sort-li"><a>kWH Savings</a></li>
+					</ul>
+				</div>
+				<div class="col s4">
+					<div id="as-des-div" class="switch">
+						<label id="as-des-label" class="valign-wrapper" style="cursor: default;">
+							<span class="mySwitch" id="switch-as" style="font-size: 20px;">Ascending</span>
+							<input id="as-des-checkbox" type="checkbox" disabled />
+							<span id="as-des-lever" class="lever" style="cursor: pointer;"></span>
+							<span class="mySwitch" id="switch-des" style="font-size: 20px;">Descending</span>
+						</label>
+					</div>
+				</div>
+				<div class="col s4">
+					<div id="sim-his-div" class="switch disabled">
+						<label id="sim-his-label" class="valign-wrapper" style="cursor: default;">
+							<span class="mySwitch" id="switch-sim" style="font-size: 20px;">Simulation</span>
+							<input id="sim-his-checkbox" type="checkbox" disabled />
+							<span id="sim-his-lever" class="lever" style="cursor: pointer;"></span>
+							<span class="mySwitch" id="switch-his" style="font-size: 20px;">Historical</span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="static/js/lib/materialize.js"></script>
+<script type="text/javascript" src="static/js/lib/jquery.js"></script>
+<script type="text/javascript" src="static/js/script.js"></script>
+<script type="text/javascript" src="static/js/lib/highcharts.js"></script>
+<!-- <script type="text/javascript" src="static/js/lib/drilldown.js"></script> -->
+<!-- <script type="text/javascript" src="static/js/lib/highcharts-more.js"></script> -->
+<script type="text/javascript" src="static/js/DR/DR.js"></script>
+<script type="text/javascript" src="static/js/DR/zone-chart.js"></script>
+<script type="text/javascript" src="static/js/DR/bldng-chart.js"></script>
+
+</html>
