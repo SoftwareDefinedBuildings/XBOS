@@ -2,7 +2,7 @@
 
 ## Running
 
-Use Python2
+Use Python3
 
 ```
 virtualenv venv
