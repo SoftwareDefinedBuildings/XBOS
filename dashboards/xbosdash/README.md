@@ -15,6 +15,10 @@ Make sure you fill out `config.toml`; this requires making an account on [https:
 
 ## API Doc
 
+### SVG endpoint
+
+Put SVG files in `static/svg` and name them appropriately to the building. You can fetch the SVG content by doing a GET to `/svg/<building name>.svg`.
+
 ### DR Endpoints
 
 - `/api/prediction/dr/<provider>`

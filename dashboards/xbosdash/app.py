@@ -12,6 +12,8 @@ from collections import defaultdict
 from functools import update_wrapper
 import pytz
 import json
+import glob
+import os
 from datetime import datetime, timedelta
 from dashutil import get_start, generate_months, prevmonday, get_today
 from datetime import timezone
@@ -378,6 +380,15 @@ def serve_occupancy(last, bucketsize):
 #@crossdomain(origin='*')
 #def setpoint_today():
 #    pass
+
+@app.route('/svg/<filename>')
+@crossdomain(origin='*')
+def getsvg(filename):
+    supported_files = glob.glob('static/svg/*.svg')
+    if filename in map(os.path.basename, supported_files):
+        with open(f'static/svg/{filename}') as f:
+            return f.read()
+    return jsonify({'error': f'no svg by name of {filename}'})
 
 @app.route('/<filename>')
 @crossdomain(origin='*')
